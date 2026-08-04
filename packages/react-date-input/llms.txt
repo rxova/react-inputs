@@ -1,0 +1,114 @@
+# @rxova/react-date-input
+
+> A headless, accessible date field for React: segmented, keyboard-first, ordered
+> by locale through `Intl`, with no calendar popup and no date library. The value
+> is a `YYYY-MM-DD` string in and out — never a `Date`, which would drag a
+> timezone into a calendar date. Zero runtime dependencies. No stylesheet.
+
+## Install
+
+    npm install @rxova/react-date-input
+
+`react >= 18` is the only peer dependency.
+
+## Minimal working example
+
+```tsx
+import { useState } from 'react'
+import { DateInput } from '@rxova/react-date-input'
+
+export function Birthday() {
+  const [value, setValue] = useState<string | null>(null)
+
+  return <DateInput label="Date of birth" value={value} onChange={setValue} max="2026-07-29" />
+}
+```
+
+Segment order, separators and month names follow the locale:
+
+```tsx
+import { DateInput } from '@rxova/react-date-input'
+
+export function Examples() {
+  return (
+    <>
+      <DateInput label="US" locale="en-US" />
+      <DateInput label="UK" locale="en-GB" />
+      <DateInput label="Japan" locale="ja-JP" />
+    </>
+  )
+}
+```
+
+`onChange` fires only when the date becomes complete and valid (or stops being
+so). For every keystroke, use `onPartsChange`.
+
+## Props
+
+`<DateInput>` — the full surface is `DateInputProps` in the published types.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `value` | `string \| null` | — | Controlled `YYYY-MM-DD`, or `null` for empty. |
+| `defaultValue` | `string \| null` | — | Uncontrolled initial value. Ignored when `value` is set. |
+| `onChange` | `(value: string \| null) => void` | — | Fires on complete/valid, and when that stops. Never mid-entry. |
+| `onPartsChange` | `(parts: DateParts) => void` | — | Every keystroke, including while incomplete. |
+| `min` | `string` | — | Earliest allowed date, inclusive, `YYYY-MM-DD`. |
+| `max` | `string` | — | Latest allowed date, inclusive, `YYYY-MM-DD`. |
+| `emitOutOfRange` | `boolean` | `true` | Reports an out-of-range date and marks the field invalid, rather than discarding it. |
+| `locale` | `string` | the runtime's locale | BCP 47 tag deciding segment order, separators and month names. |
+| `placeholders` | `DatePlaceholders` | `dd` / `mm` / `yyyy` | Per-segment placeholder text. |
+| `segmentLabels` | `DateSegmentLabels` | `Day` / `Month` / `Year` | Per-segment accessible name. |
+| `renderSegment` | `(state: DateSegmentState) => ReactNode` | — | Custom rendering for one segment. |
+| `label` | `ReactNode` | — | Accessible name for the whole field. |
+| `className` | `string` | — | |
+| `style` | `CSSProperties` | — | |
+| `name` | `string` | — | Emits a hidden input carrying the ISO value, readable by a native `<form>`. |
+| `required` | `boolean` | `false` | |
+| `disabled` | `boolean` | `false` | |
+| `readOnly` | `boolean` | `false` | |
+| `invalid` | `boolean` | `false` | Sets `aria-invalid` and `data-invalid` on the group. |
+| `aria-describedby` | `string` | — | ids of external error/help text. |
+| `id` | `string` | — | Base id; segments derive `${id}-day`, `${id}-month`, `${id}-year`. |
+| `onBlur` | `(event: FocusEvent<HTMLElement>) => void` | — | Fires when focus leaves the field, never between segments. |
+| `onFocus` | `(event: FocusEvent<HTMLElement>) => void` | — | |
+| `onWarn` | `(warning: DateWarning) => void` | `console.warn` | Development-only notice that a prop was coerced. Stripped from production builds. |
+
+Also exported: the `useDateInput` hook, the segment helpers `segmentOrder`,
+`datePieces`, `monthNames`, and the pure date functions `toISO`, `fromISO`,
+`compareISO`, `withinRange`, `daysInMonth`, `isLeapYear`, plus `MIN_YEAR` and
+`MAX_YEAR`.
+
+## Styling
+
+There is no stylesheet. Set CSS custom properties on any ancestor:
+`--rdi-gap`, `--rdi-segment-padding`, `--rdi-segment-radius`,
+`--rdi-literal-opacity`.
+
+Or target the `data-*` attributes, which are public API covered by semver:
+`data-rdi-root`, `data-rdi-segment` (`day` / `month` / `year`), `data-rdi-value`,
+plus the state hooks `data-complete`, `data-out-of-range`, `data-placeholder`,
+`data-focused`, `data-disabled`, `data-readonly`, `data-invalid`.
+
+## Three mistakes to avoid
+
+1. **Converting the value to a `Date` on the way in or out.** `new Date('2026-01-01')`
+   parses as UTC midnight and renders as the previous day anywhere west of it.
+   Keep the `YYYY-MM-DD` string; `compareISO` and `withinRange` are exported so
+   you rarely need anything else.
+2. **Expecting `onChange` on every keystroke.** It fires when the date is complete
+   and real, so you never receive `2026-02-3` half-typed. Subscribe to
+   `onPartsChange` if you need the in-progress state.
+3. **Hard-coding the segment order.** The order, the separators and the month
+   names come from `Intl` for the given `locale` — a layout that assumes
+   day-month-year is wrong in the US, and one that assumes three segments in a
+   fixed order is wrong in ja-JP.
+
+## Docs
+
+- Introduction: https://rxova.org/packages/react-inputs/components/date/introduction/
+- Usage: https://rxova.org/packages/react-inputs/components/date/usage/
+- Everything else (forms, ranges, theming, SSR): https://rxova.org/packages/react-inputs/components/date/about/
+- Migrating from another date picker: https://rxova.org/packages/react-inputs/components/date/migrating/
+- Generated API reference: https://rxova.org/packages/react-inputs/components/date/api/
+- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt

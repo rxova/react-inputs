@@ -1,0 +1,116 @@
+# @rxova/react-phone-input
+
+> A headless, accessible international phone input for React with no metadata
+> blob: country names come from `Intl.DisplayNames`, flags from Unicode, and the
+> dial-code table is about 4 kB. E.164 in, E.164 out — the value is never the
+> formatted display text. Zero runtime dependencies. No stylesheet to import.
+
+## Install
+
+    npm install @rxova/react-phone-input
+
+`react >= 18` is the only peer dependency.
+
+## Minimal working example
+
+```tsx
+import { useState } from 'react'
+import { PhoneInput } from '@rxova/react-phone-input'
+
+export function Signup() {
+  const [phone, setPhone] = useState('')
+
+  return <PhoneInput label="Phone number" value={phone} onChange={setPhone} defaultCountry="GB" />
+}
+```
+
+`onChange` receives the E.164 string plus a `PhoneDetails` second argument:
+
+```tsx
+import { PhoneInput } from '@rxova/react-phone-input'
+
+export function Field() {
+  return (
+    <PhoneInput
+      label="Phone"
+      onChange={(value, details) => {
+        // value    '+442071234567'
+        // details  { e164, country: 'GB', national: '2071234567', possible: true }
+        console.log(value, details.country, details.possible)
+      }}
+    />
+  )
+}
+```
+
+## Props
+
+`<PhoneInput>` — the full surface is `PhoneInputProps` in the published types.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `value` | `string` | — | Controlled E.164 (`'+14155552671'`) or `''`. Never the formatted text. |
+| `defaultValue` | `string` | — | Uncontrolled initial E.164 value. Ignored when `value` is set. |
+| `onChange` | `(value: string, details: PhoneDetails) => void` | — | E.164 string plus `{ e164, country, national, possible }`. |
+| `country` | `string` | — | Controlled country, ISO 3166-1 alpha-2. |
+| `defaultCountry` | `string` | `'US'` | Initial country when uncontrolled. |
+| `onCountryChange` | `(iso2: string) => void` | — | |
+| `countries` | `string[]` | every country | Restricts the list, in the order given. An empty array is ignored. |
+| `hideCountrySelect` | `boolean` | `false` | Drops the picker; numbers must be typed in `+…` form. |
+| `countryLabel` | `string` | `'Country'` | Accessible name for the country select. |
+| `renderCountry` | `(state: PhoneCountryState) => ReactNode` | flag, name and calling code | Custom option contents. |
+| `locale` | `string` | the runtime's locale | BCP 47 tag for country names. |
+| `label` | `ReactNode` | — | Accessible name for the number field. |
+| `placeholder` | `string` | — | |
+| `className` | `string` | — | |
+| `style` | `CSSProperties` | — | |
+| `name` | `string` | — | Emits a hidden input carrying the E.164 value, readable by a native `<form>`. |
+| `required` | `boolean` | `false` | |
+| `disabled` | `boolean` | `false` | |
+| `readOnly` | `boolean` | `false` | |
+| `showValidity` | `boolean` | `false` | After blur, reports whether the digits are a length this country uses. |
+| `validityLabel` | `(state: { possible: boolean; country: Country \| undefined; details: PhoneDetails }) => ReactNode` | a stock sentence | Return `''` to say nothing. |
+| `invalid` | `boolean` | `false` | Sets `aria-invalid` and `data-invalid`. |
+| `aria-describedby` | `string` | — | ids of external error/help text. |
+| `id` | `string` | — | Base id; input, select and hidden field derive theirs from it. |
+| `onBlur` | `(event: FocusEvent<HTMLElement>) => void` | — | Fires when focus leaves the whole field, never between its parts. |
+| `onFocus` | `(event: FocusEvent<HTMLElement>) => void` | — | |
+| `onWarn` | `(warning: PhoneWarning) => void` | `console.warn` | Development-only notice that a prop was coerced. Stripped from production builds. |
+
+Also exported: the `usePhoneInput` hook, the country helpers `COUNTRIES`,
+`countryByISO2`, `countryForDial`, `countryName`, `flagEmoji`, and the pure
+functions `parsePhone`, `formatPhone`, `formatNational`, `isPossible`,
+`lengthsFor`, `digitsOnly`.
+
+## Styling
+
+There is no stylesheet. Set CSS custom properties on any ancestor:
+`--rphi-gap`, `--rphi-select-width`.
+
+Or target the `data-*` attributes, which are public API covered by semver:
+`data-rphi-root`, `data-rphi-country`, `data-rphi-input`, `data-rphi-value`,
+`data-rphi-validity`, plus the state hooks `data-country`, `data-possible`,
+`data-disabled`, `data-invalid`.
+
+## Three mistakes to avoid
+
+1. **Reading `possible` as "valid".** It means the national part is a length this
+   country actually uses. No client-side check can tell you a number is assigned
+   or reachable — that needs a carrier lookup, so treat `possible` as a typo
+   catcher and verify by sending a code.
+2. **Storing the formatted text.** The value in and out is E.164. The pretty
+   grouping changes with the country and the digit count; persisting it makes the
+   stored number a presentation detail.
+3. **Shipping a metadata library alongside it.** The country names come from
+   `Intl.DisplayNames` and the flags from regional-indicator codepoints — adding
+   `libphonenumber` back for names or flags pays 300 kB for what the platform
+   already has.
+
+## Docs
+
+- Introduction: https://rxova.org/packages/react-inputs/components/phone/introduction/
+- Usage: https://rxova.org/packages/react-inputs/components/phone/usage/
+- Everything else (forms, validity, theming, SSR): https://rxova.org/packages/react-inputs/components/phone/about/
+- Migrating from another phone library: https://rxova.org/packages/react-inputs/components/phone/migrating/
+- Generated API reference: https://rxova.org/packages/react-inputs/components/phone/api/
+- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt

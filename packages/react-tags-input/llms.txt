@@ -1,0 +1,130 @@
+# @rxova/react-tags-input
+
+> A headless, accessible tag / token input for React: delimiters, paste splitting,
+> length and duplicate rules, a real roving tab order over the tags, and add and
+> remove announced to screen readers. The value is a `string[]`. Zero runtime
+> dependencies. No stylesheet to import.
+
+## Install
+
+    npm install @rxova/react-tags-input
+
+`react >= 18` is the only peer dependency.
+
+## Minimal working example
+
+```tsx
+import { useState } from 'react'
+import { TagsInput } from '@rxova/react-tags-input'
+
+export function Topics() {
+  const [tags, setTags] = useState<string[]>([])
+
+  return <TagsInput label="Topics" value={tags} onChange={setTags} placeholder="Add a topic" />
+}
+```
+
+A refused entry stays in the box so the user can fix it, and the reason arrives
+through `onReject`:
+
+```tsx
+import { TagsInput, type TagAttempt } from '@rxova/react-tags-input'
+
+export function Constrained() {
+  return (
+    <TagsInput
+      label="Topics"
+      max={5}
+      minLength={2}
+      maxLength={20}
+      transform={(raw) => raw.toLowerCase()}
+      validate={(tag, existing) =>
+        existing.length > 0 && tag === 'other' ? 'pick something specific' : true
+      }
+      onReject={(attempt: TagAttempt) => {
+        console.log(attempt.reason, attempt.message)
+      }}
+    />
+  )
+}
+```
+
+## Props
+
+`<TagsInput>` — the full surface is `TagsInputProps` in the published types.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `value` | `string[]` | — | Controlled list of tags. |
+| `defaultValue` | `string[]` | — | Uncontrolled initial list. Ignored when `value` is set. |
+| `onChange` | `(tags: string[]) => void` | — | The whole list, after every accepted add or remove. |
+| `onAdd` | `(tag: string, tags: string[]) => void` | — | Once per tag actually added, after it passed every rule. |
+| `onRemove` | `(tag: string, index: number, tags: string[]) => void` | — | With the index it occupied. |
+| `onReject` | `(attempt: TagAttempt) => void` | — | A candidate that was refused, with a machine-readable reason. |
+| `delimiters` | `string[]` | `['Enter', ',']` | Keys and characters that commit the current text. `'Tab'` is opt-in. |
+| `splitPaste` | `boolean` | `true` | Split a paste on the delimiters, and on newlines regardless. |
+| `addOnBlur` | `boolean` | `true` | Commit whatever is in the box when focus leaves. |
+| `placeholder` | `string` | — | Text in the entry box. |
+| `trim` | `boolean` | `true` | Strip leading and trailing whitespace. |
+| `allowDuplicates` | `boolean` | `false` | |
+| `caseSensitive` | `boolean` | `false` | Compare case-sensitively when deduplicating. |
+| `max` | `number` | — | Maximum number of tags. |
+| `minLength` | `number` | — | Minimum length of one tag, in codepoints. |
+| `maxLength` | `number` | — | Maximum length of one tag, in codepoints. |
+| `transform` | `(raw: string) => string` | — | Rewrites an entry before it is checked. |
+| `validate` | `(tag: string, existing: string[]) => boolean \| string` | — | Final say; a string is the refusal message. |
+| `label` | `ReactNode` | — | Accessible name for the whole field. |
+| `removeLabel` | `(tag: string) => string` | ``Remove ${tag}`` | Accessible name for a tag's remove button. |
+| `renderTag` | `(state: TagState) => ReactNode` | the tag text | Custom rendering for one tag's contents. |
+| `announce` | `(event: { type: 'add' \| 'remove' \| 'reject'; tag: string; tags: string[] }) => string` | `Added ${tag}, 3 tags` | Live-region text. Return `''` to say nothing. |
+| `className` | `string` | — | |
+| `style` | `CSSProperties` | — | |
+| `name` | `string` | — | Emits one hidden input per tag, so a native `<form>` posts an array. |
+| `required` | `boolean` | `false` | |
+| `disabled` | `boolean` | `false` | |
+| `readOnly` | `boolean` | `false` | |
+| `invalid` | `boolean` | `false` | Sets `aria-invalid` and `data-invalid`. |
+| `aria-describedby` | `string` | — | ids of external error/help text. |
+| `id` | `string` | — | Base id; the list, entry box and live region derive theirs from it. |
+| `onBlur` | `(event: FocusEvent<HTMLElement>) => void` | — | Fires when focus leaves the whole field, never between its parts. |
+| `onFocus` | `(event: FocusEvent<HTMLElement>) => void` | — | |
+| `onWarn` | `(warning: TagsWarning) => void` | `console.warn` | Development-only notice that a prop was coerced. Stripped from production builds. |
+
+Also exported: the `useTagsInput` hook and the pure helpers `attempt`,
+`attemptAll`, `sanitize`, `comparable`, `contains`, `splitPasted`.
+
+## Styling
+
+There is no stylesheet. Set CSS custom properties on any ancestor:
+`--rtg-gap`, `--rtg-tag-gap`, `--rtg-tag-padding`, `--rtg-tag-radius`,
+`--rtg-tag-background`, `--rtg-remove-size`.
+
+Keep `--rtg-remove-size` at `1.5rem` or above: at the default font size that is
+the 24×24 CSS pixels WCAG 2.5.8 Target Size (Minimum) requires.
+
+Or target the `data-*` attributes, which are public API covered by semver:
+`data-rtg-root`, `data-rtg-list`, `data-rtg-tag`, `data-rtg-tag-label`,
+`data-rtg-remove`, `data-rtg-input`, `data-rtg-value`, `data-rtg-announcement`,
+plus the state hooks `data-count`, `data-full`, `data-focused`, `data-disabled`,
+`data-readonly`, `data-invalid`.
+
+## Three mistakes to avoid
+
+1. **Treating a rejection as a value change.** A refused candidate never reaches
+   `onChange`; it stays in the entry box and reports through `onReject` with a
+   `reason` code, so the user can correct the text instead of retyping it.
+2. **Filtering duplicates yourself in `onChange`.** Deduplication happens before
+   a tag is accepted — `allowDuplicates` and `caseSensitive` control it. Filtering
+   after the fact fights the component and drops the `onAdd`/`onReject` pairing.
+3. **Expecting one form field.** With `name` set, the component emits one hidden
+   input per tag, which is how a native `<form>` posts an array. It is not a
+   single comma-joined string.
+
+## Docs
+
+- Introduction: https://rxova.org/packages/react-inputs/components/tags/introduction/
+- Usage: https://rxova.org/packages/react-inputs/components/tags/usage/
+- Everything else (forms, keyboard, theming, SSR): https://rxova.org/packages/react-inputs/components/tags/about/
+- Migrating from another tags library: https://rxova.org/packages/react-inputs/components/tags/migrating/
+- Generated API reference: https://rxova.org/packages/react-inputs/components/tags/api/
+- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt

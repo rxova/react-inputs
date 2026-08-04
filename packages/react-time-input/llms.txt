@@ -1,0 +1,114 @@
+# @rxova/react-time-input
+
+> A headless, accessible time field for React: segmented, keyboard-first, 12- or
+> 24-hour by locale through `Intl`, with no clock popup and no date library. The
+> value is always a canonical 24-hour `HH:mm` (or `HH:mm:ss`) string, whatever
+> the field displays. Zero runtime dependencies. No stylesheet to import.
+
+## Install
+
+    npm install @rxova/react-time-input
+
+`react >= 18` is the only peer dependency.
+
+## Minimal working example
+
+```tsx
+import { useState } from 'react'
+import { TimeInput } from '@rxova/react-time-input'
+
+export function Booking() {
+  const [value, setValue] = useState<string | null>(null)
+
+  return <TimeInput label="Start time" value={value} onChange={setValue} min="09:00" max="17:00" />
+}
+```
+
+The clock and the segment order follow the locale; the value does not:
+
+```tsx
+import { TimeInput } from '@rxova/react-time-input'
+
+export function Examples() {
+  return (
+    <>
+      <TimeInput label="US" locale="en-US" />
+      <TimeInput label="UK" locale="en-GB" />
+      <TimeInput label="Precise" showSeconds minuteStep={15} secondStep={30} />
+    </>
+  )
+}
+```
+
+## Props
+
+`<TimeInput>` — the full surface is `TimeInputProps` in the published types.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `value` | `string \| null` | — | Controlled `HH:mm` or `HH:mm:ss`, 24-hour, or `null` for empty. |
+| `defaultValue` | `string \| null` | — | Uncontrolled initial value. Ignored when `value` is set. |
+| `onChange` | `(value: string \| null) => void` | — | Fires on complete/valid, and when that stops. Never mid-entry. |
+| `onPartsChange` | `(parts: TimeParts) => void` | — | Every keystroke, including while incomplete. |
+| `min` | `string` | — | Earliest allowed time, inclusive, `HH:mm[:ss]`. |
+| `max` | `string` | — | Latest allowed time, inclusive, `HH:mm[:ss]`. |
+| `emitOutOfRange` | `boolean` | `true` | Reports an out-of-range time and marks the field invalid, rather than discarding it. |
+| `showSeconds` | `boolean` | `false` | Adds a seconds segment. |
+| `hour12` | `boolean` | whatever the locale uses | Forces a 12- or 24-hour clock. Display only. |
+| `minuteStep` | `number` | `1` | Arrow-key step for minutes. Must divide 60. |
+| `secondStep` | `number` | `1` | Arrow-key step for seconds. Must divide 60. |
+| `locale` | `string` | the runtime's locale | BCP 47 tag deciding segment order, separators and the clock. |
+| `placeholders` | `TimePlaceholders` | `hh` / `mm` / `ss` / `--` | Per-segment placeholder text. |
+| `segmentLabels` | `TimeSegmentLabels` | `Hour` / `Minute` / `Second` / `AM/PM` | Per-segment accessible name. |
+| `renderSegment` | `(state: TimeSegmentState) => ReactNode` | — | Custom rendering for one segment. |
+| `label` | `ReactNode` | — | Accessible name for the whole field. |
+| `className` | `string` | — | |
+| `style` | `CSSProperties` | — | |
+| `name` | `string` | — | Emits a hidden input carrying the 24-hour value, readable by a native `<form>`. |
+| `required` | `boolean` | `false` | |
+| `disabled` | `boolean` | `false` | |
+| `readOnly` | `boolean` | `false` | |
+| `invalid` | `boolean` | `false` | Sets `aria-invalid` and `data-invalid` on the group. |
+| `aria-describedby` | `string` | — | ids of external error/help text. |
+| `id` | `string` | — | Base id; segments derive `${id}-hour`, `${id}-minute`, … |
+| `onBlur` | `(event: FocusEvent<HTMLElement>) => void` | — | Fires when focus leaves the field, never between segments. |
+| `onFocus` | `(event: FocusEvent<HTMLElement>) => void` | — | |
+| `onWarn` | `(warning: TimeWarning) => void` | `console.warn` | Development-only notice that a prop was coerced. Stripped from production builds. |
+
+Also exported: the `useTimeInput` hook, the segment helpers `timePieces`,
+`dayPeriodNames`, `usesHour12`, and the pure time functions `toISO`, `fromISO`,
+`compareISO`, `withinRange`, `toDisplayHour`, `fromDisplayHour`, `toDayPeriod`,
+plus the `AM` and `PM` constants.
+
+## Styling
+
+There is no stylesheet. Set CSS custom properties on any ancestor:
+`--rti-gap`, `--rti-segment-padding`, `--rti-segment-radius`,
+`--rti-literal-opacity`.
+
+Or target the `data-*` attributes, which are public API covered by semver:
+`data-rti-root`, `data-rti-segment` (`hour` / `minute` / `second` / `dayPeriod`),
+`data-rti-value`, plus the state hooks `data-complete`, `data-out-of-range`,
+`data-placeholder`, `data-focused`, `data-disabled`, `data-readonly`,
+`data-invalid`.
+
+## Three mistakes to avoid
+
+1. **Reading `hour12` off the value.** The value is 24-hour always — `'13:30'`
+   even when the field shows `1:30 PM`. `hour12` is a display choice, so a value
+   can be stored, compared and sorted without knowing which locale produced it.
+2. **Turning the value into a `Date`.** A time of day is not an instant; it has no
+   date and no timezone until you pair it with one, and `new Date('13:30')` does
+   not parse at all. Keep the string and use `compareISO` / `withinRange`.
+3. **Setting a `minuteStep` that does not divide 60.** `7` would make the arrows
+   walk off the hour boundary and never return to `:00`; the component warns and
+   falls back to `1` rather than doing that silently.
+
+## Docs
+
+- Introduction: https://rxova.org/packages/react-inputs/components/time/introduction/
+- Usage: https://rxova.org/packages/react-inputs/components/time/usage/
+- Everything else (forms, ranges, theming, SSR): https://rxova.org/packages/react-inputs/components/time/about/
+- Migrating from another time picker: https://rxova.org/packages/react-inputs/components/time/migrating/
+- Generated API reference: https://rxova.org/packages/react-inputs/components/time/api/
+- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt

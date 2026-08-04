@@ -1,0 +1,117 @@
+# @rxova/react-file-input
+
+> A headless, accessible file picker and drop zone for React: `accept` and size
+> rules, deduplication, announced add and remove, and optional image previews
+> whose object URLs are revoked for you. It never uploads anything — the value is
+> a `File[]` and the transport is yours. Zero dependencies. No stylesheet.
+
+## Install
+
+    npm install @rxova/react-file-input
+
+`react >= 18` is the only peer dependency.
+
+## Minimal working example
+
+```tsx
+import { useState } from 'react'
+import { FileInput, describeRejection } from '@rxova/react-file-input'
+
+export function Attachments() {
+  const [files, setFiles] = useState<File[]>([])
+
+  return (
+    <FileInput
+      label="Attachments"
+      name="attachments"
+      multiple
+      accept=".pdf,image/*"
+      maxSize={5_000_000}
+      maxFiles={5}
+      previews
+      value={files}
+      onChange={setFiles}
+      onReject={(attempt) => {
+        console.warn(describeRejection(attempt, { maxSize: 5_000_000 }))
+      }}
+    />
+  )
+}
+```
+
+## Props
+
+`<FileInput>` — the full surface is `FileInputProps` in the published types.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `value` | `File[]` | — | Controlled list of files. |
+| `defaultValue` | `File[]` | — | Uncontrolled initial list. Ignored when `value` is set. |
+| `onChange` | `(files: File[]) => void` | — | The whole list, after every accepted add or remove. |
+| `onAdd` | `(file: File, files: File[]) => void` | — | Once per file actually added, after it passed every rule. |
+| `onRemove` | `(file: File, index: number, files: File[]) => void` | — | With the index it occupied. |
+| `onReject` | `(attempt: FileAttempt) => void` | — | A file that was refused, with a machine-readable reason. |
+| `accept` | `string` | — | Exactly as `<input accept>` takes it, and enforced on drop too. |
+| `maxSize` | `number` | — | Largest allowed file, in bytes. |
+| `minSize` | `number` | — | Smallest allowed file, in bytes. |
+| `maxFiles` | `number` | — | Maximum number of files. Ignored unless `multiple`. |
+| `multiple` | `boolean` | `false` | Like the native input. |
+| `dedupe` | `boolean` | `true` | Same name + size + timestamp counts as the same file. |
+| `validate` | `(file: File, existing: File[]) => boolean \| string` | — | Final say; a string is the refusal message. |
+| `previews` | `boolean` | `false` | Object URLs for image files, revoked on removal and unmount. |
+| `label` | `ReactNode` | — | Accessible name for the field. |
+| `hint` | `ReactNode` | a stock sentence | Text inside the drop zone. |
+| `removeLabel` | `(file: File) => string` | ``Remove ${name}`` | Accessible name for a file's remove button. |
+| `renderFile` | `(state: FileEntryState) => ReactNode` | the default row | Replaces a row's contents; the remove button stays. |
+| `announce` | `(event: { type: 'add' \| 'remove' \| 'reject'; files: File[]; added?: number; rejected?: FileAttempt[] }) => string` | a stock sentence | Live-region text. Return `''` to say nothing. |
+| `className` | `string` | — | |
+| `style` | `CSSProperties` | — | |
+| `name` | `string` | — | Name for the underlying `<input type="file">`. |
+| `required` | `boolean` | `false` | |
+| `disabled` | `boolean` | `false` | |
+| `readOnly` | `boolean` | `false` | Shows the selection but refuses changes. |
+| `invalid` | `boolean` | `false` | Sets `aria-invalid` and `data-invalid`. |
+| `aria-describedby` | `string` | — | ids of external error/help text. |
+| `id` | `string` | — | Base id; the input, drop zone, list and live region derive theirs from it. |
+| `onBlur` | `(event: FocusEvent<HTMLElement>) => void` | — | |
+| `onFocus` | `(event: FocusEvent<HTMLElement>) => void` | — | |
+| `onWarn` | `(warning: FileWarning) => void` | `console.warn` | Development-only notice that a prop was coerced. Stripped from production builds. |
+
+Also exported: the `useFileInput` hook and the pure helpers `attempt`,
+`attemptAll`, `matchesAccept`, `describeRejection`, `extensionOf`, `fileKey`,
+`formatBytes`, `isPreviewable`.
+
+## Styling
+
+There is no stylesheet. Set CSS custom properties on any ancestor:
+`--rfi-gap`, `--rfi-zone-gap`, `--rfi-zone-padding`, `--rfi-zone-radius`,
+`--rfi-zone-border`, `--rfi-zone-background`, `--rfi-row-gap`, `--rfi-file-gap`,
+`--rfi-preview-size`, `--rfi-preview-radius`, `--rfi-remove-size`.
+
+Or target the `data-*` attributes, which are public API covered by semver:
+`data-rfi-root`, `data-rfi-input`, `data-rfi-zone`, `data-rfi-list`,
+`data-rfi-file`, `data-rfi-name`, `data-rfi-size`, `data-rfi-preview`,
+`data-rfi-remove`, `data-rfi-announcement`, plus the state hooks `data-dragging`,
+`data-count`, `data-full`, `data-disabled`, `data-readonly`, `data-invalid`.
+
+## Three mistakes to avoid
+
+1. **Expecting an upload.** Nothing leaves the page. You get `File` objects and
+   send them yourself — `FormData`, a signed URL, whatever the backend wants —
+   which is why there is no progress bar or retry policy to configure.
+2. **Calling `URL.createObjectURL` yourself when `previews` is on.** Each
+   `FileEntry` already carries a `preview` URL, created lazily and revoked when
+   the file is removed or the component unmounts. A second URL for the same file
+   is the leak `previews` exists to avoid.
+3. **Trusting `accept` as validation.** It filters the picker and the drop, both
+   client-side, on a filename extension or a browser-reported MIME type. Check
+   the bytes on the server; this is a usability filter, not a security control.
+
+## Docs
+
+- Introduction: https://rxova.org/packages/react-inputs/components/file/introduction/
+- Usage: https://rxova.org/packages/react-inputs/components/file/usage/
+- Everything else (forms, drop zone, previews, SSR): https://rxova.org/packages/react-inputs/components/file/about/
+- Migrating from another file-upload library: https://rxova.org/packages/react-inputs/components/file/migrating/
+- Generated API reference: https://rxova.org/packages/react-inputs/components/file/api/
+- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt
