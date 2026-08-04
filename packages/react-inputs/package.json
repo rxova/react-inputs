@@ -42,9 +42,15 @@
     "react-dom": ">=18.0.0"
   },
   "dependencies": {
+    "@rxova/react-date-input": "workspace:^",
+    "@rxova/react-file-input": "workspace:^",
     "@rxova/react-intl-currency-input": "workspace:^",
     "@rxova/react-otp-input": "workspace:^",
-    "@rxova/react-rating-input": "workspace:^"
+    "@rxova/react-password-input": "workspace:^",
+    "@rxova/react-phone-input": "workspace:^",
+    "@rxova/react-rating-input": "workspace:^",
+    "@rxova/react-tags-input": "workspace:^",
+    "@rxova/react-time-input": "workspace:^"
   },
   "engines": {
     "node": ">=20.19.0"

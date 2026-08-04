@@ -1,0 +1,16 @@
+[
+  {
+    "name": "DateInput (full import)",
+    "path": "dist/index.mjs",
+    "import": "{ DateInput }",
+    "limit": "4 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  },
+  {
+    "name": "useDateInput (headless only)",
+    "path": "dist/index.mjs",
+    "import": "{ useDateInput }",
+    "limit": "3 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  }
+]

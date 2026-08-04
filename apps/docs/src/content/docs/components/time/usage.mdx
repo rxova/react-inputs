@@ -1,0 +1,200 @@
+---
+title: 'Usage'
+sidebar:
+  order: 2
+---
+
+## Try it
+
+Type digits — the field advances by itself. `a` and `p` set the day period, arrows step, Backspace
+clears. (`TimeInput` and `useState` are already in scope.)
+
+```tsx live
+function TryIt() {
+  const [value, setValue] = useState(null)
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <TimeInput label="Start time" locale="en-US" value={value} onChange={setValue} />
+      <code>{value === null ? 'null' : value}</code>
+    </div>
+  )
+}
+```
+
+Note the value stays 24-hour while the field shows AM/PM. Try `12` then `a` — midnight is `00:00`,
+not `12:00`.
+
+## Controlled and uncontrolled
+
+```tsx
+import { useState } from 'react'
+import { TimeInput } from '@rxova/react-time-input'
+
+function Controlled() {
+  const [value, setValue] = useState<string | null>('14:30')
+  return <TimeInput label="At" value={value} onChange={setValue} />
+}
+
+function Uncontrolled() {
+  return <TimeInput label="At" defaultValue="14:30" />
+}
+```
+
+`onChange` fires when the time becomes complete and valid, and when it stops being — never with a
+half-typed number in between. `onPartsChange` is the per-keystroke channel if you want one.
+
+## Clocks
+
+```tsx live
+function Clocks() {
+  return (
+    <div style={{ display: 'grid', gap: '0.5rem' }}>
+      <TimeInput label="United States" locale="en-US" defaultValue="14:05" />
+      <TimeInput label="United Kingdom" locale="en-GB" defaultValue="14:05" />
+      <TimeInput label="Japan (forced 12-hour)" locale="ja-JP" hour12 defaultValue="14:05" />
+    </div>
+  )
+}
+```
+
+Omit `locale` to use the runtime's own; pass `hour12` to force either clock.
+
+## Seconds and steps
+
+```tsx live
+function Precise() {
+  return (
+    <TimeInput
+      label="Precise time"
+      locale="en-GB"
+      showSeconds
+      minuteStep={15}
+      secondStep={30}
+      defaultValue="09:00:00"
+    />
+  )
+}
+```
+
+Steps must divide 60. A 7-minute step leaves a 4-minute bucket at the top of every hour, so it is
+refused and reported through `onWarn`. Steps apply to arrow-key stepping, not to typing — a user
+can still type `09:07` under a 15-minute step, because enforcing the grid mid-entry fights them.
+
+## Keyboard
+
+| Key                    | Effect                                                                  |
+| ---------------------- | ----------------------------------------------------------------------- |
+| `0`–`9`                | Type into the focused segment; advances when no further digit could fit |
+| `a` / `p`              | Set AM or PM (also the localised first letter)                          |
+| `↑` / `↓`              | Step the focused segment, wrapping at its ends                          |
+| `←` / `→`              | Move between segments; stops at the ends rather than cycling            |
+| `Home` / `End`         | Jump the focused segment to its minimum or maximum                      |
+| `Backspace` / `Delete` | Clear the focused segment                                               |
+| `Tab`                  | Move to the next segment, then out of the field                         |
+
+## Range
+
+```tsx
+import { TimeInput } from '@rxova/react-time-input'
+
+function Opening() {
+  return <TimeInput label="Appointment" min="09:00" max="17:00" />
+}
+```
+
+Both bounds are inclusive. A completed time outside the range is **still reported**, with the field
+marked `data-out-of-range` and `aria-invalid`. Pass `emitOutOfRange={false}` to get `null` instead.
+
+A `min` after the `max` is dropped and reported: `22:00`–`06:00` is two ranges, and this component
+does not model a range that wraps past midnight.
+
+## Forms
+
+```tsx
+import { TimeInput } from '@rxova/react-time-input'
+
+function Form() {
+  return (
+    <form action="/bookings" method="post">
+      <TimeInput label="Starts at" name="at" locale="en-US" defaultValue="14:30" />
+      <button type="submit">Save</button>
+    </form>
+  )
+}
+```
+
+The box shows `02:30 PM`; the form receives `14:30`. `required` becomes `aria-required` on the
+group — a hidden input is barred from constraint validation — so enforcing it stays with your form
+layer.
+
+## Styling
+
+No stylesheet to import.
+
+```css
+[data-rti-root] {
+  --rti-gap: 0.125rem;
+  --rti-literal-opacity: 0.5;
+}
+
+[data-rti-segment][data-focused] {
+  background: Highlight;
+  color: HighlightText;
+}
+
+[data-rti-segment][data-placeholder] {
+  opacity: 0.55;
+}
+```
+
+The `data-*` attributes are public API, covered by semver. The full list is in the
+[package README](https://github.com/rxova/react-inputs/tree/main/packages/react-time-input#styling).
+
+## Headless
+
+`useTimeInput` gives you the whole state machine with no markup — including the 12/24-hour
+translation and the digit buffer.
+
+```tsx
+import { useTimeInput } from '@rxova/react-time-input'
+
+function CustomField() {
+  const field = useTimeInput({ locale: 'en-US' })
+
+  return (
+    <div onBlur={field.handleBlur}>
+      {field.pieces.map((piece, index) =>
+        piece.kind === 'literal' ? (
+          <span key={index}>{piece.text}</span>
+        ) : (
+          <span
+            key={piece.type}
+            ref={(node) => {
+              field.segmentRefs.current[piece.type] = node
+            }}
+            role="spinbutton"
+            tabIndex={0}
+            onFocus={(event) => {
+              field.handleSegmentFocus(piece.type, event)
+            }}
+            onKeyDown={(event) => {
+              if (/^\d$/.test(event.key)) field.typeDigit(piece.type, event.key)
+              else if (event.key === 'ArrowUp') field.step(piece.type, 1)
+              else if (event.key === 'ArrowDown') field.step(piece.type, -1)
+              else field.typeLetter(piece.type, event.key)
+            }}
+          >
+            {field.displayValue(piece.type) ?? '--'}
+          </span>
+        ),
+      )}
+    </div>
+  )
+}
+```
+
+`field.clear()` empties every segment at once — not bound to a key in the default renderer, where
+Backspace clears one segment, but available for a custom one.
+
+The clock helpers are exported too — `toISO`, `fromISO`, `toDisplayHour`, `fromDisplayHour`,
+`toDayPeriod`, `compareISO`, `withinRange` — all pure and all `Date`-free.

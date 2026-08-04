@@ -1,0 +1,175 @@
+---
+title: 'Migrating'
+sidebar:
+  order: 4
+---
+
+## Migrating from react-password-strength-bar
+
+`react-password-strength-bar` renders only the bar — "the input tag is not included" — so you are
+almost certainly replacing _two_ things: the bar, and whatever input you paired it with.
+
+### Props
+
+| react-password-strength-bar | @rxova/react-password-input     | Notes                                                                     |
+| --------------------------- | ------------------------------- | ------------------------------------------------------------------------- |
+| `password`                  | `value` / `defaultValue`        | The component owns the input too                                          |
+| `onChangeScore`             | `onValidityChange` + `minScore` | Or read `strength` from the headless hook                                 |
+| `minLength`                 | `minLength`                     | Also drives the default rule and native `minlength`                       |
+| `scoreWords`                | `strengthLabel`                 | A function of the whole `PasswordStrength`, not an array                  |
+| `shortScoreWord`            | —                               | A short password reports the `too-short` penalty and is capped at score 1 |
+| `barColors`                 | `--rpi-meter-fill-1`…`-4`       | CSS custom properties, not props                                          |
+| `scoreWordClassName`        | `[data-rpi-strength-label]`     | Style by attribute                                                        |
+| `style` / `className`       | `style` / `className`           | On the root                                                               |
+
+### Before
+
+```tsx
+import { useState } from 'react'
+import PasswordStrengthBar from 'react-password-strength-bar'
+
+function SignUp() {
+  const [password, setPassword] = useState('')
+  return (
+    <>
+      <input
+        type="password"
+        value={password}
+        onChange={(event) => {
+          setPassword(event.target.value)
+        }}
+      />
+      <PasswordStrengthBar password={password} minLength={8} />
+    </>
+  )
+}
+```
+
+### After
+
+```tsx
+import { useState } from 'react'
+import { PasswordInput } from '@rxova/react-password-input'
+
+function SignUp() {
+  const [password, setPassword] = useState('')
+  return (
+    <PasswordInput
+      label="Password"
+      autoComplete="new-password"
+      value={password}
+      onChange={setPassword}
+      showStrength
+      minLength={8}
+    />
+  )
+}
+```
+
+You also gain the reveal toggle, the Caps Lock warning and the requirement checklist, and you drop
+`zxcvbn` from the bundle.
+
+### Keeping zxcvbn
+
+If your scores are tuned against zxcvbn and you do not want them to move, keep it and pass it in:
+
+```tsx
+import { zxcvbn } from '@zxcvbn-ts/core'
+import { PasswordInput } from '@rxova/react-password-input'
+import type { PasswordScore } from '@rxova/react-password-input'
+
+function Field() {
+  return (
+    <PasswordInput
+      label="Password"
+      showStrength
+      estimate={(password) => {
+        const result = zxcvbn(password)
+        return {
+          score: result.score as PasswordScore,
+          entropy: Math.log2(result.guesses),
+          penalties: [],
+          effectiveLength: password.length,
+        }
+      }}
+    />
+  )
+}
+```
+
+The 0–4 scale is identical, so nothing else changes.
+
+## Migrating from a hand-rolled reveal toggle
+
+The snippet almost everyone has:
+
+```tsx
+import { useState } from 'react'
+
+function Password() {
+  const [shown, setShown] = useState(false)
+  return (
+    <div>
+      <input type={shown ? 'text' : 'password'} />
+      <button
+        onClick={() => {
+          setShown(!shown)
+        }}
+      >
+        {shown ? 'Hide' : 'Show'}
+      </button>
+    </div>
+  )
+}
+```
+
+Replace the whole thing:
+
+```tsx
+import { PasswordInput } from '@rxova/react-password-input'
+
+function Password() {
+  return <PasswordInput label="Password" />
+}
+```
+
+What that fixes, in order of how often it bites:
+
+1. The button no longer **submits the form** — the snippet's `<button>` has no `type`, so inside a
+   `<form>` it defaults to `type="submit"`.
+2. Focus and the **caret** stay where they were.
+3. `aria-pressed` tells a screen reader whether the password is showing.
+4. The field **re-masks on blur**, so a revealed password does not sit on screen after you tab away.
+5. The toggle is reachable by keyboard **in Safari**.
+6. The hit area meets WCAG 2.5.8.
+
+## Migrating from @enzoic/enzoic-react-password-strength
+
+Enzoic checks passwords against a hosted breach API. The equivalent here is `checkCompromised`,
+except the request is yours — the plaintext never leaves the page unless you send it.
+
+```tsx
+import { PasswordInput } from '@rxova/react-password-input'
+
+function Field() {
+  return (
+    <PasswordInput
+      label="Password"
+      showStrength
+      checkCompromised={async (password, signal) => {
+        const response = await fetch('/api/breach-check', {
+          method: 'POST',
+          body: JSON.stringify({ password }),
+          headers: { 'content-type': 'application/json' },
+          signal,
+        })
+        return (await response.json()).compromised === true
+      }}
+    />
+  )
+}
+```
+
+Prefer a k-anonymity endpoint over posting the password anywhere, even to your own backend — see
+[About](./about/) for a Have I Been Pwned implementation that sends only a five-character hash
+prefix.

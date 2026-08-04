@@ -1,0 +1,147 @@
+---
+title: 'About'
+sidebar:
+  order: 3
+---
+
+The decisions behind the component, and the ones you should disagree with deliberately rather than
+by accident.
+
+## Focus after a removal
+
+The failure this component exists to fix.
+
+Delete a tag with the keyboard and the button you were on ceases to exist. Unless something takes
+focus deliberately, the browser drops it to `<body>`: a sighted keyboard user loses their place on
+the page, and a screen-reader user is silently teleported to the top of the document.
+
+So focus goes to:
+
+1. the **next** tag, if there is one,
+2. otherwise the **previous** tag,
+3. otherwise the **entry box**.
+
+An adversarial test sweeps every position in the list, because the failure only shows at the ends —
+removing the middle tag looks fine in a hand-written test and the last one does not.
+
+## One tab stop, not one per tag
+
+Each remove button is a real `<button>`, so by default each would be its own tab stop. Twenty tags
+would cost a keyboard user twenty presses to get past the field.
+
+Instead the list uses a **roving tabindex**: exactly one button has `tabIndex={0}` at a time and
+the rest have `-1`. Arrow keys move within the list, `Home` jumps to the first tag, `End` and
+arrowing right past the last tag land in the entry box.
+
+Arrowing right does **not** wrap back to the first tag — that would make the list a loop a user
+cannot arrow out of.
+
+## Two-step Backspace
+
+Almost every tag field deletes the previous tag on a single Backspace in an empty box. That
+destroys data the user cannot see they are about to lose, especially at typing speed.
+
+Here the first press **selects** the last tag — focus moves onto it, so it is visibly the thing
+under the cursor — and the second removes it. This is the change most likely to surprise someone
+migrating, and it is deliberate.
+
+## Not a combobox
+
+Several packages in this category set `role="combobox"`, `aria-expanded` and `aria-autocomplete` on
+the entry box. Those attributes promise assistive technology a popup listbox with managed
+active-descendant focus.
+
+There is no popup here, so claiming it would be a lie that makes the field _worse_ for the users it
+is meant to help. This component is a labelled text box beside a real `<ul>` — which also means a
+screen reader announces "list, 3 items" before reading them.
+
+If you build a suggestion list on top of the headless hook, you own the combobox wiring for it.
+
+## Announcements
+
+A polite live region announces additions and removals:
+
+> Added react. 3 tags.
+
+Three deliberate choices:
+
+- **Polite, never assertive.** A tag field is not an emergency; assertive would interrupt whatever
+  the user is already hearing.
+- **A batch paste is announced once** — "Added 5 tags. 5 tags." Reading each of forty pasted tags
+  in turn is not information.
+- **Rejections are silent by default.** The refused text stays visibly in the box, and announcing
+  every duplicate keystroke would talk over the user as they type.
+
+`announce` replaces all of it, and returning `''` silences it.
+
+## Rules and containment
+
+`transform` runs before every other check, so lowercasing there genuinely makes `React` a duplicate
+of `react`. Then, in order: empty, `max`, `minLength`, `maxLength`, duplicate, and finally
+`validate`.
+
+The cheap checks run first specifically so consumer code never sees an empty entry.
+
+Both consumer hooks are contained:
+
+- a throwing `transform` behaves as if it were absent
+- a throwing `validate` refuses the tag
+
+Neither takes the form down. They run on every entry, and a typo in someone's predicate should
+degrade one widget rather than unmount a page.
+
+```ts
+import { attempt } from '@rxova/react-tags-input'
+
+attempt(['react'], 'React') // { tag: 'React', accepted: false, reason: 'duplicate' }
+attempt([], '  ') // { tag: '', accepted: false, reason: 'empty' }
+```
+
+These helpers are exported and pure, so the same rules can run on the server against whatever the
+field submitted — the client-side check stops a typo, it does not secure anything.
+
+## The value
+
+A `string[]`, sanitised rather than trusted:
+
+- **non-strings are dropped, never stringified.** `String(undefined)` is `"undefined"`, and a tag
+  reading "undefined" in someone's UI is a worse failure than a missing one. The warning says
+  exactly that.
+- **a controlled `value` is sanitised on every render** rather than copied into state. Copying
+  would let the two drift, and the field would keep showing a tag the parent no longer believes in.
+- **duplicates and over-`max` entries are dropped**, each with its own warning code, because they
+  are different mistakes with different fixes.
+
+Deduplication uses `toLocaleLowerCase` rather than `toLowerCase`: in Turkish, `I` lowercases to a
+dotless `ı`, and a tag list is exactly where someone would notice "İstanbul" and "istanbul" being
+treated as different words.
+
+Lengths count **codepoints**, so two emoji are two characters and a `maxLength` of 2 accepts them.
+
+## Diagnostics
+
+`onWarn` receives `{ code, prop, received, message }`.
+
+| Code                    | Meaning                                                        |
+| ----------------------- | -------------------------------------------------------------- |
+| `value-not-array`       | The prop is not an array at all; an empty list renders         |
+| `value-had-non-strings` | Entries dropped rather than stringified                        |
+| `value-had-duplicates`  | Repeats dropped; pass `allowDuplicates` if they are meaningful |
+| `value-over-max`        | More tags than `max`; the extras were dropped                  |
+| `max-invalid`           | `max` below 1 — a field that can hold no tags is not a field   |
+| `length-range-invalid`  | `minLength` above `maxLength`; both are ignored                |
+| `no-delimiters`         | Nothing commits a tag; Enter is restored                       |
+
+With no handler these go to `console.warn`. **The entire path is stripped from production builds**,
+and the E2E suite asserts that against a real production bundle.
+
+## Testing notes
+
+Two places where the harness, not the component, sets the limit — both made visible rather than
+worked around silently:
+
+- **The paste E2E skips itself in Firefox.** Firefox ignores `clipboardData` passed to the
+  `ClipboardEvent` constructor, so a synthesised paste arrives empty. The test detects that and
+  skips with a message; the path is still covered in Chromium, WebKit and the browser suite.
+- **Emoji tags are filled, not typed.** The CDP keyboard channel mangles astral characters into
+  replacement characters.

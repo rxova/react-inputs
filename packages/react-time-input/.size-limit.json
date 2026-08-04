@@ -1,0 +1,16 @@
+[
+  {
+    "name": "TimeInput (full import)",
+    "path": "dist/index.mjs",
+    "import": "{ TimeInput }",
+    "limit": "4 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  },
+  {
+    "name": "useTimeInput (headless only)",
+    "path": "dist/index.mjs",
+    "import": "{ useTimeInput }",
+    "limit": "3.25 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  }
+]

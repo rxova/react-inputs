@@ -1,0 +1,66 @@
+---
+title: 'Introduction'
+sidebar:
+  order: 1
+---
+
+**A headless, accessible password input for React.** A real `<input>` with a reveal toggle that
+keeps your caret, a Caps Lock warning read off the real modifier, and a strength meter that costs
+**1.2 kB instead of 400**.
+
+The password field looks solved. It isn't — the category never quite formed. It split into two
+halves that never merged, and almost every app ends up writing the glue itself.
+
+## The two halves
+
+**Strength meters.** The serious estimators are dictionary-based: they carry wordlists, and the
+wordlists are what make them good. They also make them large — hundreds of kilobytes — which is a
+lopsided trade for a signup form, so they are usually shipped behind a code-split. Most of them
+render the bar only; the input is not included.
+
+**Everything else: hand-rolled.** "Password input with a reveal toggle" is one of the most-copied
+snippets in React tutorials rather than a package. That copy-pasted code is what most apps actually
+run, and it is untested code sitting on a login form.
+
+## What the copy-paste version gets wrong
+
+The canonical twelve lines flip `type` between `password` and `text`. That version typically:
+
+- **submits the form** — a `<button>` inside a `<form>` defaults to `type="submit"`
+- **loses focus** to the toggle button
+- **loses the caret**, so "reveal to check the last character" drops you to position 0 and the next
+  keystroke lands in the wrong place
+- has no `aria-pressed`, so a screen reader cannot tell whether the password is showing
+- never re-masks when you tab away, leaving the password on screen
+- is **unreachable by keyboard in Safari**, which leaves buttons out of the tab order unless the OS
+  "Full Keyboard Access" setting is on
+
+None of these are exotic. All of them are in the default.
+
+## What this package does instead
+
+- **A strength meter you can ship.** 1.2 kB brotli, no wordlists, honest about what it cannot see.
+  `estimate` lets you swap in a dictionary-based estimator as a deliberate choice rather than a
+  default tax.
+- **A reveal toggle that keeps focus and the caret**, verified in Chromium, Firefox and WebKit.
+- **A Caps Lock warning** read from `getModifierState`, so a lock turned on while typing the
+  _username_ is still caught — the case a keystroke-tracking implementation always misses.
+- **Breach checks with no library-issued network call.** You supply the lookup; the plaintext never
+  leaves the page on its own.
+- **NIST SP 800-63B defaults** — length first, no composition rules, long passphrases never
+  truncated.
+- **Zero runtime dependencies**, 4.8 kB brotli for the whole component, no stylesheet to import.
+
+## Install
+
+```bash
+npm install @rxova/react-password-input
+```
+
+```tsx
+import { PasswordInput } from '@rxova/react-password-input'
+
+function SignIn() {
+  return <PasswordInput label="Password" name="password" autoComplete="current-password" />
+}
+```

@@ -1,0 +1,260 @@
+---
+title: 'Usage'
+sidebar:
+  order: 2
+---
+
+## Try it
+
+Type a number, or paste `+44 20 7123 4567` — the picker follows the calling code. (`PhoneInput`
+and `useState` are already in scope.)
+
+```tsx live
+function TryIt() {
+  const [details, setDetails] = useState(null)
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <PhoneInput
+        label="Phone number"
+        defaultCountry="GB"
+        locale="en"
+        onChange={(value, next) => setDetails(next)}
+      />
+      <code>{details ? JSON.stringify(details) : 'nothing yet'}</code>
+    </div>
+  )
+}
+```
+
+## Controlled and uncontrolled
+
+```tsx
+import { useState } from 'react'
+import { PhoneInput } from '@rxova/react-phone-input'
+
+function Controlled() {
+  const [phone, setPhone] = useState('')
+  return <PhoneInput label="Phone" value={phone} onChange={setPhone} defaultCountry="US" />
+}
+
+function Uncontrolled() {
+  return <PhoneInput label="Phone" defaultValue="+14155552671" />
+}
+```
+
+The value is always **E.164** — one canonical format in and out, never the formatted display text,
+which changes with the country and would make the value a presentation detail.
+
+`onChange` receives the details as a second argument:
+
+```ts
+{ e164: '+442071234567', country: 'GB', national: '2071234567', possible: true }
+```
+
+## What the field accepts
+
+Users paste all three of these, so all three work:
+
+| Typed               | Read as                                                          |
+| ------------------- | ---------------------------------------------------------------- |
+| `+44 20 7123 4567`  | Explicit international; the calling code decides the country     |
+| `0044 20 7123 4567` | The `00` international prefix, treated identically               |
+| `020 7123 4567`     | National, against the selected country; the trunk `0` is dropped |
+
+`011` is honoured as the international prefix when the selected country is in the NANP — but only
+there, because `011x` is a legitimate UK area code.
+
+Non-Latin digits are normalised, so Arabic-Indic, extended Arabic-Indic and full-width numerals all
+work.
+
+## Restricting the list
+
+```tsx live
+function Restricted() {
+  return (
+    <PhoneInput
+      label="European number"
+      countries={['GB', 'IE', 'FR', 'DE', 'ES']}
+      defaultCountry="GB"
+      locale="en"
+    />
+  )
+}
+```
+
+Order is preserved. Unknown codes are dropped and reported through `onWarn`; an entirely empty or
+entirely unknown list falls back to the full table, because a picker with nothing in it is not a
+usable field.
+
+## Localised names
+
+```tsx live
+function Localised() {
+  return (
+    <div style={{ display: 'grid', gap: '0.5rem' }}>
+      <PhoneInput label="English" countries={['FR', 'DE', 'JP']} defaultCountry="FR" locale="en" />
+      <PhoneInput label="Français" countries={['FR', 'DE', 'JP']} defaultCountry="FR" locale="fr" />
+    </div>
+  )
+}
+```
+
+Omit `locale` to use the runtime's own.
+
+## Forms
+
+With a `name`, the component emits a hidden input carrying the E.164 value, so a native form posts
+the canonical number rather than what is on screen:
+
+```tsx
+import { PhoneInput } from '@rxova/react-phone-input'
+
+function Form() {
+  return (
+    <form action="/signup" method="post">
+      <PhoneInput label="Phone" name="phone" defaultCountry="US" />
+      <button type="submit">Sign up</button>
+    </form>
+  )
+}
+```
+
+The box shows `415 555 2671`; the form receives `+14155552671`.
+
+## Telling the user
+
+`showValidity` renders a message under the field saying whether the digits are a length the selected
+country actually uses.
+
+```tsx live
+function Demo() {
+  return <PhoneInput label="Phone number" defaultCountry="US" showValidity />
+}
+```
+
+Type a few digits and click away — the message appears **after** the field is left, never while
+typing. Every number is the wrong length mid-entry, and a field that turns red on the first
+keystroke teaches people to ignore it. An empty field says nothing either; that is `required`'s job.
+
+When the number is not a usable length the input also gets `aria-invalid`, and the message is
+referenced by `aria-describedby` and announced politely. Pass `invalid` yourself to override the
+inferred value — an explicit prop always wins.
+
+Custom wording, including none at all:
+
+```tsx
+<PhoneInput
+  label="Phone"
+  defaultCountry="FR"
+  showValidity
+  validityLabel={({ possible, country }) =>
+    possible ? '' : `Check the number of digits for ${country?.iso2 ?? 'this country'}.`
+  }
+/>
+```
+
+The message reflects `possible`, so read the caveat below before wording it as "valid".
+
+## Choosing a country from the keyboard
+
+The country picker is a real `<select>`, so it comes with the platform's own type-ahead: focus it
+and press `f` to jump to France, `fi` for Finland. Each option's text starts with the **country
+name** for exactly this reason — a leading flag would put a Unicode regional-indicator pair at the
+front of the string, and the keystroke would match nothing.
+
+If you replace the option content with `renderCountry`, keep the name first or you give that up:
+
+```tsx
+// Type-ahead still works.
+<PhoneInput renderCountry={({ name, country }) => `${name} (+${country.dial})`} />
+
+// Type-ahead no longer works — the text starts with an emoji.
+<PhoneInput renderCountry={({ flag, name }) => `${flag} ${name}`} />
+```
+
+## Gating on possibility
+
+```tsx
+import { useState } from 'react'
+import { PhoneInput } from '@rxova/react-phone-input'
+
+function Signup() {
+  const [ok, setOk] = useState(false)
+  return (
+    <>
+      <PhoneInput
+        label="Phone"
+        defaultCountry="US"
+        onChange={(_value, details) => {
+          setOk(details.possible)
+        }}
+      />
+      <button type="submit" disabled={!ok}>
+        Continue
+      </button>
+    </>
+  )
+}
+```
+
+Remember what `possible` means: the right _length_ for the country, not a reachable number. Do the
+real check on the server.
+
+## Styling
+
+No stylesheet to import.
+
+```css
+[data-rphi-root] {
+  --rphi-gap: 0.5rem;
+  --rphi-select-width: 7rem;
+}
+
+[data-rphi-root][data-possible] [data-rphi-input] {
+  border-color: #3fa34d;
+}
+```
+
+The `data-*` attributes are public API, covered by semver. The full list is in the
+[package README](https://github.com/rxova/react-inputs/tree/main/packages/react-phone-input#styling).
+
+## Headless
+
+`usePhoneInput` gives you the whole state machine with no markup — including the caret bookkeeping,
+which is the part worth not rewriting.
+
+```tsx
+import { usePhoneInput } from '@rxova/react-phone-input'
+
+function CustomField() {
+  const field = usePhoneInput({ defaultCountry: 'GB' })
+
+  return (
+    <div onBlur={field.handleBlur}>
+      <select
+        value={field.country?.iso2}
+        onChange={(event) => {
+          field.selectCountry(event.target.value)
+        }}
+      >
+        {field.countries.map((country) => (
+          <option key={country.iso2} value={country.iso2}>
+            {field.flagFor(country.iso2)} {field.nameFor(country.iso2)} +{country.dial}
+          </option>
+        ))}
+      </select>
+      <input
+        ref={(node) => {
+          field.inputRef.current = node
+        }}
+        type="tel"
+        value={field.text}
+        onChange={field.handleInputChange}
+      />
+    </div>
+  )
+}
+```
+
+The parsing helpers are exported too — `parsePhone`, `formatPhone`, `formatNational`, `isPossible`,
+`digitsOnly`, `lengthsFor` — all pure and synchronous.

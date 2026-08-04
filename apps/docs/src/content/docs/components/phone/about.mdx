@@ -1,0 +1,134 @@
+---
+title: 'About'
+sidebar:
+  order: 3
+---
+
+The decisions behind the component, and the ones you should disagree with deliberately rather than
+by accident.
+
+## Possible, not valid
+
+The single most important thing to understand about this package.
+
+|                   | Possibility (what this does)       | Full validity                  |
+| ----------------- | ---------------------------------- | ------------------------------ |
+| Question answered | Is this a length the country uses? | Is this an assignable number?  |
+| `+1 555 555 5555` | possible                           | **not valid**                  |
+| Data needed       | dial codes and lengths (~4 kB)     | carrier assignment rules       |
+| Good for          | stopping a typo in a form          | auditing a database of numbers |
+
+The API says so: the field is `possible`, and there is no `isValid` anywhere. Full validity needs
+the assignment rules for every carrier block in the world, and the right place to run those is the
+server, where the metadata costs nothing and the answer can be trusted.
+
+```ts
+import { parsePhone } from '@rxova/react-phone-input'
+
+parsePhone('+442071234567').possible // true  — 10 digits, which the UK uses
+parsePhone('+4420712').possible // false — no UK number is 5 digits
+parsePhone('+9912345678').possible // false — no such calling code
+```
+
+That last case is worth noting: an explicit `+` whose calling code matches nothing is never
+possible at any length, because the prefix tells us for certain the user meant it as international.
+
+## Where the data comes from
+
+| What                             | Source                                 | Cost                        |
+| -------------------------------- | -------------------------------------- | --------------------------- |
+| Country names                    | `Intl.DisplayNames`                    | 0 — every engine ships ICU  |
+| Flags                            | Two Unicode regional-indicator letters | 0 — six bytes of arithmetic |
+| Calling codes, lengths, grouping | This package's table                   | ~4 kB                       |
+
+On Windows a flag renders as the two letters rather than a flag. That is a legible fallback, not a
+broken image — and `renderCountry` lets you substitute anything else.
+
+## Shared calling codes
+
+`+1` covers 25 entries in the table and `+7` covers two. The calling code alone genuinely cannot
+distinguish them, so the first table entry wins: the United States for `+1`, Kazakhstan for `+7`.
+That is what every phone field does. Callers who need a specific one pass `country`.
+
+Calling codes are matched **longest first** — `350` (Gibraltar) and `351` (Portugal) both start
+with `35`, so a shortest-first scan would have to guess.
+
+## Trunk prefixes
+
+Nearly everywhere, a leading `0` is a trunk prefix: dialled domestically, dropped internationally.
+So `020 7123 4567` in the UK is `+44 20 7123 4567`.
+
+Italy is the well-known exception — the zero is part of the number, and `+39 06 …` is correct.
+Encoding that one exception is smaller and more honest than pretending the rule is universal. If
+another country turns out to keep its leading zero, it is one entry in a set.
+
+## The caret
+
+Formatting inserts spaces, so the character offset the browser reports stops meaning what it meant
+the moment a separator appears before it. Counting **digits** either side of the caret is the only
+anchor that survives reformatting:
+
+1. Before the reformat, count how many digits precede the caret.
+2. After it, walk the formatted string until that many digits have been passed.
+
+Restoration is skipped when the field is not focused, because setting a selection on an unfocused
+input steals focus in some engines — which would yank the page around whenever a value arrives from
+somewhere else.
+
+## Controlled country versus a typed calling code
+
+If `country` is controlled as `US` and the user types `+33 6 …`, the select moves to France.
+
+That is a deliberate reading. `country` controls which country **national** input is interpreted
+against; a number typed as `+33 …` is French by its own contents, and showing "United States"
+beside it would break the stronger invariant that the select and the text never disagree about what
+is in the field. The parent is told through `onCountryChange` and can reject the value.
+
+Changing country through the select **keeps the typed digits**: they are the user's input, the
+calling code is ours. Switching from the UK to Ireland keeps `2071234567` and re-reads it, rather
+than clearing a field the user did not mean to lose.
+
+## Native controls
+
+Both halves of the field are native on purpose.
+
+- **`<select>`, not a custom listbox.** On mobile that is the OS picker: searchable, scrollable
+  with a thumb, already localised. No custom widget of 234 options matches it, and it gives
+  keyboard type-ahead and form semantics for free. The cost — options cannot be richly styled — is
+  accepted deliberately, and `hideCountrySelect` plus the headless hook lets you build your own.
+- **`<input type="tel">`, not `type="number"`.** `number` strips leading zeros, offers a spinner
+  nobody wants on a phone number, and refuses `+` entirely. `inputmode="tel"` gives the dial pad
+  and `autocomplete="tel"` lets the browser fill it.
+
+The E.164 value is a `type="hidden"` input: never focusable, never announced, because the visible
+controls are the accessible representation of it.
+
+axe (WCAG 2.1 A/AA) runs over the component in the browser suite and over the whole demo page in
+Chromium, Firefox and WebKit.
+
+## Diagnostics
+
+`onWarn` receives `{ code, prop, received, message }` whenever a prop is rejected or coerced.
+
+| Code                      | Meaning                                                   |
+| ------------------------- | --------------------------------------------------------- |
+| `unknown-country`         | An ISO code not in the table, in `country` or `countries` |
+| `unknown-default-country` | Same, in `defaultCountry`                                 |
+| `value-not-e164`          | A national number passed where E.164 belongs              |
+| `value-country-unknown`   | A `+` value whose calling code is not in the table        |
+| `empty-country-list`      | `countries` was empty; the full list is used              |
+| `locale-invalid`          | `Intl` refused the tag; names fall back to ISO codes      |
+
+With no handler these go to `console.warn`. **The entire path is stripped from production builds** —
+it sits behind a `process.env.NODE_ENV !== 'production'` branch, so there is no runtime cost and no
+console noise in production. The E2E suite asserts this against a real production bundle.
+
+## Known limitations
+
+- **No carrier-level validity, number type, or extensions.** Out of scope; see above.
+- **Flags render as letters on Windows.**
+- **UK landline grouping is approximate.** The `4-6` grouping formats a mobile
+  (`07911 123456`) correctly and a London landline as `2071 234567` rather than `20 7123 4567`. UK
+  area codes are 2 to 5 digits and telling them apart needs the metadata this package deliberately
+  does not carry.
+- **US and Canada cannot be distinguished from the number alone.** That needs NANP area-code data.

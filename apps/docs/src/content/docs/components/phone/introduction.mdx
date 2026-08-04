@@ -1,0 +1,83 @@
+---
+title: 'Introduction'
+sidebar:
+  order: 1
+---
+
+**An international phone input with no metadata blob.** Country names from `Intl`, flags from
+Unicode, ~4 kB of dial codes. Headless, zero-dependency.
+
+A phone field usually arrives with a metadata blob: country names in every locale you might need,
+flag images, and a full number-parsing engine. That is tens of kilobytes of data — and most of it is
+data the browser already has.
+
+## What this package ships instead
+
+| What it needs          | Where it comes from                                              |
+| ---------------------- | ---------------------------------------------------------------- |
+| Country names          | `Intl.DisplayNames`, in whatever locale you ask for              |
+| Flags                  | Unicode regional indicators — six bytes of arithmetic, no images |
+| Dial codes and formats | A ~4 kB table, the one genuinely missing piece                   |
+| Runtime dependencies   | None                                                             |
+| Bundle                 | **3.9 kB** brotli                                                |
+
+## The observation this package is built on
+
+A large share of every metadata blob and locale JSON in this space is **country names**.
+`Intl.DisplayNames` has shipped in every engine since 2019 and knows them in every locale the
+runtime supports:
+
+```ts
+import { countryName, flagEmoji } from '@rxova/react-phone-input'
+
+countryName('DE', 'en') // 'Germany'
+countryName('DE', 'fr') // 'Allemagne'
+countryName('DE', 'ja') // 'ドイツ'
+```
+
+And a flag is not an image. It is the two ISO 3166-1 letters shifted into the Unicode
+regional-indicator block — six bytes of arithmetic, rendered by the platform, sized by the field's
+own `font-size`:
+
+```ts
+flagEmoji('DE') // '🇩🇪'
+```
+
+`country-flag-icons`, one of the five dependencies above, is 250 SVGs doing that job.
+
+Once names and flags are free, what is left to ship is the part the platform genuinely does not
+know: which calling code belongs to which region, how long a national number is there, and how it
+is grouped. That table is ~4 kB.
+
+## The trade, stated plainly
+
+This does **possibility**, not **validity** — and the field is called `possible`, not `valid`.
+
+A full validation engine can tell you `+1 555 555 5555` is not an assignable US number, because it
+carries the assignment rules for every carrier block in the world. That is worth its weight when you
+are auditing a database of numbers.
+
+This tells you the digits are a length that country actually uses, which is what a form field needs
+to stop a typo. If you need real validity, run it on the server, where the metadata costs nothing
+and the answer can be trusted.
+
+## Install
+
+```bash
+npm install @rxova/react-phone-input
+```
+
+```tsx
+import { useState } from 'react'
+import { PhoneInput } from '@rxova/react-phone-input'
+
+function Signup() {
+  const [phone, setPhone] = useState('')
+  return <PhoneInput label="Phone number" value={phone} onChange={setPhone} defaultCountry="GB" />
+}
+```
+
+3.9 kB brotli, zero runtime dependencies, no stylesheet to import.
+
+All sizes on this page are measured the same way: bundled with esbuild, minified, `react` external,
+brotli at quality 11. Registry `unpackedSize` is not comparable to a bundle size and is not used.

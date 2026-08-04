@@ -1,0 +1,123 @@
+---
+title: 'Migrating'
+sidebar:
+  order: 4
+---
+
+## Migrating from react-dropzone
+
+`react-dropzone` is a hook that returns prop-getters and a `File[]`. This package can be used the
+same way (`useFileInput`) or as a component that also paints the list. The rules you were passing to
+`useDropzone` map almost one-to-one.
+
+### Props
+
+| `react-dropzone`             | `@rxova/react-file-input`        | Notes                                                        |
+| ---------------------------- | -------------------------------- | ------------------------------------------------------------ |
+| `accept: { 'image/*': [] }`  | `accept="image/*"`               | The native `accept` string, not an object                    |
+| `maxSize` / `minSize`        | `maxSize` / `minSize`            | Same, in bytes                                               |
+| `maxFiles`                   | `maxFiles`                       | Ignored unless `multiple`; a bad value is dropped and warned |
+| `multiple`                   | `multiple`                       | Same                                                         |
+| `disabled`                   | `disabled`                       | Also `readOnly`, which shows the list but refuses changes    |
+| `validator`                  | `validate`                       | Return `true`, `false`, or a string used as the message      |
+| `onDrop(accepted, rejected)` | `onChange(files)` + `onReject`   | One `onReject` per refused file, with a reason               |
+| `onDropAccepted`             | `onAdd(file, files)`             | Per file                                                     |
+| `onDropRejected`             | `onReject(attempt)`              | Per file, with `reason` and `message`                        |
+| `noClick` / `noKeyboard`     | —                                | Not offered: both remove the only accessible path            |
+| `getRootProps()`             | `handleDragOver` / `handleDrop`  | Ordinary React handlers rather than a spread object          |
+| `getInputProps()`            | `inputRef` + `handleInputChange` | You render the `<input>`; the hook wires it                  |
+
+### What changes in your code
+
+```diff
+-const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
+-  accept: { 'image/*': [] },
+-  maxSize: 5_000_000,
+-  onDrop: (accepted, rejected) => { … },
+-})
+-
+-<div {...getRootProps()}>
+-  <input {...getInputProps()} />
+-</div>
++<FileInput
++  label="Photos"
++  multiple
++  previews
++  accept="image/*"
++  maxSize={5_000_000}
++  value={files}
++  onChange={setFiles}
++  onReject={(attempt) => toast(describeRejection(attempt, { maxSize: 5_000_000 }))}
++/>
+```
+
+### Previews
+
+This is the one that saves you code, and a leak:
+
+```diff
+-const previews = acceptedFiles.map((file) => ({
+-  file,
+-  url: URL.createObjectURL(file),
+-}))
+-// …and remember to revoke every one of these, on removal *and* on unmount
++<FileInput label="Photos" multiple previews accept="image/*" />
+```
+
+`react-dropzone`'s documentation asks you to revoke the URLs yourself. Here the component owns the
+lifecycle — see [About](/components/file/about/).
+
+### What you gain
+
+The rendered list, per-file rejection reasons, focus management after a removal, the polite live
+region, the drag-depth counter, `onWarn`, and a smaller bundle (3.5 kB against 5.4 kB, both measured
+the same way).
+
+### What you lose
+
+`react-dropzone`'s directory-drop traversal (`useFsAccessApi`, `getFilesFromEvent`). Recursive
+folder drops are out of scope for now — the `DataTransferItem` API is uneven across engines and the
+recursion is unbounded.
+
+## Migrating from use-file-picker
+
+`use-file-picker` reads files for you — it returns decoded text, data URLs or array buffers.
+
+```diff
+-const { openFilePicker, filesContent } = useFilePicker({ readAs: 'Text', accept: '.txt' })
+-const text = filesContent[0]?.content
++const [files, setFiles] = useState([])
++<FileInput label="Notes" accept=".txt" value={files} onChange={setFiles} />
++// then, where you actually need the text:
++const text = files[0] ? await files[0].text() : ''
+```
+
+`File` objects are the honest boundary: they are what `FormData` and `fetch` take, and reading is
+one `await` away when you genuinely need the contents. Decoding every file up front costs memory
+for files the user may be about to remove.
+
+The validators map to props: `useFilePicker`'s `FileAmountLimitValidator` is `maxFiles`,
+`FileTypeValidator` is `accept`, `FileSizeValidator` is `maxSize`/`minSize`, and a custom validator
+is `validate`.
+
+## Migrating from filepond / react-filepond
+
+Only part of this migration is a swap. FilePond is an upload pipeline — `server`, `chunkUploads`,
+progress, revert endpoints — and this package deliberately does none of that.
+
+Keep FilePond if you use its server integration. Move if you were using it purely to _collect_
+files and doing your own upload anyway: you drop ~33 kB of bundle and the plugin registration, and
+you take over rendering, which is the point of a headless field.
+
+| FilePond                    | Here                                  |
+| --------------------------- | ------------------------------------- |
+| `acceptedFileTypes`         | `accept`                              |
+| `maxFileSize`/`minFileSize` | `maxSize` / `minSize`                 |
+| `maxFiles`                  | `maxFiles`                            |
+| `allowMultiple`             | `multiple`                            |
+| `allowImagePreview`         | `previews`                            |
+| `onupdatefiles`             | `onChange`                            |
+| `onerror`                   | `onReject`                            |
+| `server`, `chunkUploads`    | — your own upload code                |
+| `labelIdle`                 | `hint`                                |
+| Stylesheet + CSS variables  | `data-rfi-*` attributes, your own CSS |

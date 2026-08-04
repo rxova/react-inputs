@@ -1,0 +1,157 @@
+---
+title: 'Usage'
+sidebar:
+  order: 2
+---
+
+## Try it
+
+Choose files or drop them on the zone. Nothing leaves your browser — the component issues no
+network request at all. (`FileInput` and `useState` are already in scope.)
+
+```tsx live
+function Demo() {
+  const [files, setFiles] = useState([])
+  return (
+    <>
+      <FileInput label="Attachments" multiple maxFiles={4} value={files} onChange={setFiles} />
+      <p>{files.length === 0 ? 'Nothing attached' : `${files.length} attached`}</p>
+    </>
+  )
+}
+```
+
+## Install
+
+```bash
+pnpm add @rxova/react-file-input
+```
+
+## Uncontrolled
+
+Omit `value` and `onChange`; the field keeps its own state and a native form submit posts it.
+
+```tsx
+<form onSubmit={handleSubmit}>
+  <FileInput label="Résumé" name="resume" accept=".pdf,.doc,.docx" />
+  <button type="submit">Apply</button>
+</form>
+```
+
+## Rules
+
+| Prop                  | What it does                                                                                              |
+| --------------------- | --------------------------------------------------------------------------------------------------------- |
+| `accept`              | The native `accept` grammar: `.ext`, `type/sub`, `type/*`. Lenient when the browser reports no MIME type. |
+| `maxSize` / `minSize` | Bytes. An inverted range is ignored rather than enforced, and reported through `onWarn`.                  |
+| `maxFiles`            | Ignored unless `multiple`. A single-file field is always capped at one.                                   |
+| `dedupe`              | On by default. Identity is name + size + last-modified, like the native control.                          |
+| `validate`            | Final say. `true`, `false`, or a string that becomes the rejection message.                               |
+
+Every refusal reaches `onReject` once _per file_, so a selection of five where two fail still adds
+the other three.
+
+```tsx live
+function Demo() {
+  const [message, setMessage] = useState('')
+  return (
+    <>
+      <FileInput
+        label="Small text files only"
+        multiple
+        accept=".txt,text/plain"
+        maxSize={1000}
+        validate={(file) => (file.name.startsWith('secret') ? 'that one stays home' : true)}
+        onReject={(attempt) => {
+          setMessage(describeRejection(attempt, { accept: '.txt', maxSize: 1000 }))
+        }}
+      />
+      <p role="status">{message}</p>
+    </>
+  )
+}
+```
+
+`describeRejection` turns any rejection into a sentence; `reason` is one of `type`, `too-large`,
+`too-small`, `duplicate`, `max-files` or `invalid` if you would rather write your own.
+
+## Previews
+
+`previews` opts into the object-URL lifecycle. URLs are minted only for images, only on the client,
+and revoked as soon as the file leaves the list.
+
+```tsx
+<FileInput label="Photos" multiple previews accept="image/*" />
+```
+
+It is **off by default** because a URL nobody revokes is a memory leak, and opting into the lifecycle
+should be deliberate.
+
+## Custom rows
+
+`renderFile` replaces the painted row; the remove button stays, so a custom renderer cannot
+accidentally drop the only way to detach a file.
+
+```tsx
+<FileInput
+  label="Attachments"
+  multiple
+  renderFile={({ file, size, preview }) => (
+    <span>
+      {preview ? <img src={preview} alt="" width={32} /> : null}
+      <strong>{file.name}</strong> — {size}
+    </span>
+  )}
+/>
+```
+
+## Headless
+
+`useFileInput` gives you the state and the handlers with no markup at all. The fiddly parts — the
+drag-depth counter, the URL revocation, the focus handoff after a removal — live in the hook.
+
+```tsx
+const field = useFileInput({ multiple: true, previews: true, maxSize: 1_000_000 })
+```
+
+| Returned            | What it is                                                        |
+| ------------------- | ----------------------------------------------------------------- |
+| `files` / `entries` | The selection, and the same list with stable keys and previews    |
+| `dragging` / `full` | A file drag is over the zone; the count or single-file cap is hit |
+| `open()`            | Opens the native picker                                           |
+| `addFiles(list)`    | Applies every rule, then commits what passed                      |
+| `removeAt(i)`       | Removes one file and moves focus                                  |
+| `clear()`           | Empties the selection                                             |
+| `handle*`           | `InputChange`, `DragOver`, `DragLeave`, `Drop`, `Focus`, `Blur`   |
+
+## Styling
+
+No stylesheet ships. Structure only, with `data-*` hooks covered by semver:
+
+`data-rfi-root`, `data-rfi-input`, `data-rfi-zone`, `data-rfi-list`, `data-rfi-file`,
+`data-rfi-name`, `data-rfi-size`, `data-rfi-preview`, `data-rfi-remove`, `data-rfi-announcement`,
+plus `data-dragging`, `data-disabled` and `data-invalid` on the root.
+
+```css
+[data-rfi-zone] {
+  border: 2px dashed;
+  padding: 2rem;
+  width: 100%;
+}
+[data-rfi-root][data-dragging] [data-rfi-zone] {
+  border-color: rebeccapurple;
+}
+```
+
+## Diagnostics
+
+```tsx
+<FileInput
+  label="Files"
+  onWarn={(warning) => Sentry.captureMessage(warning.message, { extra: warning })}
+/>
+```
+
+Fires when a prop is coerced rather than honoured — `max-files-invalid`, `size-range-invalid`,
+`negative-size`, `accept-suspicious`, `single-with-max`. Deduped per instance, falls back to
+`console.warn`, and the entire path is removed from production builds.

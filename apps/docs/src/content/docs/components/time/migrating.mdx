@@ -1,0 +1,143 @@
+---
+title: 'Migrating'
+sidebar:
+  order: 4
+---
+
+Every migration here trades a popup for a typed field, so the honest first question is whether your
+users benefit from browsing times or from stating one. An appointment slot picker that only offers
+valid slots is a genuinely different control; a start time, an alarm or an opening hour is stated.
+
+The second question is the value type: all three packages below hand you a `Date`, a `moment`, or a
+locale-formatted string. This hands you `"14:30"`.
+
+## Migrating from react-time-picker
+
+### Props
+
+| react-time-picker                   | @rxova/react-time-input    | Notes                                                       |
+| ----------------------------------- | -------------------------- | ----------------------------------------------------------- |
+| `value` (`Date \| string`)          | `value` (`string \| null`) | Always `"HH:mm"`, 24-hour                                   |
+| `onChange(value)`                   | `onChange(value)`          | Fires only for a complete, valid time                       |
+| `minTime` / `maxTime`               | `min` / `max`              | Inclusive, `"HH:mm"`                                        |
+| `maxDetail="second"`                | `showSeconds`              |                                                             |
+| `format="HH:mm"`                    | `hour12`                   | The clock, not a format string; order comes from the locale |
+| `locale`                            | `locale`                   | Both BCP 47                                                 |
+| `disableClock`                      | —                          | There is no clock to disable                                |
+| `clockIcon`, `clearIcon`            | —                          | No chrome to theme                                          |
+| `amPmAriaLabel`, `hourAriaLabel`, … | `segmentLabels`            | One object                                                  |
+| `disabled`, `required`, `name`      | same                       |                                                             |
+
+### Before
+
+```tsx
+import { useState } from 'react'
+import TimePicker from 'react-time-picker'
+import 'react-time-picker/dist/TimePicker.css'
+import 'react-clock/dist/Clock.css'
+
+function Form() {
+  const [value, setValue] = useState<string | null>('10:00')
+  return <TimePicker onChange={setValue} value={value} disableClock />
+}
+```
+
+### After
+
+```tsx
+import { useState } from 'react'
+import { TimeInput } from '@rxova/react-time-input'
+
+function Form() {
+  const [value, setValue] = useState<string | null>('10:00')
+  return <TimeInput label="Time" value={value} onChange={setValue} />
+}
+```
+
+The value format is already compatible, so this is usually a drop-in. You lose the clock popup —
+which you were disabling anyway — and drop seven runtime dependencies and two stylesheet imports.
+
+## Migrating from rc-time-picker
+
+`rc-time-picker` is antd's engine and hands you a `moment` object, so the value type changes.
+
+| rc-time-picker                     | @rxova/react-time-input     | Notes                                         |
+| ---------------------------------- | --------------------------- | --------------------------------------------- |
+| `value` (`moment`)                 | `value` (`string`)          | See the conversion below                      |
+| `onChange(moment)`                 | `onChange(string)`          |                                               |
+| `showSecond`                       | `showSeconds`               |                                               |
+| `use12Hours`                       | `hour12`                    | Defaults to the locale rather than to false   |
+| `minuteStep` / `secondStep`        | `minuteStep` / `secondStep` | Must divide 60 here; invalid steps warn       |
+| `format`                           | —                           | Order and clock come from `locale`            |
+| `disabledHours`, `disabledMinutes` | `min` / `max`               | Arbitrary per-unit disabling is not supported |
+| `open`, `popupClassName`, …        | —                           | No popup                                      |
+
+```ts
+import moment from 'moment'
+
+// moment -> value
+const value = existing ? existing.format('HH:mm') : null
+
+// value -> moment, when something downstream still needs one
+const asMoment = value ? moment(value, 'HH:mm') : null
+```
+
+Note `disabledHours`/`disabledMinutes` have no equivalent: this component models a contiguous
+range, not an arbitrary set. If you need "every hour except 13:00", validate on submit and pass
+`invalid`.
+
+## Migrating from react-datetime
+
+`react-datetime` is a combined date **and** time control. If you use both halves, pair this package
+with [`@rxova/react-date-input`](../../date/introduction/):
+
+```tsx
+import { useState } from 'react'
+import { DateInput } from '@rxova/react-date-input'
+import { TimeInput } from '@rxova/react-time-input'
+
+function When() {
+  const [date, setDate] = useState<string | null>(null)
+  const [time, setTime] = useState<string | null>(null)
+  // Compose at the boundary, where you know which timezone you mean.
+  const isoLocal = date && time ? `${date}T${time}` : null
+  return (
+    <>
+      <DateInput label="Date" value={date} onChange={setDate} />
+      <TimeInput label="Time" value={time} onChange={setTime} />
+      <input type="hidden" name="when" value={isoLocal ?? ''} />
+    </>
+  )
+}
+```
+
+Two separate fields is also usually the better form design: it lets a user tab straight to the part
+they want to change, and it means each half validates on its own.
+
+`timeConstraints={{ minutes: { step: 15 } }}` becomes `minuteStep={15}`.
+
+## Migrating from `<input type="time">`
+
+The native control is good and free — keep it unless its appearance cannot be styled consistently
+across engines, or you need the 12/24-hour choice to follow an app-level locale rather than the
+OS one.
+
+The value format is **identical** (`HH:mm`, 24-hour), so the swap is mechanical:
+
+```tsx
+import { TimeInput } from '@rxova/react-time-input'
+
+// Before
+function Before() {
+  return <input type="time" name="at" min="09:00" max="17:00" />
+}
+
+// After
+function After() {
+  return <TimeInput label="At" name="at" min="09:00" max="17:00" />
+}
+```
+
+`onChange` gives you the string directly rather than `event.target.value`. Note one real
+difference: the native input enforces `min`/`max` through constraint validation, and this one
+reports the time and marks the field instead — see [About](./about/).

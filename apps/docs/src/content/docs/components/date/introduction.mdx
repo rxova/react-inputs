@@ -1,0 +1,69 @@
+---
+title: 'Introduction'
+sidebar:
+  order: 1
+---
+
+**A segmented date field with no calendar, no date library, and no timezone bugs.**
+Headless, zero-dependency, locale-aware through `Intl`.
+
+The date-picker category is enormous and almost entirely made of calendars. That is the right
+affordance for _choosing_ a date — a meeting next month, a flight — and the wrong one for _stating_
+a date you already know. Nobody clicks back thirty years to reach their own birthday.
+
+## The shapes a date field comes in
+
+| Shape                         | What comes with it                                      |
+| ----------------------------- | ------------------------------------------------------- |
+| Calendar grid                 | A date library, and a grid you scroll back thirty years |
+| Calendar in a popover         | The above, plus positioning and focus-trapping          |
+| Segmented field plus calendar | The segments you want, and a calendar you are not using |
+| **This package**              | Segments only, **4.2 kB** brotli, no dependencies       |
+
+Three problems run through the usual options.
+
+**Wanting a keyboard date field means adopting a date library.** The mainstream choices pull one in.
+There is no reason it has to: `Intl` already knows segment
+order, separators and month names in every locale, and every engine already ships it.
+
+**They model a calendar date as an instant.** Passing `Date` objects across the API boundary is the
+single most common source of off-by-one bugs in this space.
+
+```js
+// Somewhere west of Greenwich:
+new Date('2026-03-01').getDate() // 28  — parsed as UTC midnight
+new Date(2026, 2, 1).getDate() // 1   — parsed as local midnight
+```
+
+**The one zero-dependency segmented field** in the registry has effectively no adoption, no
+published coverage, and no cross-browser story.
+
+## What this package does instead
+
+- **No calendar.** Type `15/03/1999`. Done.
+- **No date library.** Order, separators and month names come from `Intl`. Zero bytes.
+- **No `Date` objects.** The value is a `YYYY-MM-DD` string end to end; range comparisons are
+  string comparisons, which works because that format sorts chronologically.
+- **Full keyboard entry** — type, arrow, Home/End, auto-advance, backspace.
+- **Real `spinbutton` semantics**, with bounds that narrow as the date fills in and the month
+  announced by name.
+- **Zero runtime dependencies**, 3.2 kB brotli, no stylesheet to import.
+
+## Install
+
+```bash
+npm install @rxova/react-date-input
+```
+
+```tsx
+import { useState } from 'react'
+import { DateInput } from '@rxova/react-date-input'
+
+function Birthday() {
+  const [value, setValue] = useState<string | null>(null)
+  return <DateInput label="Date of birth" value={value} onChange={setValue} />
+}
+```
+
+Pair it with a calendar if some of your users are choosing rather than stating a date. The two are
+complementary; this is the half the ecosystem skipped.

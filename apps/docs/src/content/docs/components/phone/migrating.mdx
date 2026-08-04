@@ -1,0 +1,181 @@
+---
+title: 'Migrating'
+sidebar:
+  order: 4
+---
+
+Before migrating, be clear about what you are giving up: `libphonenumber`-backed packages do
+carrier-level **validity**, and this one does length-based **possibility**. If you rely on knowing
+that `+1 555 555 5555` is unassignable, keep the metadata — or move that check to the server, where
+it costs nothing.
+
+## Migrating from react-phone-number-input
+
+### Props
+
+| react-phone-number-input     | @rxova/react-phone-input              | Notes                                             |
+| ---------------------------- | ------------------------------------- | ------------------------------------------------- |
+| `value` / `onChange`         | `value` / `onChange`                  | Both E.164; `onChange` also gets a details object |
+| `defaultCountry`             | `defaultCountry`                      | Same, ISO 3166-1 alpha-2                          |
+| `country` (forces a country) | `country`                             | Controlled; an explicit `+…` still wins           |
+| `countries`                  | `countries`                           | Order is preserved here                           |
+| `international`              | —                                     | Inferred: typing `+` switches modes               |
+| `countryCallingCodeEditable` | —                                     | Always editable; that is what `+` is for          |
+| `labels` (a locale bundle)   | `locale`                              | A BCP 47 tag; names come from `Intl`              |
+| `flags`                      | `renderCountry`                       | Or nothing — flags are emoji by default           |
+| `numberInputProps`           | `className` / `style` / `placeholder` | Plus the `data-*` hooks                           |
+| `isValidPhoneNumber(value)`  | `details.possible`                    | **Weaker.** See above.                            |
+| `formatPhoneNumber`          | `formatPhone`                         | Exported                                          |
+
+### Before
+
+```tsx
+import { useState } from 'react'
+import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
+
+function Signup() {
+  const [value, setValue] = useState('')
+  return (
+    <>
+      <PhoneInput defaultCountry="GB" value={value} onChange={setValue} />
+      <button type="submit" disabled={!value || !isValidPhoneNumber(value)}>
+        Continue
+      </button>
+    </>
+  )
+}
+```
+
+### After
+
+```tsx
+import { useState } from 'react'
+import { PhoneInput } from '@rxova/react-phone-input'
+
+function Signup() {
+  const [value, setValue] = useState('')
+  const [possible, setPossible] = useState(false)
+  return (
+    <>
+      <PhoneInput
+        label="Phone"
+        defaultCountry="GB"
+        value={value}
+        onChange={(next, details) => {
+          setValue(next)
+          setPossible(details.possible)
+        }}
+      />
+      <button type="submit" disabled={!possible}>
+        Continue
+      </button>
+    </>
+  )
+}
+```
+
+You drop `libphonenumber-js`, `country-flag-icons`, `input-format`, `classnames`, `prop-types` and
+the stylesheet import — five runtime dependencies, and 41.1 kB brotli down to 3.9 kB.
+
+### Keeping real validation
+
+Move it to where the metadata is free:
+
+```ts
+// On the server.
+import { isValidPhoneNumber } from 'libphonenumber-js'
+
+export function check(e164: string) {
+  return isValidPhoneNumber(e164)
+}
+```
+
+The client stops a typo; the server decides whether the number is real. That split is usually what
+you wanted anyway, because a client-side check can always be bypassed.
+
+## Migrating from react-phone-input-2
+
+`react-phone-input-2` emits the number **without** a leading `+` by default and hands you a country
+object as a second argument, so the value shape changes.
+
+| react-phone-input-2                      | @rxova/react-phone-input             | Notes                                 |
+| ---------------------------------------- | ------------------------------------ | ------------------------------------- |
+| `value` (no `+`)                         | `value` (E.164, with `+`)            | Prefix your stored values once        |
+| `onChange(value, country, e, formatted)` | `onChange(e164, details)`            | `details.country` is the ISO code     |
+| `country`                                | `defaultCountry`                     | Lowercase ISO there, either case here |
+| `onlyCountries`                          | `countries`                          |                                       |
+| `preferredCountries`                     | `countries`                          | Put them first; order is preserved    |
+| `enableSearch`                           | —                                    | The native select does type-ahead     |
+| `inputProps`                             | `name`, `required`, `placeholder`, … | Ordinary props                        |
+
+```tsx
+import { useState } from 'react'
+import { PhoneInput } from '@rxova/react-phone-input'
+
+function Field() {
+  const [value, setValue] = useState('')
+  return (
+    <PhoneInput
+      label="Phone"
+      countries={['GB', 'IE', 'US']}
+      defaultCountry="GB"
+      value={value}
+      onChange={setValue}
+    />
+  )
+}
+```
+
+You also drop four `lodash.*` packages and `prop-types`.
+
+## Migrating from react-international-phone
+
+The closest relative — also zero-dependency — but it bundles its own country and name data
+(8.3 kB brotli against this package's 3.9 kB) rather than using `Intl`.
+
+| react-international-phone                | @rxova/react-phone-input            | Notes                                           |
+| ---------------------------------------- | ----------------------------------- | ----------------------------------------------- |
+| `value` / `onChange({ phone, country })` | `value` / `onChange(e164, details)` | `details` carries the same information          |
+| `defaultCountry`                         | `defaultCountry`                    |                                                 |
+| `countries` (country objects)            | `countries` (ISO codes)             |                                                 |
+| `forceDialCode`                          | —                                   | The calling code is always visible in `+…` mode |
+| `disableDialCodePrefill`                 | —                                   |                                                 |
+| `usePhoneInput`                          | `usePhoneInput`                     | Both expose a headless hook                     |
+
+```tsx
+import { PhoneInput } from '@rxova/react-phone-input'
+
+function Field() {
+  return <PhoneInput label="Phone" defaultCountry="ua" />
+}
+```
+
+## Migrating from a plain `<input type="tel">`
+
+If you are currently storing whatever the user typed, this is mostly a gain: you get a canonical
+E.164 value, a country, and a length check.
+
+```tsx
+import { PhoneInput } from '@rxova/react-phone-input'
+
+// Before
+function Before() {
+  return <input type="tel" name="phone" />
+}
+
+// After — the form still posts under `phone`, now as E.164.
+function After() {
+  return <PhoneInput label="Phone" name="phone" defaultCountry="US" />
+}
+```
+
+Existing rows in your database will be in whatever shape they were saved in. `parsePhone` can
+normalise them, given a country to interpret national numbers against:
+
+```ts
+import { parsePhone } from '@rxova/react-phone-input'
+
+parsePhone('(415) 555-2671', 'US').e164 // '+14155552671'
+parsePhone('020 7123 4567', 'GB').e164 // '+442071234567'
+```

@@ -1,0 +1,64 @@
+---
+title: 'Introduction'
+sidebar:
+  order: 1
+---
+
+**A headless, accessible file picker and drop zone for React.** It validates, deduplicates and
+**revokes its own preview URLs** — and it never uploads anything.
+
+3.5 kB brotli for the whole component, 2.4 kB for the headless hook, zero runtime dependencies.
+
+## The gap
+
+The category splits into two camps, and there is an empty quadrant between them.
+
+**The hook camp** hands you prop-getters and an array of `File`s. That is a good boundary, and it is
+also the whole job: the list, the previews, the per-file error messages, the focus management and
+the object-URL lifecycle stay with you. The lifecycle is the one that bites — an object URL nobody
+revokes pins the entire file in memory for the lifetime of the document, and remembering to revoke
+it is left to the caller.
+
+**The platform camp** gives you the whole pipeline: progress, retries, chunking, server plugins.
+That is a real product, and it is an order of magnitude larger, brings its own rendering, and wants
+to own your upload.
+
+This package sits between them: everything you need to _collect_ files correctly, and nothing about
+sending them.
+
+## What is usually left undone
+
+1. **Object URLs are never revoked.** Add and remove ten 5 MB photos and 50 MB is gone until a
+   reload.
+2. **The drop zone is a `div` with an `onClick`.** Dragging has no keyboard equivalent, so the click
+   path is the _only_ accessible path — and a div is not in the tab order, has no role, and ignores
+   Enter and Space.
+3. **The real `<input type="file">` is hidden with `display: none`**, which removes it from the
+   accessibility tree entirely and, in some browsers, stops `.click()` from opening the picker.
+4. **Rejections arrive in one lump.** "Some files were rejected" is not something a form can render;
+   the user needs to know which two of their five failed, and why.
+5. **Focus is lost on removal**, landing on `<body>`.
+6. **Every remove button is called "Remove"**, so a screen reader's element list is five identical
+   entries.
+7. **Re-picking a file you just removed does nothing**, because the native input still holds the
+   value and fires no `change`.
+
+Each of those has a test in this package asserting the opposite.
+
+## What you get
+
+- Pick **and** drop, with a drag-depth counter so crossing into a child element does not flicker the
+  highlight — and a drag carrying only text never lights it up at all.
+- `accept`, `maxSize`, `minSize`, `maxFiles`, `dedupe` and a `validate` function, each producing a
+  **per-file** rejection with a machine-readable reason.
+- Optional image previews whose object URLs are minted lazily and revoked the instant a file leaves
+  the list, and again on unmount.
+- A polite live region announcing additions, removals and refusals once per batch.
+- Controlled and uncontrolled use, native form participation, and a fully headless hook.
+- An `onWarn` prop for Sentry or any logger, stripped from production builds.
+
+## What it will not do
+
+It will not upload. No `fetch`, no XHR, no progress bar, no retry policy. Your upload needs your
+auth, your endpoints and your error handling — and a component that guesses at those is a component
+you fight. Compose this field with a dedicated upload library, or with fifteen lines of your own.

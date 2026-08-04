@@ -1,0 +1,120 @@
+---
+title: 'About'
+sidebar:
+  order: 3
+---
+
+## The object-URL lifecycle
+
+This is the part that is usually left to the caller, and the reason the package exists.
+
+`URL.createObjectURL(file)` hands back a string that keeps the **entire file** resident in memory
+until `URL.revokeObjectURL` is called or the document is discarded. A gallery where the user adds
+and removes ten 5 MB photos while deciding which to keep has leaked 50 MB by the time they submit.
+
+`previews` owns that lifecycle:
+
+- URLs are minted **lazily**, only for files whose type starts with `image/`.
+- They are **revoked the instant a file leaves the list**, not deferred to unmount — which is what
+  makes add-then-remove cycles safe.
+- They are revoked **again on unmount**, for whatever is still selected.
+- They are **never minted on the server**: there is no unmount during server rendering, so such a
+  URL could never be revoked.
+
+The URL map is _mutated_, never replaced. Swapping in a fresh map was a real bug caught by the
+adversarial suite — the unmount cleanup captures the map once, so reassigning it left that cleanup
+holding an empty one and every URL alive for the lifetime of the document, the exact leak the code
+exists to prevent. A test now asserts `revokeObjectURL` was called exactly as many times as
+`createObjectURL`, and an end-to-end test proves a revoked URL no longer resolves.
+
+Previews are off by default for the same reason: opting into a lifecycle should be deliberate.
+
+## Accessibility
+
+**The drop zone is a real `<button type="button">`.** Dragging has no keyboard equivalent, so the
+click path is the _only_ accessible path — and a button supplies Enter, Space, focus and a role for
+free. It also carries an explicit `tabIndex={0}`, because WebKit omits buttons from sequential
+navigation unless Full Keyboard Access is enabled.
+
+**The real `<input type="file">` stays in the accessibility tree.** It is hidden by clipping, never
+`display: none` or the `hidden` attribute, both of which remove it from the tree entirely and, in
+some browsers, stop programmatic `.click()` from opening the picker.
+
+**Focus never lands on `<body>`.** The button you just clicked is about to leave the DOM. After a
+removal, focus goes to the next file's button, or the previous one if that was the last, or back to
+the drop zone if the list is now empty.
+
+**Remove buttons are named after their file** — `Remove invoice.pdf`, not `Remove`. A screen
+reader's element list shows buttons stripped of their surrounding row, so five identical "Remove"
+entries are unusable. Override with `removeLabel`.
+
+**The list is a `<ul>`**, so a screen reader announces "list, 3 items" before reading them.
+
+**Preview images are `alt=""`.** The filename sits right beside them; alt text would be read twice.
+
+**One polite announcement per batch.** Attaching four files says so once, not four times, and
+`aria-live="polite"` never interrupts what the user is already hearing — attaching a file is not an
+emergency.
+
+Verified with `axe-core` at the component level (empty, populated, with previews, invalid, disabled,
+read-only, right-to-left) and with `@axe-core/playwright` over the whole demo page on Chromium,
+Firefox and WebKit.
+
+## Identity and dedupe
+
+Two files are the same when their **name, size and last-modified timestamp** match — the same test
+the native control applies. Content hashing would be strictly more correct and would also mean
+reading every byte of every file the user hovers over.
+
+That definition has one consequence worth knowing: a file the user edits between two picks is a
+different file, which is almost always what you want.
+
+## Rejections
+
+Every refusal produces one `onReject` call with the file and a reason:
+
+| Reason      | Cause                                              |
+| ----------- | -------------------------------------------------- |
+| `type`      | Failed the `accept` string                         |
+| `too-large` | Above `maxSize`                                    |
+| `too-small` | Below `minSize`                                    |
+| `duplicate` | Already in the list, under the identity rule above |
+| `max-files` | The count cap is reached                           |
+| `invalid`   | `validate` returned `false` or a string            |
+
+A batch is evaluated file by file, so five picked with two refused adds the other three. A throwing
+`validate` refuses that one file and warns — it never unmounts the form.
+
+Unusable bounds are **dropped rather than enforced**: `maxFiles: 0`, a negative `minSize`, a
+`minSize` above `maxSize`. A field that can never accept anything is a bug in the calling code, not
+a state worth rendering, and `onWarn` says so.
+
+## Drag behaviour
+
+`dragleave` fires every time the pointer crosses into a _child_ of the drop zone, so the naive
+`onDragLeave → setDragging(false)` flickers the highlight off and on as the user moves over the hint
+text or an existing file row. A depth counter is the only thing that survives nesting.
+
+A drag carrying only text never lights the zone up at all — the handlers check that `Files` is among
+the transfer's types before reacting.
+
+## Native forms
+
+The underlying input keeps its value, so a plain `<form>` submit posts the file with no JavaScript
+involved. The value is cleared on **removal** and on `clear()` — not after every pick, which is the
+usual trick for "let the user re-pick the same file" but also empties the control a submit would
+post, leaving the field rendering a file the server never receives.
+
+In `multiple` mode the native control can only carry the last selection. Read `value`/`onChange` if
+you accumulate across several picks.
+
+## Testing
+
+- 138 unit and browser tests, coverage enforced **per file** at 95% (99.7% statements, 99.3%
+  branches, 100% functions and lines).
+- An adversarial suite that drives the failure modes on purpose: throwing callbacks, unmounting
+  mid-drag, duplicate picks, the URL leak, two fields on one page, a `dragleave` from a child.
+- 28 end-to-end specs on Chromium, Firefox and WebKit against a **production** demo build — one of
+  which asserts the diagnostics path is absent from that bundle.
+- Where an engine cannot express something (synthesising a file `DataTransfer`), the test skips
+  **visibly** rather than passing quietly.

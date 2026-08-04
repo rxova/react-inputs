@@ -1,0 +1,16 @@
+[
+  {
+    "name": "FileInput (full import)",
+    "path": "dist/index.mjs",
+    "import": "{ FileInput }",
+    "limit": "4.5 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  },
+  {
+    "name": "useFileInput (headless only)",
+    "path": "dist/index.mjs",
+    "import": "{ useFileInput }",
+    "limit": "3.5 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  }
+]

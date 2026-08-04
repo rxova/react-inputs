@@ -1,0 +1,16 @@
+[
+  {
+    "name": "TagsInput (full import)",
+    "path": "dist/index.mjs",
+    "import": "{ TagsInput }",
+    "limit": "4 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  },
+  {
+    "name": "useTagsInput (headless only)",
+    "path": "dist/index.mjs",
+    "import": "{ useTagsInput }",
+    "limit": "3 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  }
+]

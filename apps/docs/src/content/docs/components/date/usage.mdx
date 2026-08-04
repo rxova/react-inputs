@@ -1,0 +1,182 @@
+---
+title: 'Usage'
+sidebar:
+  order: 2
+---
+
+## Try it
+
+Type digits — the field advances by itself. Arrow keys step, Backspace clears, and the day segment
+re-clamps when the month can no longer hold it. (`DateInput` and `useState` are already in scope.)
+
+```tsx live
+function TryIt() {
+  const [value, setValue] = useState(null)
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <DateInput label="Date of birth" locale="en-GB" value={value} onChange={setValue} />
+      <code>{value === null ? 'null' : value}</code>
+    </div>
+  )
+}
+```
+
+Try typing `31`, then `02` — the day clamps instead of rolling over into March.
+
+## Controlled and uncontrolled
+
+```tsx
+import { useState } from 'react'
+import { DateInput } from '@rxova/react-date-input'
+
+function Controlled() {
+  const [value, setValue] = useState<string | null>('2026-03-15')
+  return <DateInput label="Due" value={value} onChange={setValue} />
+}
+
+function Uncontrolled() {
+  return <DateInput label="Due" defaultValue="2026-03-15" />
+}
+```
+
+`onChange` fires when the date becomes complete and valid, and when it stops being — never with a
+half-typed date in between. `onPartsChange` is the per-keystroke channel if you want one.
+
+## Locales
+
+```tsx live
+function Locales() {
+  return (
+    <div style={{ display: 'grid', gap: '0.5rem' }}>
+      <DateInput label="United States" locale="en-US" defaultValue="2026-03-15" />
+      <DateInput label="United Kingdom" locale="en-GB" defaultValue="2026-03-15" />
+      <DateInput label="Japan" locale="ja-JP" defaultValue="2026-03-15" />
+      <DateInput label="Germany" locale="de-DE" defaultValue="2026-03-15" />
+    </div>
+  )
+}
+```
+
+Omit `locale` to use the runtime's own. A malformed tag (`en_US`, with an underscore) falls back to
+ISO order and reports `locale-invalid` through `onWarn` rather than throwing.
+
+## Keyboard
+
+| Key                    | Effect                                                                  |
+| ---------------------- | ----------------------------------------------------------------------- |
+| `0`–`9`                | Type into the focused segment; advances when no further digit could fit |
+| `↑` / `↓`              | Step the focused segment, wrapping at its ends                          |
+| `←` / `→`              | Move between segments; stops at the ends rather than cycling            |
+| `Home` / `End`         | Jump the focused segment to its minimum or maximum                      |
+| `Backspace` / `Delete` | Clear the focused segment                                               |
+| `Tab`                  | Move to the next segment, then out of the field                         |
+
+Typing is forgiving where it matters: `4` in a day is immediately the 4th, `1` waits to see whether
+you meant the 1st or the 19th, and `1` then `9` in a _month_ gives September rather than rejecting
+the keystroke.
+
+## Range
+
+```tsx
+import { DateInput } from '@rxova/react-date-input'
+
+function Booking() {
+  return <DateInput label="Check-in" min="2026-01-01" max="2026-12-31" />
+}
+```
+
+Both bounds are inclusive. A completed date outside the range is **still reported**, with the field
+marked `data-out-of-range` and `aria-invalid`. Pass `emitOutOfRange={false}` to get `null` instead.
+
+## Forms
+
+With a `name`, the component emits a hidden input carrying the ISO value:
+
+```tsx
+import { DateInput } from '@rxova/react-date-input'
+
+function Form() {
+  return (
+    <form action="/invoices" method="post">
+      <DateInput label="Due" name="due" />
+      <button type="submit">Save</button>
+    </form>
+  )
+}
+```
+
+A hidden input is barred from constraint validation, so `required` becomes `aria-required` on the
+group and enforcing it stays with your form layer. React Hook Form, Formik and the rest work
+through `value`/`onChange` as usual.
+
+## Styling
+
+No stylesheet to import. Everything visual is a CSS custom property or a `data-*` hook.
+
+```css
+[data-rdi-root] {
+  --rdi-gap: 0.125rem;
+  --rdi-literal-opacity: 0.5;
+}
+
+[data-rdi-segment][data-focused] {
+  background: Highlight;
+  color: HighlightText;
+}
+
+[data-rdi-segment][data-placeholder] {
+  opacity: 0.55;
+}
+
+[data-rdi-root][data-out-of-range] {
+  outline: 2px solid #d64545;
+}
+```
+
+The `data-*` attributes are public API, covered by semver. The full list is in the
+[package README](https://github.com/rxova/react-inputs/tree/main/packages/react-date-input#styling).
+
+## Headless
+
+`useDateInput` gives you the whole state machine with no markup — the digit buffer with
+auto-advance, day re-clamping, locale layout and focus management.
+
+```tsx
+import { useDateInput } from '@rxova/react-date-input'
+
+function CustomField() {
+  const field = useDateInput({ locale: 'en-GB' })
+
+  return (
+    <div onBlur={field.handleBlur}>
+      {field.pieces.map((piece, index) =>
+        piece.kind === 'literal' ? (
+          <span key={index}>{piece.text}</span>
+        ) : (
+          <span
+            key={piece.type}
+            ref={(node) => {
+              field.segmentRefs.current[piece.type] = node
+            }}
+            role="spinbutton"
+            tabIndex={0}
+            onFocus={(event) => {
+              field.handleSegmentFocus(piece.type, event)
+            }}
+            onKeyDown={(event) => {
+              if (/^\d$/.test(event.key)) field.typeDigit(piece.type, event.key)
+              else if (event.key === 'ArrowUp') field.step(piece.type, 1)
+              else if (event.key === 'ArrowDown') field.step(piece.type, -1)
+            }}
+          >
+            {field.parts[piece.type] ?? '--'}
+          </span>
+        ),
+      )}
+    </div>
+  )
+}
+```
+
+The calendar helpers are exported too — `toISO`, `fromISO`, `daysInMonth`, `isLeapYear`,
+`compareISO`, `withinRange` — all pure and all `Date`-free.

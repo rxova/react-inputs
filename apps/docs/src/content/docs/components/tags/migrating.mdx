@@ -1,0 +1,161 @@
+---
+title: 'Migrating'
+sidebar:
+  order: 4
+---
+
+One behaviour change applies to every migration below, so it is worth stating once:
+
+**Backspace in an empty box now takes two presses.** The first selects the last tag, the second
+removes it. Every package below deletes on the first press. This is deliberate — see
+[About](./about/) — but it is the change your users will notice.
+
+## Migrating from react-tagsinput
+
+The closest match in shape, and the one where the size argument does _not_ apply: it is 3.1 kB
+against this package's 3.6 kB. Migrate for the keyboard and the announcements, not for bytes.
+
+| react-tagsinput             | @rxova/react-tags-input              | Notes                                     |
+| --------------------------- | ------------------------------------ | ----------------------------------------- |
+| `value` / `onChange`        | `value` / `onChange`                 | Both `string[]`                           |
+| `addKeys` (key codes)       | `delimiters` (key names)             | `[13, 188]` becomes `['Enter', ',']`      |
+| `removeKeys`                | —                                    | Backspace and Delete, on a focused tag    |
+| `onlyUnique`                | `allowDuplicates`                    | Inverted, and on by default               |
+| `maxTags`                   | `max`                                |                                           |
+| `validationRegex`           | `validate`                           | A function, so it can explain the refusal |
+| `onValidationReject`        | `onReject`                           | Gets a reason code and a message          |
+| `addOnBlur`                 | `addOnBlur`                          | Defaults to `true` here                   |
+| `addOnPaste` / `pasteSplit` | `splitPaste`                         | Splits on delimiters and newlines         |
+| `renderTag` / `renderInput` | `renderTag` / the headless hook      |                                           |
+| `inputProps`                | `placeholder`, `name`, `required`, … | Ordinary props                            |
+
+### Before
+
+```tsx
+import { useState } from 'react'
+import TagsInput from 'react-tagsinput'
+
+function Topics() {
+  const [tags, setTags] = useState<string[]>([])
+  return <TagsInput value={tags} onChange={setTags} onlyUnique maxTags={5} />
+}
+```
+
+### After
+
+```tsx
+import { useState } from 'react'
+import { TagsInput } from '@rxova/react-tags-input'
+
+function Topics() {
+  const [tags, setTags] = useState<string[]>([])
+  return <TagsInput label="Topics" value={tags} onChange={setTags} max={5} />
+}
+```
+
+`onlyUnique` has no equivalent because uniqueness is the default; pass `allowDuplicates` for the
+old permissive behaviour.
+
+A regex validator becomes a function, which can say _why_:
+
+```tsx
+import { TagsInput } from '@rxova/react-tags-input'
+
+function Slugs() {
+  return (
+    <TagsInput
+      label="Slugs"
+      validate={(tag) => (/^[a-z0-9-]+$/.test(tag) ? true : 'lowercase, digits and dashes only')}
+    />
+  )
+}
+```
+
+## Migrating from react-tag-input
+
+`react-tag-input` models tags as `{ id, text }` objects and takes `react-dnd` as a dependency for
+drag-to-reorder.
+
+| react-tag-input               | @rxova/react-tags-input      | Notes                              |
+| ----------------------------- | ---------------------------- | ---------------------------------- |
+| `tags` (`{ id, text }[]`)     | `value` (`string[]`)         | See the conversion below           |
+| `handleAddition(tag)`         | `onAdd(tag, tags)`           |                                    |
+| `handleDelete(index)`         | `onRemove(tag, index, tags)` |                                    |
+| `handleDrag`                  | —                            | **No drag-to-reorder.** See below. |
+| `delimiters` (key codes)      | `delimiters` (key names)     |                                    |
+| `suggestions`, `autocomplete` | —                            | **No suggestions.** See below.     |
+| `allowUnique`                 | `allowDuplicates`            | Inverted                           |
+| `maxTags`                     | `max`                        |                                    |
+
+```ts
+// { id, text }[] -> string[]
+const value = existing.map((tag) => tag.text)
+
+// string[] -> { id, text }[], for whatever still needs it
+const asObjects = value.map((text) => ({ id: text, text }))
+```
+
+Two features have no equivalent, on purpose:
+
+- **Drag-to-reorder** costs a dependency and has no keyboard story of its own. A reorderable list
+  is a different control from a text field.
+- **Suggestions** would mean a listbox, `aria-activedescendant`, and an async loading story — and
+  claiming combobox semantics for the plain case too. Build one on the headless hook, or use
+  `react-select`.
+
+## Migrating from @yaireo/tagify
+
+Tagify is a vanilla-JS widget with a React wrapper, at 17.6 kB against this package's 3.6 kB. It
+does considerably more — suggestions, inline editing, drag, mixed-mode text — so check you are
+using any of it before switching.
+
+| Tagify                                  | @rxova/react-tags-input           | Notes                                |
+| --------------------------------------- | --------------------------------- | ------------------------------------ |
+| `value` (string, JSON, or object array) | `value` (`string[]`)              | One shape only                       |
+| `settings.delimiters` (regex)           | `delimiters` (key/character list) |                                      |
+| `settings.maxTags`                      | `max`                             |                                      |
+| `settings.duplicates`                   | `allowDuplicates`                 |                                      |
+| `settings.transformTag`                 | `transform`                       | Runs before every rule               |
+| `settings.validate`                     | `validate`                        | Can return a message                 |
+| `settings.whitelist` / `blacklist`      | `validate`                        | An explicit predicate                |
+| `settings.editTags`                     | —                                 | No inline editing; remove and re-add |
+| `settings.templates`                    | `renderTag`                       |                                      |
+
+```tsx
+import { TagsInput } from '@rxova/react-tags-input'
+
+const allowed = ['react', 'vue', 'svelte']
+
+function FromWhitelist() {
+  return (
+    <TagsInput
+      label="Frameworks"
+      transform={(raw) => raw.toLowerCase()}
+      validate={(tag) => (allowed.includes(tag) ? true : `pick one of ${allowed.join(', ')}`)}
+    />
+  )
+}
+```
+
+## Migrating from react-select (creatable, multi)
+
+`react-select` is a select that can be made to behave like a tag field. If you are using it purely
+for free-text tags with no options list, this is a much smaller and more focused replacement — nine
+runtime dependencies down to zero.
+
+If you _are_ using the options list, keep `react-select`: this component has no suggestions and
+will not pretend to.
+
+| react-select                   | @rxova/react-tags-input | Notes                                    |
+| ------------------------------ | ----------------------- | ---------------------------------------- |
+| `value` (`{ label, value }[]`) | `value` (`string[]`)    |                                          |
+| `onChange(options)`            | `onChange(tags)`        |                                          |
+| `isMulti` + `Creatable`        | —                       | The only mode here                       |
+| `options` / `loadOptions`      | —                       | No suggestions                           |
+| `isValidNewOption`             | `validate`              |                                          |
+| `formatCreateLabel`            | —                       | There is no "create" affordance to label |
+
+```ts
+// react-select value -> tags
+const tags = selected.map((option) => option.value)
+```

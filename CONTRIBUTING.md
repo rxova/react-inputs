@@ -12,6 +12,15 @@ docs site.
 | `packages/react-intl-currency-input/` | `@rxova/react-intl-currency-input` — locale-aware currency input.                    |
 | `packages/react-rating-input/`        | `@rxova/react-rating-input` — rating input (stars / any icon).                       |
 | `packages/react-otp-input/`           | `@rxova/react-otp-input` — OTP / one-time-code input.                                |
+| `packages/react-phone-input/`         | `@rxova/react-phone-input` — international phone input.                              |
+| `packages/react-password-input/`      | `@rxova/react-password-input` — password input, strength meter, reveal toggle.       |
+| `packages/react-date-input/`          | `@rxova/react-date-input` — segmented date field, no calendar.                       |
+| `packages/react-time-input/`          | `@rxova/react-time-input` — segmented time field, no popup.                          |
+| `packages/react-password-input/`      | `@rxova/react-password-input` — password input with strength and breach checks.      |
+| `packages/react-date-input/`          | `@rxova/react-date-input` — segmented date input (no calendar).                      |
+| `packages/react-time-input/`          | `@rxova/react-time-input` — segmented time input.                                    |
+| `packages/react-tags-input/`          | `@rxova/react-tags-input` — tag / token input.                                       |
+| `packages/react-file-input/`          | `@rxova/react-file-input` — file picker and drop zone (no uploading).                |
 | `packages/react-inputs/`              | `@rxova/react-inputs` — meta-package that re-exports the whole suite.                |
 | `packages/codemod/`                   | `@rxova/codemod` — jscodeshift codemods (one transform per migration) for the suite. |
 | `packages/utils/`                     | `@rxova/utils` — private tooling (release gate, doc-snippet checks, capture, etc.).  |

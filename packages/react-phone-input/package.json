@@ -1,0 +1,107 @@
+{
+  "name": "@rxova/react-phone-input",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "International phone input with no metadata blob: country names from Intl, flags from Unicode, 4 kB of dial codes. Headless, zero-dependency.",
+  "rxova": {
+    "slug": "phone",
+    "label": "Phone",
+    "title": "Phone input"
+  },
+  "keywords": [
+    "react",
+    "phone",
+    "phone-input",
+    "tel",
+    "international",
+    "e164",
+    "country-code",
+    "headless",
+    "accessible",
+    "a11y",
+    "intl"
+  ],
+  "license": "MIT",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run --project unit",
+    "test:browser": "vitest run --project browser",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "check:exports": "publint --strict && attw --pack .",
+    "pack:smoke": "node --import tsx ../utils/pack-smoke.ts",
+    "prepack": "pnpm build",
+    "size": "size-limit",
+    "react:min:install": "pnpm add -D react@18.3.1 react-dom@18.3.1 @types/react@18.3.27 @types/react-dom@18.3.7",
+    "test:react-min": "pnpm run react:min:install && pnpm exec vitest run --project browser && pnpm run typecheck",
+    "e2e": "playwright test",
+    "e2e:install": "playwright install --with-deps chromium firefox webkit",
+    "demo": "vite --config demo/vite.config.ts",
+    "demo:build": "vite build --config demo/vite.config.ts",
+    "demo:preview": "vite preview --config demo/vite.config.ts"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@rxova/demo-kit": "workspace:*",
+    "@size-limit/preset-small-lib": "^12.1.0",
+    "@types/node": "^26.1.1",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.0.4",
+    "@vitest/browser": "^4.1.10",
+    "@vitest/browser-playwright": "^4.1.10",
+    "@vitest/coverage-v8": "^4.1.10",
+    "playwright": "^1.61.1",
+    "publint": "^0.3.22",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-hook-form": "^7.82.0",
+    "size-limit": "^12.1.0",
+    "tsdown": "^0.22.14",
+    "typescript": "6.0.3",
+    "vite": "^8.1.5",
+    "vitest": "^4.1.10",
+    "vitest-browser-react": "^2.2.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rxova/react-inputs.git",
+    "directory": "packages/react-phone-input"
+  },
+  "bugs": {
+    "url": "https://github.com/rxova/react-inputs/issues"
+  },
+  "homepage": "https://rxova.org/packages/react-inputs/phone"
+}

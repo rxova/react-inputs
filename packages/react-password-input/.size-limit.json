@@ -1,0 +1,23 @@
+[
+  {
+    "name": "PasswordInput (full import)",
+    "path": "dist/index.mjs",
+    "import": "{ PasswordInput }",
+    "limit": "5 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  },
+  {
+    "name": "usePasswordInput (headless only)",
+    "path": "dist/index.mjs",
+    "import": "{ usePasswordInput }",
+    "limit": "3.25 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  },
+  {
+    "name": "estimateStrength (estimator only)",
+    "path": "dist/index.mjs",
+    "import": "{ estimateStrength }",
+    "limit": "1.5 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  }
+]

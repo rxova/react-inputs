@@ -1,0 +1,150 @@
+---
+title: 'About'
+sidebar:
+  order: 3
+---
+
+The decisions behind the component, and the ones you should disagree with deliberately rather than
+by accident.
+
+## Why a string and not a `Date`
+
+This is the decision everything else follows from.
+
+```js
+// Somewhere west of Greenwich:
+new Date('2026-03-01').getDate() // 28  — parsed as UTC midnight
+new Date(2026, 2, 1).getDate() // 1   — parsed as local midnight
+```
+
+A calendar date is a year, a month and a day. It is **not** a point in time. The moment it becomes
+one it acquires a timezone it never had, and that single discrepancy is behind most "my date picker
+is a day off" reports in this space.
+
+So no `Date` is ever constructed for a value. The component stores three numbers, formats them as
+`YYYY-MM-DD`, and compares ranges as strings — which is correct because that format is fixed-width
+and big-endian, so it sorts lexicographically in exactly the same order it sorts chronologically.
+
+There is deliberately **no `toDate()` helper**. Adding one would put the timezone question back
+inside the library, where it cannot be answered correctly. Construct a `Date` at your app's boundary
+and be explicit about the zone you mean.
+
+## No rollover
+
+```js
+new Date(2026, 1, 31) // 3 March 2026
+```
+
+A field built on that silently changes the month the user chose. This one refuses:
+
+```ts
+import { toISO } from '@rxova/react-date-input'
+
+toISO({ year: 2026, month: 2, day: 31 }) // null
+toISO({ year: 2024, month: 2, day: 29 }) // '2024-02-29'
+toISO({ year: 2023, month: 2, day: 29 }) // null
+```
+
+When the user changes the _month_ under an existing day, the day is **clamped**: 31 January then
+February gives the 28th. The other options are worse — rolling over undoes the month they just
+picked, and clearing the day throws away input they did not ask to lose.
+
+## Segment bounds narrow as the date fills in
+
+The day segment's maximum is not fixed:
+
+| Known so far      | Day range |
+| ----------------- | --------- |
+| nothing           | 1–31      |
+| February, no year | 1–29      |
+| February 2024     | 1–29      |
+| February 2023     | 1–28      |
+
+Narrowing any earlier would reject a value that is about to become valid — a user typing the day
+first, then February, then a leap year. `aria-valuemax` tracks this, so a screen reader announces
+the real range rather than a nominal one.
+
+## No partially-typed value escapes
+
+Typing `1999` into a year passes through 1, 19 and 199 — and each of those is a **complete** date
+once the other segments are filled. A component that emits unconditionally reports `0001-03-15` to
+its parent, and a form that saves on change persists it.
+
+So digits are _provisional_ until the number is finished — when no further digit could keep it in
+range, or the segment is full. The display and `onPartsChange` update immediately; `onChange` waits.
+A number left half-typed is settled when focus moves away, so nothing the user actually left in the
+field is withheld.
+
+## Locale handling
+
+Segment order, separators and month names all come from `Intl.DateTimeFormat`. Every engine ships
+ICU already, so this costs nothing and is correct for locales we have never heard of.
+
+```ts
+import { segmentOrder } from '@rxova/react-date-input'
+
+segmentOrder('en-US') // ['month', 'day', 'year']
+segmentOrder('en-GB') // ['day', 'month', 'year']
+segmentOrder('ja-JP') // ['year', 'month', 'day']
+```
+
+Leading and trailing affixes are trimmed: `ko-KR` and `hu-HU` end with a `.`, `ja-JP` with `日` —
+correct for display, but a dangling character after an editable field.
+
+A malformed tag falls back to ISO order and warns. `Intl` throws `RangeError` on `en_US`, and
+crashing a date field over an underscore is the worse outcome.
+
+### Two known limitations
+
+1. **Digits are Latin numerals**, even in a locale whose `Intl` output uses Arabic-Indic or Persian
+   digits. Editing a numeral system the keyboard does not produce would be worse than the
+   inconsistency.
+2. **Non-Gregorian locales take their _order_ from their own calendar but edit Gregorian numbers.**
+   `fa-IR` formats a Gregorian 3333 as a Persian year, so the order is right and the values are not
+   in that calendar. A real Persian-calendar field is a different component.
+
+## Accessibility
+
+- A `role="group"` of three `role="spinbutton"` segments. A single control would leave a
+  screen-reader user unable to tell which part they are editing; a spinbutton is exactly what a
+  bounded number with arrow-key stepping is.
+- The month announces as its **name** — `aria-valuetext="March"`, localised. "3" is the value;
+  "March" is the choice.
+- An empty segment announces its placeholder and carries **no** `aria-valuenow`, rather than
+  claiming a value of 0.
+- Separators are `aria-hidden`; reading "slash" between two named spinbuttons adds nothing.
+- Arrow keys wrap the _value_ but clamp the _focus_, so the field never becomes a trap you cannot
+  arrow out of.
+- Disabled segments stay in the accessibility tree but leave the tab order, matching native
+  controls.
+- A `ReactNode` label is rendered off-screen and referenced with `aria-labelledby`, because a node
+  cannot become an `aria-label` and the group would otherwise lose its name.
+
+axe (WCAG 2.1 A/AA) runs over the component in the browser suite and over the whole demo page in
+Chromium, Firefox and WebKit — including a right-to-left locale.
+
+## Why all three browsers
+
+The E2E suite runs Chromium, Firefox and WebKit, and for this component that is not a formality:
+the entire segment layout comes from ICU data, and the three engines ship three different ICU
+builds. "Does `en-GB` really put the day first here" is a question only a real run in each engine
+can answer.
+
+The locale tests assert _relationships_ rather than exact separator characters — ICU changes those
+between versions, and pinning them would fail the suite on a Node upgrade for no real reason.
+
+## Diagnostics
+
+`onWarn` receives `{ code, prop, received, message }` whenever a prop is rejected or coerced.
+
+| Code                                  | Meaning                                                                 |
+| ------------------------------------- | ----------------------------------------------------------------------- |
+| `value-unparseable`                   | Not `YYYY-MM-DD`, or a well-formed string for a day that does not exist |
+| `value-out-of-range`                  | Complete and real, but outside `min`/`max`                              |
+| `min-unparseable` / `max-unparseable` | A bound that is not a real ISO date; it is ignored                      |
+| `min-after-max`                       | No date could satisfy both, so both bounds are dropped                  |
+| `locale-invalid`                      | `Intl` refused the tag; ISO segment order is used                       |
+
+With no handler these go to `console.warn`. **The entire path is stripped from production builds** —
+it sits behind a `process.env.NODE_ENV !== 'production'` branch, so there is no runtime cost and no
+console noise in production. The E2E suite asserts this against a real production bundle.

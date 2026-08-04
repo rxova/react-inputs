@@ -1,0 +1,71 @@
+---
+title: 'Introduction'
+sidebar:
+  order: 1
+---
+
+**A segmented time field with no clock popup, no date library, and no timezone bugs.**
+Headless, zero-dependency, 12/24-hour from `Intl`.
+
+A time is three short numbers. Typing `14:30` is faster than opening a dropdown and scrolling a
+column of sixty minutes — and on a phone the column picker is worse still. Yet every mainstream
+option ships one, and most cannot turn it off.
+
+## The shapes a time field comes in
+
+| Shape                          | What it costs                                                 |
+| ------------------------------ | ------------------------------------------------------------- |
+| Dropdown columns of hours/mins | A popup, a scroll container, and a lot of DOM                 |
+| Segmented field plus a clock   | The segments you want, and a clock popup you usually don't    |
+| Date and time together         | A calendar you are not using, plus a date library underneath  |
+| **This package**               | Segmented field, no popup, **3.7 kB** brotli, no dependencies |
+
+Sizes are measured: bundled with esbuild, minified, React external, brotli at quality 11.
+
+## Three problems run through all of them
+
+**They bring dependencies for data the platform has.** `Intl` already knows whether a locale is 12-
+or 24-hour, where the day period sits, and what the AM/PM words are in every language the runtime
+supports:
+
+```ts
+import { usesHour12, dayPeriodNames } from '@rxova/react-time-input'
+
+usesHour12('en-US') // true
+usesHour12('de-DE') // false
+dayPeriodNames('ja-JP') // ['午前', '午後']
+```
+
+**They model a time of day as an instant.** `Date` and `moment` objects across the API boundary are
+the source of the classic off-by-one-day and off-by-one-hour bugs:
+
+```js
+new Date('14:30') // Invalid Date
+new Date('2026-01-01T14:30') // a moment that moves with the timezone and with DST
+```
+
+"Half past two" does not move. So this package never constructs one — the value is an `HH:mm`
+string end to end.
+
+**12-hour handling is where they break.** Midnight is `12 AM` and hour `0`; noon is `12 PM` and
+hour `12`. That fold is wrong in exactly two cases out of twenty-four, which is why a sampled test
+usually misses it and why "my 12:30 booking saved as 00:30" is a perennial bug report. The
+adversarial suite here sweeps all 24 hours rather than spot-checking.
+
+## Install
+
+```bash
+npm install @rxova/react-time-input
+```
+
+```tsx
+import { useState } from 'react'
+import { TimeInput } from '@rxova/react-time-input'
+
+function Booking() {
+  const [value, setValue] = useState<string | null>(null)
+  return <TimeInput label="Start time" value={value} onChange={setValue} min="09:00" max="17:00" />
+}
+```
+
+3.7 kB brotli, zero runtime dependencies, no stylesheet to import.

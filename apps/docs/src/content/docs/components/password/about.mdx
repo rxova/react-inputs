@@ -1,0 +1,176 @@
+---
+title: 'About'
+sidebar:
+  order: 3
+---
+
+The decisions behind the component, and the ones you should disagree with deliberately rather than
+by accident.
+
+## The strength estimator
+
+### What it models
+
+Four things a wordlist-free estimator can model honestly:
+
+| Signal                | How                                                                                                        |
+| --------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Character pool        | Which of five classes the password draws from — lowercase, uppercase, digits, ASCII punctuation, non-ASCII |
+| Length                | Counted in **codepoints**, so four emoji are four characters and not eight                                 |
+| Structural repetition | `aaaa`, `abcd`, `987654`, and keyboard walks like `asdf` that codepoint arithmetic cannot see              |
+| Supplied context      | `blocklist` (your product name) and `userInputs` (their email, their name)                                 |
+
+Plus ~50 corpus staples, matched through a leet table — so `P4ssw0rd` scores zero, and so do
+`trustno1` and `abc123`.
+
+```ts
+import { estimateStrength } from '@rxova/react-password-input'
+
+estimateStrength('P4ssw0rd')
+// { score: 0, entropy: 8, penalties: ['blocklisted'], effectiveLength: 8 }
+
+estimateStrength('correct-horse-battery-staple')
+// { score: 4, entropy: 164.71, penalties: [], effectiveLength: 28 }
+```
+
+### What it does not model
+
+**It does not know English.** `Tr0ub4dor&3` scores 3 here, because nothing on the client knows
+"troubadour" is a word. Catching that is exactly what a few hundred kilobytes of wordlists buys, and if you need it,
+buy it on purpose:
+
+```tsx
+// Any dictionary-based estimator fits here; `estimate` only cares about the
+// shape it returns.
+import { estimateWithWordlists } from 'your-estimator-of-choice'
+import { PasswordInput } from '@rxova/react-password-input'
+import type { PasswordScore } from '@rxova/react-password-input'
+
+function Field() {
+  return (
+    <PasswordInput
+      label="Password"
+      showStrength
+      estimate={(password) => {
+        const result = estimateWithWordlists(password)
+        return {
+          score: result.score as PasswordScore,
+          entropy: Math.log2(result.guesses),
+          penalties: [],
+          effectiveLength: password.length,
+        }
+      }}
+    />
+  )
+}
+```
+
+An `estimate` that throws is contained: the meter falls back to the built-in estimator and `onWarn`
+reports `estimate-threw`. One bad adapter does not take the login form down.
+
+The `entropy` figure is a **comparator, not a measurement**. A real offline-attack cost model needs
+the attacker's wordlist, which no client-side estimator has. The meter is a nudge; the defences that
+matter are a length floor, a breach-corpus check, and server-side rate limiting.
+
+## Why the default rule set is one rule
+
+NIST SP 800-63B requires a length minimum, requires accepting long passphrases, and says verifiers
+"SHOULD NOT impose other composition rules". The upper/lower/digit/symbol checklist trains users
+into `Password1!` and measurably _lowers_ real entropy.
+
+So the default is a single length rule, `maxLength` is unset (NIST requires accepting at least 64
+characters, and a silently truncated passphrase is a support ticket nobody can diagnose), and
+`commonRules` is there for products under an older compliance regime.
+
+## Breach checks
+
+`checkCompromised` is the only way this component learns anything about the outside world, and it
+is entirely yours. **The library issues no request of its own** — that is the whole point of the
+shape. An adversarial test asserts `fetch` is never called.
+
+```tsx
+import { PasswordInput } from '@rxova/react-password-input'
+
+/** Have I Been Pwned's k-anonymity API: only a 5-character hash prefix is sent. */
+async function checkPwned(password: string, signal: AbortSignal) {
+  const bytes = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(password))
+  const hash = [...new Uint8Array(bytes)]
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+    .toUpperCase()
+  const response = await fetch(`https://api.pwnedpasswords.com/range/${hash.slice(0, 5)}`, {
+    signal,
+  })
+  return (await response.text()).includes(hash.slice(5))
+}
+
+function Field() {
+  return <PasswordInput label="Password" showStrength checkCompromised={checkPwned} />
+}
+```
+
+Three properties worth knowing:
+
+1. **Debounced and abortable.** The `AbortSignal` fires when the password changes again or the
+   component unmounts.
+2. **A verdict is stamped with the password it belongs to.** A slow answer for an old password
+   simply stops applying — the stale-response race is structurally impossible, not merely guarded.
+3. **A failed lookup reports _unknown_, never _safe_.** Telling a user their password is fine
+   because the network was down is a lie in the one direction that gets people hurt.
+
+The check is skipped entirely while the field is `disabled`.
+
+## The caret
+
+This is the least obvious code in the package, and it is empirical.
+
+Every engine collapses an input's selection during the `mousedown` that precedes the toggle click.
+Preventing that default keeps _focus_ in the input but does not preserve the selection, and
+listening on the input's own `select` event is no help either — the collapse fires one. So the
+range is captured during the mousedown **dispatch**, before any default action runs.
+
+Then it has to be restored twice. Tracing a real click shows the restored range correct in a
+microtask and gone by the next frame: React re-syncs the controlled input's value after the click
+finishes dispatching, which clobbers a single restore. So the layout effect restores it (before
+paint, so there is no visible jump) and an animation frame re-applies it (after React has finished).
+Dropping either one is a visible bug.
+
+If you use the headless hook, wire `captureSelection` to the toggle's `onMouseDown` or you will not
+get this behaviour.
+
+## Accessibility
+
+- A real `<input>` labelled by a real `<label>`. The browser supplies keyboard behaviour, form
+  participation and password-manager integration.
+- The reveal control is a **toggle button** — `aria-pressed`, `aria-controls`, and an explicit
+  `tabindex="0"` so **Safari** includes it in the tab order without Full Keyboard Access. Without
+  that attribute the toggle is unreachable by keyboard on a default macOS install.
+- The toggle's hit area meets WCAG 2.5.8 Target Size (Minimum) at 24×24 CSS pixels.
+- Caps Lock is `role="status"`, not `role="alert"` — worth saying, not worth interrupting.
+- The checklist states met/unmet **in text**, so meaning never rides on colour alone (WCAG 1.4.1).
+- The meter carries `aria-valuetext` ("Fair"); the bare number reads as "2" with no unit.
+- One polite live region announces the strength **bucket** and the rule tally. Because the caption
+  is bucketed rather than continuous, React only rewrites that text when the bucket changes — so it
+  announces once on crossing into "Fair", not on all six characters that stayed inside it.
+- `aria-describedby` is assembled from the parts that actually rendered, so it never dangles.
+
+axe (WCAG 2.1 A/AA) runs over the component in the browser suite and over the whole demo page in
+Chromium, Firefox and WebKit.
+
+## Diagnostics
+
+`onWarn` receives `{ code, prop, message }` whenever the component keeps itself working despite a
+prop it cannot use as given.
+
+| Code                     | Meaning                                                                         |
+| ------------------------ | ------------------------------------------------------------------------------- |
+| `min-length-negative`    | `minLength` was negative or non-finite                                          |
+| `min-length-non-integer` | `minLength` was fractional                                                      |
+| `max-length-below-min`   | `maxLength` under `minLength`; no password could satisfy both, so it is dropped |
+| `duplicate-rule-id`      | Two rules share an `id`, which are used as React keys and `data-rule` values    |
+| `autocomplete-missing`   | `autoComplete` is empty or `off`, which breaks password managers                |
+| `estimate-threw`         | A custom `estimate` threw; the built-in estimator was used instead              |
+
+With no handler these go to `console.warn`. **The entire path is stripped from production builds** —
+it sits behind a `process.env.NODE_ENV !== 'production'` branch, so there is no runtime cost and no
+console noise in production. The E2E suite asserts this against a real production bundle.

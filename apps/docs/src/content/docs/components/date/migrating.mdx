@@ -1,0 +1,146 @@
+---
+title: 'Migrating'
+sidebar:
+  order: 4
+---
+
+Every migration here trades a calendar for a typed field, so the honest first question is whether
+your users are _choosing_ a date or _stating_ one. Birthdays, invoice dates, expiry dates and
+passport numbers are stated. Meetings and flights are chosen. Keep the calendar for the second kind,
+or offer both.
+
+## Migrating from react-datepicker
+
+### Props
+
+| react-datepicker                              | @rxova/react-date-input    | Notes                                            |
+| --------------------------------------------- | -------------------------- | ------------------------------------------------ |
+| `selected` (`Date`)                           | `value` (`string \| null`) | `'2026-03-15'`, never a `Date`                   |
+| `onChange(date)`                              | `onChange(iso)`            | Fires only for a complete, real date             |
+| `minDate` / `maxDate` (`Date`)                | `min` / `max` (`string`)   | Inclusive, ISO                                   |
+| `dateFormat`                                  | `locale`                   | Order comes from the locale, not a format string |
+| `locale` (a `date-fns` locale object)         | `locale` (a BCP 47 tag)    | No import, no registration                       |
+| `placeholderText`                             | `placeholders`             | Per segment                                      |
+| `disabled` / `readOnly`                       | `disabled` / `readOnly`    | Same                                             |
+| `name`                                        | `name`                     | Emits a hidden input with the ISO value          |
+| `showTimeSelect`, `selectsRange`, `inline`, … | —                          | Out of scope; keep a calendar for these          |
+
+### Before
+
+```tsx
+import { useState } from 'react'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+
+function Form() {
+  const [date, setDate] = useState<Date | null>(null)
+  return <DatePicker selected={date} onChange={setDate} dateFormat="dd/MM/yyyy" />
+}
+```
+
+### After
+
+```tsx
+import { useState } from 'react'
+import { DateInput } from '@rxova/react-date-input'
+
+function Form() {
+  const [date, setDate] = useState<string | null>(null)
+  return <DateInput label="Date" locale="en-GB" value={date} onChange={setDate} />
+}
+```
+
+You drop `date-fns`, `@floating-ui/react`, `clsx` and the stylesheet import.
+
+### Converting at the boundary
+
+If the rest of your app still wants `Date` objects, convert where the timezone question can actually
+be answered — not inside the component:
+
+```ts
+import { fromISO, toISO } from '@rxova/react-date-input'
+
+/** Local midnight. Use this when the date means "a day in the user's calendar". */
+function toLocalDate(iso: string): Date {
+  const parts = fromISO(iso)
+  if (!parts) throw new Error(`Not an ISO date: ${iso}`)
+  return new Date(parts.year, parts.month - 1, parts.day)
+}
+
+/** The inverse, reading back the same local fields. */
+function fromLocalDate(date: Date): string | null {
+  return toISO({ year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate() })
+}
+```
+
+Note both functions use the _local_ accessors consistently. Mixing `new Date(iso)` (UTC) with
+`.getDate()` (local) is the bug this package exists to avoid.
+
+## Migrating from react-day-picker
+
+`react-day-picker` is a calendar and nothing else — there is no text input to replace. The migration
+is a product decision: replace the popover-and-grid with a typed field where the date is known.
+
+```tsx
+import { useState } from 'react'
+import { DateInput } from '@rxova/react-date-input'
+
+function Birthday() {
+  const [value, setValue] = useState<string | null>(null)
+  return <DateInput label="Date of birth" value={value} onChange={setValue} max="2026-07-29" />
+}
+```
+
+`selected`/`onSelect` become `value`/`onChange`, `disabled={{ before, after }}` becomes `min`/`max`,
+and `date-fns` leaves the bundle.
+
+## Migrating from @react-aria/datepicker
+
+The closest relative: react-aria's `DateField` is also a segmented, keyboard-first field, and the
+interaction model carries over almost exactly. The differences are the dependency and the value
+type.
+
+| react-aria                                    | @rxova/react-date-input             | Notes                 |
+| --------------------------------------------- | ----------------------------------- | --------------------- |
+| `CalendarDate` from `@internationalized/date` | `string`                            | `'2026-03-15'`        |
+| `useDateFieldState` + `useDateSegment`        | `useDateInput`                      | One hook, one package |
+| `granularity`                                 | —                                   | Date only             |
+| `isDisabled` / `isReadOnly` / `isInvalid`     | `disabled` / `readOnly` / `invalid` | Renamed               |
+| `minValue` / `maxValue`                       | `min` / `max`                       | ISO strings           |
+
+```tsx
+import { useState } from 'react'
+import { DateInput } from '@rxova/react-date-input'
+
+function Field() {
+  const [value, setValue] = useState<string | null>('2026-03-15')
+  return <DateInput label="Date" value={value} onChange={setValue} />
+}
+```
+
+You lose `@internationalized/date`'s calendar systems and time support. You gain a single
+zero-dependency package and a value you can put straight into JSON.
+
+## Migrating from `<input type="date">`
+
+The native control is genuinely good and free, and you should keep it unless one of these applies:
+its appearance cannot be styled consistently across engines, its calendar cannot be removed, and on
+some platforms it cannot be operated in the format your users expect.
+
+The value format is **identical** — `YYYY-MM-DD` — so the swap is mechanical:
+
+```tsx
+import { DateInput } from '@rxova/react-date-input'
+
+// Before
+function Before() {
+  return <input type="date" name="due" min="2026-01-01" />
+}
+
+// After
+function After() {
+  return <DateInput label="Due" name="due" min="2026-01-01" />
+}
+```
+
+`onChange` gives you the string directly rather than `event.target.value`.

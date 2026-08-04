@@ -1,0 +1,62 @@
+---
+title: 'Introduction'
+sidebar:
+  order: 1
+---
+
+**A tag input where the keyboard actually works.** Headless, zero-dependency, 3.6 kB.
+
+## This is not a size argument
+
+Unlike the other components in this suite, the tag category already has small options — the
+lightest of them are within a few hundred bytes of this package's **3.6 kB**. Anyone choosing on
+bytes alone can stop reading here; the argument for this one is entirely about keyboard behaviour
+and what a screen reader is told.
+
+Sizes quoted anywhere in these docs are measured the same way: bundled with esbuild, minified,
+React external, brotli at quality 11.
+
+## The argument is the keyboard
+
+Six failures, all present in the most-downloaded options, each with a test in this repo.
+
+**1. Focus is lost on removal.** Delete a tag with the keyboard and focus lands on `<body>`. The
+user's place on the page is gone, and a screen-reader user has no idea where they are. This is the
+single most common accessibility failure in the widget.
+
+**2. Every tag is a tab stop.** Twenty tags means twenty presses to get past the field. A roving
+tabindex makes the whole list one stop, with Arrow/Home/End inside it.
+
+**3. Remove buttons are not named after their tag.** In a screen reader's element list, buttons
+appear stripped of surrounding text — so twelve buttons all read "Remove" or "×" and none of them
+can be told apart.
+
+**4. Nothing is announced.** Adding and removing tags changes the page silently.
+
+**5. A single Backspace deletes.** Backspace in an empty box removes the previous tag outright,
+destroying data the user cannot see they are about to lose. Here the first press _selects_ the tag
+and the second removes it.
+
+**6. `role="combobox"` with no popup.** Several packages claim combobox semantics — a promise to
+assistive technology of a listbox that does not exist. This component is a text box beside a list,
+and says so.
+
+## Install
+
+```bash
+npm install @rxova/react-tags-input
+```
+
+```tsx
+import { useState } from 'react'
+import { TagsInput } from '@rxova/react-tags-input'
+
+function Topics() {
+  const [tags, setTags] = useState<string[]>([])
+  return <TagsInput label="Topics" value={tags} onChange={setTags} placeholder="Add a topic" />
+}
+```
+
+Plus the ordinary things: configurable delimiters, paste splitting, case-insensitive dedupe, `max`,
+length bounds in codepoints, `transform` and `validate`, and one hidden input per tag so a native
+form posts an array.

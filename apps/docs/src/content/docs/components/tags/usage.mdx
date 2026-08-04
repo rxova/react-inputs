@@ -1,0 +1,223 @@
+---
+title: 'Usage'
+sidebar:
+  order: 2
+---
+
+## Try it
+
+Add a few tags, then try the keyboard: Backspace twice from the empty box, arrow between tags, Tab
+straight past the whole list. (`TagsInput` and `useState` are already in scope.)
+
+```tsx live
+function TryIt() {
+  const [tags, setTags] = useState(['react', 'a11y'])
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <TagsInput label="Topics" value={tags} onChange={setTags} placeholder="Add a topic" />
+      <code>{JSON.stringify(tags)}</code>
+    </div>
+  )
+}
+```
+
+## Controlled and uncontrolled
+
+```tsx
+import { useState } from 'react'
+import { TagsInput } from '@rxova/react-tags-input'
+
+function Controlled() {
+  const [tags, setTags] = useState<string[]>([])
+  return <TagsInput label="Topics" value={tags} onChange={setTags} />
+}
+
+function Uncontrolled() {
+  return <TagsInput label="Topics" defaultValue={['react']} />
+}
+```
+
+`onAdd` and `onRemove` carry the delta if you need it, and `onReject` reports refusals.
+
+## Keyboard
+
+| Key                   | Where           | Effect                                                        |
+| --------------------- | --------------- | ------------------------------------------------------------- |
+| `Enter`, `,`          | entry box       | Commit the current text                                       |
+| `Backspace`           | empty entry box | Select the last tag (a second press removes it)               |
+| `←`                   | empty entry box | Move into the tag list                                        |
+| `Backspace`, `Delete` | a tag           | Remove it                                                     |
+| `←` / `→`             | a tag           | Move between tags; right past the last lands in the entry box |
+| `Home`                | a tag           | Jump to the first tag                                         |
+| `End`                 | a tag           | Jump to the entry box                                         |
+| any character         | a tag           | Move to the entry box, keeping the keystroke                  |
+| `Tab`                 | anywhere        | Leave the field — one stop for the list, one for the box      |
+
+## Rules
+
+```tsx live
+function Constrained() {
+  const [rejection, setRejection] = useState(null)
+  return (
+    <div style={{ display: 'grid', gap: '0.5rem' }}>
+      <TagsInput
+        label="At most three lowercase topics"
+        max={3}
+        minLength={2}
+        maxLength={12}
+        transform={(raw) => raw.toLowerCase()}
+        validate={(tag) => (tag.startsWith('x') ? 'no x-words here' : true)}
+        onReject={setRejection}
+      />
+      <small>
+        {rejection ? `${rejection.reason}: ${rejection.message ?? rejection.tag}` : ' '}
+      </small>
+    </div>
+  )
+}
+```
+
+`transform` runs first, so lowercasing there makes `React` a duplicate of `react`. `validate`
+returns `true`, `false`, or a string explaining the refusal. Both are contained: a throwing
+`transform` behaves as if absent, a throwing `validate` refuses the tag.
+
+Reasons: `empty`, `duplicate`, `max-reached`, `too-short`, `too-long`, `invalid`.
+
+**A refused entry stays in the box** so the user can fix it rather than retyping from memory.
+
+## Delimiters and paste
+
+```tsx
+import { TagsInput } from '@rxova/react-tags-input'
+
+function Spaced() {
+  return <TagsInput label="Topics" delimiters={[' ', 'Enter']} />
+}
+```
+
+`Tab` is supported but opt-in, because it changes what Tab means in a form — and even then it never
+commits an _empty_ box, which would trap focus.
+
+Pasting splits on the delimiters **and on newlines regardless**, because a paste from a spreadsheet
+column arrives newline-separated whatever the field was configured for. A single-value paste is
+left to the browser. Set `splitPaste={false}` to turn it off.
+
+## Forms
+
+```tsx
+import { TagsInput } from '@rxova/react-tags-input'
+
+function Form() {
+  return (
+    <form action="/profile" method="post">
+      <TagsInput label="Skills" name="skills" defaultValue={['react', 'a11y']} />
+      <button type="submit">Save</button>
+    </form>
+  )
+}
+```
+
+One hidden input per tag, so `formData.getAll('skills')` gives `['react', 'a11y']` — not a joined
+string somebody downstream has to guess how to split.
+
+## Styling
+
+No stylesheet to import.
+
+```css
+[data-rtg-root] {
+  --rtg-tag-background: #e8f0fe;
+  --rtg-tag-radius: 999px;
+}
+
+[data-rtg-remove][data-focused] {
+  outline: 2px solid Highlight;
+}
+
+[data-rtg-root][data-full] [data-rtg-input] {
+  opacity: 0.5;
+}
+```
+
+Do not shrink `--rtg-remove-size` below `1.5rem`: at the default font size that is the 24×24 CSS
+pixels WCAG 2.5.8 requires. The full list of properties and `data-*` hooks is in the
+[package README](https://github.com/rxova/react-inputs/tree/main/packages/react-tags-input#styling).
+
+## Custom tags
+
+```tsx
+import { TagsInput } from '@rxova/react-tags-input'
+
+function Coloured() {
+  return (
+    <TagsInput
+      label="Topics"
+      defaultValue={['react', 'a11y']}
+      renderTag={({ tag, focused }) => <strong data-focused={focused}>#{tag}</strong>}
+      removeLabel={(tag) => `Remove the ${tag} topic`}
+    />
+  )
+}
+```
+
+`renderTag` changes what is painted; the remove button is still named after the real tag, not the
+rendering.
+
+## Headless
+
+`useTagsInput` gives you the whole state machine with no markup — including the roving tab order
+and the focus bookkeeping after a removal.
+
+```tsx
+import { useTagsInput } from '@rxova/react-tags-input'
+
+function CustomTags() {
+  const field = useTagsInput({ max: 5 })
+
+  return (
+    <div onBlur={field.handleBlur}>
+      <ul>
+        {field.tags.map((tag, index) => (
+          <li key={tag}>
+            {tag}
+            <button
+              ref={(node) => {
+                field.tagRefs.current[index] = node
+              }}
+              type="button"
+              tabIndex={index === field.activeIndex ? 0 : -1}
+              aria-label={`Remove ${tag}`}
+              onClick={() => {
+                field.removeAt(index)
+              }}
+              onKeyDown={(event) => {
+                field.handleTagKeyDown(event, index)
+              }}
+              onFocus={() => {
+                field.setFocusedIndex(index)
+              }}
+            >
+              ×
+            </button>
+          </li>
+        ))}
+      </ul>
+      <input
+        ref={(node) => {
+          field.inputRef.current = node
+        }}
+        value={field.text}
+        onChange={(event) => {
+          field.setText(event.target.value)
+        }}
+        onKeyDown={field.handleInputKeyDown}
+        onPaste={field.handlePaste}
+      />
+      <span aria-live="polite">{field.announcement}</span>
+    </div>
+  )
+}
+```
+
+The rule helpers are exported too — `attempt`, `attemptAll`, `sanitize`, `splitPasted`, `contains`
+— all pure, so the same rules can run on the server against whatever the field submitted.

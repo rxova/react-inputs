@@ -1,0 +1,23 @@
+[
+  {
+    "name": "PhoneInput (full import)",
+    "path": "dist/index.mjs",
+    "import": "{ PhoneInput }",
+    "limit": "4.25 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  },
+  {
+    "name": "usePhoneInput (headless only)",
+    "path": "dist/index.mjs",
+    "import": "{ usePhoneInput }",
+    "limit": "3.5 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  },
+  {
+    "name": "parsePhone (parsing only)",
+    "path": "dist/index.mjs",
+    "import": "{ parsePhone }",
+    "limit": "3 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  }
+]

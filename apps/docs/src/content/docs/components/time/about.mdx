@@ -1,0 +1,161 @@
+---
+title: 'About'
+sidebar:
+  order: 3
+---
+
+The decisions behind the component, and the ones you should disagree with deliberately rather than
+by accident.
+
+## Why a string and not a `Date`
+
+```js
+new Date('14:30') // Invalid Date
+new Date('2026-01-01T14:30') // a moment that moves with the timezone and with DST
+```
+
+A time of day is not an instant. It has no date and no zone, and the moment it acquires either it
+starts moving — across a daylight-saving boundary, `14:30` is not a fixed number of milliseconds
+from anything.
+
+So no `Date` is ever constructed. The component stores three numbers, formats them as `HH:mm` or
+`HH:mm:ss`, and compares ranges as strings — correct because the format is fixed-width and
+big-endian, including across precisions:
+
+```ts
+import { compareISO } from '@rxova/react-time-input'
+
+compareISO('09:00', '14:30') // -1
+compareISO('14:30:00', '14:30') //  0  — compared on the shared prefix
+```
+
+There is deliberately **no `toDate()` helper**. It cannot be written without inventing a date and a
+timezone the caller did not supply.
+
+## The value is always 24-hour
+
+Whatever the field displays. A US user sees `02:30 PM`; `onChange` and any form receive `14:30`.
+
+One canonical format means a value can be stored, compared and sorted without knowing which locale
+produced it — and it means the same stored value renders correctly for a US user and a German one
+without conversion.
+
+Seconds appear in the value only when `showSeconds` is on, so the canonical form matches the field
+the user was actually offered rather than claiming a precision they never had.
+
+## Midnight and noon
+
+The single easiest thing to get wrong in a time field.
+
+| Stored hour | 12-hour display | Day period |
+| ----------: | --------------: | ---------- |
+|           0 |          **12** | AM         |
+|           1 |               1 | AM         |
+|          11 |              11 | AM         |
+|          12 |          **12** | PM         |
+|          13 |               1 | PM         |
+|          23 |              11 | PM         |
+
+The fold has to happen **before** the period offset is applied, or `12 + 12` is 24. It is wrong in
+exactly two cases out of twenty-four, which is why a spot-checking test usually misses it — so the
+adversarial suite round-trips all 24 hours rather than sampling:
+
+```ts
+for (let hour = 0; hour <= 23; hour++) {
+  expect(fromDisplayHour(toDisplayHour(hour, true), toDayPeriod(hour))).toBe(hour)
+}
+```
+
+Two consequences worth knowing:
+
+- **Retyping the hour keeps the day period.** Changing a 3 PM appointment to 5 must not silently
+  make it 5 AM.
+- **A period chosen before any hour is remembered**, stored as the corresponding midnight or noon
+  hour, so the natural "PM first, then the hour" entry order works.
+
+## Locale handling
+
+12- or 24-hour, segment order, separators and the AM/PM words all come from `Intl.DateTimeFormat`.
+Every engine ships ICU already, so this costs nothing and is correct for locales we have never
+heard of.
+
+```ts
+import { usesHour12, dayPeriodNames, timePieces } from '@rxova/react-time-input'
+
+usesHour12('en-US') // true
+usesHour12('de-DE') // false
+dayPeriodNames('es-ES') // ['a. m.', 'p. m.']
+dayPeriodNames('ja-JP') // ['午前', '午後']
+```
+
+Hard-coding "AM"/"PM" would be wrong in most of the world. The day period also accepts the
+localised first letter from the keyboard, so a German user typing `v` for "vorm." is understood.
+
+A malformed tag falls back to a 24-hour field and warns — `Intl` throws `RangeError` on `en_US`,
+and crashing a time field over an underscore is the worse outcome.
+
+**Known limitation:** digits render in Latin numerals even in locales whose `Intl` output uses
+another numeral system. Editing a numeral system the keyboard does not produce would be worse than
+the inconsistency.
+
+## Steps
+
+`minuteStep` and `secondStep` must divide 60. A 7-minute step leaves a 4-minute bucket at the top
+of every hour, so arrowing up from `:56` lands somewhere the grid does not contain — the step is
+refused, 1 is used, and `onWarn` reports `step-invalid`.
+
+Steps apply to **arrow-key stepping, not typing**. A user can type `09:07` under a 15-minute step.
+Enforcing the grid on typed input fights them mid-entry; validating the final value is the form's
+job.
+
+## Ranges do not wrap past midnight
+
+`min="22:00" max="06:00"` is two ranges, not one. Pretending otherwise would make `withinRange`
+lie about everything between. Both bounds are dropped and `onWarn` says why, in those words.
+
+## Accessibility
+
+- A `role="group"` of `role="spinbutton"` segments — including the day period, which is a bounded
+  value stepped with arrows, which is exactly what a spinbutton is.
+- The day period announces as its **localised word**, never as 0 or 1. An E2E test asserts that no
+  `aria-valuetext` on the page is a bare digit.
+- The hour's `aria-valuemin`/`max` follow the clock in use (1–12 or 0–23) and `aria-valuenow` is
+  the number on the clock face, not the stored hour — so a screen reader announcing "2" beside "PM"
+  is telling the truth about what is displayed.
+- An empty segment announces its placeholder and carries **no** `aria-valuenow`, rather than
+  claiming a value of 0.
+- Separators are `aria-hidden`; reading "colon" between two named spinbuttons adds nothing.
+- Arrow keys wrap the _value_ but clamp the _focus_, so the field never becomes a trap.
+- Clearing the hour clears the day period with it, because the period is derived from the hour —
+  showing "AM" beside an empty hour would claim a half the field does not have.
+
+axe (WCAG 2.1 A/AA) runs over the component in the browser suite and over the whole demo page in
+Chromium, Firefox and WebKit — including a right-to-left locale.
+
+## Why all three browsers
+
+Whether a locale is 12- or 24-hour, and where the day period sits, comes entirely from ICU data —
+and the three engines ship three different ICU builds. That is the one claim only a real run in
+each engine can check.
+
+The locale tests assert _relationships_ rather than exact separator characters, which ICU changes
+between versions.
+
+## Diagnostics
+
+`onWarn` receives `{ code, prop, received, message }` whenever a prop is rejected or coerced.
+
+| Code                                  | Meaning                                           |
+| ------------------------------------- | ------------------------------------------------- |
+| `value-unparseable`                   | Not a zero-padded 24-hour `HH:mm[:ss]`            |
+| `value-out-of-range`                  | Complete and real, but outside `min`/`max`        |
+| `min-unparseable` / `max-unparseable` | A bound that is not a real time; it is ignored    |
+| `min-after-max`                       | No time can satisfy both; both bounds are dropped |
+| `step-invalid`                        | A step that does not divide 60; 1 is used         |
+| `locale-invalid`                      | `Intl` refused the tag; a 24-hour clock is used   |
+
+The `value-unparseable` message recognises a display format and shows the 24-hour equivalent, so
+passing `"2:30 PM"` tells you to pass `"14:30"`.
+
+With no handler these go to `console.warn`. **The entire path is stripped from production builds**,
+and the E2E suite asserts that against a real production bundle.

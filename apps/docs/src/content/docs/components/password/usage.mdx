@@ -1,0 +1,301 @@
+---
+title: 'Usage'
+sidebar:
+  order: 2
+---
+
+## Try it
+
+Type a password, then click the eye. Put your caret in the middle of the text first — it stays
+where you left it. (`PasswordInput`, `commonRules` and `useState` are already in scope.)
+
+```tsx live
+function TryIt() {
+  const [value, setValue] = useState('')
+  const [valid, setValid] = useState(false)
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem', maxWidth: '22rem' }}>
+      <PasswordInput
+        label="Choose a password"
+        autoComplete="new-password"
+        showStrength
+        minScore={2}
+        minLength={10}
+        userInputs={['ada@example.com', 'Ada Lovelace']}
+        rules={[commonRules.digit, { ...commonRules.symbol, optional: true }]}
+        value={value}
+        onChange={setValue}
+        onValidityChange={setValid}
+      />
+      <small>{valid ? 'Ready to submit' : 'Not yet'}</small>
+    </div>
+  )
+}
+```
+
+Try `password`, `P4ssw0rd`, `qwertyuiop`, `ada@example.com` and
+`correct-horse-battery-staple` — the first four are all penalised for different reasons.
+
+## Sign in
+
+The minimum useful field. Masked, with a reveal toggle and a Caps Lock warning.
+
+```tsx
+import { PasswordInput } from '@rxova/react-password-input'
+
+function SignIn() {
+  return <PasswordInput label="Password" name="password" autoComplete="current-password" />
+}
+```
+
+`autoComplete` defaults to `current-password`. **Set it to `new-password` on sign-up and
+change-password forms** — with the wrong value, password managers offer the old password instead of
+generating a new one. `onWarn` catches an empty or `off` value, but it cannot detect this mix-up,
+because only your app knows which form it is.
+
+## Controlled and uncontrolled
+
+Both the value and the reveal state can be controlled independently.
+
+```tsx
+import { useState } from 'react'
+import { PasswordInput } from '@rxova/react-password-input'
+
+function Controlled() {
+  const [value, setValue] = useState('')
+  const [revealed, setRevealed] = useState(false)
+
+  return (
+    <PasswordInput
+      label="Password"
+      value={value}
+      onChange={setValue}
+      revealed={revealed}
+      onRevealChange={setRevealed}
+    />
+  )
+}
+```
+
+`onRevealChange` fires only on an actual change, so it is safe to wire straight into state.
+
+## Requirements
+
+The default rule set is **one rule, about length**. See [About](./about/) for why. Pass `rules` for
+anything more.
+
+```tsx
+import { PasswordInput, commonRules } from '@rxova/react-password-input'
+
+function Field() {
+  return (
+    <PasswordInput
+      label="Password"
+      rules={[
+        { id: 'length', label: 'At least 12 characters', test: (p) => Array.from(p).length >= 12 },
+        commonRules.digit,
+        { ...commonRules.symbol, optional: true },
+      ]}
+    />
+  )
+}
+```
+
+A rule is `{ id, label, test, optional? }`. An `optional` rule shows in the checklist but never
+blocks validity. A `test` that throws is reported as unmet rather than taking the field down.
+
+## Confirm password
+
+A second field that has to match the first. The match is the parent's business, not the component's
+— `invalid` and `aria-describedby` are the two props that wire it up, and the error text is yours.
+
+Two details this example gets right and hand-rolled versions usually do not: the mismatch is only
+announced once the confirm field has been **touched**, so it does not shout at someone who has not
+typed there yet, and `autoComplete="new-password"` is set on both so a password manager offers to
+generate rather than autofill.
+
+```tsx live
+function SignUp() {
+  const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [touched, setTouched] = useState(false)
+
+  const mismatch = touched && confirm.length > 0 && confirm !== password
+
+  return (
+    <div style={{ display: 'grid', gap: '1rem', maxWidth: '22rem' }}>
+      <PasswordInput
+        label="Password"
+        autoComplete="new-password"
+        showStrength
+        value={password}
+        onChange={setPassword}
+      />
+
+      <div>
+        <PasswordInput
+          label="Confirm password"
+          autoComplete="new-password"
+          value={confirm}
+          onChange={setConfirm}
+          onBlur={() => {
+            setTouched(true)
+          }}
+          invalid={mismatch}
+          aria-describedby={mismatch ? 'confirm-error' : undefined}
+        />
+        {mismatch ? (
+          <p id="confirm-error" style={{ color: 'crimson', margin: '0.25rem 0 0' }}>
+            Both passwords must match.
+          </p>
+        ) : null}
+      </div>
+
+      <p>
+        {password.length === 0
+          ? 'Enter a password.'
+          : confirm === password
+            ? 'Passwords match.'
+            : 'Passwords do not match yet.'}
+      </p>
+    </div>
+  )
+}
+```
+
+The error element is referenced by `aria-describedby` **only while it exists**, so a screen reader
+reads the message when there is one and nothing when there is not. The component merges that id with
+the ones it owns for the strength meter and checklist rather than overwriting them.
+
+### With a form library
+
+The same shape works with a resolver — the confirm field's `invalid` comes from the library's error
+state instead of local state:
+
+```tsx
+const schema = z
+  .object({
+    password: z.string().min(12),
+    confirm: z.string(),
+  })
+  .refine((values) => values.password === values.confirm, {
+    message: 'Both passwords must match.',
+    path: ['confirm'],
+  })
+
+<Controller
+  name="confirm"
+  control={control}
+  render={({ field, fieldState }) => (
+    <PasswordInput
+      label="Confirm password"
+      autoComplete="new-password"
+      value={field.value}
+      onChange={field.onChange}
+      onBlur={field.onBlur}
+      invalid={fieldState.invalid}
+    />
+  )}
+/>
+```
+
+## Forms
+
+The rendered element is an ordinary `<input>`, so every form library works without an adapter and
+the `ref` lands on the input itself.
+
+```tsx
+import { useForm } from 'react-hook-form'
+import { PasswordInput } from '@rxova/react-password-input'
+
+function SignIn() {
+  const { register, handleSubmit } = useForm<{ password: string }>()
+  const { ref, onChange, ...field } = register('password', { required: true })
+
+  return (
+    <form onSubmit={handleSubmit(() => undefined)}>
+      <PasswordInput
+        label="Password"
+        ref={ref}
+        onChange={(value) => onChange({ target: { name: field.name, value } })}
+        {...field}
+      />
+      <button type="submit">Sign in</button>
+    </form>
+  )
+}
+```
+
+## Styling
+
+No stylesheet to import. Only layout-critical declarations are inlined; everything visual is a CSS
+custom property or a `data-*` hook.
+
+```css
+[data-rpi-root] {
+  --rpi-meter-height: 0.375rem;
+  --rpi-meter-fill-1: #d64545;
+  --rpi-meter-fill-2: #e08c2e;
+  --rpi-meter-fill-3: #b5c334;
+  --rpi-meter-fill-4: #3fa34d;
+}
+
+[data-rpi-rules] li[data-met] {
+  color: #3fa34d;
+}
+```
+
+The full list of properties and `data-*` hooks is in the
+[package README](https://github.com/rxova/react-inputs/tree/main/packages/react-password-input#styling).
+The `data-*` attributes are public API, covered by semver.
+
+Do not shrink `--rpi-toggle-size` below `1.5rem`: at the default font size that is the 24×24 CSS
+pixels WCAG 2.5.8 requires.
+
+## Headless
+
+`usePasswordInput` gives you the whole state machine with no markup — including the two parts that
+are genuinely hard: caret restoration across the `type` swap, and the abortable, debounced breach
+check.
+
+```tsx
+import { usePasswordInput } from '@rxova/react-password-input'
+
+function CustomField() {
+  const field = usePasswordInput({ minLength: 10 })
+
+  return (
+    <div>
+      <input
+        ref={(node) => {
+          field.inputRef.current = node
+        }}
+        id={field.ids.input}
+        type={field.type}
+        value={field.value}
+        onChange={(event) => {
+          field.setValue(event.target.value)
+        }}
+        onKeyDown={field.handleModifierEvent}
+        onKeyUp={field.handleModifierEvent}
+        onBlur={field.handleBlur}
+      />
+      <button
+        type="button"
+        aria-pressed={field.revealed}
+        onMouseDown={(event) => {
+          field.captureSelection()
+          event.preventDefault()
+        }}
+        onClick={field.toggleReveal}
+      >
+        {field.revealed ? 'Hide' : 'Show'}
+      </button>
+      {field.capsLock ? <p role="status">Caps Lock is on</p> : null}
+    </div>
+  )
+}
+```
+
+`captureSelection` on `mousedown` is not optional if you want the caret preserved — see
+[About](./about/).
