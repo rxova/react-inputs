@@ -4,6 +4,39 @@ sidebar:
   order: 4
 ---
 
+## Migrating to 1.0
+
+1.0 renames every styling hook. `--rfs-*` becomes `--rx-rating-*` and `[data-rfs-*]` becomes
+`[data-rx-rating-*]`; nothing else about the API changed, and no behaviour changed with it.
+
+| Before               | After                      |
+| -------------------- | -------------------------- |
+| `--rfs-size`         | `--rx-rating-size`         |
+| `--rfs-gap`          | `--rx-rating-gap`          |
+| `--rfs-color-filled` | `--rx-rating-color-filled` |
+| `--rfs-color-empty`  | `--rx-rating-color-empty`  |
+| `--rfs-focus-ring`   | `--rx-rating-focus-ring`   |
+| …and the other five  | same `--rx-rating-` prefix |
+| `[data-rfs-root]`    | `[data-rx-rating-root]`    |
+| `[data-rfs-item]`    | `[data-rx-rating-item]`    |
+| `[data-rfs-layer]`   | `[data-rx-rating-layer]`   |
+
+The state hooks are **unchanged**: `data-state`, `data-fill`, `data-active`, `data-disabled`,
+`data-readonly`, `data-invalid`, `data-idx`.
+
+One command, stylesheets included:
+
+```bash
+npx @rxova/codemod rx-token-prefixes --extensions css,scss,tsx,ts,jsx,js ./src
+```
+
+Pass `--dry` first to review. Running it twice is a no-op, and quote style and formatting survive
+because nothing is reparsed.
+
+Why here specifically: `rfs` was initials of a name this package no longer has —
+`react-feedback-stars` — so it was the one prefix in the suite you could not derive from the
+package you installed, and it sat one character from the file input's `--rfi-`.
+
 ## From react-rating
 
 [`react-rating`](https://www.npmjs.com/package/react-rating) (by dreyescat) uses a flexible,
@@ -29,7 +62,7 @@ if you use a different version.
 | `placeholderRating` / `placeholderSymbol` | —                                     | Use `value` + `emptyIcon`; no separate placeholder layer |
 | `onChange={(v) => …}`                     | `onChange={(v) => …}`                 | Both emit a **`number`** — no change needed              |
 | `onHover={(v) => …}`                      | `onHoverChange={(v) => …}`            | Emits `null` (not `undefined`) when the hover ends       |
-| `quiet`                                   | `--rfs-transition`                    | Control motion via CSS instead of a prop                 |
+| `quiet`                                   | `--rx-rating-transition`              | Control motion via CSS instead of a prop                 |
 
 ### Before / after
 
@@ -96,9 +129,9 @@ you use a different version.
 | `half={true}`         | `precision={0.5}`               | `half={false}` → `precision={1}`             |
 | `edit={false}`        | `readOnly` (or omit `onChange`) | Read-only equivalent                         |
 | `char="●"`            | `icon="●"`                      | Any `ReactNode` — string, emoji, SVG, or JSX |
-| `color1` (inactive)   | `--rfs-color-empty`             | A CSS custom property                        |
-| `color2` (active)     | `--rfs-color-filled`            | A CSS custom property                        |
-| `size="24px"`         | `--rfs-size: 24px`              | A CSS custom property, any unit              |
+| `color1` (inactive)   | `--rx-rating-color-empty`       | A CSS custom property                        |
+| `color2` (active)     | `--rx-rating-color-filled`      | A CSS custom property                        |
+| `size="24px"`         | `--rx-rating-size: 24px`        | A CSS custom property, any unit              |
 | `className`           | `className`                     | Same                                         |
 | `onChange={(v) => …}` | `onChange={(v) => …}`           | Both emit a **`number`** — no change needed  |
 
@@ -126,9 +159,9 @@ you use a different version.
   precision={0.5}
   onChange={setScore}
   style={{
-    ['--rfs-size' as string]: '24px',
-    ['--rfs-color-empty' as string]: '#e0e0e0',
-    ['--rfs-color-filled' as string]: '#f5a623',
+    ['--rx-rating-size' as string]: '24px',
+    ['--rx-rating-color-empty' as string]: '#e0e0e0',
+    ['--rx-rating-color-filled' as string]: '#f5a623',
   }}
 />
 ```
@@ -143,13 +176,13 @@ glyph, pass `icon="●"` (or any node).
 - **Flexible icon content.** Icons can be SVGs, images, emoji (including ZWJ sequences), or render
   functions.
 - **Exact continuous fills** with explicit `precision` and `rounding` controls.
-- **A stable styling contract** through semver-covered `--rfs-*` variables and `data-*` hooks.
+- **A stable styling contract** through semver-covered `--rx-rating-*` variables and `data-*` hooks.
 
 ### Migration notes
 
 - **Map editability to read-only state.** `edit={false}` becomes `readOnly` (or omit `onChange`).
-- **Colors move to CSS.** `color1`/`color2`/`size` become `--rfs-color-empty` /
-  `--rfs-color-filled` / `--rfs-size` — set them via `style`, a `className`, or your theme.
+- **Colors move to CSS.** `color1`/`color2`/`size` become `--rx-rating-color-empty` /
+  `--rx-rating-color-filled` / `--rx-rating-size` — set them via `style`, a `className`, or your theme.
 - **Emoji keep their own colors.** When using a colored emoji as the icon, see
   [Custom icons](/components/rating/about) for styling options.
 

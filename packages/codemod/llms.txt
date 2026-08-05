@@ -15,7 +15,9 @@
     # apply
     npx @rxova/codemod input-otp-to-otp ./src
 
-Parses `.ts`, `.tsx`, `.js`, `.jsx`. Node `>= 20.19`.
+Parses `.ts`, `.tsx`, `.js`, `.jsx`. Node `>= 20.19`. `--extensions=css,tsx,ts`
+widens the file set, which is only meaningful for a transform that rewrites text
+without parsing — `rx-token-prefixes` is the one that does.
 
 ## Transforms
 
@@ -35,6 +37,26 @@ Migrates [`input-otp`](https://github.com/guilhermerodz/input-otp) to
 | `pushPasswordManagerStrategy`, `textAlign`, `noScriptCSSFallback` | removed — there is no width hack to configure |
 
 `value`, `onChange`, `pattern` and other compatible props are left untouched.
+
+### `rx-token-prefixes`
+
+Renames the styling hooks that moved into per-component namespaces in
+`@rxova/react-otp-input` 1.0 and `@rxova/react-rating-input` 1.0.
+
+| Before | After |
+| --- | --- |
+| `--otp-*` | `--rx-otp-*` |
+| `data-otp-*` | `data-rx-otp-*` |
+| `--rfs-*` | `--rx-rating-*` |
+| `data-rfs-*` | `data-rx-rating-*` |
+
+    npx @rxova/codemod rx-token-prefixes --extensions css,scss,tsx,ts,jsx,js ./src
+
+Include the stylesheets: that is where most of these names live, and this
+transform rewrites text without parsing, so it reads a `.css` file that a normal
+codemod could not. The state hooks — `data-invalid`, `data-disabled`,
+`data-readonly`, `data-state`, `data-filled`, `data-active`, `data-fill`,
+`data-idx` — did not move and are left alone. A second run is a no-op.
 
 ## Programmatic use
 

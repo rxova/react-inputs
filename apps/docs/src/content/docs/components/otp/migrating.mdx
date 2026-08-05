@@ -4,6 +4,43 @@ sidebar:
   order: 4
 ---
 
+## Migrating to 1.0
+
+1.0 renames every styling hook. `--otp-*` becomes `--rx-otp-*` and `[data-otp-*]` becomes
+`[data-rx-otp-*]`; nothing else about the API changed, and no behaviour changed with it.
+
+| Before                 | After                     |
+| ---------------------- | ------------------------- |
+| `--otp-slot-size`      | `--rx-otp-slot-size`      |
+| `--otp-gap`            | `--rx-otp-gap`            |
+| `--otp-active-ring`    | `--rx-otp-active-ring`    |
+| `--otp-caret-color`    | `--rx-otp-caret-color`    |
+| …and the other ten     | same `--rx-otp-` prefix   |
+| `[data-otp-root]`      | `[data-rx-otp-root]`      |
+| `[data-otp-slot]`      | `[data-rx-otp-slot]`      |
+| `[data-otp-input]`     | `[data-rx-otp-input]`     |
+| `[data-otp-group]`     | `[data-rx-otp-group]`     |
+| `[data-otp-separator]` | `[data-rx-otp-separator]` |
+| `[data-otp-caret]`     | `[data-rx-otp-caret]`     |
+
+The state hooks are **unchanged**: `data-state`, `data-filled`, `data-active`, `data-disabled`,
+`data-readonly`, `data-invalid`. They mean the same thing on every input in the suite, so one
+selector should keep reaching all of them.
+
+One command, stylesheets included:
+
+```bash
+npx @rxova/codemod rx-token-prefixes --extensions css,scss,tsx,ts,jsx,js ./src
+```
+
+Pass `--dry` first to review. Running it twice is a no-op, and quote style and formatting survive
+because nothing is reparsed.
+
+Why: the old prefixes were each package's initials, which stops working at nine components —
+password and phone both reduce to `rpi`. Custom properties inherit, so setting the wrong one is
+silently inert rather than an error. `--rx-<component>-*` is collision-free by construction and is
+now enforced in CI.
+
 ## Migrating from input-otp
 
 `@rxova/react-otp-input` shares input-otp's single-input architecture, so the mental model carries over — you
@@ -60,7 +97,7 @@ first-party:
 ### Styling
 
 input-otp's `data-active` / `data-char` slot attributes map onto `[data-active]`, `[data-filled]`,
-and `[data-state]`. There is no CSS to import — style with `--otp-*` tokens instead. See
+and `[data-state]`. There is no CSS to import — style with `--rx-otp-*` tokens instead. See
 [Styling](/components/otp/about).
 
 ## Migrating from react-otp-input
@@ -79,7 +116,7 @@ change fixes a cluster of the N-input problems for free — but it also means th
 | `renderSeparator`                           | `<OtpSeparator>`                                                    | Part of the compound API                                    |
 | `inputType="number" \| "tel" \| "password"` | `mode` + `mask`                                                     | `mode="numeric"`; `mask` for password style                 |
 | `shouldAutoFocus`                           | `autoFocus`                                                         |                                                             |
-| `skipDefaultStyles`                         | _(always headless)_                                                 | No styles to skip; use `--otp-*` tokens                     |
+| `skipDefaultStyles`                         | _(always headless)_                                                 | No styles to skip; use `--rx-otp-*` tokens                  |
 | `containerStyle` / `inputStyle`             | `style` / `className` + tokens                                      |                                                             |
 | —                                           | `onComplete`, `webOTP`, `slotInteraction`, `invalid`, `placeholder` | New                                                         |
 
@@ -110,5 +147,5 @@ change fixes a cluster of the N-input problems for free — but it also means th
 
 ### Styling
 
-Replace `inputStyle` / `focusStyle` with `--otp-*` tokens and the `[data-active]` / `[data-filled]`
+Replace `inputStyle` / `focusStyle` with `--rx-otp-*` tokens and the `[data-active]` / `[data-filled]`
 hooks. See [Styling](/components/otp/about) and [Theming](/components/otp/about).

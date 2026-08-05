@@ -18,4 +18,9 @@ export const TRANSFORMS: CodemodEntry[] = [
     name: 'input-otp-to-otp',
     description: 'Migrate `input-otp` imports and usage to @rxova/react-otp-input.',
   },
+  {
+    name: 'rx-token-prefixes',
+    description:
+      'Rename 1.0 styling hooks: --otp-* / --rfs-* and data-otp-* / data-rfs-* to --rx-<name>-*. Stylesheets need the sed line in the migration guide.',
+  },
 ]

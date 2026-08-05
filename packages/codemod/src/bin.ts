@@ -48,9 +48,23 @@ const executablePath = realpathSync(process.argv[1] ?? '')
 const transformPath = resolve(dirname(executablePath), 'transforms', `${name}.cjs`)
 const dry = args.includes('--dry')
 
+/**
+ * `--extensions=css,tsx` widens the file set beyond the JS/TS default.
+ *
+ * A transform that never calls `api.jscodeshift` never parses, so it can run
+ * over stylesheets — which is exactly where `rx-token-prefixes` finds most of
+ * its work. The default stays JS/TS, because a transform that *does* parse
+ * would fail on the first `.css` file it opened.
+ */
+const extensions =
+  args
+    .find((a) => a.startsWith('--extensions'))
+    ?.split('=')[1]
+    ?.replace(/^\.+/, '') ?? 'tsx,ts,jsx,js'
+
 jscodeshift(transformPath, paths, {
   parser: 'tsx',
-  extensions: 'tsx,ts,jsx,js',
+  extensions,
   dry,
   print: dry,
   babel: true,

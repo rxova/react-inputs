@@ -31,7 +31,8 @@ npx @rxova/codemod input-otp-to-otp --dry ./src
 npx @rxova/codemod input-otp-to-otp ./src
 ```
 
-It parses `.ts` / `.tsx` / `.js` / `.jsx`.
+It parses `.ts` / `.tsx` / `.js` / `.jsx`. `--extensions=css,tsx,ts` widens that set, which only
+makes sense for a transform that rewrites text without parsing — `rx-token-prefixes` is one.
 
 ## Transforms
 
@@ -62,6 +63,30 @@ Migrates [`input-otp`](https://github.com/guilhermerodz/input-otp) usage to
   [migration guide](https://rxova.org/packages/react-inputs/components/otp/migrating/).
 
 Always review the diff (`--dry` first) and re-run your formatter afterwards.
+
+### `rx-token-prefixes`
+
+Renames the styling hooks that moved into per-component namespaces in
+`@rxova/react-otp-input` 1.0 and `@rxova/react-rating-input` 1.0.
+
+| Before       | After              |
+| ------------ | ------------------ |
+| `--otp-*`    | `--rx-otp-*`       |
+| `data-otp-*` | `data-rx-otp-*`    |
+| `--rfs-*`    | `--rx-rating-*`    |
+| `data-rfs-*` | `data-rx-rating-*` |
+
+```bash
+npx @rxova/codemod rx-token-prefixes --extensions css,scss,tsx,ts,jsx,js ./src
+```
+
+- **Include your stylesheets.** That is where most of these names live, and this transform rewrites
+  text without parsing, so it can read a `.css` file that a normal codemod could not.
+- **The state hooks are left alone** — `data-invalid`, `data-disabled`, `data-readonly`,
+  `data-state`, `data-filled`, `data-active`, `data-fill`, `data-idx` did not move, because they
+  mean the same thing on every input in the suite.
+- **Running it twice is safe.** `--rx-otp-` does not contain `--otp-`, so a second pass is a no-op.
+- Quote style and formatting survive, because nothing is reparsed or reprinted.
 
 ## Programmatic use
 
