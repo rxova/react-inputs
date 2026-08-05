@@ -75,6 +75,12 @@ Restoration is skipped when the field is not focused, because setting a selectio
 input steals focus in some engines — which would yank the page around whenever a value arrives from
 somewhere else.
 
+Deleting needs its own case. The character under the caret at a group boundary is a separator this
+component inserted, so removing it changes no digit at all: the formatter puts it straight back, the
+value comes back identical and the keystroke is dead. Backspacing through `415 555 2671` cost two
+presses at every boundary. When a deletion leaves the digit count unchanged, the digit the user was
+reaching for — behind the caret for Backspace, ahead of it for Delete — is the one that goes.
+
 ## Controlled country versus a typed calling code
 
 If `country` is controlled as `US` and the user types `+33 6 …`, the select moves to France.

@@ -218,3 +218,31 @@ export function caretForDigitIndex(formatted: string, digitsBefore: number): num
 export function digitsBeforeCaret(text: string, caret: number): number {
   return digitsOnly(text.slice(0, caret)).length
 }
+
+/**
+ * Remove the digit the user was reaching for, skipping separators.
+ *
+ * A deletion whose caret sits at a group boundary removes the *separator*, and
+ * the formatter puts it straight back on the next render: the value comes back
+ * identical and the keystroke is dead. Backspacing through `415 555 2671` cost
+ * two presses at every boundary.
+ *
+ * `step` is -1 for Backspace, which takes the digit behind the caret and lands
+ * on it, and 1 for Delete, which takes the digit ahead and leaves the caret
+ * where it is. One function rather than two mirrored ones: the pair cost more
+ * than the size budget allowed, and the asymmetry is one ternary.
+ */
+export function deleteDigit(
+  text: string,
+  caret: number,
+  step: -1 | 1,
+): { text: string; caret: number } {
+  for (let at = step < 0 ? caret - 1 : caret; at >= 0 && at < text.length; at += step) {
+    // `?? ''` is unreachable: `at` is bounded by the string's own length.
+    /* v8 ignore next */
+    if (/\d/.test(text[at] ?? '')) {
+      return { text: text.slice(0, at) + text.slice(at + 1), caret: step < 0 ? at : caret }
+    }
+  }
+  return { text, caret }
+}

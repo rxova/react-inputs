@@ -3,7 +3,7 @@
     "name": "PhoneInput (full import)",
     "path": "dist/index.mjs",
     "import": "{ PhoneInput }",
-    "limit": "4.25 kB",
+    "limit": "4.4 kB",
     "ignore": ["react", "react/jsx-runtime"]
   },
   {

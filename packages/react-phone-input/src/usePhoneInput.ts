@@ -2,7 +2,15 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent, FocusEvent } from 'react'
 import { COUNTRIES, countryByISO2, countryName, flagEmoji } from './countries'
 import type { Country } from './countries'
-import { caretForDigitIndex, digitsBeforeCaret, formatPhone, isPossible, parsePhone } from './phone'
+import {
+  caretForDigitIndex,
+  deleteDigit,
+  digitsBeforeCaret,
+  digitsOnly,
+  formatPhone,
+  isPossible,
+  parsePhone,
+} from './phone'
 import type { ParsedPhone } from './phone'
 import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect'
 import { inspectCountry, inspectCountryList, inspectLocale, inspectValue } from './warn'
@@ -260,19 +268,34 @@ export function usePhoneInput(options: UsePhoneInputOptions): UsePhoneInputResul
    * Everything hard about an as-you-type phone field is here. Formatting
    * inserts spaces, so the offset the browser reports stops meaning what it
    * meant the moment a separator appears before it. Counting digits either side
-   * of the caret is the only anchor that survives reformatting — and the
-   * backspace case has to be special-cased, because deleting the digit *before*
-   * a separator otherwise re-inserts the separator and leaves the caret
-   * apparently unmoved.
+   * of the caret is the only anchor that survives reformatting — and deletion
+   * has to be special-cased, because removing the separator *itself* changes no
+   * digit at all: the formatter re-inserts it, the value comes back identical
+   * and the keystroke is dead. A user backspacing through `415 555 2671` had to
+   * press the key twice at each group boundary.
    */
   const handleInputChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       if (disabled || readOnly) return
-      const raw = event.target.value
+      let raw = event.target.value
       // `?? raw.length` is unreachable on a `tel` input, which always reports a
       // selection. Kept for the DOM types.
       /* v8 ignore next */
-      const caret = event.target.selectionStart ?? raw.length
+      let caret = event.target.selectionStart ?? raw.length
+
+      // Same digits in, same digits out means the edit only touched a separator
+      // this component put there. `inputType` says which way the user was
+      // reaching; anything else — typing, pasting, a replaced selection — is
+      // left alone.
+      const { inputType } = event.nativeEvent as InputEvent
+      const step =
+        inputType === 'deleteContentBackward' ? -1 : inputType === 'deleteContentForward' ? 1 : 0
+      if (step !== 0 && digitsOnly(raw).length === digitsOnly(text).length) {
+        const cut = deleteDigit(raw, caret, step)
+        raw = cut.text
+        caret = cut.caret
+      }
+
       const digitsBefore = digitsBeforeCaret(raw, caret)
 
       const next = parsePhone(raw, selectedIso2)
@@ -291,7 +314,7 @@ export function usePhoneInput(options: UsePhoneInputOptions): UsePhoneInputResul
 
       report(formatted, next.country?.iso2 ?? selectedIso2)
     },
-    [disabled, readOnly, selectedIso2, isCountryControlled, onCountryChange, report],
+    [disabled, readOnly, text, selectedIso2, isCountryControlled, onCountryChange, report],
   )
 
   useIsomorphicLayoutEffect(() => {

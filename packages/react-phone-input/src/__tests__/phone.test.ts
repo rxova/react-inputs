@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   caretForDigitIndex,
+  deleteDigit,
   digitsBeforeCaret,
   digitsOnly,
   formatNational,
@@ -193,6 +194,39 @@ describe('formatPhone', () => {
     // erased the plus the instant it was typed, so the digits that followed
     // were read as a national number and the country could never change.
     expect(formatPhone(parsePhone('+'), true)).toBe('+')
+  })
+})
+
+describe('deleting past a separator', () => {
+  it('takes the digit behind a separator, not the separator', () => {
+    // The caret sits where the browser left it after removing the space, which
+    // the formatter is about to put back. Index 3 is the last digit of `415`.
+    expect(deleteDigit('415555 2671', 3, -1)).toEqual({ text: '41555 2671', caret: 2 })
+  })
+
+  it('takes an ordinary digit when one sits under the caret', () => {
+    expect(deleteDigit('415 552671', 6, -1)).toEqual({ text: '415 52671', caret: 5 })
+  })
+
+  it('leaves text with no digit behind the caret alone', () => {
+    expect(deleteDigit('+ ', 2, -1)).toEqual({ text: '+ ', caret: 2 })
+    expect(deleteDigit('415', 0, -1)).toEqual({ text: '415', caret: 0 })
+  })
+
+  it('mirrors for a forward delete, keeping the caret still', () => {
+    expect(deleteDigit('415555 2671', 3, 1)).toEqual({ text: '41555 2671', caret: 3 })
+    expect(deleteDigit('415 ', 3, 1)).toEqual({ text: '415 ', caret: 3 })
+  })
+
+  it('never changes the digit count by more than one', () => {
+    const text = '+44 20 7183 8750'
+    for (let caret = 0; caret <= text.length; caret++) {
+      const back = deleteDigit(text, caret, -1)
+      const forward = deleteDigit(text, caret, 1)
+      const original = digitsOnly(text).length
+      expect(original - digitsOnly(back.text).length).toBeLessThanOrEqual(1)
+      expect(original - digitsOnly(forward.text).length).toBeLessThanOrEqual(1)
+    }
   })
 })
 
