@@ -23,6 +23,10 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
       value,
       defaultValue,
       onChange,
+      // Reading the deprecated prop is how it keeps working after the 0.2.0
+      // migration; the component is what supports it.
+      // eslint-disable-next-line @typescript-eslint/no-deprecated
+      onValueChange,
       maximumFractionDigits,
       minimumFractionDigits,
       currencyDisplay,
@@ -51,6 +55,7 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
       value,
       defaultValue,
       onChange,
+      onValueChange,
       maximumFractionDigits,
       minimumFractionDigits,
       currencyDisplay,

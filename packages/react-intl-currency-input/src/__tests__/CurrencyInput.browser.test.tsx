@@ -402,3 +402,48 @@ describe('accessibility hooks', () => {
     await expect.poll(() => node?.tagName).toBe('INPUT')
   })
 })
+
+/* eslint-disable @typescript-eslint/no-deprecated -- the deprecated prop is the subject here. */
+describe('the 1.0 onChange rename', () => {
+  it('still fires the deprecated onValueChange, so a migration can be gradual', async () => {
+    // Kept working rather than removed: this package was the one input in the
+    // suite where `onChange` meant the DOM event, and breaking every call site
+    // at once to fix that would cost more than the inconsistency did.
+    const onValueChange = vi.fn()
+    const { container } = await render(
+      <CurrencyInput locale="en-US" currency="USD" onValueChange={onValueChange} />,
+    )
+    await userEvent.fill(container.querySelector('input')!, '12')
+
+    expect(onValueChange).toHaveBeenCalledWith(12, expect.objectContaining({ value: 12 }))
+  })
+
+  it('fires both when both are given, one call site at a time', async () => {
+    const onChange = vi.fn()
+    const onValueChange = vi.fn()
+    const { container } = await render(
+      <CurrencyInput
+        locale="en-US"
+        currency="USD"
+        onChange={onChange}
+        onValueChange={onValueChange}
+      />,
+    )
+    await userEvent.fill(container.querySelector('input')!, '5')
+
+    expect(onChange).toHaveBeenCalledWith(5, expect.objectContaining({ value: 5 }))
+    expect(onValueChange).toHaveBeenCalledWith(5, expect.objectContaining({ value: 5 }))
+  })
+
+  it('hands the raw DOM event to onNativeChange, which is where it moved', async () => {
+    const onNativeChange = vi.fn()
+    const { container } = await render(
+      <CurrencyInput locale="en-US" currency="USD" onNativeChange={onNativeChange} />,
+    )
+    await userEvent.fill(container.querySelector('input')!, '7')
+
+    expect(onNativeChange).toHaveBeenCalled()
+    expect(onNativeChange.mock.calls[0]?.[0]).toHaveProperty('target')
+  })
+})
+/* eslint-enable @typescript-eslint/no-deprecated */

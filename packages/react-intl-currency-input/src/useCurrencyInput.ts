@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent, FocusEvent, KeyboardEvent, SyntheticEvent } from 'react'
 import { flushSync } from 'react-dom'
 import { createCurrencyFormatter, resolveLocale } from './intl'
+import { devWarnOnce } from './warn'
 import type { UseCurrencyInputOptions, UseCurrencyInputResult } from './types'
 
 /** Coerce anything to a usable amount: non-finite → null. */
@@ -34,6 +35,10 @@ export function useCurrencyInput(options: UseCurrencyInputOptions): UseCurrencyI
     value: controlledValue,
     defaultValue = null,
     onChange,
+    // Reading the deprecated option is how it keeps working after the 0.2.0
+    // migration; the hook is what supports it.
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    onValueChange,
     maximumFractionDigits,
     minimumFractionDigits,
     currencyDisplay,
@@ -106,13 +111,22 @@ export function useCurrencyInput(options: UseCurrencyInputOptions): UseCurrencyI
 
   const emit = useCallback(
     (next: number | null, raw: string) => {
-      onChange?.(next, {
-        value: next,
-        formatted: formatter.format(next),
-        raw,
-      })
+      const meta = { value: next, formatted: formatter.format(next), raw }
+      onChange?.(next, meta)
+      // The 0.2.0 rename keeps the old name working so migration can be gradual.
+      // Both fire when both are given, which is what a caller migrating one call
+      // site at a time would expect.
+      if (onValueChange) {
+        if (process.env.NODE_ENV !== 'production') {
+          devWarnOnce(
+            'onValueChange',
+            '`onValueChange` was renamed to `onChange` in 0.2.0, so this component reads like the rest of the suite. It still works. `npx @rxova/codemod currency-on-change` renames it, and moves any native change handler to `onNativeChange`.',
+          )
+        }
+        onValueChange(next, meta)
+      }
     },
-    [formatter, onChange],
+    [formatter, onChange, onValueChange],
   )
 
   // ---- Caret math (live mode) ----------------------------------------------

@@ -87,6 +87,13 @@ export interface UseCurrencyInputOptions extends CurrencyInputBaseOptions {
   defaultValue?: number | null
   /** Fires on every accepted keystroke with the parsed number (or `null`). */
   onChange?: CurrencyValueChangeHandler
+  /**
+   * The same handler as `onChange`.
+   *
+   * @deprecated Renamed to `onChange` in 0.2.0. Still fires; warns once in
+   * development.
+   */
+  onValueChange?: CurrencyValueChangeHandler
 }
 
 /** Props to spread onto a native `<input>`. */
@@ -152,11 +159,30 @@ export interface CurrencyInputProps
   value?: number | null
   /** Uncontrolled initial amount. */
   defaultValue?: number | null
-  /** Fires on every accepted keystroke with the parsed number (or `null`). */
+  /**
+   * Fires on every accepted keystroke with the parsed number (or `null`) and the
+   * strings that produced it.
+   *
+   * The plain value, like every other input in the suite — see the note on
+   * {@link CurrencyInputProps.onValueChange} for why this changed.
+   */
   onChange?: CurrencyValueChangeHandler
+  /**
+   * The same handler as {@link CurrencyInputProps.onChange}.
+   *
+   * @deprecated Renamed to `onChange` in 0.2.0, so this component reads like the
+   * rest of the suite: every `onChange` emits a plain value, never an event.
+   * This one still works and still fires; it warns once in development. The raw
+   * DOM event moved to `onNativeChange`. `npx @rxova/codemod currency-on-change`
+   * renames both.
+   */
+  onValueChange?: CurrencyValueChangeHandler
   /** Marks the field invalid: sets `aria-invalid` and `data-invalid`. */
   invalid?: boolean
-  /** Forwarded native change handler; runs after the internal one. */
+  /**
+   * Forwarded native change handler; runs after the internal one. Rarely needed —
+   * `onChange` gives you the parsed value, which is what a form wants.
+   */
   onNativeChange?: ChangeEventHandler<HTMLInputElement>
   className?: string
   style?: CSSProperties

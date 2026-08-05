@@ -111,6 +111,7 @@ only on blur, with no caret management at all.
 | `value`                 | `number \| null`                                 | —                | Controlled. `null` renders an empty field.               |
 | `defaultValue`          | `number \| null`                                 | `null`           | Uncontrolled initial value.                              |
 | `onChange`              | `(value, meta) => void`                          | —                | `value` is a `number \| null`, not a DOM event.          |
+| `onValueChange`         | `(value, meta) => void`                          | —                | Deprecated alias for `onChange`.                         |
 | `onNativeChange`        | `ChangeEventHandler<HTMLInputElement>`           | —                | Forwarded DOM handler; runs after the internal one.      |
 | `maximumFractionDigits` | `number`                                         | currency default | JPY 0, EUR 2, KWD 3.                                     |
 | `minimumFractionDigits` | `number`                                         | `0`              | Set to `2` to force trailing zeros.                      |

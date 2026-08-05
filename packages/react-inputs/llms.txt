@@ -65,12 +65,12 @@ Every type is re-exported too — `CurrencyInputProps`, `RatingProps`,
 `OtpInputProps`, `PasswordInputProps`, `PhoneInputProps`, `DateInputProps`,
 `TimeInputProps`, `TagsInputProps`, `FileInputProps` and the rest.
 
-Four packages export their components and hooks by name here rather than with a
-star, because their **pure helpers** collide once merged into one namespace:
-`toISO`, `fromISO`, `compareISO` and `withinRange` mean different things in the
-date and time packages, and `attempt` / `attemptAll` mean different things in the
-tags and file packages. The widgets all come through; import those helpers from
-`@rxova/react-date-input` and friends directly.
+Exactly six names are **not** re-exported here, because they collide: `toISO`,
+`fromISO`, `compareISO` and `withinRange` mean different things in the date and
+time packages, and `attempt` / `attemptAll` mean different things in the tags and
+file packages. Import those six from `@rxova/react-date-input` and friends
+directly. Everything else — every component, hook, type and pure helper — comes
+through, and a test fails the build if a new export misses this list.
 
 ## Three mistakes to avoid
 
@@ -80,12 +80,12 @@ tags and file packages. The widgets all come through; import those helpers from
 2. **Importing a stylesheet.** There is none in any of these packages. Everything
    visual is a CSS custom property or a `data-*` hook.
 3. **Assuming one value type across the suite.** Every component emits a plain
-   value from `onChange` rather than an event, but the type follows the thing
-   being collected: `number | null` from `CurrencyInput`, `number` from
-   `Rating`, `string` from `OtpInput`, `PasswordInput` and `PhoneInput`,
-   `string | null` from `DateInput` and `TimeInput`, `string[]` from `TagsInput`
-   and `File[]` from `FileInput`. Check the component's own `llms.txt` before
-   wiring a form.
+   value from `onChange` rather than an event — that part *is* shared — but the
+   type follows the thing being collected: `number | null` from `CurrencyInput`,
+   `number` from `Rating`, `string` from `OtpInput`, `PasswordInput` and
+   `PhoneInput`, `string | null` from `DateInput` and `TimeInput`, `string[]`
+   from `TagsInput` and `File[]` from `FileInput`. Check the component's own
+   `llms.txt` before wiring a form.
 
 ## Docs
 

@@ -46,7 +46,8 @@ every native `<input>` attribute except `value`, `defaultValue`, `onChange` and
 | `value` | `number \| null` | — | Controlled amount. `null`/`undefined` render an empty field, not `"0"`. |
 | `defaultValue` | `number \| null` | — | Uncontrolled initial amount. |
 | `onChange` | `(value: number \| null, meta: CurrencyInputChange) => void` | — | Fires on every accepted keystroke. Emits the parsed value, not a DOM event. |
-| `onNativeChange` | `ChangeEventHandler<HTMLInputElement>` | — | Forwarded native handler; runs after the internal one. Rarely needed. |
+| `onValueChange` | `(value: number \| null, meta: CurrencyInputChange) => void` | — | Deprecated alias for `onChange`; still fires and warns in development. |
+| `onNativeChange` | `ChangeEventHandler<HTMLInputElement>` | — | Forwarded raw DOM event; runs after the internal handler. Rarely needed. |
 | `formatMode` | `'live' \| 'blur'` | `'live'` | `'live'` formats as you type with a stable caret; `'blur'` shows a plain number while focused. |
 | `maximumFractionDigits` | `number` | the currency's own default | JPY → 0, EUR → 2, KWD → 3. |
 | `minimumFractionDigits` | `number` | `0` | Floor on fraction digits in the formatted value. |
