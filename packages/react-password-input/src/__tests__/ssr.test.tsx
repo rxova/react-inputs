@@ -14,9 +14,9 @@ import { commonRules } from '../rules'
 describe('server rendering', () => {
   it('renders a masked field with its toggle and no DOM access', () => {
     const html = renderToStaticMarkup(<PasswordInput label="Password" />)
-    expect(html).toContain('data-rpi-root')
+    expect(html).toContain('data-rx-password-root')
     expect(html).toContain('type="password"')
-    expect(html).toContain('data-rpi-toggle')
+    expect(html).toContain('data-rx-password-toggle')
     expect(html).toContain('aria-pressed="false"')
   })
 
@@ -61,7 +61,7 @@ describe('server rendering', () => {
 
   it('omits the toggle entirely when asked', () => {
     const html = renderToStaticMarkup(<PasswordInput hideRevealToggle />)
-    expect(html).not.toContain('data-rpi-toggle')
+    expect(html).not.toContain('data-rx-password-toggle')
   })
 
   it('never emits an aria-describedby pointing at an element it did not render', () => {

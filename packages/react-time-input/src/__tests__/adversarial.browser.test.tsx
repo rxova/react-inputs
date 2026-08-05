@@ -14,7 +14,7 @@ import { fromDisplayHour, fromISO, toDayPeriod, toDisplayHour, toISO } from '../
  */
 type Seg = 'hour' | 'minute' | 'second' | 'dayPeriod'
 function seg(container: HTMLElement, type: Seg) {
-  return container.querySelector<HTMLElement>(`[data-rti-segment="${type}"]`)!
+  return container.querySelector<HTMLElement>(`[data-rx-time-segment="${type}"]`)!
 }
 function text(container: HTMLElement, type: Seg) {
   return seg(container, type).textContent
@@ -131,7 +131,7 @@ describe('hostile props', () => {
     const onWarn = vi.fn()
     const { container } = await render(<TimeInput label="Time" locale="en_US" onWarn={onWarn} />)
     // Falls back to a 24-hour HH:mm field.
-    expect(container.querySelector('[data-rti-segment="dayPeriod"]')).toBeNull()
+    expect(container.querySelector('[data-rx-time-segment="dayPeriod"]')).toBeNull()
     expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: 'locale-invalid' }))
   })
 
@@ -160,7 +160,7 @@ describe('hostile props', () => {
         onWarn={onWarn}
       />,
     )
-    expect(container.querySelector('[data-rti-root]')).not.toHaveAttribute('data-out-of-range')
+    expect(container.querySelector('[data-rx-time-root]')).not.toHaveAttribute('data-out-of-range')
     const warning = onWarn.mock.calls.map(([w]) => w).find((w) => w.code === 'min-after-max')
     expect(String(warning.message)).toContain('midnight')
   })
@@ -176,7 +176,7 @@ describe('hostile props', () => {
         onWarn={onWarn}
       />,
     )
-    expect(container.querySelector('[data-rti-root]')).not.toHaveAttribute('data-out-of-range')
+    expect(container.querySelector('[data-rx-time-root]')).not.toHaveAttribute('data-out-of-range')
     expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: 'min-unparseable' }))
   })
 })
@@ -251,7 +251,7 @@ describe('invariants', () => {
     )
     seg(container, 'dayPeriod').focus()
     await userEvent.keyboard('p')
-    const hidden = container.querySelector<HTMLInputElement>('[data-rti-value]')!
+    const hidden = container.querySelector<HTMLInputElement>('[data-rx-time-value]')!
     // The field shows 09:30 PM; the form must post 21:30, not 09:30.
     expect(text(container, 'hour')).toBe('09')
     expect(text(container, 'dayPeriod')).toBe('PM')
@@ -265,7 +265,7 @@ describe('invariants', () => {
         <TimeInput label="To" locale="en-GB" defaultValue="17:00" />
       </>,
     )
-    const roots = container.querySelectorAll<HTMLElement>('[data-rti-root]')
+    const roots = container.querySelectorAll<HTMLElement>('[data-rx-time-root]')
     seg(roots[0]!, 'hour').focus()
     await userEvent.keyboard('11')
     expect(text(roots[0]!, 'hour')).toBe('11')

@@ -184,8 +184,8 @@ export function RatingDemos({ dir = 'ltr' }: { dir?: 'ltr' | 'rtl' }) {
           <Rating value={2.5} icon={(s) => <span>{s.partial ? '◐' : s.filled ? '●' : '○'}</span>} />
         </Section>
 
-        <Section id="display-scaled" title="Sized" note="--rfs-size: 2.5rem">
-          <Rating value={3.7} style={{ ['--rfs-size' as string]: '2.5rem' }} />
+        <Section id="display-scaled" title="Sized" note="--rx-rating-size: 2.5rem">
+          <Rating value={3.7} style={{ ['--rx-rating-size' as string]: '2.5rem' }} />
         </Section>
 
         <Section id="interactive" title="Interactive" note="half steps, hover preview">

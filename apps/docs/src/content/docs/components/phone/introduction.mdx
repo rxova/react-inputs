@@ -19,7 +19,7 @@ data the browser already has.
 | Flags                  | Unicode regional indicators — six bytes of arithmetic, no images |
 | Dial codes and formats | A ~4 kB table, the one genuinely missing piece                   |
 | Runtime dependencies   | None                                                             |
-| Bundle                 | **3.9 kB** brotli                                                |
+| Bundle                 | **4.1 kB** brotli                                                |
 
 ## The observation this package is built on
 
@@ -77,7 +77,7 @@ function Signup() {
 }
 ```
 
-3.9 kB brotli, zero runtime dependencies, no stylesheet to import.
+4.1 kB brotli, zero runtime dependencies, no stylesheet to import.
 
 All sizes on this page are measured the same way: bundled with esbuild, minified, `react` external,
 brotli at quality 11. Registry `unpackedSize` is not comparable to a bundle size and is not used.

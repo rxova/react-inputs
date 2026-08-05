@@ -82,11 +82,16 @@ Also exported: the `useDateInput` hook, the segment helpers `segmentOrder`,
 ## Styling
 
 There is no stylesheet. Set CSS custom properties on any ancestor:
-`--rdi-gap`, `--rdi-segment-padding`, `--rdi-segment-radius`,
-`--rdi-literal-opacity`.
+`--rx-date-gap`, `--rx-date-segment-padding`, `--rx-date-segment-radius`,
+`--rx-date-literal-opacity`, `--rx-date-focus-ring`,
+`--rx-date-focus-ring-offset`.
+
+The focused segment paints a ring by default (`2px solid Highlight`), because a
+`<span role="spinbutton">` gets none from the browser. Restyle it through those
+two properties rather than removing it.
 
 Or target the `data-*` attributes, which are public API covered by semver:
-`data-rdi-root`, `data-rdi-segment` (`day` / `month` / `year`), `data-rdi-value`,
+`data-rx-date-root`, `data-rx-date-segment` (`day` / `month` / `year`), `data-rx-date-value`,
 plus the state hooks `data-complete`, `data-out-of-range`, `data-placeholder`,
 `data-focused`, `data-disabled`, `data-readonly`, `data-invalid`.
 

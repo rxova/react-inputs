@@ -11,16 +11,16 @@ almost certainly replacing _two_ things: the bar, and whatever input you paired 
 
 ### Props
 
-| react-password-strength-bar | @rxova/react-password-input     | Notes                                                                     |
-| --------------------------- | ------------------------------- | ------------------------------------------------------------------------- |
-| `password`                  | `value` / `defaultValue`        | The component owns the input too                                          |
-| `onChangeScore`             | `onValidityChange` + `minScore` | Or read `strength` from the headless hook                                 |
-| `minLength`                 | `minLength`                     | Also drives the default rule and native `minlength`                       |
-| `scoreWords`                | `strengthLabel`                 | A function of the whole `PasswordStrength`, not an array                  |
-| `shortScoreWord`            | —                               | A short password reports the `too-short` penalty and is capped at score 1 |
-| `barColors`                 | `--rpi-meter-fill-1`…`-4`       | CSS custom properties, not props                                          |
-| `scoreWordClassName`        | `[data-rpi-strength-label]`     | Style by attribute                                                        |
-| `style` / `className`       | `style` / `className`           | On the root                                                               |
+| react-password-strength-bar | @rxova/react-password-input         | Notes                                                                     |
+| --------------------------- | ----------------------------------- | ------------------------------------------------------------------------- |
+| `password`                  | `value` / `defaultValue`            | The component owns the input too                                          |
+| `onChangeScore`             | `onValidityChange` + `minScore`     | Or read `strength` from the headless hook                                 |
+| `minLength`                 | `minLength`                         | Also drives the default rule and native `minlength`                       |
+| `scoreWords`                | `strengthLabel`                     | A function of the whole `PasswordStrength`, not an array                  |
+| `shortScoreWord`            | —                                   | A short password reports the `too-short` penalty and is capped at score 1 |
+| `barColors`                 | `--rx-password-meter-fill-1`…`-4`   | CSS custom properties, not props                                          |
+| `scoreWordClassName`        | `[data-rx-password-strength-label]` | Style by attribute                                                        |
+| `style` / `className`       | `style` / `className`               | On the root                                                               |
 
 ### Before
 

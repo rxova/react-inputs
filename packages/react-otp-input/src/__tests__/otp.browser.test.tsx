@@ -14,7 +14,7 @@ function input(): HTMLInputElement {
 
 /** Visible characters, read from the painted slots — what the user actually sees. */
 function slotChars(container: HTMLElement): string[] {
-  return [...container.querySelectorAll('[data-otp-slot]')].map((el) => el.textContent ?? '')
+  return [...container.querySelectorAll('[data-rx-otp-slot]')].map((el) => el.textContent ?? '')
 }
 
 /** Dispatch a real paste carrying `text`, exercising the onPaste path (not just an input event). */
@@ -36,7 +36,7 @@ describe('rendering', () => {
   it('renders one textbox and `length` decorative slots', async () => {
     const { container } = await render(<OtpInput length={6} label="Code" />)
     await expect.element(page.getByRole('textbox')).toBeInTheDocument()
-    expect(container.querySelectorAll('[data-otp-slot]')).toHaveLength(6)
+    expect(container.querySelectorAll('[data-rx-otp-slot]')).toHaveLength(6)
     // Exactly one accessible field — never "1 of 6" repeated.
     expect(page.getByRole('textbox').elements()).toHaveLength(1)
   })
@@ -44,7 +44,7 @@ describe('rendering', () => {
   it('honours a custom length', async () => {
     const { container } = await render(<OtpInput length={4} label="Code" />)
     await expect.element(page.getByRole('textbox')).toBeInTheDocument()
-    expect(container.querySelectorAll('[data-otp-slot]')).toHaveLength(4)
+    expect(container.querySelectorAll('[data-rx-otp-slot]')).toHaveLength(4)
   })
 })
 
@@ -90,7 +90,7 @@ describe('typing over a full code', () => {
     // The caret expanded into a one-character selection over the fourth slot.
     expect([el.selectionStart, el.selectionEnd]).toEqual([3, 4])
     await vi.waitFor(() => {
-      expect(container.querySelectorAll('[data-otp-slot]')[3]?.hasAttribute('data-active')).toBe(
+      expect(container.querySelectorAll('[data-rx-otp-slot]')[3]?.hasAttribute('data-active')).toBe(
         true,
       )
     })
@@ -129,7 +129,7 @@ describe('keyboard refocus', () => {
     // The caret resumes at the first empty slot...
     expect([el.selectionStart, el.selectionEnd]).toEqual([3, 3])
     await vi.waitFor(() => {
-      expect(container.querySelectorAll('[data-otp-slot]')[3]?.hasAttribute('data-active')).toBe(
+      expect(container.querySelectorAll('[data-rx-otp-slot]')[3]?.hasAttribute('data-active')).toBe(
         true,
       )
     })
@@ -320,8 +320,8 @@ describe('compound & render-prop tiers', () => {
         </OtpGroup>
       </Controlled>,
     )
-    expect(container.querySelectorAll('[data-otp-group]')).toHaveLength(2)
-    expect(container.querySelector('[data-otp-separator]')?.textContent).toBe('–')
+    expect(container.querySelectorAll('[data-rx-otp-group]')).toHaveLength(2)
+    expect(container.querySelector('[data-rx-otp-separator]')?.textContent).toBe('–')
     await input().focus()
     await userEvent.keyboard('123456')
     expect(slotChars(container)).toEqual(['1', '2', '3', '4', '5', '6'])
@@ -335,7 +335,7 @@ describe('compound & render-prop tiers', () => {
       </OtpInput>,
     )
     await expect.element(page.getByRole('textbox')).toBeInTheDocument()
-    expect(container.querySelectorAll('[data-otp-slot]')[0]?.textContent).toBe('X')
+    expect(container.querySelectorAll('[data-rx-otp-slot]')[0]?.textContent).toBe('X')
   })
 
   it('renders an out-of-range slot as empty instead of crashing', async () => {
@@ -347,7 +347,7 @@ describe('compound & render-prop tiers', () => {
       </OtpInput>,
     )
     await expect.element(page.getByRole('textbox')).toBeInTheDocument()
-    const slots = container.querySelectorAll('[data-otp-slot]')
+    const slots = container.querySelectorAll('[data-rx-otp-slot]')
     expect(slots[1]?.textContent).toBe('')
     warn.mockRestore()
   })
@@ -396,7 +396,7 @@ describe('refs', () => {
     await render(<Harness />)
     await expect.element(page.getByRole('textbox')).toBeInTheDocument()
     // The forwarded ref targets the input, so focus/select/value work on it.
-    expect(captured.fromRef?.getAttribute('data-otp-input')).toBe('')
+    expect(captured.fromRef?.getAttribute('data-rx-otp-input')).toBe('')
     captured.fromInputRef = captured.fromRef as HTMLInputElement | null
     captured.fromInputRef?.focus()
     expect(document.activeElement).toBe(captured.fromInputRef)
@@ -406,7 +406,7 @@ describe('refs', () => {
     const ref = { current: null as HTMLInputElement | null }
     await render(<OtpInput length={4} label="Code" ref={ref} />)
     await expect.element(page.getByRole('textbox')).toBeInTheDocument()
-    expect(ref.current?.getAttribute('data-otp-input')).toBe('')
+    expect(ref.current?.getAttribute('data-rx-otp-input')).toBe('')
   })
 })
 
@@ -447,7 +447,7 @@ describe('pointer focus', () => {
     // The transparent input overlays the slots, so click at the fourth slot's
     // coordinates. Engines round the caret to either side of the glyph, so the
     // assertion is about which slots activated, not the exact index.
-    const slots = [...container.querySelectorAll('[data-otp-slot]')]
+    const slots = [...container.querySelectorAll('[data-rx-otp-slot]')]
     const inputBox = input().getBoundingClientRect()
     const slotBox = slots[3]!.getBoundingClientRect()
     await userEvent.click(input(), {
@@ -481,7 +481,7 @@ describe('click-to-slot geometry', () => {
     await vi.waitFor(() => {
       expect(parseFloat(input().style.letterSpacing)).toBeGreaterThan(0)
     })
-    const slots = [...container.querySelectorAll('[data-otp-slot]')]
+    const slots = [...container.querySelectorAll('[data-rx-otp-slot]')]
     const inputBox = input().getBoundingClientRect()
     const slotBox = slots[slotIndex]!.getBoundingClientRect()
     const x =
@@ -494,7 +494,7 @@ describe('click-to-slot geometry', () => {
   }
 
   function activeIndex(container: HTMLElement): number {
-    const slots = [...container.querySelectorAll('[data-otp-slot]')]
+    const slots = [...container.querySelectorAll('[data-rx-otp-slot]')]
     return slots.findIndex((s) => s.hasAttribute('data-active'))
   }
 

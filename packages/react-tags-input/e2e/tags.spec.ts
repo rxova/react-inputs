@@ -10,9 +10,9 @@ import { expect, test } from '@playwright/test'
  * Anything needing a whole page also belongs here: tab order across a form, ids
  * unique across instances, a native submit round-trip.
  */
-const inputIn = (section: string) => `[data-testid="${section}"] [data-rtg-input]`
-const tagsIn = (section: string) => `[data-testid="${section}"] [data-rtg-tag-label]`
-const removesIn = (section: string) => `[data-testid="${section}"] [data-rtg-remove]`
+const inputIn = (section: string) => `[data-testid="${section}"] [data-rx-tags-input]`
+const tagsIn = (section: string) => `[data-testid="${section}"] [data-rx-tags-label]`
+const removesIn = (section: string) => `[data-testid="${section}"] [data-rx-tags-remove]`
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/')
@@ -60,7 +60,7 @@ test('takes two Backspaces from an empty box, not one', async ({ page }) => {
   await page.locator(inputIn('native-form')).click()
   await page.keyboard.press('Backspace')
   await expect(page.locator(tagsIn('native-form'))).toHaveCount(2)
-  await expect(page.locator(`${section} [data-rtg-remove]`).nth(1)).toBeFocused()
+  await expect(page.locator(`${section} [data-rx-tags-remove]`).nth(1)).toBeFocused()
   await page.keyboard.press('Backspace')
   await expect(page.locator(tagsIn('native-form'))).toHaveCount(1)
 })
@@ -140,7 +140,7 @@ test('leaves a refused entry in the box for the user to fix', async ({ page }) =
 })
 
 test('announces additions and removals politely', async ({ page }) => {
-  const live = page.locator('[data-testid="basic"] [data-rtg-announcement]')
+  const live = page.locator('[data-testid="basic"] [data-rx-tags-announcement]')
   await expect(live).toHaveAttribute('aria-live', 'polite')
   await page.locator(inputIn('basic')).click()
   await page.keyboard.type('react')

@@ -24,9 +24,9 @@ test('the whole demo page is free of WCAG A/AA violations', async ({ page }) => 
 })
 
 test('stays clean with an out-of-range time showing', async ({ page }) => {
-  await page.locator('[data-testid="range"] [data-rti-segment="hour"]').click()
+  await page.locator('[data-testid="range"] [data-rx-time-segment="hour"]').click()
   await page.keyboard.type('2030')
-  await expect(page.locator('[data-testid="range"] [data-rti-root]')).toHaveAttribute(
+  await expect(page.locator('[data-testid="range"] [data-rx-time-root]')).toHaveAttribute(
     'data-out-of-range',
     '',
   )
@@ -34,7 +34,7 @@ test('stays clean with an out-of-range time showing', async ({ page }) => {
 })
 
 test('every field is a named group', async ({ page }) => {
-  const names = await page.locator('[data-rti-root]').evaluateAll((elements) =>
+  const names = await page.locator('[data-rx-time-root]').evaluateAll((elements) =>
     elements.map((element) => {
       const labelledBy = element.getAttribute('aria-labelledby')
       return labelledBy
@@ -47,7 +47,7 @@ test('every field is a named group', async ({ page }) => {
 })
 
 test('every segment is a named spinbutton with a coherent range', async ({ page }) => {
-  const segments = await page.locator('[data-rti-segment]').evaluateAll((elements) =>
+  const segments = await page.locator('[data-rx-time-segment]').evaluateAll((elements) =>
     elements.map((element) => ({
       role: element.getAttribute('role'),
       label: element.getAttribute('aria-label'),
@@ -72,7 +72,7 @@ test('every segment is a named spinbutton with a coherent range', async ({ page 
 
 test('the day period never announces as a bare number', async ({ page }) => {
   const texts = await page
-    .locator('[data-rti-segment="dayPeriod"]')
+    .locator('[data-rx-time-segment="dayPeriod"]')
     .evaluateAll((els) => els.map((el) => el.getAttribute('aria-valuetext')))
   expect(texts.length).toBeGreaterThan(0)
   for (const text of texts) expect(text).not.toMatch(/^[01]$/)
@@ -94,7 +94,7 @@ test('every aria-labelledby and aria-describedby points at something real', asyn
 })
 
 test('the whole field can be filled without a pointer', async ({ page }) => {
-  await page.locator('[data-testid="controlled"] [data-rti-segment="hour"]').focus()
+  await page.locator('[data-testid="controlled"] [data-rx-time-segment="hour"]').focus()
   await page.keyboard.type('1145')
   await page.keyboard.press('p')
   await expect(page.getByTestId('value')).toHaveText('23:45')

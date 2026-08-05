@@ -14,10 +14,10 @@ function makeFile(name: string, type = 'text/plain') {
   return new File([new Uint8Array(10)], name, { type, lastModified: 1 })
 }
 function input(container: HTMLElement) {
-  return container.querySelector<HTMLInputElement>('[data-rfi-input]')!
+  return container.querySelector<HTMLInputElement>('[data-rx-file-input]')!
 }
 function names(container: HTMLElement) {
-  return Array.from(container.querySelectorAll('[data-rfi-name]')).map((e) => e.textContent)
+  return Array.from(container.querySelectorAll('[data-rx-file-name]')).map((e) => e.textContent)
 }
 async function pick(container: HTMLElement, files: File[]) {
   const data = new DataTransfer()
@@ -129,7 +129,7 @@ describe('render props', () => {
 
   it('renders without a label element when none is given', async () => {
     const { container } = await render(<FileInput aria-describedby="hint" />)
-    expect(container.querySelector('[data-rfi-root] > label')).toBeNull()
+    expect(container.querySelector('[data-rx-file-root] > label')).toBeNull()
   })
 
   it('accepts a custom announcer, including one that says nothing', async () => {
@@ -138,7 +138,7 @@ describe('render props', () => {
     await vi.waitFor(() => {
       expect(names(container)).toEqual(['a.txt'])
     })
-    expect(container.querySelector('[data-rfi-announcement]')?.textContent).toBe('')
+    expect(container.querySelector('[data-rx-file-announcement]')?.textContent).toBe('')
   })
 
   it('routes removals and clears through the custom announcer too', async () => {
@@ -390,14 +390,14 @@ describe('refs and the headless hook', () => {
     const { container } = await render(<FileInput label="Files" disabled />)
     const data = new DataTransfer()
     data.items.add(makeFile('a.txt'))
-    const target = container.querySelector('[data-rfi-zone]')!
+    const target = container.querySelector('[data-rx-file-zone]')!
     target.dispatchEvent(
       new DragEvent('dragover', { dataTransfer: data, bubbles: true, cancelable: true }),
     )
     target.dispatchEvent(
       new DragEvent('dragleave', { dataTransfer: data, bubbles: true, cancelable: true }),
     )
-    expect(container.querySelector('[data-rfi-root]')).not.toHaveAttribute('data-dragging')
+    expect(container.querySelector('[data-rx-file-root]')).not.toHaveAttribute('data-dragging')
   })
 
   it('leaves the native value in place after a pick, and clears it on removal', async () => {
@@ -418,7 +418,7 @@ describe('refs and the headless hook', () => {
 
   it('ignores a dragleave that carries no files', async () => {
     const { container } = await render(<FileInput label="Files" />)
-    const target = container.querySelector('[data-rfi-zone]')!
+    const target = container.querySelector('[data-rx-file-zone]')!
     const withFiles = new DataTransfer()
     withFiles.items.add(makeFile('a.txt'))
     target.dispatchEvent(
@@ -431,7 +431,7 @@ describe('refs and the headless hook', () => {
     )
     // The text drag must not cancel the file drag's highlight.
     await vi.waitFor(() => {
-      expect(container.querySelector('[data-rfi-root]')).toHaveAttribute('data-dragging')
+      expect(container.querySelector('[data-rx-file-root]')).toHaveAttribute('data-dragging')
     })
   })
 })

@@ -21,13 +21,13 @@ npm install @rxova/react-time-input
 - **No popup.** A time is three short numbers. Typing `14:30` beats scrolling a column of 60.
 - **No date library.** 12/24-hour, segment order, separators and the AM/PM words all come from
   `Intl`, which every engine already ships. `react-time-picker` brings seven dependencies and
-  9.8 kB; this brings none and 3.7 kB.
+  9.8 kB; this brings none and 3.8 kB.
 - **No `Date` objects.** The value is an `HH:mm` string end to end — a time of day is not an
   instant.
 - **Midnight and noon are right.** 12 AM is hour 0, 12 PM is hour 12, and an exhaustive test sweeps
   all 24 hours to prove it.
 - **Fully keyboard-operable** — type, arrow, Home/End, auto-advance, backspace, `a`/`p`.
-- **Zero runtime dependencies**, 3.7 kB brotli, no stylesheet to import.
+- **Zero runtime dependencies**, 3.8 kB brotli, no stylesheet to import.
 
 ## Basic use
 
@@ -147,12 +147,18 @@ your form layer.
 
 There is no stylesheet to import.
 
-| Property                | Default       | Applies to           |
-| ----------------------- | ------------- | -------------------- |
-| `--rti-gap`             | `0.0625rem`   | Space between pieces |
-| `--rti-segment-padding` | `0 0.0625rem` | Inside each segment  |
-| `--rti-segment-radius`  | `0.125rem`    | Segment corners      |
-| `--rti-literal-opacity` | `0.7`         | The separators       |
+| Property                      | Default               | Applies to                  |
+| ----------------------------- | --------------------- | --------------------------- |
+| `--rx-time-gap`               | `0.0625rem`           | Space between pieces        |
+| `--rx-time-segment-padding`   | `0 0.0625rem`         | Inside each segment         |
+| `--rx-time-segment-radius`    | `0.125rem`            | Segment corners             |
+| `--rx-time-literal-opacity`   | `0.7`                 | The separators              |
+| `--rx-time-focus-ring`        | `2px solid Highlight` | Ring on the focused segment |
+| `--rx-time-focus-ring-offset` | `1px`                 | Its offset                  |
+
+The focused segment paints a ring by default. A `<span role="spinbutton">` gets none from the
+browser, so overriding these is the supported way to restyle it — removing it outright leaves a
+keyboard user unable to tell which segment they are on.
 
 ### `data-*` attributes
 
@@ -160,15 +166,15 @@ These are **public API**, covered by semver.
 
 | Attribute                         | On           | Meaning                                   |
 | --------------------------------- | ------------ | ----------------------------------------- |
-| `data-rti-root`                   | wrapper      | Always present                            |
+| `data-rx-time-root`               | wrapper      | Always present                            |
 | `data-complete`                   | wrapper      | Every needed segment filled               |
 | `data-invalid`                    | wrapper      | `invalid` prop, or out of range           |
 | `data-out-of-range`               | wrapper      | Complete but outside `min`/`max`          |
 | `data-disabled` / `data-readonly` | wrapper      | Mirrors the props                         |
-| `data-rti-segment`                | segment      | `hour`, `minute`, `second` or `dayPeriod` |
+| `data-rx-time-segment`            | segment      | `hour`, `minute`, `second` or `dayPeriod` |
 | `data-placeholder`                | segment      | The segment is empty                      |
 | `data-focused`                    | segment      | The segment has focus                     |
-| `data-rti-value`                  | hidden input | The 24-hour value a form posts            |
+| `data-rx-time-value`              | hidden input | The 24-hour value a form posts            |
 
 ## Headless
 

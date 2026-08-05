@@ -11,10 +11,10 @@ import { useTagsInput } from '../useTagsInput'
  * only observable through real events.
  */
 function box(container: HTMLElement) {
-  return container.querySelector<HTMLInputElement>('[data-rtg-input]')!
+  return container.querySelector<HTMLInputElement>('[data-rx-tags-input]')!
 }
 function labels(container: HTMLElement) {
-  return Array.from(container.querySelectorAll('[data-rtg-tag-label]')).map((e) => e.textContent)
+  return Array.from(container.querySelectorAll('[data-rx-tags-label]')).map((e) => e.textContent)
 }
 
 describe('onWarn', () => {
@@ -81,7 +81,7 @@ describe('render props and labels', () => {
         renderTag={(state) => <b data-index={state.index}>{state.tag.toUpperCase()}</b>}
       />,
     )
-    expect(container.querySelector('[data-rtg-tag-label] b')).toHaveTextContent('REACT')
+    expect(container.querySelector('[data-rx-tags-label] b')).toHaveTextContent('REACT')
     // The remove button is still named after the real tag, not the rendering.
     await expect.element(page.getByRole('button', { name: 'Remove react' })).toBeInTheDocument()
   })
@@ -98,7 +98,7 @@ describe('render props and labels', () => {
         }}
       />,
     )
-    container.querySelector<HTMLButtonElement>('[data-rtg-remove]')!.focus()
+    container.querySelector<HTMLButtonElement>('[data-rx-tags-remove]')!.focus()
     await vi.waitFor(() => {
       expect(seen.some(Boolean)).toBe(true)
     })
@@ -106,7 +106,7 @@ describe('render props and labels', () => {
 
   it('renders without a label element when none is given', async () => {
     const { container } = await render(<TagsInput aria-describedby="hint" />)
-    expect(container.querySelector('[data-rtg-root] > label')).toBeNull()
+    expect(container.querySelector('[data-rx-tags-root] > label')).toBeNull()
   })
 
   it('shows a placeholder in the entry box', async () => {
@@ -126,7 +126,7 @@ describe('refs', () => {
           <button
             type="button"
             onClick={() => {
-              setTag(ref.current?.getAttribute('data-rtg-input') === '' ? 'entry' : 'other')
+              setTag(ref.current?.getAttribute('data-rx-tags-input') === '' ? 'entry' : 'other')
             }}
           >
             Read ref
@@ -268,7 +268,7 @@ describe('guards', () => {
 
   it('leaves a modified key on a tag to the browser', async () => {
     const { container } = await render(<TagsInput label="Tags" defaultValue={['a', 'b']} />)
-    const buttons = container.querySelectorAll<HTMLButtonElement>('[data-rtg-remove]')
+    const buttons = container.querySelectorAll<HTMLButtonElement>('[data-rx-tags-remove]')
     buttons[0]!.focus()
     await userEvent.keyboard('{Control>}{Backspace}{/Control}')
     expect(labels(container)).toEqual(['a', 'b'])
@@ -288,7 +288,7 @@ describe('guards', () => {
       expect(onReject).toHaveBeenCalledTimes(2)
     })
     expect(labels(container)).toEqual(['a', 'b'])
-    expect(container.querySelector('[data-rtg-announcement]')?.textContent).toBe('')
+    expect(container.querySelector('[data-rx-tags-announcement]')?.textContent).toBe('')
   })
 
   it('moves the roving stop from the active tag when none is focused', async () => {

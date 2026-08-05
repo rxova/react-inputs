@@ -15,26 +15,26 @@
   gap: 0.5rem;
 
   /* --- the component's own knobs ------------------------------------------ */
-  --otp-slot-size: 2.75rem;
-  --otp-gap: 0.5rem;
-  --otp-font: inherit;
-  --otp-font-size: 1.125rem;
-  --otp-radius: var(--radius, 0.5rem);
-  --otp-color: hsl(var(--foreground, 222 47% 11%));
-  --otp-bg: hsl(var(--background, 0 0% 100%));
-  --otp-border: 1px solid hsl(var(--border, 214 32% 91%));
-  --otp-active-ring: 2px solid hsl(var(--ring, 222 47% 11%));
-  --otp-caret-color: hsl(var(--foreground, 222 47% 11%));
-  --otp-placeholder-color: hsl(var(--muted-foreground, 215 16% 47%));
-  --otp-separator-color: hsl(var(--muted-foreground, 215 16% 47%));
-  --otp-transition: 150ms ease;
+  --rx-otp-slot-size: 2.75rem;
+  --rx-otp-gap: 0.5rem;
+  --rx-otp-font: inherit;
+  --rx-otp-font-size: 1.125rem;
+  --rx-otp-radius: var(--radius, 0.5rem);
+  --rx-otp-color: hsl(var(--foreground, 222 47% 11%));
+  --rx-otp-bg: hsl(var(--background, 0 0% 100%));
+  --rx-otp-border: 1px solid hsl(var(--border, 214 32% 91%));
+  --rx-otp-active-ring: 2px solid hsl(var(--ring, 222 47% 11%));
+  --rx-otp-caret-color: hsl(var(--foreground, 222 47% 11%));
+  --rx-otp-placeholder-color: hsl(var(--muted-foreground, 215 16% 47%));
+  --rx-otp-separator-color: hsl(var(--muted-foreground, 215 16% 47%));
+  --rx-otp-transition: 150ms ease;
 }
 
 /* An invalid field re-points the two colour knobs rather than restyling slots,
    so a custom slot layout inherits the error state for free. */
 .rx-field[data-invalid] {
-  --otp-border: 1px solid hsl(var(--destructive, 0 84% 60%));
-  --otp-active-ring: 2px solid hsl(var(--destructive, 0 84% 60%));
+  --rx-otp-border: 1px solid hsl(var(--destructive, 0 84% 60%));
+  --rx-otp-active-ring: 2px solid hsl(var(--destructive, 0 84% 60%));
 }
 
 .rx-field__label {

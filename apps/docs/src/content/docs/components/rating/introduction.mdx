@@ -51,9 +51,9 @@ to reimplement them (imperfectly). Details in [Accessibility](/components/rating
 ## Small, honest packaging
 
 - **Zero runtime dependencies.** `react` is the only peer.
-- **No stylesheet.** Only layout-critical CSS is inlined; everything visual is a `--rfs-*` custom
+- **No stylesheet.** Only layout-critical CSS is inlined; everything visual is a `--rx-rating-*` custom
   property or a `data-*` hook, both covered by semver.
-- **~2.5 kB brotli** for the full component; `useRating` is ~900 B on its own for a fully custom
+- **~2.8 kB brotli** for the full component; `useRating` is ~1.2 kB on its own for a fully custom
   renderer.
 - Dual ESM/CJS with correct types in both, verified in CI by `publint` and
   `@arethetypeswrong/cli`, plus a pack-and-import smoke test.

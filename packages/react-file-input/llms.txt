@@ -84,14 +84,14 @@ Also exported: the `useFileInput` hook and the pure helpers `attempt`,
 ## Styling
 
 There is no stylesheet. Set CSS custom properties on any ancestor:
-`--rfi-gap`, `--rfi-zone-gap`, `--rfi-zone-padding`, `--rfi-zone-radius`,
-`--rfi-zone-border`, `--rfi-zone-background`, `--rfi-row-gap`, `--rfi-file-gap`,
-`--rfi-preview-size`, `--rfi-preview-radius`, `--rfi-remove-size`.
+`--rx-file-gap`, `--rx-file-zone-gap`, `--rx-file-zone-padding`, `--rx-file-zone-radius`,
+`--rx-file-zone-border`, `--rx-file-zone-background`, `--rx-file-row-gap`, `--rx-file-list-gap`,
+`--rx-file-preview-size`, `--rx-file-preview-radius`, `--rx-file-remove-size`.
 
 Or target the `data-*` attributes, which are public API covered by semver:
-`data-rfi-root`, `data-rfi-input`, `data-rfi-zone`, `data-rfi-list`,
-`data-rfi-file`, `data-rfi-name`, `data-rfi-size`, `data-rfi-preview`,
-`data-rfi-remove`, `data-rfi-announcement`, plus the state hooks `data-dragging`,
+`data-rx-file-root`, `data-rx-file-input`, `data-rx-file-zone`, `data-rx-file-list`,
+`data-rx-file-file`, `data-rx-file-name`, `data-rx-file-size`, `data-rx-file-preview`,
+`data-rx-file-remove`, `data-rx-file-announcement`, plus the state hooks `data-dragging`,
 `data-count`, `data-full`, `data-disabled`, `data-readonly`, `data-invalid`.
 
 ## Three mistakes to avoid

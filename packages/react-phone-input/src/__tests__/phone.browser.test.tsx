@@ -10,11 +10,11 @@ import { PhoneInput } from '../PhoneInput'
  * `relatedTarget` — jsdom fakes both.
  */
 function input(container: HTMLElement) {
-  return container.querySelector<HTMLInputElement>('[data-rphi-input]')!
+  return container.querySelector<HTMLInputElement>('[data-rx-phone-input]')!
 }
 
 function select(container: HTMLElement) {
-  return container.querySelector<HTMLSelectElement>('[data-rphi-country]')!
+  return container.querySelector<HTMLSelectElement>('[data-rx-phone-country]')!
 }
 
 describe('typing', () => {
@@ -48,7 +48,7 @@ describe('typing', () => {
       '+141555',
       expect.objectContaining({ possible: false }),
     )
-    expect(container.querySelector('[data-rphi-root]')).not.toHaveAttribute('data-possible')
+    expect(container.querySelector('[data-rx-phone-root]')).not.toHaveAttribute('data-possible')
   })
 
   it('survives the plus being typed on its own, one keystroke at a time', async () => {
@@ -76,7 +76,7 @@ describe('typing', () => {
     const { container } = await render(<PhoneInput label="Phone" defaultCountry="US" />)
     await userEvent.fill(input(container), '+442071234567')
     expect(select(container).value).toBe('GB')
-    expect(container.querySelector('[data-rphi-root]')).toHaveAttribute('data-country', 'GB')
+    expect(container.querySelector('[data-rx-phone-root]')).toHaveAttribute('data-country', 'GB')
   })
 
   it('reports a country change made by typing', async () => {
@@ -188,7 +188,7 @@ describe('the country select', () => {
 
   it('can be hidden entirely', async () => {
     const { container } = await render(<PhoneInput label="Phone" hideCountrySelect />)
-    expect(container.querySelector('[data-rphi-country]')).toBeNull()
+    expect(container.querySelector('[data-rx-phone-country]')).toBeNull()
   })
 
   it('renders custom option contents', async () => {
@@ -275,7 +275,7 @@ describe('forms', () => {
 
   it('emits no hidden field without a name', async () => {
     const { container } = await render(<PhoneInput label="Phone" />)
-    expect(container.querySelector('[data-rphi-value]')).toBeNull()
+    expect(container.querySelector('[data-rx-phone-value]')).toBeNull()
   })
 
   it('forwards the ref to the input', async () => {
@@ -367,7 +367,7 @@ describe('country type-ahead', () => {
 
 describe('validity feedback', () => {
   function feedback(container: HTMLElement) {
-    return container.querySelector('[data-rphi-validity]')
+    return container.querySelector('[data-rx-phone-validity]')
   }
 
   it('says nothing before the field has been left', async () => {

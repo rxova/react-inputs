@@ -10,9 +10,9 @@ import { Rating } from '../Rating'
  * just wrote.
  */
 function fillRatio(container: HTMLElement, index: number): number {
-  const item = container.querySelector<HTMLElement>(`[data-rfs-item="${String(index)}"]`)
+  const item = container.querySelector<HTMLElement>(`[data-rx-rating-item="${String(index)}"]`)
   if (!item) throw new Error(`no item at index ${String(index)}`)
-  const fill = item.querySelector<HTMLElement>('[data-rfs-layer="fill"]')
+  const fill = item.querySelector<HTMLElement>('[data-rx-rating-layer="fill"]')
   if (!fill) throw new Error('no fill layer')
   return fill.getBoundingClientRect().width / item.getBoundingClientRect().width
 }
@@ -21,7 +21,7 @@ describe('rendering', () => {
   it('renders max icons', async () => {
     const { container } = await render(<Rating value={3} max={7} />)
     await expect.element(page.getByRole('img')).toBeInTheDocument()
-    expect(container.querySelectorAll('[data-rfs-item]')).toHaveLength(7)
+    expect(container.querySelectorAll('[data-rx-rating-item]')).toHaveLength(7)
   })
 
   it('measures a partial fill from real layout', async () => {
@@ -48,7 +48,7 @@ describe('rendering', () => {
   it('sets data-state per icon', async () => {
     const { container } = await render(<Rating value={2.5} />)
     await expect.element(page.getByRole('img')).toBeInTheDocument()
-    const states = [...container.querySelectorAll('[data-rfs-item]')].map((el) =>
+    const states = [...container.querySelectorAll('[data-rx-rating-item]')].map((el) =>
       el.getAttribute('data-state'),
     )
     expect(states).toEqual(['full', 'full', 'partial', 'empty', 'empty'])
@@ -63,7 +63,7 @@ describe('rendering', () => {
   it('never overflows its container at max', async () => {
     const { container } = await render(<Rating value={5} />)
     await expect.element(page.getByRole('img')).toBeInTheDocument()
-    const root = container.querySelector<HTMLElement>('[data-rfs-root]')!
+    const root = container.querySelector<HTMLElement>('[data-rx-rating-root]')!
     expect(root.scrollWidth).toBeLessThanOrEqual(root.clientWidth + 1)
   })
 })
@@ -86,8 +86,8 @@ describe('icon sources render identically', () => {
   it('does not squash the icon inside the clip', async () => {
     const { container } = await render(<Rating value={0.5} icon={<svg data-testid="g" />} />)
     await expect.element(page.getByRole('img')).toBeInTheDocument()
-    const item = container.querySelector<HTMLElement>('[data-rfs-item="0"]')!
-    const inner = item.querySelector<HTMLElement>('[data-rfs-layer="fill"] > span')!
+    const item = container.querySelector<HTMLElement>('[data-rx-rating-item="0"]')!
+    const inner = item.querySelector<HTMLElement>('[data-rx-rating-layer="fill"] > span')!
     // The clip is half the item wide, but the icon inside keeps full width.
     expect(inner.getBoundingClientRect().width).toBeCloseTo(item.getBoundingClientRect().width, 0)
   })
@@ -95,11 +95,11 @@ describe('icon sources render identically', () => {
   it('dims the implicit empty layer but leaves an explicit one alone', async () => {
     const implicit = await render(<Rating value={0} icon="X" />)
     await expect.element(page.getByRole('img')).toBeInTheDocument()
-    const a = implicit.container.querySelector<HTMLElement>('[data-rfs-layer="empty"]')!
+    const a = implicit.container.querySelector<HTMLElement>('[data-rx-rating-layer="empty"]')!
     expect(getComputedStyle(a).filter).not.toBe('none')
 
     const explicit = await render(<Rating value={0} icon="X" emptyIcon="O" />)
-    const b = explicit.container.querySelectorAll<HTMLElement>('[data-rfs-layer="empty"]')
+    const b = explicit.container.querySelectorAll<HTMLElement>('[data-rx-rating-layer="empty"]')
     expect(getComputedStyle(b[b.length - 1]!).filter).toBe('none')
   })
 })
@@ -108,8 +108,8 @@ describe('rtl', () => {
   it('fills from the right edge', async () => {
     const { container } = await render(<Rating value={0.5} dir="rtl" />)
     await expect.element(page.getByRole('img')).toBeInTheDocument()
-    const item = container.querySelector<HTMLElement>('[data-rfs-item="0"]')!
-    const fill = item.querySelector<HTMLElement>('[data-rfs-layer="fill"]')!
+    const item = container.querySelector<HTMLElement>('[data-rx-rating-item="0"]')!
+    const fill = item.querySelector<HTMLElement>('[data-rx-rating-layer="fill"]')!
     const itemBox = item.getBoundingClientRect()
     const fillBox = fill.getBoundingClientRect()
 
@@ -122,8 +122,8 @@ describe('rtl', () => {
   it('fills from the left edge in ltr', async () => {
     const { container } = await render(<Rating value={0.5} dir="ltr" />)
     await expect.element(page.getByRole('img')).toBeInTheDocument()
-    const item = container.querySelector<HTMLElement>('[data-rfs-item="0"]')!
-    const fill = item.querySelector<HTMLElement>('[data-rfs-layer="fill"]')!
+    const item = container.querySelector<HTMLElement>('[data-rx-rating-item="0"]')!
+    const fill = item.querySelector<HTMLElement>('[data-rx-rating-layer="fill"]')!
     expect(fill.getBoundingClientRect().left).toBeCloseTo(item.getBoundingClientRect().left, 0)
   })
 })
@@ -311,7 +311,7 @@ describe('keyboard', () => {
 describe('cursor consistency', () => {
   /** Computed cursor at the midpoint of the gap between the first two icons. */
   function gapCursor(container: HTMLElement): string {
-    const items = container.querySelectorAll<HTMLElement>('[data-rfs-item]')
+    const items = container.querySelectorAll<HTMLElement>('[data-rx-rating-item]')
     const first = items[0]!.getBoundingClientRect()
     const second = items[1]!.getBoundingClientRect()
     const el = document.elementFromPoint(
@@ -374,7 +374,7 @@ describe('uncovered API surface', () => {
     await render(<Rating value={3} ref={objectRef} />)
     await expect.element(page.getByRole('img')).toBeInTheDocument()
     expect(objectRef.current).toBeInstanceOf(HTMLElement)
-    expect(objectRef.current).toHaveAttribute('data-rfs-root')
+    expect(objectRef.current).toHaveAttribute('data-rx-rating-root')
   })
 
   it('ignores touch pointers for hover preview', async () => {

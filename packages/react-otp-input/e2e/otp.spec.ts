@@ -10,7 +10,9 @@ test.beforeEach(async ({ page }) => {
 async function slotChars(page: Page, testid: string) {
   return page.evaluate((testid) => {
     const root = document.querySelector(`[data-testid="${testid}"]`)
-    return [...(root?.querySelectorAll('[data-otp-slot]') ?? [])].map((el) => el.textContent ?? '')
+    return [...(root?.querySelectorAll('[data-rx-otp-slot]') ?? [])].map(
+      (el) => el.textContent ?? '',
+    )
   }, testid)
 }
 
@@ -18,13 +20,13 @@ test.describe('display', () => {
   test('renders one field and six slots by default', async ({ page }) => {
     const section = page.locator('[data-testid="default"]')
     await expect(section.getByRole('textbox')).toHaveCount(1)
-    await expect(section.locator('[data-otp-slot]')).toHaveCount(6)
+    await expect(section.locator('[data-rx-otp-slot]')).toHaveCount(6)
   })
 
   test('groups render a separator between two runs of slots', async ({ page }) => {
     const section = page.locator('[data-testid="grouped"]')
-    await expect(section.locator('[data-otp-group]')).toHaveCount(2)
-    await expect(section.locator('[data-otp-separator]')).toHaveText('–')
+    await expect(section.locator('[data-rx-otp-group]')).toHaveCount(2)
+    await expect(section.locator('[data-rx-otp-separator]')).toHaveText('–')
   })
 
   test('keeps every OTP row inside its card at desktop and phone widths', async ({ page }) => {
@@ -32,7 +34,7 @@ test.describe('display', () => {
       await page.setViewportSize({ width, height: 900 })
 
       const overflowingRows = await page
-        .locator('[data-otp-root]')
+        .locator('[data-rx-otp-root]')
         .evaluateAll((roots) =>
           roots.flatMap((root, index) =>
             root.scrollWidth > root.clientWidth
@@ -117,7 +119,7 @@ test.describe('typing', () => {
     // input-otp can't do (its caret only moves by arrow key). The exact index
     // depends on per-engine font metrics, so assert the tapped region, then
     // prove an in-place middle edit.
-    const box = (await section.locator('[data-otp-slot]').nth(2).boundingBox())!
+    const box = (await section.locator('[data-rx-otp-slot]').nth(2).boundingBox())!
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2)
     const caret = await field.evaluate((el) => (el as HTMLInputElement).selectionStart)
     // The glyphs are laid at the true slot pitch, so the third slot's centre
@@ -213,7 +215,7 @@ test.describe('page-level concerns', () => {
     await page.getByTestId('rtl-toggle').focus()
     await page.keyboard.press('Tab')
     const focused = await page.evaluate(() =>
-      document.activeElement?.getAttribute('data-otp-input') === '' ? 'otp-input' : 'other',
+      document.activeElement?.getAttribute('data-rx-otp-input') === '' ? 'otp-input' : 'other',
     )
     expect(focused).toBe('otp-input')
   })

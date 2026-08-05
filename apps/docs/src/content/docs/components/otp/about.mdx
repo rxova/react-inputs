@@ -104,7 +104,7 @@ const otp = useOtpInput({ length: 6, value: code, onChange: setCode })
   {otp.slots.map((s) => (
     <div key={s.index} {...otp.getSlotProps(s.index)}>
       {s.char ?? s.placeholder}
-      {s.hasFakeCaret && <span data-otp-caret />}
+      {s.hasFakeCaret && <span data-rx-otp-caret />}
     </div>
   ))}
 </div>
@@ -288,24 +288,24 @@ Set `blurOnComplete` to dismiss the mobile keyboard once the code is entered.
 
 ## Styling
 
-No stylesheet to import. Only layout-critical CSS is inlined; everything visual is a `--otp-*` custom
+No stylesheet to import. Only layout-critical CSS is inlined; everything visual is a `--rx-otp-*` custom
 property or a `data-*` hook — both covered by semver.
 
 ### Custom properties
 
-Set them on `[data-otp-root]` or any ancestor:
+Set them on `[data-rx-otp-root]` or any ancestor:
 
 ```css
-[data-otp-root] {
-  --otp-slot-size: 2.5rem;
-  --otp-gap: 0.5rem;
-  --otp-radius: 0.5rem;
-  --otp-border: 1px solid #d4d4d8;
-  --otp-color: inherit;
-  --otp-bg: transparent;
-  --otp-font-size: 1.125rem;
-  --otp-caret-color: currentColor;
-  --otp-active-ring: 2px solid Highlight;
+[data-rx-otp-root] {
+  --rx-otp-slot-size: 2.5rem;
+  --rx-otp-gap: 0.5rem;
+  --rx-otp-radius: 0.5rem;
+  --rx-otp-border: 1px solid #d4d4d8;
+  --rx-otp-color: inherit;
+  --rx-otp-bg: transparent;
+  --rx-otp-font-size: 1.125rem;
+  --rx-otp-caret-color: currentColor;
+  --rx-otp-active-ring: 2px solid Highlight;
 }
 ```
 
@@ -317,12 +317,12 @@ function Themed() {
   return (
     <div
       style={{
-        '--otp-slot-size': '3rem',
-        '--otp-radius': '0.9rem',
-        '--otp-gap': '0.4rem',
-        '--otp-border': '2px solid #5a45d6',
-        '--otp-active-ring': '3px solid #f5a623',
-        '--otp-font-size': '1.4rem',
+        '--rx-otp-slot-size': '3rem',
+        '--rx-otp-radius': '0.9rem',
+        '--rx-otp-gap': '0.4rem',
+        '--rx-otp-border': '2px solid #5a45d6',
+        '--rx-otp-active-ring': '3px solid #f5a623',
+        '--rx-otp-font-size': '1.4rem',
       }}
     >
       <OtpInput length={6} value={code} onChange={setCode} label="Themed code" />
@@ -335,16 +335,16 @@ function Themed() {
 
 All covered by semver:
 
-- Structure: `[data-otp-root]`, `[data-otp-input]`, `[data-otp-slot]`, `[data-otp-group]`,
-  `[data-otp-separator]`, `[data-otp-caret]`
+- Structure: `[data-rx-otp-root]`, `[data-rx-otp-input]`, `[data-rx-otp-slot]`, `[data-rx-otp-group]`,
+  `[data-rx-otp-separator]`, `[data-rx-otp-caret]`
 - Per-slot state: `[data-state="filled" | "active" | "empty"]`, plus `[data-active]`, `[data-filled]`,
   `[data-disabled]`, `[data-readonly]`, `[data-invalid]`
 
 ```css
-[data-otp-slot][data-active] {
-  border-color: var(--otp-active-color, #5a45d6);
+[data-rx-otp-slot][data-active] {
+  border-color: var(--rx-otp-active-color, #5a45d6);
 }
-[data-otp-root][data-invalid] [data-otp-slot] {
+[data-rx-otp-root][data-invalid] [data-rx-otp-slot] {
   border-color: #c0392b;
 }
 ```
@@ -362,20 +362,20 @@ For full control over the markup, drop to the [`useOtpInput` hook](/components/o
 
 ### Theming recipes
 
-Everything visual is a `--otp-*` token or a `data-*` hook — there is no stylesheet and no theme to
+Everything visual is a `--rx-otp-*` token or a `data-*` hook — there is no stylesheet and no theme to
 override. See the token and hook lists above. A few common recipes:
 
 #### Underline slots (no boxes)
 
 ```css
-[data-otp-root] {
-  --otp-border: none;
-  --otp-radius: 0;
+[data-rx-otp-root] {
+  --rx-otp-border: none;
+  --rx-otp-radius: 0;
 }
-[data-otp-slot] {
+[data-rx-otp-slot] {
   border-bottom: 2px solid var(--rx-rule-strong);
 }
-[data-otp-slot][data-active] {
+[data-rx-otp-slot][data-active] {
   border-bottom-color: #5a45d6;
 }
 ```
@@ -383,21 +383,21 @@ override. See the token and hook lists above. A few common recipes:
 #### Filled slots
 
 ```css
-[data-otp-root] {
-  --otp-bg: #f4f4f5;
-  --otp-border: 1px solid transparent;
+[data-rx-otp-root] {
+  --rx-otp-bg: #f4f4f5;
+  --rx-otp-border: 1px solid transparent;
 }
-[data-otp-slot][data-filled] {
-  --otp-bg: #ede9fe;
+[data-rx-otp-slot][data-filled] {
+  --rx-otp-bg: #ede9fe;
 }
 ```
 
 #### Error state
 
 ```css
-[data-otp-root][data-invalid] [data-otp-slot] {
+[data-rx-otp-root][data-invalid] [data-rx-otp-slot] {
   border-color: #c0392b;
-  --otp-caret-color: #c0392b;
+  --rx-otp-caret-color: #c0392b;
 }
 ```
 

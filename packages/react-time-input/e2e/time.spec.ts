@@ -8,7 +8,7 @@ import { expect, test } from '@playwright/test'
  * across instances, a native submit round-trip) also belongs here.
  */
 const seg = (section: string, type: string) =>
-  `[data-testid="${section}"] [data-rti-segment="${type}"]`
+  `[data-testid="${section}"] [data-rx-time-segment="${type}"]`
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/')
@@ -31,9 +31,9 @@ test('honours an explicit hour12 override', async ({ page }) => {
 test('never starts or ends with a separator, in any locale', async ({ page }) => {
   for (const section of ['clock-us', 'clock-gb', 'clock-ja']) {
     const kinds = await page
-      .locator(`[data-testid="${section}"] [data-rti-root] > span`)
+      .locator(`[data-testid="${section}"] [data-rx-time-root] > span`)
       .evaluateAll((elements) =>
-        elements.map((el) => (el.hasAttribute('data-rti-segment') ? 'segment' : 'literal')),
+        elements.map((el) => (el.hasAttribute('data-rx-time-segment') ? 'segment' : 'literal')),
       )
     expect(kinds.at(0)).toBe('segment')
     expect(kinds.at(-1)).toBe('segment')
@@ -104,7 +104,7 @@ test('clears a segment with Backspace', async ({ page }) => {
 test('marks an out-of-range time without discarding it', async ({ page }) => {
   await page.locator(seg('range', 'hour')).click()
   await page.keyboard.type('2030')
-  await expect(page.locator('[data-testid="range"] [data-rti-root]')).toHaveAttribute(
+  await expect(page.locator('[data-testid="range"] [data-rx-time-root]')).toHaveAttribute(
     'data-out-of-range',
     '',
   )
@@ -114,7 +114,7 @@ test('marks an out-of-range time without discarding it', async ({ page }) => {
 test('accepts a time inside the range without marking it', async ({ page }) => {
   await page.locator(seg('range', 'hour')).click()
   await page.keyboard.type('1030')
-  await expect(page.locator('[data-testid="range"] [data-rti-root]')).not.toHaveAttribute(
+  await expect(page.locator('[data-testid="range"] [data-rx-time-root]')).not.toHaveAttribute(
     'data-out-of-range',
     '',
   )

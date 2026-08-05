@@ -29,13 +29,13 @@ describe('semantics', () => {
 
   it('names the reveal control as a toggle button', async () => {
     const { container } = await render(<PasswordInput label="Password" />)
-    const button = container.querySelector('[data-rpi-toggle]')!
+    const button = container.querySelector('[data-rx-password-toggle]')!
     expect(button.getAttribute('aria-pressed')).toBe('false')
     expect(button.getAttribute('aria-label')).toBe('Show password')
     // Points at the thing it controls, so the relationship is not implied by
     // visual adjacency alone.
     expect(button.getAttribute('aria-controls')).toBe(
-      container.querySelector('[data-rpi-input]')!.id,
+      container.querySelector('[data-rx-password-input]')!.id,
     )
   })
 
@@ -46,10 +46,10 @@ describe('semantics', () => {
         <p id="err">That password is wrong</p>
       </>,
     )
-    const input = container.querySelector('[data-rpi-input]')!
+    const input = container.querySelector('[data-rx-password-input]')!
     expect(input).toHaveAttribute('aria-invalid', 'true')
     expect(input.getAttribute('aria-describedby')).toContain('err')
-    expect(container.querySelector('[data-rpi-root]')).toHaveAttribute('data-invalid')
+    expect(container.querySelector('[data-rx-password-root]')).toHaveAttribute('data-invalid')
   })
 
   it('merges its own describedby ids with the caller-supplied one', async () => {
@@ -64,7 +64,9 @@ describe('semantics', () => {
         <p id="hint">Pick something memorable</p>
       </>,
     )
-    const described = container.querySelector('[data-rpi-input]')!.getAttribute('aria-describedby')!
+    const described = container
+      .querySelector('[data-rx-password-input]')!
+      .getAttribute('aria-describedby')!
     const ids = described.split(' ')
     expect(ids).toContain('hint')
     // Every id resolves to an element that actually exists — a dangling
@@ -76,7 +78,7 @@ describe('semantics', () => {
     const { container } = await render(
       <PasswordInput label="Password" showStrength value="k4Tm9pR2wZ" onChange={() => undefined} />,
     )
-    const meter = container.querySelector('[data-rpi-meter]')!
+    const meter = container.querySelector('[data-rx-password-meter]')!
     expect(meter).toHaveAttribute('aria-label', 'Password strength')
     // The bare number reads as "2 of 4" with no unit; valuetext is the part a
     // user can act on.
@@ -85,16 +87,16 @@ describe('semantics', () => {
 
   it('stays a disabled control rather than disappearing', async () => {
     const { container } = await render(<PasswordInput label="Password" disabled />)
-    expect(container.querySelector('[data-rpi-input]')).toBeDisabled()
+    expect(container.querySelector('[data-rx-password-input]')).toBeDisabled()
     // Still present in the tree, so the field does not silently vanish for a
     // screen-reader user working through the form.
-    expect(container.querySelector('[data-rpi-toggle]')).toBeDisabled()
+    expect(container.querySelector('[data-rx-password-toggle]')).toBeDisabled()
   })
 
   it('gives the reveal button a target big enough to hit', async () => {
     // WCAG 2.5.8 Target Size (Minimum) is 24x24 CSS pixels.
     const { container } = await render(<PasswordInput label="Password" />)
-    const box = container.querySelector('[data-rpi-toggle]')!.getBoundingClientRect()
+    const box = container.querySelector('[data-rx-password-toggle]')!.getBoundingClientRect()
     expect(box.width).toBeGreaterThanOrEqual(24)
     expect(box.height).toBeGreaterThanOrEqual(24)
   })

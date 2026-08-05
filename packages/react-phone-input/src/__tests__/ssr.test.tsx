@@ -13,9 +13,9 @@ import { PhoneInput } from '../PhoneInput'
 describe('server rendering', () => {
   it('renders the field and the country select without a DOM', () => {
     const html = renderToStaticMarkup(<PhoneInput label="Phone" countries={['GB', 'US']} />)
-    expect(html).toContain('data-rphi-root')
-    expect(html).toContain('data-rphi-input')
-    expect(html).toContain('data-rphi-country')
+    expect(html).toContain('data-rx-phone-root')
+    expect(html).toContain('data-rx-phone-input')
+    expect(html).toContain('data-rx-phone-country')
     expect(html).toContain('type="tel"')
   })
 
@@ -44,12 +44,12 @@ describe('server rendering', () => {
 
   it('omits the hidden field without a name', () => {
     const html = renderToStaticMarkup(<PhoneInput label="Phone" />)
-    expect(html).not.toContain('data-rphi-value')
+    expect(html).not.toContain('data-rx-phone-value')
   })
 
   it('omits the country select when asked', () => {
     const html = renderToStaticMarkup(<PhoneInput label="Phone" hideCountrySelect />)
-    expect(html).not.toContain('data-rphi-country')
+    expect(html).not.toContain('data-rx-phone-country')
   })
 
   it('resolves country names from Intl on the server too', () => {

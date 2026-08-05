@@ -8,7 +8,7 @@ import type { FileEntryState, FileInputProps } from './types'
 const rootStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
-  gap: 'var(--rfi-gap, 0.5rem)',
+  gap: 'var(--rx-file-gap, 0.5rem)',
   font: 'inherit',
 }
 
@@ -16,13 +16,13 @@ const zoneStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: 'var(--rfi-zone-gap, 0.5rem)',
-  padding: 'var(--rfi-zone-padding, 1rem)',
-  border: 'var(--rfi-zone-border, 1px dashed currentColor)',
-  borderRadius: 'var(--rfi-zone-radius, 0.375rem)',
+  gap: 'var(--rx-file-zone-gap, 0.5rem)',
+  padding: 'var(--rx-file-zone-padding, 1rem)',
+  border: 'var(--rx-file-zone-border, 1px dashed currentColor)',
+  borderRadius: 'var(--rx-file-zone-radius, 0.375rem)',
   font: 'inherit',
   color: 'inherit',
-  background: 'var(--rfi-zone-background, transparent)',
+  background: 'var(--rx-file-zone-background, transparent)',
   cursor: 'pointer',
   textAlign: 'center',
 }
@@ -30,7 +30,7 @@ const zoneStyle: CSSProperties = {
 const listStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
-  gap: 'var(--rfi-file-gap, 0.25rem)',
+  gap: 'var(--rx-file-list-gap, 0.25rem)',
   margin: 0,
   padding: 0,
   listStyle: 'none',
@@ -39,14 +39,14 @@ const listStyle: CSSProperties = {
 const rowStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: 'var(--rfi-row-gap, 0.5rem)',
+  gap: 'var(--rx-file-row-gap, 0.5rem)',
 }
 
 const previewStyle: CSSProperties = {
-  width: 'var(--rfi-preview-size, 2.5rem)',
-  height: 'var(--rfi-preview-size, 2.5rem)',
+  width: 'var(--rx-file-preview-size, 2.5rem)',
+  height: 'var(--rx-file-preview-size, 2.5rem)',
   objectFit: 'cover',
-  borderRadius: 'var(--rfi-preview-radius, 0.25rem)',
+  borderRadius: 'var(--rx-file-preview-radius, 0.25rem)',
   flexShrink: 0,
 }
 
@@ -56,8 +56,8 @@ const removeStyle: CSSProperties = {
   justifyContent: 'center',
   // 24px of hit area at the default font size. Below this the button fails
   // WCAG 2.5.8 Target Size (Minimum) on touch.
-  minWidth: 'var(--rfi-remove-size, 1.5rem)',
-  minHeight: 'var(--rfi-remove-size, 1.5rem)',
+  minWidth: 'var(--rx-file-remove-size, 1.5rem)',
+  minHeight: 'var(--rx-file-remove-size, 1.5rem)',
   marginInlineStart: 'auto',
   padding: 0,
   font: 'inherit',
@@ -154,7 +154,7 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
       <div
         className={className}
         style={{ ...rootStyle, ...style }}
-        data-rfi-root=""
+        data-rx-file-root=""
         data-dragging={dragging ? '' : undefined}
         data-full={full ? '' : undefined}
         data-count={files.length}
@@ -178,7 +178,7 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
             else if (ref) ref.current = node
           }}
           id={ids.input}
-          data-rfi-input=""
+          data-rx-file-input=""
           type="file"
           name={name}
           accept={accept}
@@ -207,7 +207,7 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
           // WebKit leaves buttons out of the tab order unless Full Keyboard
           // Access is on; without this the drop zone is unreachable in Safari.
           tabIndex={0}
-          data-rfi-zone=""
+          data-rx-file-zone=""
           data-dragging={dragging ? '' : undefined}
           disabled={disabled || readOnly}
           style={zoneStyle}
@@ -223,7 +223,7 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
         {entries.length === 0 ? null : (
           // A real list, so a screen reader announces "list, 3 items" before
           // reading the files.
-          <ul id={ids.list} data-rfi-list="" style={listStyle}>
+          <ul id={ids.list} data-rx-file-list="" style={listStyle}>
             {entries.map((entry, index) => {
               const state: FileEntryState = {
                 ...entry,
@@ -233,7 +233,7 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
                 readOnly,
               }
               return (
-                <li key={entry.key} data-rfi-file={index} style={rowStyle}>
+                <li key={entry.key} data-rx-file-file={index} style={rowStyle}>
                   {renderFile ? (
                     renderFile(state)
                   ) : (
@@ -241,10 +241,15 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
                       {previews && entry.preview !== undefined ? (
                         // Decorative: the file's name is right beside it, so a
                         // description here would be read twice.
-                        <img src={entry.preview} alt="" data-rfi-preview="" style={previewStyle} />
+                        <img
+                          src={entry.preview}
+                          alt=""
+                          data-rx-file-preview=""
+                          style={previewStyle}
+                        />
                       ) : null}
-                      <span data-rfi-name="">{entry.file.name}</span>
-                      <span data-rfi-size="">{state.size}</span>
+                      <span data-rx-file-name="">{entry.file.name}</span>
+                      <span data-rx-file-size="">{state.size}</span>
                     </>
                   )}
                   {readOnly ? null : (
@@ -254,7 +259,7 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
                         removeRefs.current[index] = node
                       }}
                       tabIndex={0}
-                      data-rfi-remove=""
+                      data-rx-file-remove=""
                       // Names the file, not just the action: a list of buttons
                       // all called "Remove" is unusable in a screen reader's
                       // element list, where they appear without their row.
@@ -286,7 +291,7 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
         <span
           id={ids.announcement}
           aria-live="polite"
-          data-rfi-announcement=""
+          data-rx-file-announcement=""
           style={visuallyHidden}
         >
           {announcement}

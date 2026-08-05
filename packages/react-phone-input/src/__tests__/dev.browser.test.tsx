@@ -10,11 +10,11 @@ import { PhoneInput } from '../PhoneInput'
  * the hook are only observable through real events.
  */
 function input(container: HTMLElement) {
-  return container.querySelector<HTMLInputElement>('[data-rphi-input]')!
+  return container.querySelector<HTMLInputElement>('[data-rx-phone-input]')!
 }
 
 function select(container: HTMLElement) {
-  return container.querySelector<HTMLSelectElement>('[data-rphi-country]')!
+  return container.querySelector<HTMLSelectElement>('[data-rx-phone-country]')!
 }
 
 describe('onWarn', () => {
@@ -132,7 +132,7 @@ describe('refs and labels', () => {
 
   it('renders without a label element when none is given', async () => {
     const { container } = await render(<PhoneInput aria-describedby="hint" />)
-    expect(container.querySelector('[data-rphi-root] > label')).toBeNull()
+    expect(container.querySelector('[data-rx-phone-root] > label')).toBeNull()
   })
 })
 
@@ -177,7 +177,7 @@ describe('guards', () => {
     const { container } = await render(<PhoneInput label="Phone" defaultCountry="US" />)
     await userEvent.fill(input(container), '+33612345678')
     expect(select(container).value).toBe('FR')
-    expect(container.querySelector('[data-rphi-root]')).toHaveAttribute('data-country', 'FR')
+    expect(container.querySelector('[data-rx-phone-root]')).toHaveAttribute('data-country', 'FR')
   })
 
   it('lets an explicit calling code win over a controlled country, and says so', async () => {

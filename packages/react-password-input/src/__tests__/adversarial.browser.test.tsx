@@ -32,10 +32,10 @@ describe('hostile consumer callbacks', () => {
         }}
       />,
     )
-    await userEvent.fill(container.querySelector('[data-rpi-input]')!, 'abc')
+    await userEvent.fill(container.querySelector('[data-rx-password-input]')!, 'abc')
     // The field still works; the meter falls back to the built-in estimate.
-    expect(container.querySelector('[data-rpi-input]')).toHaveValue('abc')
-    expect(container.querySelector('[data-rpi-meter]')).not.toBeNull()
+    expect(container.querySelector('[data-rx-password-input]')).toHaveValue('abc')
+    expect(container.querySelector('[data-rx-password-meter]')).not.toBeNull()
     expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: 'estimate-threw' }))
   })
 
@@ -52,11 +52,11 @@ describe('hostile consumer callbacks', () => {
         }}
       />,
     )
-    await userEvent.fill(container.querySelector('[data-rpi-input]')!, 'hunter2')
+    await userEvent.fill(container.querySelector('[data-rx-password-input]')!, 'hunter2')
     await new Promise((resolve) => setTimeout(resolve, 60))
     // Treated as "unknown", never as "safe".
-    expect(container.querySelector('[data-rpi-compromised]')).toBeNull()
-    expect(container.querySelector('[data-rpi-input]')).toHaveValue('hunter2')
+    expect(container.querySelector('[data-rx-password-compromised]')).toBeNull()
+    expect(container.querySelector('[data-rx-password-input]')).toHaveValue('hunter2')
   })
 
   it('does not fire onRevealChange when blur leaves an already-masked field', async () => {
@@ -85,7 +85,7 @@ describe('security properties the README claims', () => {
       const { container } = await render(
         <PasswordInput label="Password" showStrength rules={[commonRules.digit]} />,
       )
-      await userEvent.fill(container.querySelector('[data-rpi-input]')!, 'hunter2!A')
+      await userEvent.fill(container.querySelector('[data-rx-password-input]')!, 'hunter2!A')
       await new Promise((resolve) => setTimeout(resolve, 50))
       expect(fetchSpy).not.toHaveBeenCalled()
     } finally {
@@ -101,7 +101,7 @@ describe('security properties the README claims', () => {
     const { container } = await render(
       <PasswordInput label="Password" showStrength defaultValue={secret} />,
     )
-    const root = container.querySelector('[data-rpi-root]')!
+    const root = container.querySelector('[data-rx-password-root]')!
     for (const element of root.querySelectorAll('*')) {
       for (const attribute of element.attributes) {
         // `value` on the input itself is the field's own state, not a leak.
@@ -110,7 +110,7 @@ describe('security properties the README claims', () => {
       }
     }
     // And it is not sitting in the live region either.
-    expect(root.querySelector('[data-rpi-announcement]')!.textContent).not.toContain(secret)
+    expect(root.querySelector('[data-rx-password-announcement]')!.textContent).not.toContain(secret)
   })
 
   it('escapes markup in consumer-supplied labels instead of rendering it', async () => {
@@ -121,20 +121,20 @@ describe('security properties the README claims', () => {
         defaultValue="x"
       />,
     )
-    const input = container.querySelector<HTMLInputElement>('[data-rpi-input]')!
+    const input = container.querySelector<HTMLInputElement>('[data-rx-password-input]')!
     input.focus()
     const event = new KeyboardEvent('keydown', { key: 'a', bubbles: true })
     Object.defineProperty(event, 'getModifierState', { value: () => true })
     input.dispatchEvent(event)
     await expect.element(page.getByRole('status')).toBeInTheDocument()
     // Rendered as text, not parsed as HTML.
-    expect(container.querySelector('[data-rpi-caps-lock]')!.querySelector('img')).toBeNull()
+    expect(container.querySelector('[data-rx-password-caps-lock]')!.querySelector('img')).toBeNull()
   })
 
   it('reveals only on explicit action, never because the value changed', async () => {
     const { container } = await render(<PasswordInput label="Password" />)
-    await userEvent.fill(container.querySelector('[data-rpi-input]')!, 'whatever')
-    expect(container.querySelector('[data-rpi-input]')).toHaveAttribute('type', 'password')
+    await userEvent.fill(container.querySelector('[data-rx-password-input]')!, 'whatever')
+    expect(container.querySelector('[data-rx-password-input]')).toHaveAttribute('type', 'password')
   })
 })
 
@@ -210,7 +210,7 @@ describe('hostile input', () => {
     const { container } = await render(
       <PasswordInput label="Password" minLength={8} rules={undefined} defaultValue="🔐🔑🗝🛡" />,
     )
-    expect(container.querySelector('[data-rpi-rules]')).toBeNull()
+    expect(container.querySelector('[data-rx-password-rules]')).toBeNull()
     expect(estimateStrength('🔐🔑🗝🛡', { minLength: 8 }).penalties).toContain('too-short')
   })
 
@@ -218,7 +218,7 @@ describe('hostile input', () => {
     // NIST requires accepting at least 64 characters. The default leaves
     // maxLength unset precisely so a long passphrase is never cut in half.
     const { container } = await render(<PasswordInput label="Password" />)
-    expect(container.querySelector('[data-rpi-input]')).not.toHaveAttribute('maxlength')
+    expect(container.querySelector('[data-rx-password-input]')).not.toHaveAttribute('maxlength')
   })
 })
 
@@ -229,7 +229,7 @@ describe('state machine edges', () => {
       <PasswordInput label="Password" readOnly value="hunter2" onChange={() => undefined} />,
     )
     await page.getByRole('button', { name: 'Show password' }).click()
-    expect(container.querySelector('[data-rpi-input]')).toHaveAttribute('type', 'text')
+    expect(container.querySelector('[data-rx-password-input]')).toHaveAttribute('type', 'text')
   })
 
   it('does not run the breach check for a disabled field', async () => {
@@ -304,7 +304,7 @@ describe('state machine edges', () => {
         }
       />,
     )
-    const input = container.querySelector('[data-rpi-input]')!
+    const input = container.querySelector('[data-rx-password-input]')!
 
     await userEvent.fill(input, 'leaked-one')
     await vi.waitFor(() => {
@@ -321,6 +321,6 @@ describe('state machine edges', () => {
     resolvers.get('fresh-two')!(false)
     await new Promise((resolve) => setTimeout(resolve, 40))
 
-    expect(container.querySelector('[data-rpi-compromised]')).toBeNull()
+    expect(container.querySelector('[data-rx-password-compromised]')).toBeNull()
   })
 })

@@ -31,10 +31,10 @@ test('the whole demo page is free of WCAG A/AA violations', async ({ page }) => 
 
 test('stays clean after adding and rejecting files', async ({ page }) => {
   await page
-    .locator('[data-testid="multiple"] [data-rfi-input]')
+    .locator('[data-testid="multiple"] [data-rx-file-input]')
     .setInputFiles([textFile('a.txt'), textFile('b.txt')])
   await page
-    .locator('[data-testid="rules"] [data-rfi-input]')
+    .locator('[data-testid="rules"] [data-rx-file-input]')
     .setInputFiles([{ name: 'no.png', mimeType: 'image/png', buffer: Buffer.from([137, 80]) }])
   expect(await scan(page)).toEqual([])
 })
@@ -42,7 +42,7 @@ test('stays clean after adding and rejecting files', async ({ page }) => {
 test('every file input has an accessible name and stays in the tree', async ({ page }) => {
   // `display: none` would hide the control from assistive technology entirely;
   // the visually-hidden clip technique keeps it reachable.
-  const fields = await page.locator('[data-rfi-input]').evaluateAll((elements) =>
+  const fields = await page.locator('[data-rx-file-input]').evaluateAll((elements) =>
     elements.map((element) => ({
       label: element.id
         ? (document.querySelector(`label[for="${element.id}"]`)?.textContent ?? null)
@@ -63,7 +63,7 @@ test('every drop zone is a real button', async ({ page }) => {
   // Dragging has no keyboard equivalent, so the click path *is* the accessible
   // path — and a real button supplies Enter, Space, focus and a role for free.
   const zones = await page
-    .locator('[data-rfi-zone]')
+    .locator('[data-rx-file-zone]')
     .evaluateAll((elements) =>
       elements.map((el) => ({ tag: el.tagName, type: el.getAttribute('type') })),
     )
@@ -78,10 +78,10 @@ test('every remove button names its own file', async ({ page }) => {
   // A list of buttons all called "Remove" is unusable in a screen reader's
   // element list, where they appear stripped of their surrounding text.
   await page
-    .locator('[data-testid="multiple"] [data-rfi-input]')
+    .locator('[data-testid="multiple"] [data-rx-file-input]')
     .setInputFiles([textFile('one.txt'), textFile('two.txt')])
   const names = await page
-    .locator('[data-rfi-remove]')
+    .locator('[data-rx-file-remove]')
     .evaluateAll((elements) => elements.map((el) => el.getAttribute('aria-label')))
   expect(names.length).toBeGreaterThan(0)
   for (const name of names) {
@@ -92,9 +92,11 @@ test('every remove button names its own file', async ({ page }) => {
 
 test('every file list is a real list', async ({ page }) => {
   // So a screen reader announces "list, 2 items" before reading them.
-  await page.locator('[data-testid="multiple"] [data-rfi-input]').setInputFiles([textFile('a.txt')])
+  await page
+    .locator('[data-testid="multiple"] [data-rx-file-input]')
+    .setInputFiles([textFile('a.txt')])
   const tags = await page
-    .locator('[data-rfi-list]')
+    .locator('[data-rx-file-list]')
     .evaluateAll((elements) => elements.map((el) => el.tagName))
   expect(tags.length).toBeGreaterThan(0)
   expect(tags.every((tag) => tag === 'UL')).toBe(true)
@@ -104,7 +106,7 @@ test('every live region is polite, never assertive', async ({ page }) => {
   // Attaching a file is not an emergency; assertive would interrupt whatever
   // the user is already hearing.
   const modes = await page
-    .locator('[data-rfi-announcement]')
+    .locator('[data-rx-file-announcement]')
     .evaluateAll((els) => els.map((el) => el.getAttribute('aria-live')))
   expect(modes.length).toBeGreaterThan(0)
   expect(modes.every((mode) => mode === 'polite')).toBe(true)
@@ -117,10 +119,10 @@ test('every preview image is marked decorative', async ({ page }) => {
     'base64',
   )
   await page
-    .locator('[data-testid="previews"] [data-rfi-input]')
+    .locator('[data-testid="previews"] [data-rx-file-input]')
     .setInputFiles([{ name: 'dot.png', mimeType: 'image/png', buffer: png }])
   const alts = await page
-    .locator('[data-rfi-preview]')
+    .locator('[data-rx-file-preview]')
     .evaluateAll((els) => els.map((el) => el.getAttribute('alt')))
   expect(alts).toEqual([''])
   expect(await scan(page)).toEqual([])
@@ -128,8 +130,10 @@ test('every preview image is marked decorative', async ({ page }) => {
 
 test('every remove button meets the minimum target size', async ({ page }) => {
   // WCAG 2.5.8 Target Size (Minimum) is 24x24 CSS pixels.
-  await page.locator('[data-testid="multiple"] [data-rfi-input]').setInputFiles([textFile('a.txt')])
-  const boxes = await page.locator('[data-rfi-remove]').evaluateAll((els) =>
+  await page
+    .locator('[data-testid="multiple"] [data-rx-file-input]')
+    .setInputFiles([textFile('a.txt')])
+  const boxes = await page.locator('[data-rx-file-remove]').evaluateAll((els) =>
     els.map((el) => {
       const rect = el.getBoundingClientRect()
       return { width: rect.width, height: rect.height }
@@ -144,11 +148,11 @@ test('every remove button meets the minimum target size', async ({ page }) => {
 
 test('the field can be filled and emptied without a pointer', async ({ page }) => {
   await page
-    .locator('[data-testid="multiple"] [data-rfi-input]')
+    .locator('[data-testid="multiple"] [data-rx-file-input]')
     .setInputFiles([textFile('a.txt'), textFile('b.txt')])
-  const removes = page.locator('[data-testid="multiple"] [data-rfi-remove]')
+  const removes = page.locator('[data-testid="multiple"] [data-rx-file-remove]')
   await removes.first().focus()
   await page.keyboard.press('Enter')
   await page.keyboard.press('Enter')
-  await expect(page.locator('[data-testid="multiple"] [data-rfi-name]')).toHaveCount(0)
+  await expect(page.locator('[data-testid="multiple"] [data-rx-file-name]')).toHaveCount(0)
 })

@@ -14,11 +14,11 @@ import { digitsOnly, formatPhone, isPossible, parsePhone } from '../phone'
  * comments say which.
  */
 function input(container: HTMLElement) {
-  return container.querySelector<HTMLInputElement>('[data-rphi-input]')!
+  return container.querySelector<HTMLInputElement>('[data-rx-phone-input]')!
 }
 
 function select(container: HTMLElement) {
-  return container.querySelector<HTMLSelectElement>('[data-rphi-country]')!
+  return container.querySelector<HTMLSelectElement>('[data-rx-phone-country]')!
 }
 
 describe('hostile props', () => {
@@ -229,7 +229,7 @@ describe('invariants', () => {
       <PhoneInput label="Phone" name="phone" defaultCountry="GB" />,
     )
     await userEvent.fill(input(container), '02071234567')
-    const hidden = container.querySelector<HTMLInputElement>('[data-rphi-value]')!
+    const hidden = container.querySelector<HTMLInputElement>('[data-rx-phone-value]')!
     // The box shows grouped national digits, the form posts E.164 — but they
     // must describe the same number, or the user submits something else.
     expect(hidden.value).toBe('+442071234567')
@@ -255,7 +255,7 @@ describe('invariants', () => {
         <PhoneInput label="Work" defaultCountry="US" defaultValue="+14155552671" />
       </>,
     )
-    const boxes = container.querySelectorAll<HTMLInputElement>('[data-rphi-input]')
+    const boxes = container.querySelectorAll<HTMLInputElement>('[data-rx-phone-input]')
     expect(boxes[0]!.value).toContain('+44')
     expect(boxes[1]!.value).toContain('+1')
 

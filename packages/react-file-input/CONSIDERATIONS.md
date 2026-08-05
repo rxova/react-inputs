@@ -6,7 +6,7 @@ Decisions I made without asking, and why. Each is reversible; flag any you disag
 
 - **`@rxova/react-file-input`**, matching the sibling packages. Not "dropzone" or "uploader": it
   is a _field_, it participates in a form, and it uploads nothing.
-- Component `FileInput`, hook `useFileInput`, `data-rfi-*` attributes, warning prefix
+- Component `FileInput`, hook `useFileInput`, `data-rx-file-*` attributes, warning prefix
   `[react-file-input]`, demo on ports 5283/4183 — the next free slot in the repo's sequence.
 - Pure helpers (`attempt`, `attemptAll`, `matchesAccept`, `formatBytes`, `describeRejection`,
   `fileKey`, `extensionOf`, `isPreviewable`) are exported. They are useful for server-side

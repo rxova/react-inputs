@@ -17,10 +17,10 @@ function makeFile(name: string, type = 'text/plain') {
   return new File([new Uint8Array(10)], name, { type, lastModified: 1 })
 }
 function input(container: HTMLElement) {
-  return container.querySelector<HTMLInputElement>('[data-rfi-input]')!
+  return container.querySelector<HTMLInputElement>('[data-rx-file-input]')!
 }
 function zone(container: HTMLElement) {
-  return container.querySelector<HTMLButtonElement>('[data-rfi-zone]')!
+  return container.querySelector<HTMLButtonElement>('[data-rx-file-zone]')!
 }
 
 describe('semantics', () => {
@@ -108,7 +108,7 @@ describe('semantics', () => {
         onChange={() => undefined}
       />,
     )
-    const image = container.querySelector('[data-rfi-preview]')
+    const image = container.querySelector('[data-rx-file-preview]')
     expect(image).not.toBeNull()
     expect(image).toHaveAttribute('alt', '')
   })
@@ -118,7 +118,7 @@ describe('semantics', () => {
     const { container } = await render(
       <FileInput label="Files" value={[makeFile('a.txt')]} onChange={() => undefined} />,
     )
-    const rect = container.querySelector('[data-rfi-remove]')!.getBoundingClientRect()
+    const rect = container.querySelector('[data-rx-file-remove]')!.getBoundingClientRect()
     expect(rect.width).toBeGreaterThanOrEqual(24)
     expect(rect.height).toBeGreaterThanOrEqual(24)
   })
@@ -132,14 +132,14 @@ describe('semantics', () => {
     )
     expect(input(container)).toHaveAttribute('aria-invalid', 'true')
     expect(input(container)).toHaveAttribute('aria-describedby', 'err')
-    expect(container.querySelector('[data-rfi-root]')).toHaveAttribute('data-invalid')
+    expect(container.querySelector('[data-rx-file-root]')).toHaveAttribute('data-invalid')
   })
 
   it('announces additions and removals politely', async () => {
     const { container } = await render(
       <FileInput label="Files" multiple value={[makeFile('a.txt')]} onChange={() => undefined} />,
     )
-    const live = container.querySelector('[data-rfi-announcement]')!
+    const live = container.querySelector('[data-rx-file-announcement]')!
     expect(live).toHaveAttribute('aria-live', 'polite')
     await page.getByRole('button', { name: 'Remove a.txt' }).click()
     expect(live).toHaveTextContent('Removed a.txt')
@@ -156,7 +156,7 @@ describe('semantics', () => {
       />,
     )
     await page.getByRole('button', { name: 'Remove b.txt' }).click()
-    expect(document.activeElement).toBe(container.querySelectorAll('[data-rfi-remove]')[1])
+    expect(document.activeElement).toBe(container.querySelectorAll('[data-rx-file-remove]')[1])
     expect(document.activeElement).toHaveAttribute('aria-label', 'Remove c.txt')
   })
 
@@ -165,7 +165,7 @@ describe('semantics', () => {
       <FileInput label="Files" multiple defaultValue={[makeFile('a.txt'), makeFile('b.txt')]} />,
     )
     await page.getByRole('button', { name: 'Remove b.txt' }).click()
-    expect(document.activeElement).toBe(container.querySelector('[data-rfi-remove]'))
+    expect(document.activeElement).toBe(container.querySelector('[data-rx-file-remove]'))
   })
 
   it('returns focus to the drop zone when the list empties', async () => {
@@ -183,7 +183,7 @@ describe('semantics', () => {
       <FileInput label="Files" defaultValue={[makeFile('a.txt')]} />,
     )
     expect(zone(container).tabIndex).toBe(0)
-    expect(container.querySelector<HTMLElement>('[data-rfi-remove]')?.tabIndex).toBe(0)
+    expect(container.querySelector<HTMLElement>('[data-rx-file-remove]')?.tabIndex).toBe(0)
   })
 
   it('disables both controls together', async () => {

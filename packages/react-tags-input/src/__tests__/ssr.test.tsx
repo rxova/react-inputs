@@ -9,9 +9,9 @@ import { TagsInput } from '../TagsInput'
 describe('server rendering', () => {
   it('renders the list and the entry box without a DOM', () => {
     const html = renderToStaticMarkup(<TagsInput label="Tags" defaultValue={['react', 'vue']} />)
-    expect(html).toContain('data-rtg-root')
-    expect(html).toContain('data-rtg-list')
-    expect(html).toContain('data-rtg-input')
+    expect(html).toContain('data-rx-tags-root')
+    expect(html).toContain('data-rx-tags-list')
+    expect(html).toContain('data-rx-tags-input')
     expect(html).toContain('react')
     expect(html).toContain('vue')
   })
@@ -25,28 +25,28 @@ describe('server rendering', () => {
     const html = renderToStaticMarkup(
       <TagsInput label="Tags" name="topics" defaultValue={['a', 'b']} />,
     )
-    expect(html.match(/data-rtg-value/g)).toHaveLength(2)
+    expect(html.match(/data-rx-tags-value/g)).toHaveLength(2)
     expect(html).toContain('value="a"')
     expect(html).toContain('value="b"')
   })
 
   it('omits hidden inputs without a name', () => {
     const html = renderToStaticMarkup(<TagsInput label="Tags" defaultValue={['a']} />)
-    expect(html).not.toContain('data-rtg-value')
+    expect(html).not.toContain('data-rx-tags-value')
   })
 
   it('sanitises a controlled value server-side, not just on the client', () => {
     const html = renderToStaticMarkup(
       <TagsInput label="Tags" value={['a', 'a', '  ', 'b']} onChange={() => undefined} />,
     )
-    expect(html.match(/data-rtg-tag=/g)).toHaveLength(2)
+    expect(html.match(/data-rx-tags-tag=/g)).toHaveLength(2)
   })
 
   it('omits the remove buttons entirely while read-only', () => {
     const html = renderToStaticMarkup(
       <TagsInput label="Tags" readOnly value={['a']} onChange={() => undefined} />,
     )
-    expect(html).not.toContain('data-rtg-remove')
+    expect(html).not.toContain('data-rx-tags-remove')
   })
 
   it('gives the live region its polite role before hydration', () => {

@@ -14,7 +14,7 @@ describe('server rendering', () => {
     const html = renderToStaticMarkup(<Rating value={4.3} />)
     expect(html).toContain('role="img"')
     expect(html).toContain('aria-label="4.3 out of 5"')
-    expect(html).toContain('data-rfs-root')
+    expect(html).toContain('data-rx-rating-root')
   })
 
   it('renders the partial fill width server-side', () => {

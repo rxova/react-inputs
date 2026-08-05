@@ -22,11 +22,11 @@ npm install @rxova/react-date-input
   clicks through a month grid. This is the field for dates you already know.
 - **No date library.** Segment order, separators and month names come from `Intl`, which every
   engine already ships. `react-datepicker` brings `date-fns` and `@floating-ui` and lands at
-  40.0 kB brotli; `react-day-picker` at 17.9 kB. This is 3.2 kB and brings nothing.
+  40.0 kB brotli; `react-day-picker` at 17.9 kB. This is 3.3 kB and brings nothing.
 - **No `Date` objects, so no off-by-one.** The value is a `YYYY-MM-DD` string from end to end.
 - **Fully keyboard-operable** — type, arrow, Home/End, auto-advance, backspace.
 - **Real `spinbutton` semantics** per segment, with the month announced by name.
-- **Zero runtime dependencies**, 3.2 kB brotli, no stylesheet to import.
+- **Zero runtime dependencies**, 3.3 kB brotli, no stylesheet to import.
 
 ## Basic use
 
@@ -146,20 +146,26 @@ through `value`/`onChange` as usual.
 There is no stylesheet to import. Only layout-critical declarations are inlined; everything visual
 is a CSS custom property or a `data-*` hook.
 
-| Property                | Default       | Applies to           |
-| ----------------------- | ------------- | -------------------- |
-| `--rdi-gap`             | `0.0625rem`   | Space between pieces |
-| `--rdi-segment-padding` | `0 0.0625rem` | Inside each segment  |
-| `--rdi-segment-radius`  | `0.125rem`    | Segment corners      |
-| `--rdi-literal-opacity` | `0.7`         | The separators       |
+| Property                      | Default               | Applies to                  |
+| ----------------------------- | --------------------- | --------------------------- |
+| `--rx-date-gap`               | `0.0625rem`           | Space between pieces        |
+| `--rx-date-segment-padding`   | `0 0.0625rem`         | Inside each segment         |
+| `--rx-date-segment-radius`    | `0.125rem`            | Segment corners             |
+| `--rx-date-literal-opacity`   | `0.7`                 | The separators              |
+| `--rx-date-focus-ring`        | `2px solid Highlight` | Ring on the focused segment |
+| `--rx-date-focus-ring-offset` | `1px`                 | Its offset                  |
+
+The focused segment paints a ring by default. A `<span role="spinbutton">` gets none from the
+browser, so overriding these is the supported way to restyle it — removing it outright leaves a
+keyboard user unable to tell which of the three segments they are on.
 
 ```css
-[data-rdi-segment][data-focused] {
+[data-rx-date-segment][data-focused] {
   background: Highlight;
   color: HighlightText;
 }
 
-[data-rdi-segment][data-placeholder] {
+[data-rx-date-segment][data-placeholder] {
   opacity: 0.55;
 }
 ```
@@ -170,15 +176,15 @@ These are **public API**, covered by semver.
 
 | Attribute                         | On           | Meaning                                   |
 | --------------------------------- | ------------ | ----------------------------------------- |
-| `data-rdi-root`                   | wrapper      | Always present                            |
+| `data-rx-date-root`               | wrapper      | Always present                            |
 | `data-complete`                   | wrapper      | Every segment filled and the date is real |
 | `data-invalid`                    | wrapper      | `invalid` prop, or out of range           |
 | `data-out-of-range`               | wrapper      | Complete but outside `min`/`max`          |
 | `data-disabled` / `data-readonly` | wrapper      | Mirrors the props                         |
-| `data-rdi-segment`                | segment      | `day`, `month` or `year`                  |
+| `data-rx-date-segment`            | segment      | `day`, `month` or `year`                  |
 | `data-placeholder`                | segment      | The segment is empty                      |
 | `data-focused`                    | segment      | The segment has focus                     |
-| `data-rdi-value`                  | hidden input | The ISO value a form posts                |
+| `data-rx-date-value`              | hidden input | The ISO value a form posts                |
 
 ## Headless
 

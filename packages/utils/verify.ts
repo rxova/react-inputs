@@ -72,6 +72,10 @@ export const steps: readonly VerifyStep[] = [
   // that ships in the tarball, and both are sub-second parse passes worth doing
   // before anything expensive runs.
   { name: 'Check agent llms.txt files', script: 'check:llms' },
+  // Same neighbourhood, same reason: a styling hook outside its component's
+  // namespace is a compatibility break that nothing else in the gate would
+  // notice, and the scan is a sub-second read of the component sources.
+  { name: 'Check styling token namespaces', script: 'check:tokens' },
   { name: 'Check e2e browser list', script: 'check:browsers' },
   { name: 'Lint', script: 'lint' },
   // One Turbo invocation instead of four sequential `pnpm run`s. Turbo already

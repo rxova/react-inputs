@@ -82,12 +82,12 @@ unexpected range — and is stripped from production builds.
 
 There is no stylesheet. Set CSS custom properties on any ancestor:
 
-`--rfs-size`, `--rfs-gap`, `--rfs-color-filled`, `--rfs-color-empty`,
-`--rfs-color-hover`, `--rfs-empty-filter`, `--rfs-focus-ring`,
-`--rfs-focus-ring-offset`, `--rfs-focus-ring-radius`, `--rfs-transition`.
+`--rx-rating-size`, `--rx-rating-gap`, `--rx-rating-color-filled`, `--rx-rating-color-empty`,
+`--rx-rating-color-hover`, `--rx-rating-empty-filter`, `--rx-rating-focus-ring`,
+`--rx-rating-focus-ring-offset`, `--rx-rating-focus-ring-radius`, `--rx-rating-transition`.
 
 Or target the `data-*` attributes, which are public API covered by semver:
-`data-rfs-root`, `data-rfs-item`, `data-rfs-layer`, plus the state hooks
+`data-rx-rating-root`, `data-rx-rating-item`, `data-rx-rating-layer`, plus the state hooks
 `data-state`, `data-fill`, `data-active`, `data-disabled`, `data-readonly`,
 `data-invalid`, `data-idx`.
 
@@ -99,7 +99,7 @@ Or target the `data-*` attributes, which are public API covered by semver:
    reader should hear for a score that is being reported rather than collected.
 2. **Importing a stylesheet.** There is none. Colour and size are CSS custom
    properties — a `Rating` that renders invisible is almost always
-   `--rfs-color-filled` inheriting a background-coloured value, not a bug.
+   `--rx-rating-color-filled` inheriting a background-coloured value, not a bug.
 3. **Assuming `precision` rounds the value you pass in.** `precision` is the grid
    the *user's* input snaps to. A `value` you supply is displayed as given, at
    whatever fractional fill it implies — that is what makes a 3.7-star average

@@ -85,11 +85,11 @@ functions `parsePhone`, `formatPhone`, `formatNational`, `isPossible`,
 ## Styling
 
 There is no stylesheet. Set CSS custom properties on any ancestor:
-`--rphi-gap`, `--rphi-select-width`.
+`--rx-phone-gap`, `--rx-phone-select-width`.
 
 Or target the `data-*` attributes, which are public API covered by semver:
-`data-rphi-root`, `data-rphi-country`, `data-rphi-input`, `data-rphi-value`,
-`data-rphi-validity`, plus the state hooks `data-country`, `data-possible`,
+`data-rx-phone-root`, `data-rx-phone-country`, `data-rx-phone-input`, `data-rx-phone-value`,
+`data-rx-phone-validity`, plus the state hooks `data-country`, `data-possible`,
 `data-disabled`, `data-invalid`.
 
 ## Three mistakes to avoid

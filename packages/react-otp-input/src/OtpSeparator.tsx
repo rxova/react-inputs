@@ -3,7 +3,7 @@ import type { CSSProperties, HTMLAttributes } from 'react'
 const separatorStyle: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
-  color: 'var(--otp-separator-color, #a1a1aa)',
+  color: 'var(--rx-otp-separator-color, #a1a1aa)',
   userSelect: 'none',
 }
 
@@ -11,7 +11,7 @@ const separatorStyle: CSSProperties = {
 export function OtpSeparator({ children = '-', style, ...rest }: HTMLAttributes<HTMLSpanElement>) {
   return (
     <span
-      data-otp-separator=""
+      data-rx-otp-separator=""
       aria-hidden="true"
       style={{ ...separatorStyle, ...style }}
       {...rest}

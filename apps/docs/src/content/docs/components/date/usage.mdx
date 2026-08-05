@@ -114,21 +114,21 @@ through `value`/`onChange` as usual.
 No stylesheet to import. Everything visual is a CSS custom property or a `data-*` hook.
 
 ```css
-[data-rdi-root] {
-  --rdi-gap: 0.125rem;
-  --rdi-literal-opacity: 0.5;
+[data-rx-date-root] {
+  --rx-date-gap: 0.125rem;
+  --rx-date-literal-opacity: 0.5;
 }
 
-[data-rdi-segment][data-focused] {
+[data-rx-date-segment][data-focused] {
   background: Highlight;
   color: HighlightText;
 }
 
-[data-rdi-segment][data-placeholder] {
+[data-rx-date-segment][data-placeholder] {
   opacity: 0.55;
 }
 
-[data-rdi-root][data-out-of-range] {
+[data-rx-date-root][data-out-of-range] {
   outline: 2px solid #d64545;
 }
 ```

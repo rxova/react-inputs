@@ -74,10 +74,10 @@ main {
   font-size: 0.8rem;
   font-weight: 600;
 }
-/* The OTP field's transparent overlay input ([data-otp-input]) is positioned
+/* The OTP field's transparent overlay input ([data-rx-otp-input]) is positioned
  * to sit exactly over its slots; adding padding/border/font here would shift its
  * caret-to-glyph mapping and break spatial tap. It styles itself, so exclude it. */
-input:not([data-otp-input]),
+input:not([data-rx-otp-input]),
 select {
   padding: 0.45rem 0.6rem;
   font-size: 1rem;
@@ -87,8 +87,8 @@ select {
   color: inherit;
   font-family: inherit;
 }
-input:not([data-otp-input])[aria-invalid='true'],
-input:not([data-otp-input])[data-invalid] {
+input:not([data-rx-otp-input])[aria-invalid='true'],
+input:not([data-rx-otp-input])[data-invalid] {
   border-color: #c0392b;
   outline-color: #c0392b;
 }
@@ -151,30 +151,30 @@ output {
 
 /* Rating (react-rating-input) token additions. */
 :root {
-  --rfs-size: 1.6rem;
-  --rfs-color-filled: #f5a623;
+  --rx-rating-size: 1.6rem;
+  --rx-rating-color-filled: #f5a623;
 }
 /* Proves the focus ring is a consumer concern and is not clipped by the fill. */
-[data-rfs-root] {
-  --rfs-focus-ring: 2px solid #0066cc;
+[data-rx-rating-root] {
+  --rx-rating-focus-ring: 2px solid #0066cc;
 }
 
 /* OTP (react-otp-input) token additions. */
 :root {
-  --otp-slot-size: 2.75rem;
-  --otp-font-size: 1.25rem;
+  --rx-otp-slot-size: 2.75rem;
+  --rx-otp-font-size: 1.25rem;
 }
 /* Proves the active ring and focus styling are consumer concerns via tokens. */
-[data-otp-root] {
-  --otp-active-ring: 2px solid #0066cc;
+[data-rx-otp-root] {
+  --rx-otp-active-ring: 2px solid #0066cc;
 }
-[data-otp-root]:focus-within {
+[data-rx-otp-root]:focus-within {
   outline: none;
 }
-[data-otp-slot] {
+[data-rx-otp-slot] {
   transition: box-shadow 120ms;
 }
-[data-otp-root][data-invalid] [data-otp-slot] {
+[data-rx-otp-root][data-invalid] [data-rx-otp-slot] {
   border-color: #c0392b;
 }
 
@@ -187,7 +187,7 @@ output {
   }
 
   :root {
-    --otp-slot-size: clamp(1.75rem, 9vw, 2.25rem);
-    --otp-gap: clamp(0.25rem, 2vw, 0.5rem);
+    --rx-otp-slot-size: clamp(1.75rem, 9vw, 2.25rem);
+    --rx-otp-gap: clamp(0.25rem, 2vw, 0.5rem);
   }
 }

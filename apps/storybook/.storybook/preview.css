@@ -10,40 +10,40 @@
   color-scheme: light;
 
   /* Rating (react-rating-input) tokens. */
-  --rfs-size: 1.6rem;
-  --rfs-color-filled: #f5a623;
+  --rx-rating-size: 1.6rem;
+  --rx-rating-color-filled: #f5a623;
 
   /* OTP (react-otp-input) tokens. */
-  --otp-slot-size: 2.75rem;
-  --otp-font-size: 1.25rem;
+  --rx-otp-slot-size: 2.75rem;
+  --rx-otp-font-size: 1.25rem;
 }
 
 /* The CustomIcons rating story re-tints the filled color via the same token. */
 .hearts {
-  --rfs-color-filled: #e0245e;
+  --rx-rating-color-filled: #e0245e;
 }
 
 /* The focus/active rings are consumer concerns; provide them via tokens. */
-[data-rfs-root] {
-  --rfs-focus-ring: 2px solid #0066cc;
+[data-rx-rating-root] {
+  --rx-rating-focus-ring: 2px solid #0066cc;
 }
-[data-otp-root] {
-  --otp-active-ring: 2px solid #0066cc;
+[data-rx-otp-root] {
+  --rx-otp-active-ring: 2px solid #0066cc;
 }
-[data-otp-root]:focus-within {
+[data-rx-otp-root]:focus-within {
   outline: none;
 }
-[data-otp-slot] {
+[data-rx-otp-slot] {
   transition: box-shadow 120ms;
 }
-[data-otp-root][data-invalid] [data-otp-slot] {
+[data-rx-otp-root][data-invalid] [data-rx-otp-slot] {
   border-color: #c0392b;
 }
 
 /* Plain inputs (the currency field, form controls in stories). The OTP overlay
- * input ([data-otp-input]) positions itself over its slots and must keep its
+ * input ([data-rx-otp-input]) positions itself over its slots and must keep its
  * own metrics, so it is excluded — see demo-kit for the long version. */
-.story input:not([data-otp-input]),
+.story input:not([data-rx-otp-input]),
 .story select {
   padding: 0.45rem 0.6rem;
   font-size: 1rem;
@@ -53,8 +53,8 @@
   color: inherit;
   font-family: inherit;
 }
-.story input:not([data-otp-input])[aria-invalid='true'],
-.story input:not([data-otp-input])[data-invalid] {
+.story input:not([data-rx-otp-input])[aria-invalid='true'],
+.story input:not([data-rx-otp-input])[data-invalid] {
   border-color: #c0392b;
   outline-color: #c0392b;
 }

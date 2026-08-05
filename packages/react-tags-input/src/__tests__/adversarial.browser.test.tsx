@@ -13,13 +13,13 @@ import { attemptAll, sanitize, splitPasted } from '../tags'
  * focus and announcement invariants the README claims.
  */
 function box(container: HTMLElement) {
-  return container.querySelector<HTMLInputElement>('[data-rtg-input]')!
+  return container.querySelector<HTMLInputElement>('[data-rx-tags-input]')!
 }
 function labels(container: HTMLElement) {
-  return Array.from(container.querySelectorAll('[data-rtg-tag-label]')).map((e) => e.textContent)
+  return Array.from(container.querySelectorAll('[data-rx-tags-label]')).map((e) => e.textContent)
 }
 function removeButtons(container: HTMLElement) {
-  return Array.from(container.querySelectorAll<HTMLButtonElement>('[data-rtg-remove]'))
+  return Array.from(container.querySelectorAll<HTMLButtonElement>('[data-rx-tags-remove]'))
 }
 function paste(input: HTMLInputElement, text: string) {
   const data = new DataTransfer()
@@ -146,7 +146,7 @@ describe('hostile input', () => {
     box(container).focus()
     await userEvent.keyboard('<img src=x onerror="alert(1)">{Enter}')
     expect(labels(container)).toHaveLength(1)
-    expect(container.querySelector('[data-rtg-list] img')).toBeNull()
+    expect(container.querySelector('[data-rx-tags-list] img')).toBeNull()
   })
 
   it('handles a huge paste in linear time', async () => {
@@ -196,7 +196,7 @@ describe('hostile input', () => {
     await vi.waitFor(() => {
       expect(labels(container)).toHaveLength(5)
     })
-    const announcement = container.querySelector('[data-rtg-announcement]')!.textContent ?? ''
+    const announcement = container.querySelector('[data-rx-tags-announcement]')!.textContent ?? ''
     expect(announcement).toContain('5 tags')
     expect(announcement).not.toContain('a.')
   })
@@ -336,9 +336,9 @@ describe('invariants', () => {
     const { container } = await render(<TagsInput label="Tags" name="topics" />)
     box(container).focus()
     await userEvent.keyboard('  React  {Enter}vue{Enter}')
-    const hidden = Array.from(container.querySelectorAll<HTMLInputElement>('[data-rtg-value]')).map(
-      (input) => input.value,
-    )
+    const hidden = Array.from(
+      container.querySelectorAll<HTMLInputElement>('[data-rx-tags-value]'),
+    ).map((input) => input.value)
     expect(hidden).toEqual(labels(container))
     expect(hidden).toEqual(['React', 'vue'])
   })
@@ -350,7 +350,7 @@ describe('invariants', () => {
         <TagsInput label="Second" defaultValue={['b']} />
       </>,
     )
-    const roots = container.querySelectorAll<HTMLElement>('[data-rtg-root]')
+    const roots = container.querySelectorAll<HTMLElement>('[data-rx-tags-root]')
     box(roots[0]!).focus()
     await userEvent.keyboard('x{Enter}')
     expect(labels(roots[0]!)).toEqual(['a', 'x'])
@@ -364,6 +364,6 @@ describe('invariants', () => {
     const { container } = await render(<TagsInput label="Tags" announce={() => ''} />)
     box(container).focus()
     await userEvent.keyboard('react{Enter}')
-    expect(container.querySelector('[data-rtg-announcement]')?.textContent).toBe('')
+    expect(container.querySelector('[data-rx-tags-announcement]')?.textContent).toBe('')
   })
 })

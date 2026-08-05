@@ -11,7 +11,7 @@ import { DateInput } from '../DateInput'
  */
 
 function segment(container: HTMLElement, type: 'day' | 'month' | 'year') {
-  return container.querySelector<HTMLElement>(`[data-rdi-segment="${type}"]`)!
+  return container.querySelector<HTMLElement>(`[data-rx-date-segment="${type}"]`)!
 }
 
 function text(container: HTMLElement, type: 'day' | 'month' | 'year') {
@@ -22,15 +22,15 @@ describe('layout', () => {
   it('orders the segments by locale', async () => {
     const us = await render(<DateInput label="Date" locale="en-US" />)
     expect(
-      Array.from(us.container.querySelectorAll('[data-rdi-segment]')).map((element) =>
-        element.getAttribute('data-rdi-segment'),
+      Array.from(us.container.querySelectorAll('[data-rx-date-segment]')).map((element) =>
+        element.getAttribute('data-rx-date-segment'),
       ),
     ).toEqual(['month', 'day', 'year'])
 
     const gb = await render(<DateInput label="Date" locale="en-GB" />)
     expect(
-      Array.from(gb.container.querySelectorAll('[data-rdi-segment]')).map((element) =>
-        element.getAttribute('data-rdi-segment'),
+      Array.from(gb.container.querySelectorAll('[data-rx-date-segment]')).map((element) =>
+        element.getAttribute('data-rx-date-segment'),
       ),
     ).toEqual(['day', 'month', 'year'])
   })
@@ -350,7 +350,7 @@ describe('range', () => {
     // Reported, not swallowed: a field that silently drops what you typed is
     // indistinguishable from one that accepted it.
     expect(onChange).toHaveBeenLastCalledWith('1999-03-15')
-    expect(container.querySelector('[data-rdi-root]')).toHaveAttribute('data-out-of-range')
+    expect(container.querySelector('[data-rx-date-root]')).toHaveAttribute('data-out-of-range')
     expect(segment(container, 'day')).toHaveAttribute('aria-invalid', 'true')
   })
 
@@ -383,7 +383,7 @@ describe('range', () => {
       />,
     )
     // Neither bound applies, so a date between them is not marked invalid.
-    expect(container.querySelector('[data-rdi-root]')).not.toHaveAttribute('data-out-of-range')
+    expect(container.querySelector('[data-rx-date-root]')).not.toHaveAttribute('data-out-of-range')
   })
 })
 
@@ -452,7 +452,7 @@ describe('forms', () => {
 
   it('emits no hidden input without a name', async () => {
     const { container } = await render(<DateInput label="Date" locale="en-GB" />)
-    expect(container.querySelector('[data-rdi-value]')).toBeNull()
+    expect(container.querySelector('[data-rx-date-value]')).toBeNull()
   })
 
   it('fires onBlur only when focus leaves the whole field', async () => {

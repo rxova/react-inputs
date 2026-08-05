@@ -13,9 +13,9 @@ function makeFile(name: string, type = 'text/plain') {
 describe('server rendering', () => {
   it('renders the field and the drop zone without a DOM', () => {
     const html = renderToStaticMarkup(<FileInput label="Files" name="files" />)
-    expect(html).toContain('data-rfi-root')
-    expect(html).toContain('data-rfi-input')
-    expect(html).toContain('data-rfi-zone')
+    expect(html).toContain('data-rx-file-root')
+    expect(html).toContain('data-rx-file-input')
+    expect(html).toContain('data-rx-file-zone')
     expect(html).toContain('type="file"')
   })
 
@@ -31,10 +31,10 @@ describe('server rendering', () => {
     const html = renderToStaticMarkup(
       <FileInput label="Files" multiple defaultValue={[makeFile('a.txt'), makeFile('b.txt')]} />,
     )
-    expect(html).toContain('data-rfi-list')
+    expect(html).toContain('data-rx-file-list')
     expect(html).toContain('a.txt')
     expect(html).toContain('b.txt')
-    expect(html.match(/data-rfi-file=/g)).toHaveLength(2)
+    expect(html.match(/data-rx-file-file=/g)).toHaveLength(2)
   })
 
   it('names every remove button after its file before hydration', () => {
@@ -63,7 +63,7 @@ describe('server rendering', () => {
       />,
     )
     expect(html).not.toContain('blob:')
-    expect(html).not.toContain('data-rfi-preview')
+    expect(html).not.toContain('data-rx-file-preview')
     expect(html).toContain('photo.png')
   })
 
@@ -71,7 +71,7 @@ describe('server rendering', () => {
     const html = renderToStaticMarkup(
       <FileInput label="Files" readOnly value={[makeFile('a.txt')]} onChange={() => undefined} />,
     )
-    expect(html).not.toContain('data-rfi-remove')
+    expect(html).not.toContain('data-rx-file-remove')
   })
 
   it('marks disabled state on both controls', () => {
@@ -105,6 +105,6 @@ describe('server rendering', () => {
       />,
     )
     expect(warned).toBe(0)
-    expect(html).toContain('data-rfi-root')
+    expect(html).toContain('data-rx-file-root')
   })
 })

@@ -23,7 +23,7 @@ describe('single-input semantics', () => {
   it('hides every painted slot from the accessibility tree', async () => {
     const { container } = await render(<OtpInput length={6} value="12" label="Code" />)
     await expect.element(page.getByRole('textbox')).toBeInTheDocument()
-    const slots = container.querySelectorAll('[data-otp-slot]')
+    const slots = container.querySelectorAll('[data-rx-otp-slot]')
     expect(slots.length).toBe(6)
     for (const slot of slots) expect(slot).toHaveAttribute('aria-hidden', 'true')
   })
@@ -38,7 +38,7 @@ describe('single-input semantics', () => {
     const box = page.getByRole('textbox')
     await expect.element(box).toHaveAttribute('aria-invalid', 'true')
     await expect.element(box).toHaveAttribute('aria-describedby', 'err')
-    expect(container.querySelector('[data-otp-root]')).toHaveAttribute('data-invalid')
+    expect(container.querySelector('[data-rx-otp-root]')).toHaveAttribute('data-invalid')
   })
 
   it('stays an exposed (disabled) field rather than disappearing', async () => {
@@ -78,7 +78,7 @@ describe('focus & caret', () => {
     const { container } = await render(<OtpInput length={6} label="Code" />)
     await page.getByRole('textbox').click()
     await vi.waitFor(() => {
-      expect(container.querySelector('[data-otp-caret]')).not.toBeNull()
+      expect(container.querySelector('[data-rx-otp-caret]')).not.toBeNull()
     })
   })
 })

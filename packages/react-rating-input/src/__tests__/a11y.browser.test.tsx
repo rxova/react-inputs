@@ -18,7 +18,7 @@ describe('read-only semantics', () => {
   it('hides decorative icons from the accessibility tree', async () => {
     const { container } = await render(<Rating value={3} />)
     await expect.element(page.getByRole('img')).toBeInTheDocument()
-    const layers = container.querySelectorAll('[data-rfs-layer]')
+    const layers = container.querySelectorAll('[data-rx-rating-layer]')
     expect(layers.length).toBeGreaterThan(0)
     for (const layer of layers) expect(layer).toHaveAttribute('aria-hidden', 'true')
   })
@@ -118,7 +118,7 @@ describe('interactive semantics', () => {
       <Rating value={0} onChange={() => undefined} precision={1} />,
     )
     await userEvent.tab()
-    const focused = container.querySelector<HTMLElement>('[data-rfs-item="0"]')
+    const focused = container.querySelector<HTMLElement>('[data-rx-rating-item="0"]')
     expect(focused).not.toBeNull()
     // The ring must not be clipped away by the fill layer's overflow:hidden.
     expect(getComputedStyle(focused!).outlineStyle).not.toBe('none')
@@ -128,7 +128,7 @@ describe('interactive semantics', () => {
     const { container } = await render(
       <Rating value={0} onChange={() => undefined} precision={1} />,
     )
-    const root = container.querySelector<HTMLElement>('[data-rfs-root]')!
+    const root = container.querySelector<HTMLElement>('[data-rx-rating-root]')!
     expect(root).toHaveAttribute('tabindex', '-1')
     root.focus()
     expect(document.activeElement).toBe(root)
@@ -142,7 +142,7 @@ describe('target size', () => {
         value={0}
         onChange={() => undefined}
         precision={1}
-        style={{ ['--rfs-size' as string]: '24px' }}
+        style={{ ['--rx-rating-size' as string]: '24px' }}
       />,
     )
     await expect.element(page.getByRole('radiogroup')).toBeInTheDocument()

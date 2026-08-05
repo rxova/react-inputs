@@ -30,7 +30,7 @@ recipes, theming, WebOTP, and migration guides from other OTP libraries.
 - **Tap any slot to edit it** — the input's characters sit at their true slot pitch, so a click or tap
   lands the caret where you touched, which a collapsed single-input field physically can't do
 - **WebOTP** — programmatic SMS retrieval (`useWebOTP`) that no other OTP library ships
-- **Headless** — zero runtime dependencies, no stylesheet to import, ~3.6 kB brotli
+- **Headless** — zero runtime dependencies, no stylesheet to import, ~4.3 kB brotli
 - **Form-ready** — string `onChange`, native `name`, and first-class React Hook Form / Formik / React
   Final Form / TanStack Form recipes
 - **Correct on the seams** — formatted paste, Chrome auto-translate, IME, RTL, alphanumeric, SSR/RSC
@@ -149,18 +149,18 @@ the [form-library guide](https://rxova.org/packages/react-inputs/components/otp/
 No stylesheet to import. Layout-critical CSS is inlined; everything visual is a token or a `data-*` hook.
 
 ```css
-[data-otp-root] {
-  --otp-slot-size: 2.5rem;
-  --otp-gap: 0.5rem;
-  --otp-radius: 0.5rem;
-  --otp-border: 1px solid #d4d4d8;
-  --otp-active-ring: 2px solid Highlight;
-  --otp-caret-color: currentColor;
+[data-rx-otp-root] {
+  --rx-otp-slot-size: 2.5rem;
+  --rx-otp-gap: 0.5rem;
+  --rx-otp-radius: 0.5rem;
+  --rx-otp-border: 1px solid #d4d4d8;
+  --rx-otp-active-ring: 2px solid Highlight;
+  --rx-otp-caret-color: currentColor;
 }
 ```
 
-Stable selector hooks (semver-covered): `[data-otp-root]`, `[data-otp-input]`, `[data-otp-slot]`,
-`[data-otp-group]`, `[data-otp-separator]`, `[data-otp-caret]`, plus per-slot
+Stable selector hooks (semver-covered): `[data-rx-otp-root]`, `[data-rx-otp-input]`, `[data-rx-otp-slot]`,
+`[data-rx-otp-group]`, `[data-rx-otp-separator]`, `[data-rx-otp-caret]`, plus per-slot
 `[data-state="filled|active|empty"]`, `[data-active]`, `[data-filled]`, `[data-invalid]`.
 
 ## Accessibility

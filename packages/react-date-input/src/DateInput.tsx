@@ -22,7 +22,7 @@ const DEFAULT_LABELS: Record<DateSegment, string> = {
 const rootStyle: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 'var(--rdi-gap, 0.0625rem)',
+  gap: 'var(--rx-date-gap, 0.0625rem)',
   font: 'inherit',
   // Segments are rendered right-to-left-safe by leaning on the locale's own
   // part order rather than on writing direction, but the box still has to lay
@@ -34,8 +34,8 @@ const segmentStyle: CSSProperties = {
   // Tabular figures so the field does not reflow as digits change width, which
   // otherwise makes the separators visibly jitter while typing.
   fontVariantNumeric: 'tabular-nums',
-  padding: 'var(--rdi-segment-padding, 0 0.0625rem)',
-  borderRadius: 'var(--rdi-segment-radius, 0.125rem)',
+  padding: 'var(--rx-date-segment-padding, 0 0.0625rem)',
+  borderRadius: 'var(--rx-date-segment-radius, 0.125rem)',
   // Neither the caret nor a text selection means anything on a spinbutton: the
   // value changes wholesale, never character by character.
   caretColor: 'transparent',
@@ -43,9 +43,24 @@ const segmentStyle: CSSProperties = {
   outline: 'none',
 }
 
+/**
+ * The focused segment's ring.
+ *
+ * `outline: none` above removes the UA ring, and a `<span role="spinbutton">`
+ * gets nothing else for free — so without this a keyboard user cannot see which
+ * of the three segments they are on, which is WCAG 2.4.7 Focus Visible with no
+ * mitigation. Shipped as a custom property with a system-colour default (the
+ * shape `@rxova/react-rating-input` already uses) so a theme restyles the ring
+ * rather than losing it.
+ */
+const focusedSegmentStyle: CSSProperties = {
+  outline: 'var(--rx-date-focus-ring, 2px solid Highlight)',
+  outlineOffset: 'var(--rx-date-focus-ring-offset, 1px)',
+}
+
 const literalStyle: CSSProperties = {
   userSelect: 'none',
-  opacity: 'var(--rdi-literal-opacity, 0.7)',
+  opacity: 'var(--rx-date-literal-opacity, 0.7)',
 }
 
 /**
@@ -154,7 +169,7 @@ export const DateInput = /* @__PURE__ */ forwardRef<HTMLDivElement, DateInputPro
         ref={ref}
         className={className}
         style={{ ...rootStyle, ...style }}
-        data-rdi-root=""
+        data-rx-date-root=""
         data-disabled={disabled ? '' : undefined}
         data-readonly={readOnly ? '' : undefined}
         data-invalid={isInvalid ? '' : undefined}
@@ -210,7 +225,7 @@ export const DateInput = /* @__PURE__ */ forwardRef<HTMLDivElement, DateInputPro
                 segmentRefs.current[segment] = node
               }}
               id={ids[segment]}
-              data-rdi-segment={segment}
+              data-rx-date-segment={segment}
               data-placeholder={current === null ? '' : undefined}
               data-focused={focused === segment ? '' : undefined}
               // A real spinbutton, which is what a bounded numeric field with
@@ -238,7 +253,9 @@ export const DateInput = /* @__PURE__ */ forwardRef<HTMLDivElement, DateInputPro
               aria-disabled={disabled ? true : undefined}
               aria-readonly={readOnly ? true : undefined}
               aria-invalid={isInvalid ? true : undefined}
-              style={segmentStyle}
+              style={
+                focused === segment ? { ...segmentStyle, ...focusedSegmentStyle } : segmentStyle
+              }
               onKeyDown={(event) => {
                 if (disabled) return
                 onSegmentKeyDown(event, segment)
@@ -261,7 +278,13 @@ export const DateInput = /* @__PURE__ */ forwardRef<HTMLDivElement, DateInputPro
           // validation, so the attribute would look like it was doing something
           // and do nothing. `required` is surfaced as `aria-required` on the
           // group instead, and enforcing it is the form layer's job.
-          <input type="hidden" id={ids.hidden} data-rdi-value="" name={name} value={value ?? ''} />
+          <input
+            type="hidden"
+            id={ids.hidden}
+            data-rx-date-value=""
+            name={name}
+            value={value ?? ''}
+          />
         )}
       </div>
     )

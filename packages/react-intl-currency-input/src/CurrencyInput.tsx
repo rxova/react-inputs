@@ -82,6 +82,10 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
         inputMode="decimal"
         autoComplete={rest.autoComplete ?? 'off'}
         aria-invalid={invalid ? true : undefined}
+        // Every component in the suite carries a `data-rx-<slug>-root` selector
+        // hook. This one renders a single element, so the root *is* the input —
+        // hence one attribute here where the composite components carry two.
+        data-rx-currency-root=""
         data-invalid={invalid ? '' : undefined}
         value={inputProps.value}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {

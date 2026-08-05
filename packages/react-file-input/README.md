@@ -2,7 +2,7 @@
 
 A file picker and drop zone for React that validates, deduplicates and **revokes its own preview URLs** — and never uploads anything.
 
-- **3.5 kB** brotli for the whole component, **2.4 kB** for the headless hook. No runtime dependencies.
+- **3.6 kB** brotli for the whole component, **2.5 kB** for the headless hook. No runtime dependencies.
 - **Keyboard-first.** The drop zone is a real `<button>`, so Enter and Space open the picker. Dragging has no keyboard equivalent, so the click path _is_ the accessible path.
 - **Object URLs are managed for you** — created lazily, revoked the moment a file is removed and again on unmount. This is the one thing every alternative leaves to the caller.
 - **Per-file rejection reasons**: `type`, `too-large`, `too-small`, `duplicate`, `max-files`, `invalid` — with a sentence you can render as-is.
@@ -111,7 +111,7 @@ The fiddly parts — the drag-depth counter, the URL revocation, the focus hando
 
 No stylesheet ships. The component paints structure only and exposes `data-*` hooks covered by semver:
 
-`data-rfi-root`, `data-rfi-input`, `data-rfi-zone`, `data-rfi-list`, `data-rfi-file`, `data-rfi-name`, `data-rfi-size`, `data-rfi-preview`, `data-rfi-remove`, `data-rfi-announcement`, plus `data-dragging`, `data-disabled`, `data-invalid` on the root.
+`data-rx-file-root`, `data-rx-file-input`, `data-rx-file-zone`, `data-rx-file-list`, `data-rx-file-file`, `data-rx-file-name`, `data-rx-file-size`, `data-rx-file-preview`, `data-rx-file-remove`, `data-rx-file-announcement`, plus `data-dragging`, `data-disabled`, `data-invalid` on the root.
 
 `renderFile` replaces a whole row when the default one is not what you want; the remove button stays.
 

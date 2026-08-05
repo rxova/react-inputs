@@ -24,7 +24,7 @@ const DEFAULT_LABELS: Record<TimeSegment, string> = {
 const rootStyle: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 'var(--rti-gap, 0.0625rem)',
+  gap: 'var(--rx-time-gap, 0.0625rem)',
   font: 'inherit',
   whiteSpace: 'nowrap',
 }
@@ -33,8 +33,8 @@ const segmentStyle: CSSProperties = {
   // Tabular figures so the field does not reflow as digits change width, which
   // otherwise makes the separators visibly jitter while typing.
   fontVariantNumeric: 'tabular-nums',
-  padding: 'var(--rti-segment-padding, 0 0.0625rem)',
-  borderRadius: 'var(--rti-segment-radius, 0.125rem)',
+  padding: 'var(--rx-time-segment-padding, 0 0.0625rem)',
+  borderRadius: 'var(--rx-time-segment-radius, 0.125rem)',
   // Neither the caret nor a text selection means anything on a spinbutton: the
   // value changes wholesale, never character by character.
   caretColor: 'transparent',
@@ -42,9 +42,24 @@ const segmentStyle: CSSProperties = {
   outline: 'none',
 }
 
+/**
+ * The focused segment's ring.
+ *
+ * `outline: none` above removes the UA ring, and a `<span role="spinbutton">`
+ * gets nothing else for free — so without this a keyboard user cannot see which
+ * segment they are on, which is WCAG 2.4.7 Focus Visible with no mitigation.
+ * Shipped as a custom property with a system-colour default (the shape
+ * `@rxova/react-rating-input` already uses) so a theme restyles the ring rather
+ * than losing it.
+ */
+const focusedSegmentStyle: CSSProperties = {
+  outline: 'var(--rx-time-focus-ring, 2px solid Highlight)',
+  outlineOffset: 'var(--rx-time-focus-ring-offset, 1px)',
+}
+
 const literalStyle: CSSProperties = {
   userSelect: 'none',
-  opacity: 'var(--rti-literal-opacity, 0.7)',
+  opacity: 'var(--rx-time-literal-opacity, 0.7)',
 }
 
 /**
@@ -163,7 +178,7 @@ export const TimeInput = /* @__PURE__ */ forwardRef<HTMLDivElement, TimeInputPro
         ref={ref}
         className={className}
         style={{ ...rootStyle, ...style }}
-        data-rti-root=""
+        data-rx-time-root=""
         data-disabled={disabled ? '' : undefined}
         data-readonly={readOnly ? '' : undefined}
         data-invalid={isInvalid ? '' : undefined}
@@ -224,7 +239,7 @@ export const TimeInput = /* @__PURE__ */ forwardRef<HTMLDivElement, TimeInputPro
                 segmentRefs.current[segment] = node
               }}
               id={ids[segment]}
-              data-rti-segment={segment}
+              data-rx-time-segment={segment}
               data-placeholder={current === null ? '' : undefined}
               data-focused={focused === segment ? '' : undefined}
               // A real spinbutton, which is what a bounded value with arrow-key
@@ -248,7 +263,9 @@ export const TimeInput = /* @__PURE__ */ forwardRef<HTMLDivElement, TimeInputPro
               aria-disabled={disabled ? true : undefined}
               aria-readonly={readOnly ? true : undefined}
               aria-invalid={isInvalid ? true : undefined}
-              style={segmentStyle}
+              style={
+                focused === segment ? { ...segmentStyle, ...focusedSegmentStyle } : segmentStyle
+              }
               onKeyDown={(event) => {
                 if (disabled) return
                 onSegmentKeyDown(event, segment)
@@ -271,7 +288,13 @@ export const TimeInput = /* @__PURE__ */ forwardRef<HTMLDivElement, TimeInputPro
           // validation, so the attribute would look like it was doing something
           // and do nothing. `required` is surfaced as `aria-required` on the
           // group instead.
-          <input type="hidden" id={ids.hidden} data-rti-value="" name={name} value={value ?? ''} />
+          <input
+            type="hidden"
+            id={ids.hidden}
+            data-rx-time-value=""
+            name={name}
+            value={value ?? ''}
+          />
         )}
       </div>
     )

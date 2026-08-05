@@ -83,4 +83,4 @@ body:
         - label: 'The page is right-to-left'
         - label: 'The user prefers reduced motion'
         - label: 'A strict Content Security Policy is in effect'
-        - label: 'Custom `--rfs-*` CSS variables are set'
+        - label: 'Custom `--rx-rating-*` CSS variables are set'

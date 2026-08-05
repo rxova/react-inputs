@@ -14,7 +14,7 @@ async function violations(container: HTMLElement) {
 }
 
 function segment(container: HTMLElement, type: 'day' | 'month' | 'year') {
-  return container.querySelector<HTMLElement>(`[data-rdi-segment="${type}"]`)!
+  return container.querySelector<HTMLElement>(`[data-rx-date-segment="${type}"]`)!
 }
 
 describe('semantics', () => {
@@ -23,7 +23,7 @@ describe('semantics', () => {
     // single field would leave a screen-reader user unable to tell which part
     // they are editing.
     const { container } = await render(<DateInput label="Date of birth" locale="en-GB" />)
-    const group = container.querySelector('[data-rdi-root]')!
+    const group = container.querySelector('[data-rx-date-root]')!
     expect(group).toHaveAttribute('role', 'group')
     expect(group).toHaveAttribute('aria-label', 'Date of birth')
     expect(page.getByRole('spinbutton').elements()).toHaveLength(3)
@@ -78,7 +78,7 @@ describe('semantics', () => {
 
   it('hides the separators from the accessibility tree', async () => {
     const { container } = await render(<DateInput label="Date" locale="en-GB" />)
-    const literals = container.querySelectorAll('[data-rdi-root] > span[aria-hidden="true"]')
+    const literals = container.querySelectorAll('[data-rx-date-root] > span[aria-hidden="true"]')
     expect(literals.length).toBeGreaterThan(0)
   })
 
@@ -99,13 +99,13 @@ describe('semantics', () => {
 
   it('exposes required and read-only states', async () => {
     const { container } = await render(<DateInput label="Date" locale="en-GB" required readOnly />)
-    expect(container.querySelector('[data-rdi-root]')).toHaveAttribute('aria-required', 'true')
+    expect(container.querySelector('[data-rx-date-root]')).toHaveAttribute('aria-required', 'true')
     expect(segment(container, 'day')).toHaveAttribute('aria-readonly', 'true')
   })
 
   it('keeps a disabled field in the tree but out of the tab order', async () => {
     const { container } = await render(<DateInput label="Date" locale="en-GB" disabled />)
-    expect(container.querySelector('[data-rdi-root]')).toHaveAttribute('aria-disabled', 'true')
+    expect(container.querySelector('[data-rx-date-root]')).toHaveAttribute('aria-disabled', 'true')
     expect(segment(container, 'day')).toHaveAttribute('tabindex', '-1')
     // Still announced, so the field does not silently vanish for a screen
     // reader user working through the form.

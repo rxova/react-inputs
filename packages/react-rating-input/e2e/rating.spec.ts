@@ -11,10 +11,10 @@ async function fillRatio(page: Page, testid: string, index: number) {
   return page.evaluate(
     ({ testid, index }) => {
       const item = document.querySelector<HTMLElement>(
-        `[data-testid="${testid}"] [data-rfs-item="${String(index)}"]`,
+        `[data-testid="${testid}"] [data-rx-rating-item="${String(index)}"]`,
       )
       if (!item) throw new Error(`no item ${String(index)} in ${testid}`)
-      const fill = item.querySelector<HTMLElement>('[data-rfs-layer="fill"]')
+      const fill = item.querySelector<HTMLElement>('[data-rx-rating-layer="fill"]')
       if (!fill) throw new Error('no fill layer')
       return fill.getBoundingClientRect().width / item.getBoundingClientRect().width
     },
@@ -36,7 +36,9 @@ test.describe('display', () => {
   test('emits a clean percentage into the style attribute', async ({ page }) => {
     // Regression guard: 4.3 once produced width:29.999999999999982%.
     const width = await page
-      .locator('[data-testid="display-continuous"] [data-rfs-item="4"] [data-rfs-layer="fill"]')
+      .locator(
+        '[data-testid="display-continuous"] [data-rx-rating-item="4"] [data-rx-rating-layer="fill"]',
+      )
       .evaluate((el) => el.getAttribute('style'))
     expect(width).toContain('width: 30%')
   })
@@ -48,14 +50,14 @@ test.describe('display', () => {
   })
 
   test('honours a custom max and icon', async ({ page }) => {
-    const items = page.locator('[data-testid="display-custom-svg"] [data-rfs-item]')
+    const items = page.locator('[data-testid="display-custom-svg"] [data-rx-rating-item]')
     await expect(items).toHaveCount(7)
     expect(await fillRatio(page, 'display-custom-svg', 5)).toBeCloseTo(0.5, 1)
   })
 
-  test('scales with --rfs-size', async ({ page }) => {
+  test('scales with --rx-rating-size', async ({ page }) => {
     const box = await page
-      .locator('[data-testid="display-scaled"] [data-rfs-item="0"]')
+      .locator('[data-testid="display-scaled"] [data-rx-rating-item="0"]')
       .boundingBox()
     // 2.5rem at a 16px root.
     expect(box?.width).toBeCloseTo(40, 0)
@@ -107,7 +109,7 @@ test.describe('keyboard', () => {
         const el = document.activeElement as HTMLElement | null
         if (!el || el === document.body) return 'none'
         const section = el.closest('[data-testid]')?.getAttribute('data-testid')
-        if (el.closest('[data-rfs-root]')) return `rating:${section ?? '?'}`
+        if (el.closest('[data-rx-rating-root]')) return `rating:${section ?? '?'}`
         // textContent is only nullable on Document/DocumentType nodes, never
         // on an HTMLElement, which is what activeElement narrows to here.
         return `${el.tagName.toLowerCase()}:${el.textContent.trim()}`
@@ -186,8 +188,8 @@ test.describe('forms', () => {
 
 test.describe('page-level concerns', () => {
   test('flips the fill origin when the document goes RTL', async ({ page }) => {
-    const item = page.locator('[data-testid="display-half"] [data-rfs-item="4"]')
-    const fill = item.locator('[data-rfs-layer="fill"]')
+    const item = page.locator('[data-testid="display-half"] [data-rx-rating-item="4"]')
+    const fill = item.locator('[data-rx-rating-layer="fill"]')
 
     const ltr = { item: await item.boundingBox(), fill: await fill.boundingBox() }
     expect(ltr.fill!.x).toBeCloseTo(ltr.item!.x, 0)
@@ -205,7 +207,7 @@ test.describe('page-level concerns', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.reload()
     const duration = await page
-      .locator('[data-testid="display-continuous"] [data-rfs-layer="fill"]')
+      .locator('[data-testid="display-continuous"] [data-rx-rating-layer="fill"]')
       .first()
       .evaluate((el) => getComputedStyle(el).transitionDuration)
     expect(duration).toBe('0s')
@@ -215,7 +217,7 @@ test.describe('page-level concerns', () => {
     await page.emulateMedia({ reducedMotion: 'no-preference' })
     await page.reload()
     const duration = await page
-      .locator('[data-testid="display-continuous"] [data-rfs-layer="fill"]')
+      .locator('[data-testid="display-continuous"] [data-rx-rating-layer="fill"]')
       .first()
       .evaluate((el) => getComputedStyle(el).transitionDuration)
     expect(duration).not.toBe('0s')
@@ -225,7 +227,7 @@ test.describe('page-level concerns', () => {
     await page.getByTestId('rtl-toggle').focus()
     await page.keyboard.press('Tab')
     const outline = await page.evaluate(() => {
-      const el = document.activeElement?.closest('[data-rfs-item]')
+      const el = document.activeElement?.closest('[data-rx-rating-item]')
       return el ? getComputedStyle(el).outlineStyle : 'none'
     })
     expect(outline).not.toBe('none')

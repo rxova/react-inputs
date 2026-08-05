@@ -16,7 +16,7 @@ const DEFAULT_STAR = (
 const rootStyle: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 'var(--rfs-gap, 0.125rem)',
+  gap: 'var(--rx-rating-gap, 0.125rem)',
   position: 'relative',
   lineHeight: 1,
 }
@@ -24,7 +24,7 @@ const rootStyle: CSSProperties = {
 const itemStyle: CSSProperties = {
   // font-size drives the box so emoji, which size by font-size rather than
   // width/height, scale identically to SVG.
-  fontSize: 'var(--rfs-size, 1.25rem)',
+  fontSize: 'var(--rx-rating-size, 1.25rem)',
   lineHeight: 1,
   position: 'relative',
   display: 'inline-block',
@@ -145,29 +145,29 @@ export const Rating = /* @__PURE__ */ forwardRef<HTMLSpanElement, RatingProps>(
       return (
         <span
           key={index}
-          data-rfs-item={index}
+          data-rx-rating-item={index}
           data-state={state.filled ? 'full' : state.empty ? 'empty' : 'partial'}
           {...(active ? { 'data-active': '' } : {})}
           style={{
             ...itemStyle,
             ...(isFocusedItem
               ? {
-                  outline: 'var(--rfs-focus-ring, 2px solid Highlight)',
-                  outlineOffset: 'var(--rfs-focus-ring-offset, 2px)',
-                  borderRadius: 'var(--rfs-focus-ring-radius, 2px)',
+                  outline: 'var(--rx-rating-focus-ring, 2px solid Highlight)',
+                  outlineOffset: 'var(--rx-rating-focus-ring-offset, 2px)',
+                  borderRadius: 'var(--rx-rating-focus-ring-radius, 2px)',
                 }
               : {}),
           }}
         >
           <span
-            data-rfs-layer="empty"
+            data-rx-rating-layer="empty"
             aria-hidden="true"
             style={{
               ...layerBase,
               width: '1em',
-              color: 'var(--rfs-color-empty, #d8d8d8)',
+              color: 'var(--rx-rating-color-empty, #d8d8d8)',
               ...(dimEmpty
-                ? { filter: 'var(--rfs-empty-filter, grayscale(1) opacity(0.35))' }
+                ? { filter: 'var(--rx-rating-empty-filter, grayscale(1) opacity(0.35))' }
                 : {}),
             }}
           >
@@ -175,16 +175,16 @@ export const Rating = /* @__PURE__ */ forwardRef<HTMLSpanElement, RatingProps>(
           </span>
 
           <span
-            data-rfs-layer="fill"
+            data-rx-rating-layer="fill"
             aria-hidden="true"
             style={{
               ...layerBase,
               width: `${String(toPercent(fill))}%`,
               overflow: 'hidden',
               color: active
-                ? 'var(--rfs-color-hover, var(--rfs-color-filled, #f5a623))'
-                : 'var(--rfs-color-filled, #f5a623)',
-              transition: reducedMotion ? 'none' : 'width var(--rfs-transition, 120ms) ease',
+                ? 'var(--rx-rating-color-hover, var(--rx-rating-color-filled, #f5a623))'
+                : 'var(--rx-rating-color-filled, #f5a623)',
+              transition: reducedMotion ? 'none' : 'width var(--rx-rating-transition, 120ms) ease',
             }}
           >
             <span style={innerStyle}>{filledNode}</span>
@@ -258,7 +258,7 @@ export const Rating = /* @__PURE__ */ forwardRef<HTMLSpanElement, RatingProps>(
       className,
       dir,
       style: { ...rootStyle, ...style },
-      'data-rfs-root': '',
+      'data-rx-rating-root': '',
       ...(disabled ? { 'data-disabled': '' } : {}),
       ...(invalid ? { 'data-invalid': '' } : {}),
     }

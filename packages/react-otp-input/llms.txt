@@ -81,14 +81,14 @@ and `useWebOTP` for building your own markup.
 
 There is no stylesheet. Set CSS custom properties on any ancestor:
 
-`--otp-slot-size`, `--otp-gap`, `--otp-font`, `--otp-font-size`, `--otp-color`,
-`--otp-bg`, `--otp-border`, `--otp-radius`, `--otp-active-ring`,
-`--otp-caret-color`, `--otp-caret-width`, `--otp-placeholder-color`,
-`--otp-separator-color`, `--otp-transition`.
+`--rx-otp-slot-size`, `--rx-otp-gap`, `--rx-otp-font`, `--rx-otp-font-size`, `--rx-otp-color`,
+`--rx-otp-bg`, `--rx-otp-border`, `--rx-otp-radius`, `--rx-otp-active-ring`,
+`--rx-otp-caret-color`, `--rx-otp-caret-width`, `--rx-otp-placeholder-color`,
+`--rx-otp-separator-color`, `--rx-otp-transition`.
 
 Or target the `data-*` attributes, which are public API covered by semver:
-`data-otp-root`, `data-otp-input`, `data-otp-group`, `data-otp-slot`,
-`data-otp-separator`, `data-otp-caret`, plus the state hooks `data-state`,
+`data-rx-otp-root`, `data-rx-otp-input`, `data-rx-otp-group`, `data-rx-otp-slot`,
+`data-rx-otp-separator`, `data-rx-otp-caret`, plus the state hooks `data-state`,
 `data-filled`, `data-active`, `data-disabled`, `data-readonly`, `data-invalid`.
 
 ## Three mistakes to avoid

@@ -19,13 +19,13 @@ describe('semantics', () => {
     // form participation, autofill and — on mobile — its own country picker,
     // none of which a custom listbox of 234 options can match.
     const { container } = await render(<PhoneInput label="Phone number" name="phone" />)
-    const box = container.querySelector('[data-rphi-input]')!
+    const box = container.querySelector('[data-rx-phone-input]')!
     expect(box.tagName).toBe('INPUT')
     expect(box).toHaveAttribute('type', 'tel')
     expect(box).toHaveAttribute('inputmode', 'tel')
     expect(box).toHaveAttribute('autocomplete', 'tel')
     await expect.element(page.getByLabelText('Phone number')).toBeInTheDocument()
-    expect(container.querySelector('[data-rphi-country]')?.tagName).toBe('SELECT')
+    expect(container.querySelector('[data-rx-phone-country]')?.tagName).toBe('SELECT')
   })
 
   it('names the country select', async () => {
@@ -45,29 +45,29 @@ describe('semantics', () => {
         <p id="err">That number is not reachable</p>
       </>,
     )
-    const box = container.querySelector('[data-rphi-input]')!
+    const box = container.querySelector('[data-rx-phone-input]')!
     expect(box).toHaveAttribute('aria-invalid', 'true')
     expect(box).toHaveAttribute('aria-describedby', 'err')
-    expect(container.querySelector('[data-rphi-root]')).toHaveAttribute('data-invalid')
+    expect(container.querySelector('[data-rx-phone-root]')).toHaveAttribute('data-invalid')
   })
 
   it('stays an exposed, disabled field rather than disappearing', async () => {
     const { container } = await render(<PhoneInput label="Phone" disabled />)
-    expect(container.querySelector('[data-rphi-input]')).toBeDisabled()
+    expect(container.querySelector('[data-rx-phone-input]')).toBeDisabled()
     expect(page.getByRole('combobox').elements()).toHaveLength(1)
   })
 
   it('is fully operable from the keyboard', async () => {
     const { container } = await render(<PhoneInput label="Phone" countries={['US', 'GB']} />)
-    const select = container.querySelector<HTMLSelectElement>('[data-rphi-country]')!
+    const select = container.querySelector<HTMLSelectElement>('[data-rx-phone-country]')!
     select.focus()
     await userEvent.tab()
-    expect(document.activeElement).toBe(container.querySelector('[data-rphi-input]'))
+    expect(document.activeElement).toBe(container.querySelector('[data-rx-phone-input]'))
   })
 
   it('does not put the hidden value field in the tab order', async () => {
     const { container } = await render(<PhoneInput label="Phone" name="phone" />)
-    const hidden = container.querySelector<HTMLInputElement>('[data-rphi-value]')!
+    const hidden = container.querySelector<HTMLInputElement>('[data-rx-phone-value]')!
     expect(hidden.type).toBe('hidden')
   })
 })

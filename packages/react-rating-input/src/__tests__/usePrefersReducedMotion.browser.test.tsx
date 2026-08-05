@@ -79,7 +79,7 @@ describe('reduced motion in Rating', () => {
     stubMatchMedia(true)
     const { container } = await render(<Rating value={2.5} />)
     await expect.element(page.getByRole('img')).toBeInTheDocument()
-    const fill = container.querySelector<HTMLElement>('[data-rfs-layer="fill"]')!
+    const fill = container.querySelector<HTMLElement>('[data-rx-rating-layer="fill"]')!
     expect(getComputedStyle(fill).transitionDuration).toBe('0s')
   })
 
@@ -87,7 +87,7 @@ describe('reduced motion in Rating', () => {
     stubMatchMedia(false)
     const { container } = await render(<Rating value={2.5} />)
     await expect.element(page.getByRole('img')).toBeInTheDocument()
-    const fill = container.querySelector<HTMLElement>('[data-rfs-layer="fill"]')!
+    const fill = container.querySelector<HTMLElement>('[data-rx-rating-layer="fill"]')!
     expect(getComputedStyle(fill).transitionDuration).not.toBe('0s')
   })
 })

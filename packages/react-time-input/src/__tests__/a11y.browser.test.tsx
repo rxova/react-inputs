@@ -15,7 +15,7 @@ async function violations(container: HTMLElement) {
 
 type Seg = 'hour' | 'minute' | 'second' | 'dayPeriod'
 function seg(container: HTMLElement, type: Seg) {
-  return container.querySelector<HTMLElement>(`[data-rti-segment="${type}"]`)!
+  return container.querySelector<HTMLElement>(`[data-rx-time-segment="${type}"]`)!
 }
 
 describe('semantics', () => {
@@ -24,7 +24,7 @@ describe('semantics', () => {
     // a single field would leave a screen-reader user unable to tell which part
     // they are editing.
     const { container } = await render(<TimeInput label="Start time" locale="en-US" />)
-    const group = container.querySelector('[data-rti-root]')!
+    const group = container.querySelector('[data-rx-time-root]')!
     expect(group).toHaveAttribute('role', 'group')
     expect(group).toHaveAttribute('aria-label', 'Start time')
     expect(page.getByRole('spinbutton').elements()).toHaveLength(3)
@@ -76,7 +76,7 @@ describe('semantics', () => {
   it('hides the separators from the accessibility tree', async () => {
     const { container } = await render(<TimeInput label="Time" locale="en-GB" />)
     expect(
-      container.querySelectorAll('[data-rti-root] > span[aria-hidden="true"]').length,
+      container.querySelectorAll('[data-rx-time-root] > span[aria-hidden="true"]').length,
     ).toBeGreaterThan(0)
   })
 
@@ -97,13 +97,13 @@ describe('semantics', () => {
 
   it('exposes required and read-only states', async () => {
     const { container } = await render(<TimeInput label="Time" locale="en-GB" required readOnly />)
-    expect(container.querySelector('[data-rti-root]')).toHaveAttribute('aria-required', 'true')
+    expect(container.querySelector('[data-rx-time-root]')).toHaveAttribute('aria-required', 'true')
     expect(seg(container, 'hour')).toHaveAttribute('aria-readonly', 'true')
   })
 
   it('keeps a disabled field in the tree but out of the tab order', async () => {
     const { container } = await render(<TimeInput label="Time" locale="en-GB" disabled />)
-    expect(container.querySelector('[data-rti-root]')).toHaveAttribute('aria-disabled', 'true')
+    expect(container.querySelector('[data-rx-time-root]')).toHaveAttribute('aria-disabled', 'true')
     expect(seg(container, 'hour')).toHaveAttribute('tabindex', '-1')
     expect(page.getByRole('spinbutton').elements()).toHaveLength(2)
   })

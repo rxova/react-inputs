@@ -13,8 +13,8 @@ The library owns geometry; you own appearance. An `icon` (and optional `emptyIco
 
 ### An SVG
 
-Any SVG works. Size it in `em` so it scales with `--rfs-size`, and give it `fill="currentColor"` so
-it picks up the fill color the component sets from `--rfs-color-filled`:
+Any SVG works. Size it in `em` so it scales with `--rx-rating-size`, and give it `fill="currentColor"` so
+it picks up the fill color the component sets from `--rx-rating-color-filled`:
 
 ```tsx
 function Heart() {
@@ -27,7 +27,7 @@ function Heart() {
 ```
 
 ```tsx
-<Rating value={3.5} max={5} icon={<Heart />} style={{ '--rfs-color-filled': 'crimson' }} />
+<Rating value={3.5} max={5} icon={<Heart />} style={{ '--rx-rating-color-filled': 'crimson' }} />
 ```
 
 Provide a distinct outline for the empty state, or omit `emptyIcon` to reuse the same icon dimmed:
@@ -45,9 +45,9 @@ An emoji string is a valid icon, including ZWJ sequences (the component never cl
 <Rating value={2.5} icon="👩‍🍳" />
 ```
 
-:::caution[Emoji ignore `--rfs-color-filled`]
+:::caution[Emoji ignore `--rx-rating-color-filled`]
 Emoji render from a **color font**, so CSS `color` cannot recolor them. The implicit empty layer is
-therefore dimmed with `--rfs-empty-filter` (a `grayscale`/`opacity` filter), which works on emoji and
+therefore dimmed with `--rx-rating-empty-filter` (a `grayscale`/`opacity` filter), which works on emoji and
 SVG alike. Pass an explicit `emptyIcon` to control the empty look yourself.
 :::
 
@@ -171,10 +171,10 @@ Knowing what the properties _target_ makes the rest of the page obvious. Each ic
 absolutely-stacked layers inside a sized box:
 
 ```
-[data-rfs-root]                     ← the flex row; --rfs-gap separates items
- └─ [data-rfs-item]                 ← one icon slot; --rfs-size sets its font-size (the box)
-     ├─ [data-rfs-layer="empty"]    ← the track, full width; --rfs-color-empty (+ --rfs-empty-filter)
-     └─ [data-rfs-layer="fill"]     ← the fill, clipped to the value's %; --rfs-color-filled
+[data-rx-rating-root]                     ← the flex row; --rx-rating-gap separates items
+ └─ [data-rx-rating-item]                 ← one icon slot; --rx-rating-size sets its font-size (the box)
+     ├─ [data-rx-rating-layer="empty"]    ← the track, full width; --rx-rating-color-empty (+ --rx-rating-empty-filter)
+     └─ [data-rx-rating-layer="fill"]     ← the fill, clipped to the value's %; --rx-rating-color-filled
 ```
 
 The fill layer sits on top of the empty layer and is clipped to a percentage width, so a `4.3`
@@ -197,12 +197,12 @@ function StylingPlayground() {
   const [score, setScore] = useState(3.5)
 
   const vars = {
-    '--rfs-size': `${size}rem`,
-    '--rfs-gap': `${gap}rem`,
-    '--rfs-color-filled': filled,
-    '--rfs-color-empty': empty,
-    '--rfs-color-hover': hover,
-    '--rfs-transition': `${transition}ms`,
+    '--rx-rating-size': `${size}rem`,
+    '--rx-rating-gap': `${gap}rem`,
+    '--rx-rating-color-filled': filled,
+    '--rx-rating-color-empty': empty,
+    '--rx-rating-color-hover': hover,
+    '--rx-rating-transition': `${transition}ms`,
   }
 
   const Row = ({ label, children }) => (
@@ -274,7 +274,7 @@ function StylingPlayground() {
       </div>
 
       <pre style={{ margin: 0 }}>
-        {`[data-rfs-root] {\n${Object.entries(vars)
+        {`[data-rx-rating-root] {\n${Object.entries(vars)
           .map(([k, v]) => `  ${k}: ${v};`)
           .join('\n')}\n}`}
       </pre>
@@ -287,50 +287,50 @@ function StylingPlayground() {
 
 The complete set. Every one has a fallback baked in, so you only override what you care about.
 
-| Property                  | Default                      | Controls                                                       |
-| ------------------------- | ---------------------------- | -------------------------------------------------------------- |
-| `--rfs-size`              | `1.25rem`                    | Icon size. Any unit — it's a `font-size`, so `em`/`%` cascade. |
-| `--rfs-gap`               | `0.125rem`                   | Horizontal space between icons.                                |
-| `--rfs-color-filled`      | `#f5a623`                    | Colour of the filled (fill-layer) icon.                        |
-| `--rfs-color-empty`       | `#d8d8d8`                    | Colour of the empty (track) icon.                              |
-| `--rfs-color-hover`       | `var(--rfs-color-filled)`    | Colour of the hover/keyboard preview fill.                     |
-| `--rfs-empty-filter`      | `grayscale(1) opacity(0.35)` | CSS `filter` on the _implicit_ empty layer (see below).        |
-| `--rfs-transition`        | `120ms`                      | Duration of the fill/preview width transition.                 |
-| `--rfs-focus-ring`        | `2px solid Highlight`        | `outline` shorthand drawn on the focused icon.                 |
-| `--rfs-focus-ring-offset` | `2px`                        | `outline-offset` of the focus ring.                            |
-| `--rfs-focus-ring-radius` | `2px`                        | `border-radius` of the focus ring.                             |
+| Property                        | Default                         | Controls                                                       |
+| ------------------------------- | ------------------------------- | -------------------------------------------------------------- |
+| `--rx-rating-size`              | `1.25rem`                       | Icon size. Any unit — it's a `font-size`, so `em`/`%` cascade. |
+| `--rx-rating-gap`               | `0.125rem`                      | Horizontal space between icons.                                |
+| `--rx-rating-color-filled`      | `#f5a623`                       | Colour of the filled (fill-layer) icon.                        |
+| `--rx-rating-color-empty`       | `#d8d8d8`                       | Colour of the empty (track) icon.                              |
+| `--rx-rating-color-hover`       | `var(--rx-rating-color-filled)` | Colour of the hover/keyboard preview fill.                     |
+| `--rx-rating-empty-filter`      | `grayscale(1) opacity(0.35)`    | CSS `filter` on the _implicit_ empty layer (see below).        |
+| `--rx-rating-transition`        | `120ms`                         | Duration of the fill/preview width transition.                 |
+| `--rx-rating-focus-ring`        | `2px solid Highlight`           | `outline` shorthand drawn on the focused icon.                 |
+| `--rx-rating-focus-ring-offset` | `2px`                           | `outline-offset` of the focus ring.                            |
+| `--rx-rating-focus-ring-radius` | `2px`                           | `border-radius` of the focus ring.                             |
 
-Because they're custom properties, they **cascade**. Set them on `[data-rfs-root]`, on the element's
+Because they're custom properties, they **cascade**. Set them on `[data-rx-rating-root]`, on the element's
 `style` prop, on a wrapper `class`, or on `:root` for the whole app — whatever scope you want.
 
-#### Size — `--rfs-size`
+#### Size — `--rx-rating-size`
 
 Size is a single property, in any unit. Set it inline for one instance, or on an ancestor to size a
 whole group. Since it's a `font-size`, relative units (`em`, `%`) inherit naturally.
 
 ```tsx live
 <div style={{ display: 'grid', gap: '0.75rem' }}>
-  <Rating value={3.5} style={{ '--rfs-size': '1rem' }} />
-  <Rating value={3.5} style={{ '--rfs-size': '1.75rem' }} />
-  <Rating value={3.5} style={{ '--rfs-size': '3rem' }} />
+  <Rating value={3.5} style={{ '--rx-rating-size': '1rem' }} />
+  <Rating value={3.5} style={{ '--rx-rating-size': '1.75rem' }} />
+  <Rating value={3.5} style={{ '--rx-rating-size': '3rem' }} />
 </div>
 ```
 
-#### Gap — `--rfs-gap`
+#### Gap — `--rx-rating-gap`
 
 The space between icons. `0` packs them flush; larger values give an airier row.
 
 ```tsx live
 <div style={{ display: 'grid', gap: '0.75rem', fontSize: '1.75rem' }}>
-  <Rating value={3.5} style={{ '--rfs-gap': '0' }} />
-  <Rating value={3.5} style={{ '--rfs-gap': '0.25rem' }} />
-  <Rating value={3.5} style={{ '--rfs-gap': '0.75rem' }} />
+  <Rating value={3.5} style={{ '--rx-rating-gap': '0' }} />
+  <Rating value={3.5} style={{ '--rx-rating-gap': '0.25rem' }} />
+  <Rating value={3.5} style={{ '--rx-rating-gap': '0.75rem' }} />
 </div>
 ```
 
 #### Colours — filled, empty, hover
 
-Three independent colours. `--rfs-color-hover` defaults to `--rfs-color-filled`, so a rating with no
+Three independent colours. `--rx-rating-color-hover` defaults to `--rx-rating-color-filled`, so a rating with no
 hover colour set previews in its fill colour; override it for a distinct “I'm about to pick this”
 tint. **Hover over the interactive one** to see the hover colour.
 
@@ -338,10 +338,10 @@ tint. **Hover over the interactive one** to see the hover colour.
 function Colours() {
   const [score, setScore] = useState(3)
   const brand = {
-    '--rfs-color-filled': '#6d28d9',
-    '--rfs-color-empty': '#e5e7eb',
-    '--rfs-color-hover': '#c026d3',
-    '--rfs-size': '2rem',
+    '--rx-rating-color-filled': '#6d28d9',
+    '--rx-rating-color-empty': '#e5e7eb',
+    '--rx-rating-color-hover': '#c026d3',
+    '--rx-rating-size': '2rem',
   }
   return (
     <div style={{ display: 'grid', gap: '0.75rem' }}>
@@ -353,12 +353,12 @@ function Colours() {
 ```
 
 :::caution[Colour is a no-op on emoji]
-Emoji render from a **colour font** (COLR/CBDT), so `--rfs-color-filled` and `--rfs-color-empty` have
+Emoji render from a **colour font** (COLR/CBDT), so `--rx-rating-color-filled` and `--rx-rating-color-empty` have
 no effect on them — you cannot recolour 🌟 with CSS `color`. That's exactly why the empty layer is
 dimmed with a **filter** instead. See the next section.
 :::
 
-#### The empty layer — `--rfs-empty-filter`
+#### The empty layer — `--rx-rating-empty-filter`
 
 When you don't pass an `emptyIcon`, the track is the _same_ glyph as the fill, dimmed by a CSS
 `filter` so it reads as “empty”. A filter — unlike `color` — works on emoji and SVG alike, which is
@@ -367,9 +367,13 @@ why the default is `grayscale(1) opacity(0.35)` rather than a grey colour.
 ```tsx live
 <div style={{ display: 'grid', gap: '0.75rem', fontSize: '2rem' }}>
   <Rating value={2.5} icon="⭐" />
-  <Rating value={2.5} icon="⭐" style={{ '--rfs-empty-filter': 'grayscale(1) opacity(0.2)' }} />
-  <Rating value={2.5} icon="⭐" style={{ '--rfs-empty-filter': 'sepia(1) opacity(0.5)' }} />
-  <Rating value={2.5} icon="⭐" style={{ '--rfs-empty-filter': 'none' }} />
+  <Rating
+    value={2.5}
+    icon="⭐"
+    style={{ '--rx-rating-empty-filter': 'grayscale(1) opacity(0.2)' }}
+  />
+  <Rating value={2.5} icon="⭐" style={{ '--rx-rating-empty-filter': 'sepia(1) opacity(0.5)' }} />
+  <Rating value={2.5} icon="⭐" style={{ '--rx-rating-empty-filter': 'none' }} />
 </div>
 ```
 
@@ -379,15 +383,15 @@ so the component leaves it alone.
 ```tsx live
 <Rating
   value={2.5}
-  style={{ '--rfs-size': '2rem' }}
+  style={{ '--rx-rating-size': '2rem' }}
   icon={<span>●</span>}
   emptyIcon={<span style={{ color: '#cbd5e1' }}>○</span>}
 />
 ```
 
-#### Motion — `--rfs-transition`
+#### Motion — `--rx-rating-transition`
 
-The fill width animates when the value or hover preview changes; `--rfs-transition` is its duration.
+The fill width animates when the value or hover preview changes; `--rx-rating-transition` is its duration.
 Crank it up here and hover slowly to watch the fill glide.
 
 ```tsx live
@@ -400,9 +404,9 @@ function Motion() {
       precision={0.5}
       label="Slow fill"
       style={{
-        '--rfs-size': '2.5rem',
-        '--rfs-transition': '450ms',
-        '--rfs-color-hover': '#22c55e',
+        '--rx-rating-size': '2.5rem',
+        '--rx-rating-transition': '450ms',
+        '--rx-rating-color-hover': '#22c55e',
       }}
     />
   )
@@ -417,10 +421,10 @@ function Motion() {
 
 :::note[Respects `prefers-reduced-motion`]
 The transition is dropped automatically when the user has **Reduce motion** turned on — no
-configuration needed. Set `--rfs-transition: 0ms` to disable it for everyone.
+configuration needed. Set `--rx-rating-transition: 0ms` to disable it for everyone.
 :::
 
-#### Focus ring — `--rfs-focus-ring`
+#### Focus ring — `--rx-rating-focus-ring`
 
 When a rating is operated by keyboard, a focus ring is drawn on the focused icon. It's an `outline`
 (so the fill layer's `overflow: hidden` can't clip it), with a matching offset and corner radius. Tab
@@ -436,21 +440,21 @@ function Focus() {
       precision={1}
       label="Focus me with Tab, then arrow keys"
       style={{
-        '--rfs-size': '2.5rem',
-        '--rfs-focus-ring': '3px solid #2563eb',
-        '--rfs-focus-ring-offset': '4px',
-        '--rfs-focus-ring-radius': '6px',
+        '--rx-rating-size': '2.5rem',
+        '--rx-rating-focus-ring': '3px solid #2563eb',
+        '--rx-rating-focus-ring-offset': '4px',
+        '--rx-rating-focus-ring-radius': '6px',
       }}
     />
   )
 }
 ```
 
-| Property                  | Maps to          | Default               |
-| ------------------------- | ---------------- | --------------------- |
-| `--rfs-focus-ring`        | `outline`        | `2px solid Highlight` |
-| `--rfs-focus-ring-offset` | `outline-offset` | `2px`                 |
-| `--rfs-focus-ring-radius` | `border-radius`  | `2px`                 |
+| Property                        | Maps to          | Default               |
+| ------------------------------- | ---------------- | --------------------- |
+| `--rx-rating-focus-ring`        | `outline`        | `2px solid Highlight` |
+| `--rx-rating-focus-ring-offset` | `outline-offset` | `2px`                 |
+| `--rx-rating-focus-ring-radius` | `border-radius`  | `2px`                 |
 
 `Highlight` is the system focus colour, so the default ring matches the user's OS accent out of the
 box. Override the shorthand for a branded ring.
@@ -462,9 +466,9 @@ For anything a custom property doesn't cover, target these attributes from your 
 
 | Selector                                  | Marks                                           |
 | ----------------------------------------- | ----------------------------------------------- |
-| `[data-rfs-root]`                         | The root element.                               |
-| `[data-rfs-item]`                         | One icon slot (its value is the 0-based index). |
-| `[data-rfs-layer="fill"\|"empty"]`        | The fill layer vs. the empty/track layer.       |
+| `[data-rx-rating-root]`                   | The root element.                               |
+| `[data-rx-rating-item]`                   | One icon slot (its value is the 0-based index). |
+| `[data-rx-rating-layer="fill"\|"empty"]`  | The fill layer vs. the empty/track layer.       |
 | `[data-state="full"\|"partial"\|"empty"]` | Per-icon fill state.                            |
 | `[data-active]`                           | Icons under the current hover/keyboard preview. |
 | `[data-readonly]`                         | Present in read-only (display) mode.            |
@@ -477,13 +481,13 @@ Because the state lives in the DOM, you can restyle a whole state by _setting a 
 selector — no per-instance props. A red error look driven only by the `invalid` prop:
 
 ```css
-[data-rfs-root][data-invalid] {
-  --rfs-color-filled: #dc2626;
-  --rfs-color-empty: #fecaca;
+[data-rx-rating-root][data-invalid] {
+  --rx-rating-color-filled: #dc2626;
+  --rx-rating-color-empty: #fecaca;
 }
 
 /* Fade the control while it's unavailable. */
-[data-rfs-root][data-disabled] {
+[data-rx-rating-root][data-disabled] {
   opacity: 0.5;
 }
 ```
@@ -495,7 +499,7 @@ The same states, side by side:
   <Rating
     value={3}
     invalid
-    style={{ '--rfs-color-filled': '#dc2626', '--rfs-color-empty': '#fecaca' }}
+    style={{ '--rx-rating-color-filled': '#dc2626', '--rx-rating-color-empty': '#fecaca' }}
   />
   <Rating value={3} onChange={() => {}} disabled style={{ opacity: 0.5 }} />
   <Rating value={3.5} />
@@ -507,12 +511,12 @@ icons, or only the icons under the pointer:
 
 ```css
 /* Nudge the icon currently being previewed. */
-[data-rfs-item][data-active] {
+[data-rx-rating-item][data-active] {
   transform: scale(1.15);
 }
 
 /* Give the fill layer a subtle glow. */
-[data-rfs-layer='fill'] {
+[data-rx-rating-layer='fill'] {
   filter: drop-shadow(0 0 2px currentColor);
 }
 ```
@@ -523,7 +527,7 @@ The same three scopes as any custom property — pick per use:
 
 ```tsx
 // Per instance — inline style:
-<Rating value={4.3} style={{ '--rfs-size': '2rem', '--rfs-color-filled': '#6d28d9' }} />
+<Rating value={4.3} style={{ '--rx-rating-size': '2rem', '--rx-rating-color-filled': '#6d28d9' }} />
 
 // Per theme — a class you control:
 <Rating value={4.3} className="brand-rating" />
@@ -533,11 +537,11 @@ The same three scopes as any custom property — pick per use:
 
 ```css
 :root {
-  --rfs-color-filled: #6d28d9;
-  --rfs-color-empty: #e5e7eb;
+  --rx-rating-color-filled: #6d28d9;
+  --rx-rating-color-empty: #e5e7eb;
 }
 .brand-rating {
-  --rfs-size: 2rem;
+  --rx-rating-size: 2rem;
 }
 ```
 
@@ -546,7 +550,7 @@ Those patterns are in the theming recipes below.
 
 ### Theming recipes
 
-Everything visual is a `--rfs-*` custom property (see the property list above for the full set).
+Everything visual is a `--rx-rating-*` custom property (see the property list above for the full set).
 That means you can theme the component with whatever styling tool you already use — no wrapper
 component, no `!important`, no reaching into internals.
 
@@ -554,10 +558,10 @@ component, no `!important`, no reaching into internals.
 
 ```css
 .rating-brand {
-  --rfs-size: 1.5rem;
-  --rfs-gap: 0.25rem;
-  --rfs-color-filled: #6d28d9;
-  --rfs-color-empty: #e5e7eb;
+  --rx-rating-size: 1.5rem;
+  --rx-rating-gap: 0.25rem;
+  --rx-rating-color-filled: #6d28d9;
+  --rx-rating-color-empty: #e5e7eb;
 }
 ```
 
@@ -569,8 +573,8 @@ component, no `!important`, no reaching into internals.
 
 ```css title="Rating.module.css"
 .brand {
-  --rfs-color-filled: #6d28d9;
-  --rfs-color-hover: #7c3aed;
+  --rx-rating-color-filled: #6d28d9;
+  --rx-rating-color-hover: #7c3aed;
 }
 ```
 
@@ -587,7 +591,10 @@ function Stars() {
 Set the custom properties with arbitrary properties, no plugin required:
 
 ```tsx
-<Rating value={4.3} className="[--rfs-color-filled:theme(colors.violet.600)] [--rfs-size:1.5rem]" />
+<Rating
+  value={4.3}
+  className="[--rx-rating-color-filled:theme(colors.violet.600)] [--rx-rating-size:1.5rem]"
+/>
 ```
 
 Or map them to your design tokens in a component layer:
@@ -595,8 +602,8 @@ Or map them to your design tokens in a component layer:
 ```css
 @layer components {
   .rating {
-    --rfs-color-filled: theme(colors.violet.600);
-    --rfs-color-empty: theme(colors.gray.200);
+    --rx-rating-color-filled: theme(colors.violet.600);
+    --rx-rating-color-empty: theme(colors.gray.200);
   }
 }
 ```
@@ -611,9 +618,9 @@ import styled from 'styled-components'
 import { Rating } from '@rxova/react-rating-input'
 
 const BrandRating = styled(Rating)`
-  --rfs-color-filled: ${(p) => p.theme.colors.brand};
-  --rfs-color-empty: ${(p) => p.theme.colors.subtle};
-  --rfs-size: 1.5rem;
+  --rx-rating-color-filled: ${(p) => p.theme.colors.brand};
+  --rx-rating-color-empty: ${(p) => p.theme.colors.subtle};
+  --rx-rating-size: 1.5rem;
 `
 ```
 
@@ -626,9 +633,9 @@ Target the semver-stable `data-*` hooks to theme states — for example, a red e
 by the `invalid` prop:
 
 ```css
-[data-rfs-root][data-invalid] {
-  --rfs-color-filled: #dc2626;
-  --rfs-color-empty: #fecaca;
+[data-rx-rating-root][data-invalid] {
+  --rx-rating-color-filled: #dc2626;
+  --rx-rating-color-empty: #fecaca;
 }
 ```
 

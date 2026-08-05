@@ -37,7 +37,7 @@ change in the browser: locales, currencies, precision, digits, negatives and key
 - **Useful input controls** — opt-in ArrowUp/ArrowDown stepping and raw-input transformation
 - **Correct where others break** — bg-BG's "space only above 9999", fr-FR's narrow no-break space,
   ja-JP's zero decimals, KWD's three, ar-EG's native digits, hi-IN's lakh grouping, de-CH's apostrophe
-- **Zero runtime dependencies**, ~2.9 kB brotli, no stylesheet to import
+- **Zero runtime dependencies**, ~3.2 kB brotli, no stylesheet to import
 - **Form-ready** — first-class React Hook Form / Formik / React Final Form / TanStack Form recipes
 
 ## One value, eight languages

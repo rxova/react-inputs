@@ -410,7 +410,7 @@ export function useOtpInput(options: UseOtpInputOptions = {}): UseOtpInputResult
   const getContainerProps = useCallback<UseOtpInputResult['getContainerProps']>(
     (props = {}) => ({
       ...props,
-      'data-otp-root': '',
+      'data-rx-otp-root': '',
       dir,
       style: { position: 'relative', ...props.style },
     }),
@@ -453,7 +453,7 @@ export function useOtpInput(options: UseOtpInputOptions = {}): UseOtpInputResult
         'aria-label': ariaLabel ?? label,
         'aria-invalid': invalid ? true : undefined,
         'aria-describedby': describedBy,
-        'data-otp-input': '',
+        'data-rx-otp-input': '',
         style: overlayStyle,
         onChange: (event) => {
           props.onChange?.(event)
@@ -573,7 +573,7 @@ export function useOtpInput(options: UseOtpInputOptions = {}): UseOtpInputResult
         ...props,
         id: `${baseId}-slot-${String(index)}`,
         'aria-hidden': true,
-        'data-otp-slot': '',
+        'data-rx-otp-slot': '',
         'data-state': state,
         ...(slot?.isActive ? { 'data-active': '' } : {}),
         ...(slot?.isFilled ? { 'data-filled': '' } : {}),

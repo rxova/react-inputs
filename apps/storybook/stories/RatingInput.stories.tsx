@@ -95,7 +95,7 @@ export const CustomIcons: Story = {
     const heart = (state: RatingIconState) => (
       <span
         style={{
-          fontSize: 'var(--rfs-size)',
+          fontSize: 'var(--rx-rating-size)',
           display: 'inline-block',
           transform: state.active ? 'scale(1.2)' : 'none',
           transition: 'transform 120ms',

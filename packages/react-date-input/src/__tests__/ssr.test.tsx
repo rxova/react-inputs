@@ -14,21 +14,21 @@ import { DateInput } from '../DateInput'
 describe('server rendering', () => {
   it('renders the segments without a DOM', () => {
     const html = renderToStaticMarkup(<DateInput label="Date" locale="en-GB" />)
-    expect(html).toContain('data-rdi-root')
+    expect(html).toContain('data-rx-date-root')
     expect(html).toContain('role="group"')
-    expect(html).toContain('data-rdi-segment="day"')
-    expect(html).toContain('data-rdi-segment="month"')
-    expect(html).toContain('data-rdi-segment="year"')
+    expect(html).toContain('data-rx-date-segment="day"')
+    expect(html).toContain('data-rx-date-segment="month"')
+    expect(html).toContain('data-rx-date-segment="year"')
   })
 
   it('emits the locale order server-side, so hydration has nothing to correct', () => {
     const us = renderToStaticMarkup(<DateInput label="Date" locale="en-US" />)
-    expect(us.indexOf('data-rdi-segment="month"')).toBeLessThan(
-      us.indexOf('data-rdi-segment="day"'),
+    expect(us.indexOf('data-rx-date-segment="month"')).toBeLessThan(
+      us.indexOf('data-rx-date-segment="day"'),
     )
     const gb = renderToStaticMarkup(<DateInput label="Date" locale="en-GB" />)
-    expect(gb.indexOf('data-rdi-segment="day"')).toBeLessThan(
-      gb.indexOf('data-rdi-segment="month"'),
+    expect(gb.indexOf('data-rx-date-segment="day"')).toBeLessThan(
+      gb.indexOf('data-rx-date-segment="month"'),
     )
   })
 
@@ -58,7 +58,7 @@ describe('server rendering', () => {
 
   it('omits the hidden field without a name', () => {
     const html = renderToStaticMarkup(<DateInput label="Date" locale="en-GB" />)
-    expect(html).not.toContain('data-rdi-value')
+    expect(html).not.toContain('data-rx-date-value')
   })
 
   it('marks an out-of-range value on the server too', () => {

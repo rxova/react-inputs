@@ -25,7 +25,7 @@ function Controlled(props: { initial?: string } = {}) {
 describe('masking and the reveal toggle', () => {
   it('starts masked, with the toggle offering to show', async () => {
     const { container } = await render(<PasswordInput label="Password" />)
-    const input = container.querySelector('[data-rpi-input]')!
+    const input = container.querySelector('[data-rx-password-input]')!
     expect(input).toHaveAttribute('type', 'password')
     await expect
       .element(page.getByRole('button', { name: 'Show password' }))
@@ -36,12 +36,12 @@ describe('masking and the reveal toggle', () => {
     const { container } = await render(<PasswordInput label="Password" defaultValue="hunter2" />)
     await page.getByRole('button', { name: 'Show password' }).click()
 
-    const input = container.querySelector('[data-rpi-input]')!
+    const input = container.querySelector('[data-rx-password-input]')!
     expect(input).toHaveAttribute('type', 'text')
     await expect
       .element(page.getByRole('button', { name: 'Hide password' }))
       .toHaveAttribute('aria-pressed', 'true')
-    expect(container.querySelector('[data-rpi-root]')).toHaveAttribute('data-revealed')
+    expect(container.querySelector('[data-rx-password-root]')).toHaveAttribute('data-revealed')
   })
 
   it('keeps focus and the caret exactly where they were', async () => {
@@ -49,7 +49,7 @@ describe('masking and the reveal toggle', () => {
     // the input's inner editor, and without the explicit restore the caret
     // lands at the end — so the next keystroke goes to the wrong place.
     const { container } = await render(<PasswordInput label="Password" defaultValue="abcdef" />)
-    const input = container.querySelector<HTMLInputElement>('[data-rpi-input]')!
+    const input = container.querySelector<HTMLInputElement>('[data-rx-password-input]')!
 
     input.focus()
     input.setSelectionRange(2, 4)
@@ -65,7 +65,7 @@ describe('masking and the reveal toggle', () => {
     const { container } = await render(<PasswordInput label="Password" defaultValue="abcdef" />)
     const button = page.getByRole('button', { name: 'Show password' })
     await button.click()
-    const input = container.querySelector<HTMLInputElement>('[data-rpi-input]')!
+    const input = container.querySelector<HTMLInputElement>('[data-rx-password-input]')!
     // The button was clicked directly, so the input never held focus and there
     // was no caret to restore. Focus must stay on the button.
     expect(document.activeElement).not.toBe(input)
@@ -79,12 +79,12 @@ describe('masking and the reveal toggle', () => {
       </>,
     )
     await page.getByRole('button', { name: 'Show password' }).click()
-    expect(container.querySelector('[data-rpi-input]')).toHaveAttribute('type', 'text')
+    expect(container.querySelector('[data-rx-password-input]')).toHaveAttribute('type', 'text')
 
-    container.querySelector<HTMLInputElement>('[data-rpi-input]')!.focus()
+    container.querySelector<HTMLInputElement>('[data-rx-password-input]')!.focus()
     await page.getByRole('button', { name: 'Elsewhere' }).click()
 
-    expect(container.querySelector('[data-rpi-input]')).toHaveAttribute('type', 'password')
+    expect(container.querySelector('[data-rx-password-input]')).toHaveAttribute('type', 'password')
   })
 
   it('stays revealed while focus moves between the input and its own toggle', async () => {
@@ -92,9 +92,9 @@ describe('masking and the reveal toggle', () => {
     // password before the button could ever be pressed.
     const { container } = await render(<PasswordInput label="Password" defaultValue="hunter2" />)
     await page.getByRole('button', { name: 'Show password' }).click()
-    container.querySelector<HTMLInputElement>('[data-rpi-input]')!.focus()
+    container.querySelector<HTMLInputElement>('[data-rx-password-input]')!.focus()
     await userEvent.tab()
-    expect(container.querySelector('[data-rpi-input]')).toHaveAttribute('type', 'text')
+    expect(container.querySelector('[data-rx-password-input]')).toHaveAttribute('type', 'text')
   })
 
   it('keeps the password visible after blur when hideOnBlur is off', async () => {
@@ -105,9 +105,9 @@ describe('masking and the reveal toggle', () => {
       </>,
     )
     await page.getByRole('button', { name: 'Show password' }).click()
-    container.querySelector<HTMLInputElement>('[data-rpi-input]')!.focus()
+    container.querySelector<HTMLInputElement>('[data-rx-password-input]')!.focus()
     await page.getByRole('button', { name: 'Elsewhere' }).click()
-    expect(container.querySelector('[data-rpi-input]')).toHaveAttribute('type', 'text')
+    expect(container.querySelector('[data-rx-password-input]')).toHaveAttribute('type', 'text')
   })
 
   it('supports a controlled reveal state', async () => {
@@ -118,7 +118,7 @@ describe('masking and the reveal toggle', () => {
     await page.getByRole('button', { name: 'Show password' }).click()
     expect(onRevealChange).toHaveBeenCalledWith(true)
     // Controlled and the parent did not accept the change, so nothing moved.
-    expect(container.querySelector('[data-rpi-input]')).toHaveAttribute('type', 'password')
+    expect(container.querySelector('[data-rx-password-input]')).toHaveAttribute('type', 'password')
   })
 
   it('renders a custom label and icon through the render props', async () => {
@@ -144,7 +144,7 @@ describe('masking and the reveal toggle', () => {
 
   it('omits the toggle when hideRevealToggle is set', async () => {
     const { container } = await render(<PasswordInput label="Password" hideRevealToggle />)
-    expect(container.querySelector('[data-rpi-toggle]')).toBeNull()
+    expect(container.querySelector('[data-rx-password-toggle]')).toBeNull()
   })
 
   it('is never a submit button', async () => {
@@ -167,13 +167,13 @@ describe('value', () => {
   it('is uncontrolled by default and reports every change', async () => {
     const onChange = vi.fn()
     const { container } = await render(<PasswordInput label="Password" onChange={onChange} />)
-    await userEvent.fill(container.querySelector('[data-rpi-input]')!, 'abc')
+    await userEvent.fill(container.querySelector('[data-rx-password-input]')!, 'abc')
     expect(onChange).toHaveBeenLastCalledWith('abc')
   })
 
   it('follows the parent when controlled', async () => {
     const { container } = await render(<Controlled />)
-    await userEvent.fill(container.querySelector('[data-rpi-input]')!, 'secret')
+    await userEvent.fill(container.querySelector('[data-rx-password-input]')!, 'secret')
     await expect.element(page.getByTestId('mirror')).toHaveTextContent('secret')
   })
 
@@ -182,7 +182,7 @@ describe('value', () => {
     const { container } = await render(
       <PasswordInput label="Password" readOnly value="fixed" onChange={onChange} />,
     )
-    const input = container.querySelector<HTMLInputElement>('[data-rpi-input]')!
+    const input = container.querySelector<HTMLInputElement>('[data-rx-password-input]')!
     expect(input).toHaveAttribute('readonly')
     expect(input.value).toBe('fixed')
   })
@@ -192,12 +192,12 @@ describe('value', () => {
       <PasswordInput label="Password" minLength={8} maxLength={4} onWarn={() => undefined} />,
     )
     // A field nobody can fill is worse than a missing cap.
-    expect(container.querySelector('[data-rpi-input]')).not.toHaveAttribute('maxlength')
+    expect(container.querySelector('[data-rx-password-input]')).not.toHaveAttribute('maxlength')
   })
 
   it('applies a usable maxLength', async () => {
     const { container } = await render(<PasswordInput label="Password" maxLength={64} />)
-    expect(container.querySelector('[data-rpi-input]')).toHaveAttribute('maxlength', '64')
+    expect(container.querySelector('[data-rx-password-input]')).toHaveAttribute('maxlength', '64')
   })
 })
 
@@ -226,7 +226,7 @@ function typeWithCapsLock(input: HTMLElement, capsLock: boolean) {
 describe('Caps Lock', () => {
   it('warns while Caps Lock is on and clears when it goes off', async () => {
     const { container } = await render(<PasswordInput label="Password" />)
-    const input = container.querySelector<HTMLInputElement>('[data-rpi-input]')!
+    const input = container.querySelector<HTMLInputElement>('[data-rx-password-input]')!
     input.focus()
 
     typeWithCapsLock(input, true)
@@ -234,7 +234,7 @@ describe('Caps Lock', () => {
 
     typeWithCapsLock(input, false)
     await vi.waitFor(() => {
-      expect(container.querySelector('[data-rpi-caps-lock]')).toBeNull()
+      expect(container.querySelector('[data-rx-password-caps-lock]')).toBeNull()
     })
   })
 
@@ -243,25 +243,25 @@ describe('Caps Lock', () => {
     // username. A component that tracked keydown/keyup of the CapsLock key
     // itself would never see it and would stay silent for the whole session.
     const { container } = await render(<PasswordInput label="Password" />)
-    const input = container.querySelector<HTMLInputElement>('[data-rpi-input]')!
+    const input = container.querySelector<HTMLInputElement>('[data-rx-password-input]')!
     typeWithCapsLock(input, true)
     await expect.element(page.getByRole('status')).toBeInTheDocument()
   })
 
   it('stays silent when the warning is disabled', async () => {
     const { container } = await render(<PasswordInput label="Password" capsLockWarning={false} />)
-    const input = container.querySelector<HTMLInputElement>('[data-rpi-input]')!
+    const input = container.querySelector<HTMLInputElement>('[data-rx-password-input]')!
     input.focus()
     typeWithCapsLock(input, true)
     await new Promise((resolve) => setTimeout(resolve, 50))
-    expect(container.querySelector('[data-rpi-caps-lock]')).toBeNull()
+    expect(container.querySelector('[data-rx-password-caps-lock]')).toBeNull()
   })
 
   it('renders a custom warning', async () => {
     const { container } = await render(
       <PasswordInput label="Password" capsLockLabel="MAJUSCULES" />,
     )
-    const input = container.querySelector<HTMLInputElement>('[data-rpi-input]')!
+    const input = container.querySelector<HTMLInputElement>('[data-rx-password-input]')!
     input.focus()
     typeWithCapsLock(input, true)
     await expect.element(page.getByRole('status')).toHaveTextContent('MAJUSCULES')
@@ -274,14 +274,14 @@ describe('Caps Lock', () => {
         <button type="button">Elsewhere</button>
       </>,
     )
-    const input = container.querySelector<HTMLInputElement>('[data-rpi-input]')!
+    const input = container.querySelector<HTMLInputElement>('[data-rx-password-input]')!
     input.focus()
     typeWithCapsLock(input, true)
     await expect.element(page.getByRole('status')).toBeInTheDocument()
 
     await page.getByRole('button', { name: 'Elsewhere' }).click()
     await vi.waitFor(() => {
-      expect(container.querySelector('[data-rpi-caps-lock]')).toBeNull()
+      expect(container.querySelector('[data-rx-password-caps-lock]')).toBeNull()
     })
   })
 })
@@ -289,7 +289,7 @@ describe('Caps Lock', () => {
 describe('strength meter', () => {
   it('is absent unless asked for', async () => {
     const { container } = await render(<PasswordInput label="Password" defaultValue="abc" />)
-    expect(container.querySelector('[data-rpi-meter]')).toBeNull()
+    expect(container.querySelector('[data-rx-password-meter]')).toBeNull()
   })
 
   it('exposes the score as a meter with a readable value', async () => {
@@ -301,19 +301,21 @@ describe('strength meter', () => {
         onChange={() => undefined}
       />,
     )
-    const meter = container.querySelector('[data-rpi-meter]')!
+    const meter = container.querySelector('[data-rx-password-meter]')!
     expect(meter).toHaveAttribute('role', 'meter')
     expect(meter).toHaveAttribute('aria-valuenow', '4')
     expect(meter).toHaveAttribute('aria-valuetext', 'Strong')
-    expect(container.querySelector('[data-rpi-root]')).toHaveAttribute('data-score', '4')
+    expect(container.querySelector('[data-rx-password-root]')).toHaveAttribute('data-score', '4')
   })
 
   it('fills one segment per point of score', async () => {
     const { container } = await render(
       <PasswordInput label="Password" showStrength value="k4Tm9pR2" onChange={() => undefined} />,
     )
-    const filled = container.querySelectorAll('[data-rpi-segment][data-filled]')
-    const score = Number(container.querySelector('[data-rpi-meter]')!.getAttribute('aria-valuenow'))
+    const filled = container.querySelectorAll('[data-rx-password-segment][data-filled]')
+    const score = Number(
+      container.querySelector('[data-rx-password-meter]')!.getAttribute('aria-valuenow'),
+    )
     expect(filled).toHaveLength(score)
   })
 
@@ -328,7 +330,10 @@ describe('strength meter', () => {
         estimate={() => ({ score: 3, entropy: 42, penalties: [], effectiveLength: 8 })}
       />,
     )
-    expect(container.querySelector('[data-rpi-meter]')).toHaveAttribute('aria-valuenow', '3')
+    expect(container.querySelector('[data-rx-password-meter]')).toHaveAttribute(
+      'aria-valuenow',
+      '3',
+    )
   })
 
   it('accepts a custom caption', async () => {
@@ -341,7 +346,7 @@ describe('strength meter', () => {
         strengthLabel={(strength) => `${String(strength.score)}/4`}
       />,
     )
-    expect(container.querySelector('[data-rpi-strength-label]')).toHaveTextContent('4/4')
+    expect(container.querySelector('[data-rx-password-strength-label]')).toHaveTextContent('4/4')
   })
 })
 
@@ -385,7 +390,7 @@ describe('requirement checklist', () => {
         onValidityChange={onValidityChange}
       />,
     )
-    expect(container.querySelector('[data-rpi-rules]')).toBeNull()
+    expect(container.querySelector('[data-rx-password-rules]')).toBeNull()
     expect(onValidityChange).toHaveBeenLastCalledWith(false)
   })
 })
@@ -396,7 +401,7 @@ describe('validity', () => {
     const { container } = await render(
       <PasswordInput label="Password" minLength={4} onValidityChange={onValidityChange} />,
     )
-    const input = container.querySelector('[data-rpi-input]')!
+    const input = container.querySelector('[data-rx-password-input]')!
 
     await userEvent.fill(input, 'ab')
     await userEvent.fill(input, 'abcd')
@@ -416,12 +421,12 @@ describe('validity', () => {
         onValidityChange={onValidityChange}
       />,
     )
-    const input = container.querySelector('[data-rpi-input]')!
+    const input = container.querySelector('[data-rx-password-input]')!
     await userEvent.fill(input, 'password')
     expect(onValidityChange).toHaveBeenLastCalledWith(false)
     await userEvent.fill(input, 'k4Tm9pR2wZ!vQ8yBn#Lm')
     expect(onValidityChange).toHaveBeenLastCalledWith(true)
-    expect(container.querySelector('[data-rpi-root]')).toHaveAttribute('data-valid')
+    expect(container.querySelector('[data-rx-password-root]')).toHaveAttribute('data-valid')
   })
 })
 
@@ -446,7 +451,7 @@ describe('breach check', () => {
         checkCompromisedDelay={250}
       />,
     )
-    const input = container.querySelector('[data-rpi-input]')!
+    const input = container.querySelector('[data-rx-password-input]')!
 
     await userEvent.fill(input, 'hunt')
     await userEvent.fill(input, 'hunter2')
@@ -467,9 +472,9 @@ describe('breach check', () => {
         onValidityChange={() => undefined}
       />,
     )
-    await userEvent.fill(container.querySelector('[data-rpi-input]')!, 'hunter2')
+    await userEvent.fill(container.querySelector('[data-rx-password-input]')!, 'hunter2')
     await new Promise((resolve) => setTimeout(resolve, 60))
-    expect(container.querySelector('[data-rpi-compromised]')).toBeNull()
+    expect(container.querySelector('[data-rx-password-compromised]')).toBeNull()
   })
 
   it('blocks validity while the password is known-compromised', async () => {
@@ -483,7 +488,7 @@ describe('breach check', () => {
         onValidityChange={onValidityChange}
       />,
     )
-    await userEvent.fill(container.querySelector('[data-rpi-input]')!, 'hunter2')
+    await userEvent.fill(container.querySelector('[data-rx-password-input]')!, 'hunter2')
     await expect.element(page.getByRole('alert')).toBeInTheDocument()
     expect(onValidityChange).toHaveBeenLastCalledWith(false)
   })
@@ -496,11 +501,11 @@ describe('breach check', () => {
         checkCompromisedDelay={10}
       />,
     )
-    const input = container.querySelector('[data-rpi-input]')!
+    const input = container.querySelector('[data-rx-password-input]')!
     await userEvent.fill(input, 'hunter2')
     await expect.element(page.getByRole('alert')).toBeInTheDocument()
     await userEvent.clear(input)
-    expect(container.querySelector('[data-rpi-compromised]')).toBeNull()
+    expect(container.querySelector('[data-rx-password-compromised]')).toBeNull()
   })
 })
 

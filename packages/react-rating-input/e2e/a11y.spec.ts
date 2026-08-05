@@ -39,7 +39,7 @@ test('stays clean while showing a validation error', async ({ page }) => {
 test('every rating group has a unique accessible name', async ({ page }) => {
   await page.goto('/')
   const names = await page
-    .locator('[data-rfs-root]')
+    .locator('[data-rx-rating-root]')
     .evaluateAll((els) => els.map((el) => el.getAttribute('aria-label')))
   expect(names.every((n) => n && n.length > 0)).toBe(true)
 })

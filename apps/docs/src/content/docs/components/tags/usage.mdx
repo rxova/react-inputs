@@ -125,21 +125,21 @@ string somebody downstream has to guess how to split.
 No stylesheet to import.
 
 ```css
-[data-rtg-root] {
-  --rtg-tag-background: #e8f0fe;
-  --rtg-tag-radius: 999px;
+[data-rx-tags-root] {
+  --rx-tags-tag-background: #e8f0fe;
+  --rx-tags-tag-radius: 999px;
 }
 
-[data-rtg-remove][data-focused] {
+[data-rx-tags-remove][data-focused] {
   outline: 2px solid Highlight;
 }
 
-[data-rtg-root][data-full] [data-rtg-input] {
+[data-rx-tags-root][data-full] [data-rx-tags-input] {
   opacity: 0.5;
 }
 ```
 
-Do not shrink `--rtg-remove-size` below `1.5rem`: at the default font size that is the 24×24 CSS
+Do not shrink `--rx-tags-remove-size` below `1.5rem`: at the default font size that is the 24×24 CSS
 pixels WCAG 2.5.8 requires. The full list of properties and `data-*` hooks is in the
 [package README](https://github.com/rxova/react-inputs/tree/main/packages/react-tags-input#styling).
 

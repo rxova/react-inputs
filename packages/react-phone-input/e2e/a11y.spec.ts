@@ -24,16 +24,16 @@ test('the whole demo page is free of WCAG A/AA violations', async ({ page }) => 
 })
 
 test('stays clean with numbers entered', async ({ page }) => {
-  await page.locator('[data-testid="basic"] [data-rphi-input]').click()
+  await page.locator('[data-testid="basic"] [data-rx-phone-input]').click()
   await page.keyboard.type('4155552671')
-  await page.locator('[data-testid="details"] [data-rphi-input]').click()
+  await page.locator('[data-testid="details"] [data-rx-phone-input]').click()
   await page.keyboard.type('+33612345678')
   expect(await scan(page)).toEqual([])
 })
 
 test('every number field has an accessible name', async ({ page }) => {
   const names = await page
-    .locator('[data-rphi-input]')
+    .locator('[data-rx-phone-input]')
     .evaluateAll((elements) =>
       elements.map((element) =>
         element.id
@@ -47,7 +47,7 @@ test('every number field has an accessible name', async ({ page }) => {
 
 test('every country select has an accessible name', async ({ page }) => {
   const names = await page
-    .locator('[data-rphi-country]')
+    .locator('[data-rx-phone-country]')
     .evaluateAll((elements) => elements.map((element) => element.getAttribute('aria-label')))
   expect(names.length).toBeGreaterThan(0)
   expect(names.every((name) => typeof name === 'string' && name.length > 0)).toBe(true)
@@ -57,7 +57,7 @@ test('no option in any picker is blank', async ({ page }) => {
   // An unknown ISO code or a missing Intl name would render an empty option,
   // which is unreachable by type-ahead and meaningless to a screen reader.
   const blanks = await page
-    .locator('[data-rphi-country] option')
+    .locator('[data-rx-phone-country] option')
     .evaluateAll(
       (elements) =>
         elements.filter((element) => (element.textContent ?? '').trim().length < 3).length,
@@ -67,7 +67,7 @@ test('no option in any picker is blank', async ({ page }) => {
 
 test('the field can be filled without a pointer', async ({ page }) => {
   const section = page.locator('[data-testid="details"]')
-  await section.locator('[data-rphi-country]').focus()
+  await section.locator('[data-rx-phone-country]').focus()
   await page.keyboard.press('Tab')
   await page.keyboard.type('2071234567')
   await expect(page.getByTestId('e164')).toHaveText('+442071234567')

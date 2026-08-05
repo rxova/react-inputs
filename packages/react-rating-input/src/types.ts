@@ -70,7 +70,7 @@ export interface RatingProps {
   // ---- Icons ----------------------------------------------------------------
   /** Filled icon. A function receives per-icon state. @default a built-in star */
   icon?: RatingIcon
-  /** Empty/track icon. @default same as `icon`, dimmed via `--rfs-empty-filter` */
+  /** Empty/track icon. @default same as `icon`, dimmed via `--rx-rating-empty-filter` */
   emptyIcon?: RatingIcon
 
   // ---- Interaction ----------------------------------------------------------

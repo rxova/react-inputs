@@ -28,7 +28,7 @@ form recipes, theming, and migration from `react-rating` / `react-stars`.
 - **Any precision** — continuous `4.3`, halves, tenths, or whole stars, with the rounding
   direction you choose
 - **Accessible** — native radios in a radiogroup when interactive, `role="img"` when not
-- **Zero runtime dependencies**, ~2.3 kB brotli, no stylesheet to import
+- **Zero runtime dependencies**, ~2.8 kB brotli, no stylesheet to import
 - **Form-ready** — first-class React Hook Form / Formik / React Final Form / TanStack Form integration
 
 ## Display
@@ -197,27 +197,27 @@ No stylesheet to import. Only layout-critical CSS is inlined; everything visual 
 property.
 
 ```css
-[data-rfs-root] {
-  --rfs-size: 1.25rem;
-  --rfs-gap: 0.125rem;
-  --rfs-color-filled: #f5a623;
-  --rfs-color-empty: #d8d8d8;
-  --rfs-color-hover: var(--rfs-color-filled);
-  --rfs-empty-filter: grayscale(1) opacity(0.35);
-  --rfs-transition: 120ms;
-  --rfs-focus-ring: 2px solid Highlight;
+[data-rx-rating-root] {
+  --rx-rating-size: 1.25rem;
+  --rx-rating-gap: 0.125rem;
+  --rx-rating-color-filled: #f5a623;
+  --rx-rating-color-empty: #d8d8d8;
+  --rx-rating-color-hover: var(--rx-rating-color-filled);
+  --rx-rating-empty-filter: grayscale(1) opacity(0.35);
+  --rx-rating-transition: 120ms;
+  --rx-rating-focus-ring: 2px solid Highlight;
 }
 ```
 
-Stable selector hooks, covered by semver: `[data-rfs-root]`, `[data-rfs-item]`,
-`[data-rfs-layer="fill"|"empty"]`, `[data-state="full"|"partial"|"empty"]`, `[data-active]`,
+Stable selector hooks, covered by semver: `[data-rx-rating-root]`, `[data-rx-rating-item]`,
+`[data-rx-rating-layer="fill"|"empty"]`, `[data-state="full"|"partial"|"empty"]`, `[data-active]`,
 `[data-readonly]`, `[data-disabled]`, `[data-invalid]`.
 
 ### Emoji
 
 Emoji work anywhere an icon does, with one caveat worth knowing: they render from a colour font,
-so `--rfs-color-filled` has **no effect** on them. That is why the implicit empty layer is dimmed
-with `--rfs-empty-filter` (a `grayscale`/`opacity` filter) rather than with colour — filters work
+so `--rx-rating-color-filled` has **no effect** on them. That is why the implicit empty layer is dimmed
+with `--rx-rating-empty-filter` (a `grayscale`/`opacity` filter) rather than with colour — filters work
 on emoji and SVG alike. Pass an explicit `emptyIcon` and no filter is applied.
 
 ## Props
@@ -261,7 +261,7 @@ stable and safe to `switch` on: see `RatingWarning` / `RatingWarningCode` in
 ## Headless
 
 `useRating` exposes the state machine — value, hover preview, focus, group blur, fills and steps
-— if you want to render the whole thing yourself. ~864 B on its own.
+— if you want to render the whole thing yourself. ~1.2 kB on its own.
 
 ## Accessibility
 
@@ -276,7 +276,7 @@ Also handled: visible focus ring that the fill layer's `overflow: hidden` cannot
 
 **Known limitation:** at `precision={0.5}` each half-star target is narrower than the WCAG 2.2
 §2.5.8 24×24 px minimum. That is inherent to half-star input. Use `precision={1}` or a larger
-`--rfs-size` where that matters.
+`--rx-rating-size` where that matters.
 
 ## Part of rxova
 

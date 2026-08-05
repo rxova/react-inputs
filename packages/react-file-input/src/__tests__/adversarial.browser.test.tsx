@@ -17,10 +17,10 @@ function makeFile(name: string, options: { type?: string; size?: number; at?: nu
   return new File([new Uint8Array(size)], name, { type, lastModified: at })
 }
 function input(container: HTMLElement) {
-  return container.querySelector<HTMLInputElement>('[data-rfi-input]')!
+  return container.querySelector<HTMLInputElement>('[data-rx-file-input]')!
 }
 function names(container: HTMLElement) {
-  return Array.from(container.querySelectorAll('[data-rfi-name]')).map((e) => e.textContent)
+  return Array.from(container.querySelectorAll('[data-rx-file-name]')).map((e) => e.textContent)
 }
 async function pick(container: HTMLElement, files: File[]) {
   const data = new DataTransfer()
@@ -48,7 +48,7 @@ describe('the object-URL lifecycle', () => {
       for (let round = 0; round < 3; round++) {
         await pick(container, [makeFile('a.png', { type: 'image/png', at: round })])
         await vi.waitFor(() => {
-          expect(container.querySelectorAll('[data-rfi-preview]')).toHaveLength(1)
+          expect(container.querySelectorAll('[data-rx-file-preview]')).toHaveLength(1)
         })
         await page.getByRole('button', { name: 'Remove a.png' }).click()
         await vi.waitFor(() => {
@@ -101,7 +101,7 @@ describe('security properties the README claims', () => {
     await vi.waitFor(() => {
       expect(names(container)).toHaveLength(1)
     })
-    expect(container.querySelector('[data-rfi-list] img')).toBeNull()
+    expect(container.querySelector('[data-rx-file-list] img')).toBeNull()
   })
 
   it('does not treat a doctored extension as a matching type', async () => {
@@ -238,7 +238,7 @@ describe('hostile input', () => {
     await vi.waitFor(() => {
       expect(names(container)).toEqual(['empty.txt'])
     })
-    expect(container.querySelector('[data-rfi-size]')).toHaveTextContent('0 B')
+    expect(container.querySelector('[data-rx-file-size]')).toHaveTextContent('0 B')
   })
 
   it('handles a file with no extension and no type', async () => {
@@ -265,7 +265,7 @@ describe('hostile input', () => {
     await vi.waitFor(() => {
       expect(onReject).toHaveBeenCalledTimes(2)
     })
-    expect(container.querySelector('[data-rfi-announcement]')?.textContent).toBe('')
+    expect(container.querySelector('[data-rx-file-announcement]')?.textContent).toBe('')
   })
 
   it('announces a mixed batch once, with the refused count', async () => {
@@ -276,7 +276,7 @@ describe('hostile input', () => {
     await vi.waitFor(() => {
       expect(names(container)).toEqual(['a.txt', 'c.txt'])
     })
-    const said = container.querySelector('[data-rfi-announcement]')?.textContent ?? ''
+    const said = container.querySelector('[data-rx-file-announcement]')?.textContent ?? ''
     expect(said).toContain('2 files')
     expect(said).toContain('1 refused')
   })
@@ -292,7 +292,7 @@ describe('invariants', () => {
     const data = new DataTransfer()
     data.items.add(makeFile('d'))
     container
-      .querySelector('[data-rfi-zone]')!
+      .querySelector('[data-rx-file-zone]')!
       .dispatchEvent(new DragEvent('drop', { dataTransfer: data, bubbles: true, cancelable: true }))
     await vi.waitFor(() => {
       expect(names(container)).toHaveLength(2)
@@ -319,7 +319,7 @@ describe('invariants', () => {
     await vi.waitFor(() => {
       expect(names(container)).toHaveLength(2)
     })
-    const labels = Array.from(container.querySelectorAll('[data-rfi-remove]')).map((button) =>
+    const labels = Array.from(container.querySelectorAll('[data-rx-file-remove]')).map((button) =>
       button.getAttribute('aria-label'),
     )
     expect(labels).toEqual(['Remove one.txt', 'Remove two.txt'])
@@ -333,7 +333,7 @@ describe('invariants', () => {
         <FileInput label="Second" multiple />
       </>,
     )
-    const roots = container.querySelectorAll<HTMLElement>('[data-rfi-root]')
+    const roots = container.querySelectorAll<HTMLElement>('[data-rx-file-root]')
     await pick(roots[0]!, [makeFile('only-first.txt')])
     await vi.waitFor(() => {
       expect(names(roots[0]!)).toEqual(['only-first.txt'])

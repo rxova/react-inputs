@@ -18,7 +18,7 @@
 npm install @rxova/react-phone-input
 ```
 
-- **10x smaller than the default choice.** 3.9 kB brotli against `react-phone-number-input`'s
+- **10x smaller than the default choice.** 4.1 kB brotli against `react-phone-number-input`'s
   41.1 kB: names come from `Intl.DisplayNames`, flags are two regional-indicator letters, and all
   that is left to ship is the dial-code table.
 - **No flag sprite sheet, no icon font.** A flag emoji is six bytes of arithmetic.
@@ -26,7 +26,7 @@ npm install @rxova/react-phone-input
 - **As-you-type formatting that keeps your caret** where you left it, mid-string.
 - **Native `<select>` and native `<input type="tel">`** — the platform's own picker on mobile,
   autofill, and keyboard type-ahead for free.
-- **Zero runtime dependencies**, 3.9 kB brotli, no stylesheet to import.
+- **Zero runtime dependencies**, 4.1 kB brotli, no stylesheet to import.
 
 ## Basic use
 
@@ -160,10 +160,10 @@ on the `<input>`, which is what `setFocus()` and focus-first-error patterns expe
 
 There is no stylesheet to import.
 
-| Property              | Default    | Applies to                           |
-| --------------------- | ---------- | ------------------------------------ |
-| `--rphi-gap`          | `0.375rem` | Space between the select and the box |
-| `--rphi-select-width` | `9rem`     | Maximum width of the country select  |
+| Property                  | Default    | Applies to                           |
+| ------------------------- | ---------- | ------------------------------------ |
+| `--rx-phone-gap`          | `0.375rem` | Space between the select and the box |
+| `--rx-phone-select-width` | `9rem`     | Maximum width of the country select  |
 
 ### `data-*` attributes
 
@@ -171,13 +171,13 @@ These are **public API**, covered by semver.
 
 | Attribute                        | On           | Meaning                          |
 | -------------------------------- | ------------ | -------------------------------- |
-| `data-rphi-root`                 | wrapper      | Always present                   |
+| `data-rx-phone-root`             | wrapper      | Always present                   |
 | `data-country`                   | wrapper      | ISO code of the resolved country |
 | `data-possible`                  | wrapper      | The number is a possible length  |
 | `data-invalid` / `data-disabled` | wrapper      | Mirrors the props                |
-| `data-rphi-country`              | `<select>`   | The country picker               |
-| `data-rphi-input`                | `<input>`    | The number field                 |
-| `data-rphi-value`                | hidden input | The E.164 value a form posts     |
+| `data-rx-phone-country`          | `<select>`   | The country picker               |
+| `data-rx-phone-input`            | `<input>`    | The number field                 |
+| `data-rx-phone-value`            | hidden input | The E.164 value a form posts     |
 
 ## Headless
 

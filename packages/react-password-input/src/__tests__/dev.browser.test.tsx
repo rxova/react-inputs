@@ -22,7 +22,7 @@ describe('onWarn', () => {
       expect.objectContaining({ code: 'min-length-negative', prop: 'minLength' }),
     )
     // Coerced, not crashed: the field still renders with the default floor.
-    expect(container.querySelector('[data-rpi-input]')).toHaveAttribute('minlength', '8')
+    expect(container.querySelector('[data-rx-password-input]')).toHaveAttribute('minlength', '8')
   })
 
   it('reports a fractional minLength', async () => {
@@ -72,7 +72,7 @@ describe('onWarn', () => {
     const { container } = await render(
       <PasswordInput label="Password" minLength={-1} onWarn={onWarn} />,
     )
-    await userEvent.fill(container.querySelector('[data-rpi-input]')!, 'abcdef')
+    await userEvent.fill(container.querySelector('[data-rx-password-input]')!, 'abcdef')
     expect(onWarn.mock.calls.filter(([w]) => w.code === 'min-length-negative')).toHaveLength(1)
   })
 })
@@ -106,7 +106,7 @@ describe('refs', () => {
 describe('edges', () => {
   it('omits the native minlength when the floor is zero', async () => {
     const { container } = await render(<PasswordInput label="Password" minLength={0} />)
-    expect(container.querySelector('[data-rpi-input]')).not.toHaveAttribute('minlength')
+    expect(container.querySelector('[data-rx-password-input]')).not.toHaveAttribute('minlength')
   })
 
   it('omits aria-valuetext when the caption is not a plain string', async () => {
@@ -122,9 +122,11 @@ describe('edges', () => {
         strengthLabel={() => <strong>Weak-ish</strong>}
       />,
     )
-    const meter = container.querySelector('[data-rpi-meter]')!
+    const meter = container.querySelector('[data-rx-password-meter]')!
     expect(meter).not.toHaveAttribute('aria-valuetext')
-    expect(container.querySelector('[data-rpi-strength-label]')).toHaveTextContent('Weak-ish')
+    expect(container.querySelector('[data-rx-password-strength-label]')).toHaveTextContent(
+      'Weak-ish',
+    )
   })
 
   it('ignores writes while disabled', async () => {
@@ -132,7 +134,7 @@ describe('edges', () => {
     const { container } = await render(
       <PasswordInput label="Password" disabled onChange={onChange} />,
     )
-    const input = container.querySelector<HTMLInputElement>('[data-rpi-input]')!
+    const input = container.querySelector<HTMLInputElement>('[data-rx-password-input]')!
     // The DOM refuses the keystroke, and the hook refuses it again — the
     // headless path has no `disabled` attribute to lean on.
     expect(input).toBeDisabled()
@@ -143,8 +145,8 @@ describe('edges', () => {
     // No mousedown, so nothing captured the selection ahead of time and the
     // hook falls back to reading it live.
     const { container } = await render(<PasswordInput label="Password" defaultValue="abcdef" />)
-    const input = container.querySelector<HTMLInputElement>('[data-rpi-input]')!
-    const button = container.querySelector<HTMLButtonElement>('[data-rpi-toggle]')!
+    const input = container.querySelector<HTMLInputElement>('[data-rx-password-input]')!
+    const button = container.querySelector<HTMLButtonElement>('[data-rx-password-toggle]')!
     input.focus()
     input.setSelectionRange(1, 3)
     button.click()
@@ -174,7 +176,7 @@ describe('edges', () => {
       )
     }
     const { container } = await render(<Harness />)
-    const input = container.querySelector('[data-rpi-input]')!
+    const input = container.querySelector('[data-rx-password-input]')!
     await userEvent.fill(input, 'ab')
     await userEvent.fill(input, 'abc')
     await userEvent.fill(input, 'abcd')
@@ -189,9 +191,9 @@ describe('edges', () => {
         checkCompromisedDelay={10}
       />,
     )
-    await userEvent.fill(container.querySelector('[data-rpi-input]')!, 'hunter2')
+    await userEvent.fill(container.querySelector('[data-rx-password-input]')!, 'hunter2')
     await vi.waitFor(() => {
-      expect(container.querySelector('[data-rpi-announcement]')).toHaveTextContent(
+      expect(container.querySelector('[data-rx-password-announcement]')).toHaveTextContent(
         'Checking password',
       )
     })

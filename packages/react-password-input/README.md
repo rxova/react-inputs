@@ -28,7 +28,7 @@ npm install @rxova/react-password-input
   the page on its own
 - **NIST SP 800-63B by default** — length first, no composition rules, long passphrases never
   truncated
-- **Zero runtime dependencies**, 4.7 kB brotli for the whole component, no stylesheet to import
+- **Zero runtime dependencies**, 4.8 kB brotli for the whole component, no stylesheet to import
 
 ## Sign in
 
@@ -240,45 +240,45 @@ function SignIn() {
 There is no stylesheet to import. Only layout-critical declarations are inlined; everything visual
 is a CSS custom property or a `data-*` hook.
 
-| Property                  | Default                          | Applies to                   |
-| ------------------------- | -------------------------------- | ---------------------------- |
-| `--rpi-gap`               | `0.375rem`                       | Space between stacked parts  |
-| `--rpi-field-gap`         | `0.25rem`                        | Input to reveal button       |
-| `--rpi-toggle-size`       | `1.75rem`                        | Reveal button hit area       |
-| `--rpi-meter-height`      | `0.25rem`                        | Meter bar height             |
-| `--rpi-meter-gap`         | `0.125rem`                       | Space between meter segments |
-| `--rpi-meter-radius`      | `999px`                          | Meter segment corners        |
-| `--rpi-meter-track`       | `rgba(0 0 0 / 0.15)`             | Unfilled segment             |
-| `--rpi-meter-fill`        | `currentColor`                   | Filled segment, any score    |
-| `--rpi-meter-fill-1`…`-4` | falls back to `--rpi-meter-fill` | Filled segment per score     |
-| `--rpi-rules-indent`      | `1.25rem`                        | Checklist indent             |
+| Property                          | Default                                  | Applies to                   |
+| --------------------------------- | ---------------------------------------- | ---------------------------- |
+| `--rx-password-gap`               | `0.375rem`                               | Space between stacked parts  |
+| `--rx-password-field-gap`         | `0.25rem`                                | Input to reveal button       |
+| `--rx-password-toggle-size`       | `1.75rem`                                | Reveal button hit area       |
+| `--rx-password-meter-height`      | `0.25rem`                                | Meter bar height             |
+| `--rx-password-meter-gap`         | `0.125rem`                               | Space between meter segments |
+| `--rx-password-meter-radius`      | `999px`                                  | Meter segment corners        |
+| `--rx-password-meter-track`       | `rgba(0 0 0 / 0.15)`                     | Unfilled segment             |
+| `--rx-password-meter-fill`        | `currentColor`                           | Filled segment, any score    |
+| `--rx-password-meter-fill-1`…`-4` | falls back to `--rx-password-meter-fill` | Filled segment per score     |
+| `--rx-password-rules-indent`      | `1.25rem`                                | Checklist indent             |
 
-Do not shrink `--rpi-toggle-size` below `1.5rem`: at the default font size that is the 24×24 CSS
+Do not shrink `--rx-password-toggle-size` below `1.5rem`: at the default font size that is the 24×24 CSS
 pixels WCAG 2.5.8 Target Size (Minimum) requires.
 
 ### `data-*` attributes
 
 These are **public API**, covered by semver.
 
-| Attribute                        | On            | Meaning                            |
-| -------------------------------- | ------------- | ---------------------------------- |
-| `data-rpi-root`                  | wrapper       | Always present                     |
-| `data-revealed`                  | wrapper       | Password is showing as text        |
-| `data-disabled` / `data-invalid` | wrapper       | Mirrors the props                  |
-| `data-valid`                     | wrapper       | All rules met and `minScore` hit   |
-| `data-score`                     | wrapper       | `0`–`4`, only when `showStrength`  |
-| `data-rpi-field`                 | input row     | Input plus toggle                  |
-| `data-rpi-input`                 | `<input>`     | The control itself                 |
-| `data-rpi-toggle`                | `<button>`    | The reveal toggle                  |
-| `data-rpi-caps-lock`             | warning       | Present only while Caps Lock is on |
-| `data-rpi-meter`                 | meter         | `role="meter"`                     |
-| `data-rpi-segment`               | meter segment | `0`–`3`                            |
-| `data-filled`                    | meter segment | Segment is lit                     |
-| `data-rpi-strength-label`        | caption       | The score caption                  |
-| `data-rpi-rules`                 | `<ul>`        | The checklist                      |
-| `data-rule` / `data-met`         | `<li>`        | Rule id, and whether it passes     |
-| `data-rpi-compromised`           | alert         | Present only when known-breached   |
-| `data-rpi-announcement`          | live region   | Off-screen, `aria-live="polite"`   |
+| Attribute                         | On            | Meaning                            |
+| --------------------------------- | ------------- | ---------------------------------- |
+| `data-rx-password-root`           | wrapper       | Always present                     |
+| `data-revealed`                   | wrapper       | Password is showing as text        |
+| `data-disabled` / `data-invalid`  | wrapper       | Mirrors the props                  |
+| `data-valid`                      | wrapper       | All rules met and `minScore` hit   |
+| `data-score`                      | wrapper       | `0`–`4`, only when `showStrength`  |
+| `data-rx-password-field`          | input row     | Input plus toggle                  |
+| `data-rx-password-input`          | `<input>`     | The control itself                 |
+| `data-rx-password-toggle`         | `<button>`    | The reveal toggle                  |
+| `data-rx-password-caps-lock`      | warning       | Present only while Caps Lock is on |
+| `data-rx-password-meter`          | meter         | `role="meter"`                     |
+| `data-rx-password-segment`        | meter segment | `0`–`3`                            |
+| `data-filled`                     | meter segment | Segment is lit                     |
+| `data-rx-password-strength-label` | caption       | The score caption                  |
+| `data-rx-password-rules`          | `<ul>`        | The checklist                      |
+| `data-rule` / `data-met`          | `<li>`        | Rule id, and whether it passes     |
+| `data-rx-password-compromised`    | alert         | Present only when known-breached   |
+| `data-rx-password-announcement`   | live region   | Off-screen, `aria-live="polite"`   |
 
 ## Props
 

@@ -109,7 +109,7 @@ describe('controlled value edges', () => {
     }
     const { container } = await render(<Controlled />)
     await page.getByRole('button', { name: 'Clear' }).click()
-    expect(container.querySelector<HTMLInputElement>('[data-rphi-input]')!.value).toBe('')
+    expect(container.querySelector<HTMLInputElement>('[data-rx-phone-input]')!.value).toBe('')
   })
 })
 
@@ -152,7 +152,7 @@ describe('caret restoration', () => {
     // Setting a selection on an unfocused input steals focus in some engines,
     // which would yank the page around whenever a value arrives from elsewhere.
     const { container } = await render(<PhoneInput label="Phone" defaultCountry="US" />)
-    const box = container.querySelector<HTMLInputElement>('[data-rphi-input]')!
+    const box = container.querySelector<HTMLInputElement>('[data-rx-phone-input]')!
     const outside = document.createElement('button')
     document.body.appendChild(outside)
     outside.focus()
@@ -172,7 +172,7 @@ describe('caret restoration', () => {
 
   it('does restore it when the field is focused', async () => {
     const { container } = await render(<PhoneInput label="Phone" defaultCountry="US" />)
-    const box = container.querySelector<HTMLInputElement>('[data-rphi-input]')!
+    const box = container.querySelector<HTMLInputElement>('[data-rx-phone-input]')!
     box.focus()
     await userEvent.fill(box, '415555')
     expect(document.activeElement).toBe(box)

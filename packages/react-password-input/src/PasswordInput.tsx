@@ -26,13 +26,13 @@ const EYE_OFF = (
 const rootStyle: CSSProperties = {
   display: 'inline-flex',
   flexDirection: 'column',
-  gap: 'var(--rpi-gap, 0.375rem)',
+  gap: 'var(--rx-password-gap, 0.375rem)',
 }
 
 const fieldStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: 'var(--rpi-field-gap, 0.25rem)',
+  gap: 'var(--rx-password-field-gap, 0.25rem)',
 }
 
 const inputStyle: CSSProperties = {
@@ -50,8 +50,8 @@ const toggleStyle: CSSProperties = {
   flexShrink: 0,
   // 24px of hit area at the default font size. Below this the button fails
   // WCAG 2.5.8 Target Size (Minimum) on touch.
-  minWidth: 'var(--rpi-toggle-size, 1.75rem)',
-  minHeight: 'var(--rpi-toggle-size, 1.75rem)',
+  minWidth: 'var(--rx-password-toggle-size, 1.75rem)',
+  minHeight: 'var(--rx-password-toggle-size, 1.75rem)',
   padding: 0,
   font: 'inherit',
   lineHeight: 1,
@@ -63,13 +63,13 @@ const toggleStyle: CSSProperties = {
 
 const trackStyle: CSSProperties = {
   display: 'flex',
-  gap: 'var(--rpi-meter-gap, 0.125rem)',
-  height: 'var(--rpi-meter-height, 0.25rem)',
+  gap: 'var(--rx-password-meter-gap, 0.125rem)',
+  height: 'var(--rx-password-meter-height, 0.25rem)',
 }
 
 const listStyle: CSSProperties = {
   margin: 0,
-  paddingInlineStart: 'var(--rpi-rules-indent, 1.25rem)',
+  paddingInlineStart: 'var(--rx-password-rules-indent, 1.25rem)',
 }
 
 /**
@@ -181,7 +181,7 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
       <div
         className={className}
         style={{ ...rootStyle, ...style }}
-        data-rpi-root=""
+        data-rx-password-root=""
         data-revealed={revealed ? '' : undefined}
         data-disabled={disabled ? '' : undefined}
         data-invalid={invalid ? '' : undefined}
@@ -190,7 +190,7 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
       >
         {label !== undefined ? <label htmlFor={ids.input}>{label}</label> : null}
 
-        <div style={fieldStyle} data-rpi-field="">
+        <div style={fieldStyle} data-rx-password-field="">
           <input
             ref={(node) => {
               inputRef.current = node
@@ -198,7 +198,7 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
               else if (ref) ref.current = node
             }}
             id={ids.input}
-            data-rpi-input=""
+            data-rx-password-input=""
             // Driven by the hook so the headless and rendered paths can never
             // disagree about what "revealed" means.
             type={type}
@@ -235,7 +235,7 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
               // Never a submit button: the default `type` inside a form is
               // "submit", so an unadorned reveal toggle submits the login form.
               type="button"
-              data-rpi-toggle=""
+              data-rx-password-toggle=""
               // A toggle button, so `aria-pressed` rather than a changing role.
               // The name stays "Show password" while pressed=false and flips
               // with the state, which is what screen-reader users expect from
@@ -279,13 +279,13 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
         {capsLock ? (
           // role="status" rather than "alert": Caps Lock being on is worth
           // saying, not worth interrupting whatever is already being read.
-          <p id={ids.capsLock} role="status" data-rpi-caps-lock="" style={{ margin: 0 }}>
+          <p id={ids.capsLock} role="status" data-rx-password-caps-lock="" style={{ margin: 0 }}>
             {capsLockLabel}
           </p>
         ) : null}
 
         {showStrength ? (
-          <div data-rpi-strength="">
+          <div data-rx-password-strength="">
             <div
               role="meter"
               aria-valuemin={0}
@@ -295,34 +295,34 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
               // makes it "Fair" — which is the only part a user can act on.
               aria-valuetext={typeof caption === 'string' ? caption : undefined}
               aria-label="Password strength"
-              data-rpi-meter=""
+              data-rx-password-meter=""
               style={trackStyle}
             >
               {Array.from({ length: SEGMENTS }, (_, index) => (
                 <span
                   key={index}
                   aria-hidden="true"
-                  data-rpi-segment={index}
+                  data-rx-password-segment={index}
                   data-filled={index < strength.score ? '' : undefined}
                   style={{
                     flex: 1,
                     background:
                       index < strength.score
-                        ? `var(--rpi-meter-fill-${String(strength.score)}, var(--rpi-meter-fill, currentColor))`
-                        : 'var(--rpi-meter-track, rgba(0 0 0 / 0.15))',
-                    borderRadius: 'var(--rpi-meter-radius, 999px)',
+                        ? `var(--rx-password-meter-fill-${String(strength.score)}, var(--rx-password-meter-fill, currentColor))`
+                        : 'var(--rx-password-meter-track, rgba(0 0 0 / 0.15))',
+                    borderRadius: 'var(--rx-password-meter-radius, 999px)',
                   }}
                 />
               ))}
             </div>
-            <p id={ids.strength} data-rpi-strength-label="" style={{ margin: 0 }}>
+            <p id={ids.strength} data-rx-password-strength-label="" style={{ margin: 0 }}>
               {caption}
             </p>
           </div>
         ) : null}
 
         {showRules ? (
-          <ul id={ids.rules} data-rpi-rules="" style={listStyle}>
+          <ul id={ids.rules} data-rx-password-rules="" style={listStyle}>
             {rules.map((rule) => (
               <li key={rule.id} data-rule={rule.id} data-met={rule.met ? '' : undefined}>
                 {/*
@@ -330,7 +330,7 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
                   or an icon — WCAG 1.4.1 (Use of Colour). The marker itself is
                   aria-hidden so it is not read as "check mark" before the label.
                 */}
-                <span aria-hidden="true" data-rpi-rule-marker="">
+                <span aria-hidden="true" data-rx-password-rule-marker="">
                   {rule.met ? '✓ ' : '· '}
                 </span>
                 {rule.label}
@@ -341,7 +341,12 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
         ) : null}
 
         {compromised === true ? (
-          <p id={ids.compromised} role="alert" data-rpi-compromised="" style={{ margin: 0 }}>
+          <p
+            id={ids.compromised}
+            role="alert"
+            data-rx-password-compromised=""
+            style={{ margin: 0 }}
+          >
             {compromisedLabel}
           </p>
         ) : null}
@@ -355,7 +360,7 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
           rather than on all six characters that stayed inside it. That is the
           whole reason the caption is bucketed rather than a percentage.
         */}
-        <span aria-live="polite" data-rpi-announcement="" style={visuallyHidden}>
+        <span aria-live="polite" data-rx-password-announcement="" style={visuallyHidden}>
           {showStrength && typeof caption === 'string' ? caption : ''}
           {showRules ? ` ${String(metCount)} of ${String(rules.length)} requirements met.` : ''}
           {checking ? ' Checking password.' : ''}

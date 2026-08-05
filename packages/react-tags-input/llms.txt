@@ -96,15 +96,15 @@ Also exported: the `useTagsInput` hook and the pure helpers `attempt`,
 ## Styling
 
 There is no stylesheet. Set CSS custom properties on any ancestor:
-`--rtg-gap`, `--rtg-tag-gap`, `--rtg-tag-padding`, `--rtg-tag-radius`,
-`--rtg-tag-background`, `--rtg-remove-size`.
+`--rx-tags-gap`, `--rx-tags-tag-gap`, `--rx-tags-tag-padding`, `--rx-tags-tag-radius`,
+`--rx-tags-tag-background`, `--rx-tags-remove-size`.
 
-Keep `--rtg-remove-size` at `1.5rem` or above: at the default font size that is
+Keep `--rx-tags-remove-size` at `1.5rem` or above: at the default font size that is
 the 24×24 CSS pixels WCAG 2.5.8 Target Size (Minimum) requires.
 
 Or target the `data-*` attributes, which are public API covered by semver:
-`data-rtg-root`, `data-rtg-list`, `data-rtg-tag`, `data-rtg-tag-label`,
-`data-rtg-remove`, `data-rtg-input`, `data-rtg-value`, `data-rtg-announcement`,
+`data-rx-tags-root`, `data-rx-tags-list`, `data-rx-tags-tag`, `data-rx-tags-label`,
+`data-rx-tags-remove`, `data-rx-tags-input`, `data-rx-tags-value`, `data-rx-tags-announcement`,
 plus the state hooks `data-count`, `data-full`, `data-focused`, `data-disabled`,
 `data-readonly`, `data-invalid`.
 

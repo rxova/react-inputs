@@ -11,17 +11,17 @@ import { TagsInput } from '../TagsInput'
  * be worth asserting.
  */
 function box(container: HTMLElement) {
-  return container.querySelector<HTMLInputElement>('[data-rtg-input]')!
+  return container.querySelector<HTMLInputElement>('[data-rx-tags-input]')!
 }
 
 function tagLabels(container: HTMLElement) {
-  return Array.from(container.querySelectorAll('[data-rtg-tag-label]')).map(
+  return Array.from(container.querySelectorAll('[data-rx-tags-label]')).map(
     (element) => element.textContent,
   )
 }
 
 function removeButtons(container: HTMLElement) {
-  return Array.from(container.querySelectorAll<HTMLButtonElement>('[data-rtg-remove]'))
+  return Array.from(container.querySelectorAll<HTMLButtonElement>('[data-rx-tags-remove]'))
 }
 
 describe('adding tags', () => {
@@ -100,7 +100,7 @@ describe('adding tags', () => {
     await userEvent.keyboard('a{Enter}b{Enter}c{Enter}')
     expect(tagLabels(container)).toEqual(['a', 'b'])
     expect(onReject).toHaveBeenCalledWith(expect.objectContaining({ reason: 'max-reached' }))
-    expect(container.querySelector('[data-rtg-root]')).toHaveAttribute('data-full')
+    expect(container.querySelector('[data-rx-tags-root]')).toHaveAttribute('data-full')
   })
 
   it('applies transform and validate', async () => {
@@ -358,7 +358,7 @@ describe('controlled use and forms', () => {
 
   it('emits no hidden inputs without a name', async () => {
     const { container } = await render(<TagsInput label="Tags" defaultValue={['a']} />)
-    expect(container.querySelector('[data-rtg-value]')).toBeNull()
+    expect(container.querySelector('[data-rx-tags-value]')).toBeNull()
   })
 
   it('requires the entry box only while the list is empty', async () => {

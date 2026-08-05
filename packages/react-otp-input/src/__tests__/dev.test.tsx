@@ -28,7 +28,7 @@ describe('compound index validation', () => {
     )
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('tile [0, 6)'))
     // ...but still renders what it was given rather than throwing.
-    expect(html).toContain('data-otp-slot')
+    expect(html).toContain('data-rx-otp-slot')
   })
 
   it('warns on a duplicate index', () => {

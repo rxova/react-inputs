@@ -99,9 +99,9 @@ html[data-has-hero] .sl-markdown-content > :first-child {
 }
 
 /* The landing's demo shows all three inputs side by side, and at its default
- * --rfs-size (1.25rem) the rating reads as a footnote next to the OTP's 2.5rem
+ * --rx-rating-size (1.25rem) the rating reads as a footnote next to the OTP's 2.5rem
  * slots. Scoped to the landing rather than set in live.css, so the ratings in
  * every other live example keep the size their prose was written around. */
 html[data-has-hero] .rx-live__preview {
-  --rfs-size: 2rem;
+  --rx-rating-size: 2rem;
 }

@@ -15,7 +15,7 @@ import { fromISO, toISO } from '../date'
  */
 
 function segment(container: HTMLElement, type: 'day' | 'month' | 'year') {
-  return container.querySelector<HTMLElement>(`[data-rdi-segment="${type}"]`)!
+  return container.querySelector<HTMLElement>(`[data-rx-date-segment="${type}"]`)!
 }
 
 function text(container: HTMLElement, type: 'day' | 'month' | 'year') {
@@ -99,8 +99,8 @@ describe('hostile props', () => {
     const onWarn = vi.fn()
     const { container } = await render(<DateInput label="Date" locale="en_US" onWarn={onWarn} />)
     expect(
-      Array.from(container.querySelectorAll('[data-rdi-segment]')).map((element) =>
-        element.getAttribute('data-rdi-segment'),
+      Array.from(container.querySelectorAll('[data-rx-date-segment]')).map((element) =>
+        element.getAttribute('data-rx-date-segment'),
       ),
     ).toEqual(['year', 'month', 'day'])
     expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: 'locale-invalid' }))
@@ -118,7 +118,7 @@ describe('hostile props', () => {
         onWarn={onWarn}
       />,
     )
-    expect(container.querySelector('[data-rdi-root]')).not.toHaveAttribute('data-out-of-range')
+    expect(container.querySelector('[data-rx-date-root]')).not.toHaveAttribute('data-out-of-range')
     expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: 'min-unparseable' }))
   })
 
@@ -134,7 +134,7 @@ describe('hostile props', () => {
         onWarn={onWarn}
       />,
     )
-    expect(container.querySelector('[data-rdi-root]')).not.toHaveAttribute('data-out-of-range')
+    expect(container.querySelector('[data-rx-date-root]')).not.toHaveAttribute('data-out-of-range')
     expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: 'min-after-max' }))
   })
 })
@@ -250,7 +250,7 @@ describe('invariants', () => {
     segment(container, 'year').focus()
     await userEvent.keyboard('2023')
 
-    const hidden = container.querySelector<HTMLInputElement>('[data-rdi-value]')!
+    const hidden = container.querySelector<HTMLInputElement>('[data-rx-date-value]')!
     // The 29th was clamped to the 28th; the hidden input must agree with what
     // is on screen, or the form posts something the user never saw.
     expect(text(container, 'day')).toBe('28')
@@ -278,7 +278,7 @@ describe('invariants', () => {
         <DateInput label="To" locale="en-GB" defaultValue="2026-12-31" />
       </>,
     )
-    const roots = container.querySelectorAll<HTMLElement>('[data-rdi-root]')
+    const roots = container.querySelectorAll<HTMLElement>('[data-rx-date-root]')
     expect(text(roots[0]!, 'day')).toBe('01')
     expect(text(roots[1]!, 'day')).toBe('31')
 

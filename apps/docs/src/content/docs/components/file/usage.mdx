@@ -128,17 +128,17 @@ const field = useFileInput({ multiple: true, previews: true, maxSize: 1_000_000 
 
 No stylesheet ships. Structure only, with `data-*` hooks covered by semver:
 
-`data-rfi-root`, `data-rfi-input`, `data-rfi-zone`, `data-rfi-list`, `data-rfi-file`,
-`data-rfi-name`, `data-rfi-size`, `data-rfi-preview`, `data-rfi-remove`, `data-rfi-announcement`,
+`data-rx-file-root`, `data-rx-file-input`, `data-rx-file-zone`, `data-rx-file-list`, `data-rx-file-file`,
+`data-rx-file-name`, `data-rx-file-size`, `data-rx-file-preview`, `data-rx-file-remove`, `data-rx-file-announcement`,
 plus `data-dragging`, `data-disabled` and `data-invalid` on the root.
 
 ```css
-[data-rfi-zone] {
+[data-rx-file-zone] {
   border: 2px dashed;
   padding: 2rem;
   width: 100%;
 }
-[data-rfi-root][data-dragging] [data-rfi-zone] {
+[data-rx-file-root][data-dragging] [data-rx-file-zone] {
   border-color: rebeccapurple;
 }
 ```

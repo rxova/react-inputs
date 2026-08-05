@@ -24,10 +24,10 @@ test('the whole demo page is free of WCAG A/AA violations', async ({ page }) => 
 })
 
 test('stays clean after adding and rejecting tags', async ({ page }) => {
-  await page.locator('[data-testid="basic"] [data-rtg-input]').click()
+  await page.locator('[data-testid="basic"] [data-rx-tags-input]').click()
   await page.keyboard.type('react')
   await page.keyboard.press('Enter')
-  await page.locator('[data-testid="rules"] [data-rtg-input]').click()
+  await page.locator('[data-testid="rules"] [data-rx-tags-input]').click()
   await page.keyboard.type('a')
   await page.keyboard.press('Enter')
   expect(await scan(page)).toEqual([])
@@ -35,7 +35,7 @@ test('stays clean after adding and rejecting tags', async ({ page }) => {
 
 test('every entry box has an accessible name', async ({ page }) => {
   const names = await page
-    .locator('[data-rtg-input]')
+    .locator('[data-rx-tags-input]')
     .evaluateAll((elements) =>
       elements.map((element) =>
         element.id
@@ -51,7 +51,7 @@ test('every remove button names its own tag', async ({ page }) => {
   // A list of buttons all called "Remove" is unusable in a screen reader's
   // element list, where they appear stripped of their surrounding text.
   const names = await page
-    .locator('[data-rtg-remove]')
+    .locator('[data-rx-tags-remove]')
     .evaluateAll((elements) => elements.map((el) => el.getAttribute('aria-label')))
   expect(names.length).toBeGreaterThan(0)
   for (const name of names) {
@@ -63,7 +63,7 @@ test('every remove button names its own tag', async ({ page }) => {
 test('every tag list is a real list', async ({ page }) => {
   // So a screen reader announces "list, 3 items" before reading them.
   const tags = await page
-    .locator('[data-rtg-list]')
+    .locator('[data-rx-tags-list]')
     .evaluateAll((elements) => elements.map((el) => el.tagName))
   expect(tags.length).toBeGreaterThan(0)
   expect(tags.every((tag) => tag === 'UL')).toBe(true)
@@ -71,11 +71,11 @@ test('every tag list is a real list', async ({ page }) => {
 
 test('every list keeps exactly one tab stop', async ({ page }) => {
   const perList = await page
-    .locator('[data-rtg-list]')
+    .locator('[data-rx-tags-list]')
     .evaluateAll((lists) =>
       lists.map(
         (list) =>
-          Array.from(list.querySelectorAll<HTMLElement>('[data-rtg-remove]')).filter(
+          Array.from(list.querySelectorAll<HTMLElement>('[data-rx-tags-remove]')).filter(
             (button) => button.tabIndex === 0,
           ).length,
       ),
@@ -90,23 +90,23 @@ test('every live region is polite, never assertive', async ({ page }) => {
   // A tag field is not an emergency; assertive would interrupt whatever the
   // user is already hearing.
   const modes = await page
-    .locator('[data-rtg-announcement]')
+    .locator('[data-rx-tags-announcement]')
     .evaluateAll((els) => els.map((el) => el.getAttribute('aria-live')))
   expect(modes.length).toBeGreaterThan(0)
   expect(modes.every((mode) => mode === 'polite')).toBe(true)
 })
 
 test('the field can be filled and emptied without a pointer', async ({ page }) => {
-  await page.locator('[data-testid="basic"] [data-rtg-input]').focus()
+  await page.locator('[data-testid="basic"] [data-rx-tags-input]').focus()
   await page.keyboard.type('one')
   await page.keyboard.press('Enter')
   await page.keyboard.type('two')
   await page.keyboard.press('Enter')
-  await expect(page.locator('[data-testid="basic"] [data-rtg-tag-label]')).toHaveCount(2)
+  await expect(page.locator('[data-testid="basic"] [data-rx-tags-label]')).toHaveCount(2)
 
   await page.keyboard.press('Backspace')
   await page.keyboard.press('Backspace')
   await page.keyboard.press('Backspace')
   await page.keyboard.press('Backspace')
-  await expect(page.locator('[data-testid="basic"] [data-rtg-tag-label]')).toHaveCount(0)
+  await expect(page.locator('[data-testid="basic"] [data-rx-tags-label]')).toHaveCount(0)
 })

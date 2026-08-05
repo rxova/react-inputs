@@ -9,7 +9,7 @@ const rootStyle: CSSProperties = {
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
-  gap: 'var(--rtg-gap, 0.25rem)',
+  gap: 'var(--rx-tags-gap, 0.25rem)',
   font: 'inherit',
 }
 
@@ -23,10 +23,10 @@ const listStyle: CSSProperties = {
 const tagStyle: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 'var(--rtg-tag-gap, 0.25rem)',
-  padding: 'var(--rtg-tag-padding, 0.125rem 0.375rem)',
-  borderRadius: 'var(--rtg-tag-radius, 0.25rem)',
-  background: 'var(--rtg-tag-background, rgba(0 0 0 / 0.08))',
+  gap: 'var(--rx-tags-tag-gap, 0.25rem)',
+  padding: 'var(--rx-tags-tag-padding, 0.125rem 0.375rem)',
+  borderRadius: 'var(--rx-tags-tag-radius, 0.25rem)',
+  background: 'var(--rx-tags-tag-background, rgba(0 0 0 / 0.08))',
   maxWidth: '100%',
 }
 
@@ -36,8 +36,8 @@ const removeStyle: CSSProperties = {
   justifyContent: 'center',
   // 24px of hit area at the default font size. Below this the button fails
   // WCAG 2.5.8 Target Size (Minimum) on touch.
-  minWidth: 'var(--rtg-remove-size, 1.5rem)',
-  minHeight: 'var(--rtg-remove-size, 1.5rem)',
+  minWidth: 'var(--rx-tags-remove-size, 1.5rem)',
+  minHeight: 'var(--rx-tags-remove-size, 1.5rem)',
   padding: 0,
   font: 'inherit',
   lineHeight: 1,
@@ -52,7 +52,11 @@ const inputStyle: CSSProperties = {
   flex: '1 1 6rem',
   minWidth: '4rem',
   border: 0,
-  outline: 'none',
+  // No `outline: none`. The entry box is the field's only text tab stop, and
+  // suppressing the UA ring here left a keyboard user with no indication of
+  // where they were — WCAG 2.4.7 Focus Visible, with nothing shipped in its
+  // place. A theme that wants a ring around the whole field can still draw one
+  // from `[data-rx-tags-root]:focus-within` and suppress this one.
   background: 'transparent',
 }
 
@@ -130,7 +134,7 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
       <div
         className={className}
         style={{ ...rootStyle, ...style }}
-        data-rtg-root=""
+        data-rx-tags-root=""
         data-disabled={disabled ? '' : undefined}
         data-readonly={readOnly ? '' : undefined}
         data-invalid={invalid ? '' : undefined}
@@ -146,7 +150,7 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
           knows how many tags there are before hearing them. `display: contents`
           keeps that semantic without the list becoming a layout box of its own.
         */}
-        <ul id={ids.list} data-rtg-list="" style={listStyle}>
+        <ul id={ids.list} data-rx-tags-list="" style={listStyle}>
           {tags.map((tag, index) => {
             const state: TagState = {
               tag,
@@ -156,15 +160,15 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
               readOnly,
             }
             return (
-              <li key={`${tag}-${String(index)}`} data-rtg-tag={index} style={tagStyle}>
-                <span data-rtg-tag-label="">{renderTag ? renderTag(state) : tag}</span>
+              <li key={`${tag}-${String(index)}`} data-rx-tags-tag={index} style={tagStyle}>
+                <span data-rx-tags-label="">{renderTag ? renderTag(state) : tag}</span>
                 {readOnly ? null : (
                   <button
                     ref={(node) => {
                       tagRefs.current[index] = node
                     }}
                     type="button"
-                    data-rtg-remove=""
+                    data-rx-tags-remove=""
                     data-focused={focusedIndex === index ? '' : undefined}
                     // Roving tabindex: the list is one tab stop, not one per
                     // tag. Twenty tags would otherwise cost a keyboard user
@@ -204,7 +208,7 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
             else if (ref) ref.current = node
           }}
           id={ids.input}
-          data-rtg-input=""
+          data-rx-tags-input=""
           type="text"
           value={text}
           placeholder={placeholder}
@@ -236,7 +240,7 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
               <input
                 key={`${name}-${String(index)}`}
                 type="hidden"
-                data-rtg-value=""
+                data-rx-tags-value=""
                 name={name}
                 value={tag}
               />
@@ -254,7 +258,7 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
         <span
           id={ids.announcement}
           aria-live="polite"
-          data-rtg-announcement=""
+          data-rx-tags-announcement=""
           style={visuallyHidden}
         >
           {announcement}

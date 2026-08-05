@@ -9,7 +9,7 @@ import { DateInput } from '../DateInput'
  * guards are only observable through real key events.
  */
 function segment(container: HTMLElement, type: 'day' | 'month' | 'year') {
-  return container.querySelector<HTMLElement>(`[data-rdi-segment="${type}"]`)!
+  return container.querySelector<HTMLElement>(`[data-rx-date-segment="${type}"]`)!
 }
 
 describe('onWarn', () => {
@@ -92,7 +92,7 @@ describe('onWarn', () => {
 describe('labels', () => {
   it('takes a string label as the group name', async () => {
     const { container } = await render(<DateInput label="Date of birth" locale="en-GB" />)
-    const group = container.querySelector('[data-rdi-root]')!
+    const group = container.querySelector('[data-rx-date-root]')!
     expect(group).toHaveAttribute('aria-label', 'Date of birth')
     expect(group).not.toHaveAttribute('aria-labelledby')
   })
@@ -110,7 +110,7 @@ describe('labels', () => {
         locale="en-GB"
       />,
     )
-    const group = container.querySelector('[data-rdi-root]')!
+    const group = container.querySelector('[data-rx-date-root]')!
     const labelledBy = group.getAttribute('aria-labelledby')
     expect(labelledBy).toBeTruthy()
     expect(document.getElementById(labelledBy!)?.textContent).toContain('Date')
@@ -119,7 +119,7 @@ describe('labels', () => {
 
   it('has neither attribute when no label is given', async () => {
     const { container } = await render(<DateInput locale="en-GB" aria-describedby="hint" />)
-    const group = container.querySelector('[data-rdi-root]')!
+    const group = container.querySelector('[data-rx-date-root]')!
     expect(group).not.toHaveAttribute('aria-label')
     expect(group).not.toHaveAttribute('aria-labelledby')
   })

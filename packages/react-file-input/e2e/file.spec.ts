@@ -12,10 +12,10 @@ import type { Locator, Page } from '@playwright/test'
  * Anything needing a whole page also belongs here: tab order across a form, ids
  * unique across instances, a native submit round-trip.
  */
-const inputIn = (section: string) => `[data-testid="${section}"] [data-rfi-input]`
-const zoneIn = (section: string) => `[data-testid="${section}"] [data-rfi-zone]`
-const namesIn = (section: string) => `[data-testid="${section}"] [data-rfi-name]`
-const removesIn = (section: string) => `[data-testid="${section}"] [data-rfi-remove]`
+const inputIn = (section: string) => `[data-testid="${section}"] [data-rx-file-input]`
+const zoneIn = (section: string) => `[data-testid="${section}"] [data-rx-file-zone]`
+const namesIn = (section: string) => `[data-testid="${section}"] [data-rx-file-name]`
+const removesIn = (section: string) => `[data-testid="${section}"] [data-rx-file-remove]`
 
 function textFile(name: string, body = 'hello') {
   return { name, mimeType: 'text/plain', buffer: Buffer.from(body) }
@@ -138,7 +138,7 @@ test('renders an image preview and revokes it on removal', async ({ page }) => {
   await page
     .locator(inputIn('previews'))
     .setInputFiles([{ name: 'dot.png', mimeType: 'image/png', buffer: png }])
-  const preview = page.locator('[data-testid="previews"] [data-rfi-preview]')
+  const preview = page.locator('[data-testid="previews"] [data-rx-file-preview]')
   await expect(preview).toHaveCount(1)
   const url = await preview.getAttribute('src')
   expect(url).toMatch(/^blob:/)
@@ -158,7 +158,7 @@ test('renders an image preview and revokes it on removal', async ({ page }) => {
 
 test('accepts a synthesised drop and highlights while dragging', async ({ page }) => {
   const zone = page.locator(zoneIn('multiple'))
-  const root = page.locator('[data-testid="multiple"] [data-rfi-root]')
+  const root = page.locator('[data-testid="multiple"] [data-rx-file-root]')
 
   const supported = await zone.evaluate((element) => {
     try {
@@ -210,7 +210,7 @@ test('keeps focus inside the field after a removal', async ({ page }) => {
       document.activeElement &&
       document.activeElement !== document.body &&
       document
-        .querySelector('[data-testid="multiple"] [data-rfi-root]')
+        .querySelector('[data-testid="multiple"] [data-rx-file-root]')
         ?.contains(document.activeElement),
     ),
   )
@@ -218,7 +218,7 @@ test('keeps focus inside the field after a removal', async ({ page }) => {
 })
 
 test('announces additions and removals in a polite live region', async ({ page }) => {
-  const live: Locator = page.locator('[data-testid="basic"] [data-rfi-announcement]')
+  const live: Locator = page.locator('[data-testid="basic"] [data-rx-file-announcement]')
   await expect(live).toHaveAttribute('aria-live', 'polite')
   await pick(page, 'basic', [textFile('spoken.txt')])
   await expect(live).toContainText('spoken.txt')

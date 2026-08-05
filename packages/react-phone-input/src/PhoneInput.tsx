@@ -8,14 +8,14 @@ import type { PhoneCountryState, PhoneInputProps } from './types'
 const rootStyle: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 'var(--rphi-gap, 0.375rem)',
+  gap: 'var(--rx-phone-gap, 0.375rem)',
   font: 'inherit',
 }
 
 const selectStyle: CSSProperties = {
   font: 'inherit',
   // The flag is an emoji, so it sizes by font-size like the rest of the field.
-  maxWidth: 'var(--rphi-select-width, 9rem)',
+  maxWidth: 'var(--rx-phone-select-width, 9rem)',
   flexShrink: 0,
 }
 
@@ -98,7 +98,7 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
       <div
         className={className}
         style={{ ...rootStyle, ...style }}
-        data-rphi-root=""
+        data-rx-phone-root=""
         data-country={country?.iso2}
         data-possible={details.possible ? '' : undefined}
         data-invalid={invalid ? '' : undefined}
@@ -115,7 +115,7 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
           // type-ahead and form semantics for free.
           <select
             id={ids.select}
-            data-rphi-country=""
+            data-rx-phone-country=""
             aria-label={countryLabel}
             value={country?.iso2 ?? ''}
             disabled={disabled || readOnly}
@@ -157,7 +157,7 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
             else if (ref) ref.current = node
           }}
           id={ids.input}
-          data-rphi-input=""
+          data-rx-phone-input=""
           // `tel`, so mobile keyboards show the dial pad. Not `number`: that
           // strips leading zeros, offers a spinner nobody wants on a phone
           // number, and refuses the `+` entirely.
@@ -184,7 +184,7 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
           // already hearing after they tab away.
           <p
             id={ids.validity}
-            data-rphi-validity=""
+            data-rx-phone-validity=""
             data-possible={details.possible ? '' : undefined}
             role="status"
             aria-live="polite"
@@ -197,7 +197,7 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
           // The canonical value a native form posts. Separate from the visible
           // input because the two carry different things: the box shows grouped
           // national digits, the form wants E.164.
-          <input type="hidden" id={ids.hidden} data-rphi-value="" name={name} value={value} />
+          <input type="hidden" id={ids.hidden} data-rx-phone-value="" name={name} value={value} />
         )}
       </div>
     )

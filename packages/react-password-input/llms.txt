@@ -110,20 +110,24 @@ Also exported: `usePasswordInput` for your own markup, `estimateStrength` and
 
 There is no stylesheet. Set CSS custom properties on any ancestor:
 
-`--rpi-gap`, `--rpi-field-gap`, `--rpi-toggle-size`, `--rpi-meter-height`,
-`--rpi-meter-gap`, `--rpi-meter-radius`, `--rpi-meter-track`, `--rpi-meter-fill`,
-`--rpi-meter-fill-1` … `--rpi-meter-fill-4`, `--rpi-rules-indent`.
+`--rx-password-gap`, `--rx-password-field-gap`, `--rx-password-toggle-size`,
+`--rx-password-meter-height`, `--rx-password-meter-gap`,
+`--rx-password-meter-radius`, `--rx-password-meter-track`,
+`--rx-password-meter-fill`, `--rx-password-meter-fill-1` …
+`--rx-password-meter-fill-4`, `--rx-password-rules-indent`.
 
-Keep `--rpi-toggle-size` at `1.5rem` or above: at the default font size that is
+Keep `--rx-password-toggle-size` at `1.5rem` or above: at the default font size that is
 the 24×24 CSS pixels WCAG 2.5.8 Target Size (Minimum) requires.
 
 Or target the `data-*` attributes, which are public API covered by semver:
-`data-rpi-root`, `data-rpi-field`, `data-rpi-input`, `data-rpi-toggle`,
-`data-rpi-caps-lock`, `data-rpi-meter`, `data-rpi-segment`, `data-rpi-strength`,
-`data-rpi-strength-label`, `data-rpi-rules`, `data-rpi-rule-marker`,
-`data-rpi-compromised`, `data-rpi-announcement`, plus the state hooks
-`data-revealed`, `data-valid`, `data-score`, `data-filled`, `data-met`,
-`data-rule`, `data-disabled`, `data-invalid`.
+`data-rx-password-root`, `data-rx-password-field`, `data-rx-password-input`,
+`data-rx-password-toggle`, `data-rx-password-caps-lock`, `data-rx-password-meter`,
+`data-rx-password-segment`, `data-rx-password-strength`,
+`data-rx-password-strength-label`, `data-rx-password-rules`,
+`data-rx-password-rule-marker`, `data-rx-password-compromised`,
+`data-rx-password-announcement`, plus the state hooks `data-revealed`,
+`data-valid`, `data-score`, `data-filled`, `data-met`, `data-rule`,
+`data-disabled`, `data-invalid`.
 
 ## Three mistakes to avoid
 

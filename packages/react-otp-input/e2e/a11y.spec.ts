@@ -39,7 +39,7 @@ test('stays clean while showing a validation error', async ({ page }) => {
 test('every field has a unique accessible name', async ({ page }) => {
   await page.goto('/')
   const names = await page
-    .locator('[data-otp-input]')
+    .locator('[data-rx-otp-input]')
     .evaluateAll((els) => els.map((el) => el.getAttribute('aria-label')))
   expect(names.length).toBeGreaterThan(0)
   expect(names.every((n) => n && n.length > 0)).toBe(true)
@@ -47,6 +47,6 @@ test('every field has a unique accessible name', async ({ page }) => {
 
 test('input ids are unique across the page', async ({ page }) => {
   await page.goto('/')
-  const ids = await page.locator('[data-otp-input]').evaluateAll((els) => els.map((e) => e.id))
+  const ids = await page.locator('[data-rx-otp-input]').evaluateAll((els) => els.map((e) => e.id))
   expect(new Set(ids).size).toBe(ids.length)
 })

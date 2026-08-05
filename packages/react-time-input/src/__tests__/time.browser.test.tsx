@@ -12,7 +12,7 @@ import { TimeInput } from '../TimeInput'
 type Seg = 'hour' | 'minute' | 'second' | 'dayPeriod'
 
 function seg(container: HTMLElement, type: Seg) {
-  return container.querySelector<HTMLElement>(`[data-rti-segment="${type}"]`)!
+  return container.querySelector<HTMLElement>(`[data-rx-time-segment="${type}"]`)!
 }
 
 function text(container: HTMLElement, type: Seg) {
@@ -23,8 +23,8 @@ describe('layout', () => {
   it('shows a 24-hour field with no day period for a 24-hour locale', async () => {
     const { container } = await render(<TimeInput label="Time" locale="en-GB" />)
     expect(
-      Array.from(container.querySelectorAll('[data-rti-segment]')).map((element) =>
-        element.getAttribute('data-rti-segment'),
+      Array.from(container.querySelectorAll('[data-rx-time-segment]')).map((element) =>
+        element.getAttribute('data-rx-time-segment'),
       ),
     ).toEqual(['hour', 'minute'])
   })
@@ -32,18 +32,18 @@ describe('layout', () => {
   it('shows a day period for a 12-hour locale', async () => {
     const { container } = await render(<TimeInput label="Time" locale="en-US" />)
     expect(
-      Array.from(container.querySelectorAll('[data-rti-segment]')).map((element) =>
-        element.getAttribute('data-rti-segment'),
+      Array.from(container.querySelectorAll('[data-rx-time-segment]')).map((element) =>
+        element.getAttribute('data-rx-time-segment'),
       ),
     ).toEqual(['hour', 'minute', 'dayPeriod'])
   })
 
   it('lets hour12 override the locale in both directions', async () => {
     const forced = await render(<TimeInput label="Time" locale="en-GB" hour12 />)
-    expect(forced.container.querySelector('[data-rti-segment="dayPeriod"]')).not.toBeNull()
+    expect(forced.container.querySelector('[data-rx-time-segment="dayPeriod"]')).not.toBeNull()
 
     const suppressed = await render(<TimeInput label="Time" locale="en-US" hour12={false} />)
-    expect(suppressed.container.querySelector('[data-rti-segment="dayPeriod"]')).toBeNull()
+    expect(suppressed.container.querySelector('[data-rx-time-segment="dayPeriod"]')).toBeNull()
   })
 
   it('adds seconds when asked', async () => {
@@ -314,7 +314,7 @@ describe('range and states', () => {
     seg(container, 'hour').focus()
     await userEvent.keyboard('2030')
     expect(onChange).toHaveBeenLastCalledWith('20:30')
-    expect(container.querySelector('[data-rti-root]')).toHaveAttribute('data-out-of-range')
+    expect(container.querySelector('[data-rx-time-root]')).toHaveAttribute('data-out-of-range')
   })
 
   it('reports null instead when emitOutOfRange is off', async () => {
@@ -379,7 +379,7 @@ describe('forms', () => {
 
   it('emits no hidden input without a name', async () => {
     const { container } = await render(<TimeInput label="Time" locale="en-GB" />)
-    expect(container.querySelector('[data-rti-value]')).toBeNull()
+    expect(container.querySelector('[data-rx-time-value]')).toBeNull()
   })
 
   it('fires onBlur only when focus leaves the whole field', async () => {

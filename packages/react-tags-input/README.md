@@ -122,17 +122,21 @@ to guess how to split. `required` applies to the entry box only while the list i
 
 There is no stylesheet to import.
 
-| Property               | Default              | Applies to                          |
-| ---------------------- | -------------------- | ----------------------------------- |
-| `--rtg-gap`            | `0.25rem`            | Between tags and the entry box      |
-| `--rtg-tag-gap`        | `0.25rem`            | Between a tag's text and its button |
-| `--rtg-tag-padding`    | `0.125rem 0.375rem`  | Inside a tag                        |
-| `--rtg-tag-radius`     | `0.25rem`            | Tag corners                         |
-| `--rtg-tag-background` | `rgba(0 0 0 / 0.08)` | Tag background                      |
-| `--rtg-remove-size`    | `1.5rem`             | Remove button hit area              |
+| Property                   | Default              | Applies to                          |
+| -------------------------- | -------------------- | ----------------------------------- |
+| `--rx-tags-gap`            | `0.25rem`            | Between tags and the entry box      |
+| `--rx-tags-tag-gap`        | `0.25rem`            | Between a tag's text and its button |
+| `--rx-tags-tag-padding`    | `0.125rem 0.375rem`  | Inside a tag                        |
+| `--rx-tags-tag-radius`     | `0.25rem`            | Tag corners                         |
+| `--rx-tags-tag-background` | `rgba(0 0 0 / 0.08)` | Tag background                      |
+| `--rx-tags-remove-size`    | `1.5rem`             | Remove button hit area              |
 
-Do not shrink `--rtg-remove-size` below `1.5rem`: at the default font size that is the 24×24 CSS
+Do not shrink `--rx-tags-remove-size` below `1.5rem`: at the default font size that is the 24×24 CSS
 pixels WCAG 2.5.8 Target Size (Minimum) requires.
+
+The entry box keeps the browser's own focus ring. To ring the whole field instead, draw one from
+`[data-rx-tags-root]:focus-within` and suppress the inner one — but suppress it only once the
+replacement is in place, or the field's only text tab stop becomes invisible to a keyboard user.
 
 ### `data-*` attributes
 
@@ -140,18 +144,18 @@ These are **public API**, covered by semver.
 
 | Attribute                                          | On            | Meaning                          |
 | -------------------------------------------------- | ------------- | -------------------------------- |
-| `data-rtg-root`                                    | wrapper       | Always present                   |
+| `data-rx-tags-root`                                | wrapper       | Always present                   |
 | `data-count`                                       | wrapper       | Number of tags                   |
 | `data-full`                                        | wrapper       | `max` reached                    |
 | `data-invalid` / `data-disabled` / `data-readonly` | wrapper       | Mirrors the props                |
-| `data-rtg-list`                                    | `<ul>`        | The tag list                     |
-| `data-rtg-tag`                                     | `<li>`        | The tag's index                  |
-| `data-rtg-tag-label`                               | `<span>`      | The tag's rendered contents      |
-| `data-rtg-remove`                                  | `<button>`    | The remove button                |
+| `data-rx-tags-list`                                | `<ul>`        | The tag list                     |
+| `data-rx-tags-tag`                                 | `<li>`        | The tag's index                  |
+| `data-rx-tags-label`                               | `<span>`      | The tag's rendered contents      |
+| `data-rx-tags-remove`                              | `<button>`    | The remove button                |
 | `data-focused`                                     | remove button | This tag has focus               |
-| `data-rtg-input`                                   | `<input>`     | The entry box                    |
-| `data-rtg-value`                                   | hidden input  | One per tag, for form submission |
-| `data-rtg-announcement`                            | live region   | Off-screen, `aria-live="polite"` |
+| `data-rx-tags-input`                               | `<input>`     | The entry box                    |
+| `data-rx-tags-value`                               | hidden input  | One per tag, for form submission |
+| `data-rx-tags-announcement`                        | live region   | Off-screen, `aria-live="polite"` |
 
 ## Headless
 

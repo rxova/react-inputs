@@ -16,7 +16,7 @@ test.beforeEach(async ({ page }) => {
 })
 
 test('masks by default and reveals on demand, in every engine', async ({ page }) => {
-  const field = page.locator('[data-testid="basic"] [data-rpi-input]')
+  const field = page.locator('[data-testid="basic"] [data-rx-password-input]')
   await field.fill('hunter2')
   await expect(field).toHaveAttribute('type', 'password')
 
@@ -32,7 +32,7 @@ test('masks by default and reveals on demand, in every engine', async ({ page })
 
 test('keeps the caret in place across the reveal, in every engine', async ({ page }) => {
   const section = page.locator('[data-testid="basic"]')
-  const field = section.locator('[data-rpi-input]')
+  const field = section.locator('[data-rx-password-input]')
   await field.fill('abcdef')
   await field.evaluate((element: HTMLInputElement) => {
     element.focus()
@@ -51,18 +51,18 @@ test('keeps the caret in place across the reveal, in every engine', async ({ pag
 
 test('re-masks when focus leaves the field', async ({ page }) => {
   const section = page.locator('[data-testid="basic"]')
-  const field = section.locator('[data-rpi-input]')
+  const field = section.locator('[data-rx-password-input]')
   await field.fill('hunter2')
   await section.getByRole('button', { name: 'Show password' }).click()
   await expect(field).toHaveAttribute('type', 'text')
 
-  await page.locator('[data-testid="caps"] [data-rpi-input]').click()
+  await page.locator('[data-testid="caps"] [data-rx-password-input]').click()
   await expect(field).toHaveAttribute('type', 'password')
 })
 
 test('the reveal toggle is reachable and operable by keyboard alone', async ({ page }) => {
   const section = page.locator('[data-testid="basic"]')
-  const field = section.locator('[data-rpi-input]')
+  const field = section.locator('[data-rx-password-input]')
   await field.click()
   await page.keyboard.type('hunter2')
   await page.keyboard.press('Tab')
@@ -74,10 +74,10 @@ test('the reveal toggle is reachable and operable by keyboard alone', async ({ p
 
 test('the strength meter and checklist track what is typed', async ({ page }) => {
   const section = page.locator('[data-testid="strength"]')
-  const field = section.locator('[data-rpi-input]')
+  const field = section.locator('[data-rx-password-input]')
 
   await field.fill('password')
-  await expect(section.locator('[data-rpi-meter]')).toHaveAttribute('aria-valuenow', '0')
+  await expect(section.locator('[data-rx-password-meter]')).toHaveAttribute('aria-valuenow', '0')
   await expect(page.getByTestId('validity')).toHaveText('Not yet')
 
   await field.fill('Kq7#mVx2Lp!wZ')
@@ -88,18 +88,18 @@ test('the strength meter and checklist track what is typed', async ({ page }) =>
 test('an optional rule never blocks validity', async ({ page }) => {
   const section = page.locator('[data-testid="strength"]')
   // No symbol, so the optional rule fails — validity must still be reached.
-  await section.locator('[data-rpi-input]').fill('Kq7mVx2LpwZ9')
+  await section.locator('[data-rx-password-input]').fill('Kq7mVx2LpwZ9')
   await expect(section.locator('[data-rule="symbol"]')).not.toHaveAttribute('data-met', '')
   await expect(page.getByTestId('validity')).toHaveText('Ready to submit')
 })
 
 test('the breach check reports a known-compromised password', async ({ page }) => {
   const section = page.locator('[data-testid="breach"]')
-  await section.locator('[data-rpi-input]').fill('hunter2')
+  await section.locator('[data-rx-password-input]').fill('hunter2')
   await expect(section.getByRole('alert')).toContainText('data breach')
 
-  await section.locator('[data-rpi-input]').fill('Kq7#mVx2Lp!wZ')
-  await expect(section.locator('[data-rpi-compromised]')).toHaveCount(0)
+  await section.locator('[data-rx-password-input]').fill('Kq7#mVx2Lp!wZ')
+  await expect(section.locator('[data-rx-password-compromised]')).toHaveCount(0)
 })
 
 test('strips the diagnostics path from a production build', async ({ page }) => {
@@ -143,15 +143,15 @@ test('every id on the page is unique across instances', async ({ page }) => {
 })
 
 test('every password field is reachable in a sensible tab order', async ({ page }) => {
-  await page.locator('[data-testid="basic"] [data-rpi-input]').click()
+  await page.locator('[data-testid="basic"] [data-rx-password-input]').click()
   const order: string[] = []
   for (let step = 0; step < 4; step++) {
     order.push(
       await page.evaluate(() => {
         const active = document.activeElement
-        return active?.getAttribute('data-rpi-input') !== null
+        return active?.getAttribute('data-rx-password-input') !== null
           ? 'input'
-          : active?.getAttribute('data-rpi-toggle') !== null
+          : active?.getAttribute('data-rx-password-toggle') !== null
             ? 'toggle'
             : (active?.tagName.toLowerCase() ?? 'none')
       }),

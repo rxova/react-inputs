@@ -12,18 +12,18 @@ import { TimeInput } from '../TimeInput'
 describe('server rendering', () => {
   it('renders the segments without a DOM', () => {
     const html = renderToStaticMarkup(<TimeInput label="Time" locale="en-GB" />)
-    expect(html).toContain('data-rti-root')
+    expect(html).toContain('data-rx-time-root')
     expect(html).toContain('role="group"')
-    expect(html).toContain('data-rti-segment="hour"')
-    expect(html).toContain('data-rti-segment="minute"')
+    expect(html).toContain('data-rx-time-segment="hour"')
+    expect(html).toContain('data-rx-time-segment="minute"')
   })
 
   it('emits the locale clock server-side, so hydration has nothing to correct', () => {
     expect(renderToStaticMarkup(<TimeInput label="T" locale="en-US" />)).toContain(
-      'data-rti-segment="dayPeriod"',
+      'data-rx-time-segment="dayPeriod"',
     )
     expect(renderToStaticMarkup(<TimeInput label="T" locale="en-GB" />)).not.toContain(
-      'data-rti-segment="dayPeriod"',
+      'data-rx-time-segment="dayPeriod"',
     )
   })
 
@@ -53,7 +53,7 @@ describe('server rendering', () => {
 
   it('omits the hidden field without a name', () => {
     expect(renderToStaticMarkup(<TimeInput label="T" locale="en-GB" />)).not.toContain(
-      'data-rti-value',
+      'data-rx-time-value',
     )
   })
 

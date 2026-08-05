@@ -83,12 +83,17 @@ plus the `AM` and `PM` constants.
 ## Styling
 
 There is no stylesheet. Set CSS custom properties on any ancestor:
-`--rti-gap`, `--rti-segment-padding`, `--rti-segment-radius`,
-`--rti-literal-opacity`.
+`--rx-time-gap`, `--rx-time-segment-padding`, `--rx-time-segment-radius`,
+`--rx-time-literal-opacity`, `--rx-time-focus-ring`,
+`--rx-time-focus-ring-offset`.
+
+The focused segment paints a ring by default (`2px solid Highlight`), because a
+`<span role="spinbutton">` gets none from the browser. Restyle it through those
+two properties rather than removing it.
 
 Or target the `data-*` attributes, which are public API covered by semver:
-`data-rti-root`, `data-rti-segment` (`hour` / `minute` / `second` / `dayPeriod`),
-`data-rti-value`, plus the state hooks `data-complete`, `data-out-of-range`,
+`data-rx-time-root`, `data-rx-time-segment` (`hour` / `minute` / `second` / `dayPeriod`),
+`data-rx-time-value`, plus the state hooks `data-complete`, `data-out-of-range`,
 `data-placeholder`, `data-focused`, `data-disabled`, `data-readonly`,
 `data-invalid`.
 

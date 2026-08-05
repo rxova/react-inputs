@@ -25,14 +25,14 @@ test('the whole demo page is free of WCAG A/AA violations', async ({ page }) => 
 
 test('stays clean with a date entered and an out-of-range warning showing', async ({ page }) => {
   const section = page.locator('[data-testid="range"]')
-  await section.locator('[data-rdi-segment="day"]').click()
+  await section.locator('[data-rx-date-segment="day"]').click()
   await page.keyboard.type('15031999')
-  await expect(section.locator('[data-rdi-root]')).toHaveAttribute('data-out-of-range', '')
+  await expect(section.locator('[data-rx-date-root]')).toHaveAttribute('data-out-of-range', '')
   expect(await scan(page)).toEqual([])
 })
 
 test('every field is a named group', async ({ page }) => {
-  const names = await page.locator('[data-rdi-root]').evaluateAll((elements) =>
+  const names = await page.locator('[data-rx-date-root]').evaluateAll((elements) =>
     elements.map((element) => {
       const labelledBy = element.getAttribute('aria-labelledby')
       return labelledBy
@@ -45,7 +45,7 @@ test('every field is a named group', async ({ page }) => {
 })
 
 test('every segment is a named spinbutton with a coherent range', async ({ page }) => {
-  const segments = await page.locator('[data-rdi-segment]').evaluateAll((elements) =>
+  const segments = await page.locator('[data-rx-date-segment]').evaluateAll((elements) =>
     elements.map((element) => ({
       role: element.getAttribute('role'),
       label: element.getAttribute('aria-label'),
@@ -83,7 +83,7 @@ test('every aria-labelledby and aria-describedby points at something real', asyn
 
 test('the whole field can be filled without a pointer', async ({ page }) => {
   const section = page.locator('[data-testid="controlled"]')
-  await section.locator('[data-rdi-segment="day"]').focus()
+  await section.locator('[data-rx-date-segment="day"]').focus()
   await page.keyboard.type('25')
   await page.keyboard.type('12')
   await page.keyboard.type('2030')

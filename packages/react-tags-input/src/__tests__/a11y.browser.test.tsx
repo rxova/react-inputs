@@ -14,10 +14,10 @@ async function violations(container: HTMLElement) {
 }
 
 function box(container: HTMLElement) {
-  return container.querySelector<HTMLInputElement>('[data-rtg-input]')!
+  return container.querySelector<HTMLInputElement>('[data-rx-tags-input]')!
 }
 function removeButtons(container: HTMLElement) {
-  return Array.from(container.querySelectorAll<HTMLButtonElement>('[data-rtg-remove]'))
+  return Array.from(container.querySelectorAll<HTMLButtonElement>('[data-rx-tags-remove]'))
 }
 
 describe('semantics', () => {
@@ -28,7 +28,7 @@ describe('semantics', () => {
       <TagsInput label="Topics" defaultValue={['react', 'vue', 'svelte']} />,
     )
     await expect.element(page.getByLabelText('Topics')).toBeInTheDocument()
-    expect(container.querySelector('[data-rtg-list]')?.tagName).toBe('UL')
+    expect(container.querySelector('[data-rx-tags-list]')?.tagName).toBe('UL')
     expect(page.getByRole('listitem').elements()).toHaveLength(3)
   })
 
@@ -56,7 +56,7 @@ describe('semantics', () => {
 
   it('announces an addition and a removal politely', async () => {
     const { container } = await render(<TagsInput label="Tags" />)
-    const live = container.querySelector('[data-rtg-announcement]')!
+    const live = container.querySelector('[data-rx-tags-announcement]')!
     expect(live).toHaveAttribute('aria-live', 'polite')
 
     box(container).focus()
@@ -73,7 +73,7 @@ describe('semantics', () => {
     )
     box(container).focus()
     await userEvent.keyboard('react{Enter}')
-    expect(container.querySelector('[data-rtg-announcement]')).toHaveTextContent('add:react')
+    expect(container.querySelector('[data-rx-tags-announcement]')).toHaveTextContent('add:react')
   })
 
   it('wires invalid state to aria-invalid and data-invalid', async () => {
@@ -85,7 +85,7 @@ describe('semantics', () => {
     )
     expect(box(container)).toHaveAttribute('aria-invalid', 'true')
     expect(box(container)).toHaveAttribute('aria-describedby', 'err')
-    expect(container.querySelector('[data-rtg-root]')).toHaveAttribute('data-invalid')
+    expect(container.querySelector('[data-rx-tags-root]')).toHaveAttribute('data-invalid')
   })
 
   it('gives the remove buttons a big enough target', async () => {

@@ -232,15 +232,15 @@ No stylesheet to import. Only layout-critical declarations are inlined; everythi
 custom property or a `data-*` hook.
 
 ```css
-[data-rpi-root] {
-  --rpi-meter-height: 0.375rem;
-  --rpi-meter-fill-1: #d64545;
-  --rpi-meter-fill-2: #e08c2e;
-  --rpi-meter-fill-3: #b5c334;
-  --rpi-meter-fill-4: #3fa34d;
+[data-rx-password-root] {
+  --rx-password-meter-height: 0.375rem;
+  --rx-password-meter-fill-1: #d64545;
+  --rx-password-meter-fill-2: #e08c2e;
+  --rx-password-meter-fill-3: #b5c334;
+  --rx-password-meter-fill-4: #3fa34d;
 }
 
-[data-rpi-rules] li[data-met] {
+[data-rx-password-rules] li[data-met] {
   color: #3fa34d;
 }
 ```
@@ -249,7 +249,7 @@ The full list of properties and `data-*` hooks is in the
 [package README](https://github.com/rxova/react-inputs/tree/main/packages/react-password-input#styling).
 The `data-*` attributes are public API, covered by semver.
 
-Do not shrink `--rpi-toggle-size` below `1.5rem`: at the default font size that is the 24×24 CSS
+Do not shrink `--rx-password-toggle-size` below `1.5rem`: at the default font size that is the 24×24 CSS
 pixels WCAG 2.5.8 requires.
 
 ## Headless

@@ -15,13 +15,13 @@ function makeFile(name: string, options: { type?: string; size?: number; at?: nu
 }
 
 function input(container: HTMLElement) {
-  return container.querySelector<HTMLInputElement>('[data-rfi-input]')!
+  return container.querySelector<HTMLInputElement>('[data-rx-file-input]')!
 }
 function names(container: HTMLElement) {
-  return Array.from(container.querySelectorAll('[data-rfi-name]')).map((e) => e.textContent)
+  return Array.from(container.querySelectorAll('[data-rx-file-name]')).map((e) => e.textContent)
 }
 function zone(container: HTMLElement) {
-  return container.querySelector<HTMLButtonElement>('[data-rfi-zone]')!
+  return container.querySelector<HTMLButtonElement>('[data-rx-file-zone]')!
 }
 
 /** Drive the hidden input the way the native picker does. */
@@ -62,7 +62,7 @@ describe('choosing files', () => {
     const { container } = await render(<FileInput label="Files" />)
     await pick(container, [makeFile('big.bin', { size: 1500 })])
     await vi.waitFor(() => {
-      expect(container.querySelector('[data-rfi-size]')).toHaveTextContent('1.5 kB')
+      expect(container.querySelector('[data-rx-file-size]')).toHaveTextContent('1.5 kB')
     })
   })
 
@@ -128,7 +128,7 @@ describe('choosing files', () => {
     await vi.waitFor(() => {
       expect(names(container)).toEqual(['a', 'b'])
     })
-    expect(container.querySelector('[data-rfi-root]')).toHaveAttribute('data-full')
+    expect(container.querySelector('[data-rx-file-root]')).toHaveAttribute('data-full')
   })
 
   it('applies a custom validate with its message', async () => {
@@ -175,7 +175,7 @@ describe('dropping files', () => {
       new DragEvent('dragover', { dataTransfer: data, bubbles: true, cancelable: true }),
     )
     await vi.waitFor(() => {
-      expect(container.querySelector('[data-rfi-root]')).toHaveAttribute('data-dragging')
+      expect(container.querySelector('[data-rx-file-root]')).toHaveAttribute('data-dragging')
     })
   })
 
@@ -187,7 +187,7 @@ describe('dropping files', () => {
     zone(container).dispatchEvent(
       new DragEvent('dragover', { dataTransfer: data, bubbles: true, cancelable: true }),
     )
-    expect(container.querySelector('[data-rfi-root]')).not.toHaveAttribute('data-dragging')
+    expect(container.querySelector('[data-rx-file-root]')).not.toHaveAttribute('data-dragging')
   })
 
   it('does not flicker when the pointer crosses a child element', async () => {
@@ -204,11 +204,11 @@ describe('dropping files', () => {
     target.dispatchEvent(event('dragover'))
     target.dispatchEvent(event('dragleave'))
     await vi.waitFor(() => {
-      expect(container.querySelector('[data-rfi-root]')).toHaveAttribute('data-dragging')
+      expect(container.querySelector('[data-rx-file-root]')).toHaveAttribute('data-dragging')
     })
     target.dispatchEvent(event('dragleave'))
     await vi.waitFor(() => {
-      expect(container.querySelector('[data-rfi-root]')).not.toHaveAttribute('data-dragging')
+      expect(container.querySelector('[data-rx-file-root]')).not.toHaveAttribute('data-dragging')
     })
   })
 
@@ -221,7 +221,7 @@ describe('dropping files', () => {
     )
     drop(container, [makeFile('a.txt')])
     await vi.waitFor(() => {
-      expect(container.querySelector('[data-rfi-root]')).not.toHaveAttribute('data-dragging')
+      expect(container.querySelector('[data-rx-file-root]')).not.toHaveAttribute('data-dragging')
     })
   })
 })
@@ -262,16 +262,16 @@ describe('previews', () => {
     await vi.waitFor(() => {
       expect(names(withOut.container)).toEqual(['a.png'])
     })
-    expect(withOut.container.querySelector('[data-rfi-preview]')).toBeNull()
+    expect(withOut.container.querySelector('[data-rx-file-preview]')).toBeNull()
 
     const withPreviews = await render(<FileInput label="Files" previews />)
     await pick(withPreviews.container, [makeFile('b.png', { type: 'image/png' })])
     await vi.waitFor(() => {
-      expect(withPreviews.container.querySelector('[data-rfi-preview]')).not.toBeNull()
+      expect(withPreviews.container.querySelector('[data-rx-file-preview]')).not.toBeNull()
     })
-    expect(withPreviews.container.querySelector('[data-rfi-preview]')?.getAttribute('src')).toMatch(
-      /^blob:/,
-    )
+    expect(
+      withPreviews.container.querySelector('[data-rx-file-preview]')?.getAttribute('src'),
+    ).toMatch(/^blob:/)
   })
 
   it('makes no preview for a non-image', async () => {
@@ -280,7 +280,7 @@ describe('previews', () => {
     await vi.waitFor(() => {
       expect(names(container)).toEqual(['a.pdf'])
     })
-    expect(container.querySelector('[data-rfi-preview]')).toBeNull()
+    expect(container.querySelector('[data-rx-file-preview]')).toBeNull()
   })
 
   it('revokes the URL when the file is removed', async () => {
@@ -291,9 +291,9 @@ describe('previews', () => {
       const { container } = await render(<FileInput label="Files" previews />)
       await pick(container, [makeFile('a.png', { type: 'image/png' })])
       await vi.waitFor(() => {
-        expect(container.querySelector('[data-rfi-preview]')).not.toBeNull()
+        expect(container.querySelector('[data-rx-file-preview]')).not.toBeNull()
       })
-      const url = container.querySelector('[data-rfi-preview]')!.getAttribute('src')!
+      const url = container.querySelector('[data-rx-file-preview]')!.getAttribute('src')!
       await page.getByRole('button', { name: 'Remove a.png' }).click()
       await vi.waitFor(() => {
         expect(revoke).toHaveBeenCalledWith(url)
@@ -312,7 +312,7 @@ describe('previews', () => {
         makeFile('b.png', { type: 'image/png', at: 2 }),
       ])
       await vi.waitFor(() => {
-        expect(screen.container.querySelectorAll('[data-rfi-preview]')).toHaveLength(2)
+        expect(screen.container.querySelectorAll('[data-rx-file-preview]')).toHaveLength(2)
       })
       revoke.mockClear()
       void screen.unmount()
@@ -330,14 +330,14 @@ describe('previews', () => {
     const { container } = await render(<FileInput label="Files" previews multiple />)
     await pick(container, [makeFile('a.png', { type: 'image/png' })])
     await vi.waitFor(() => {
-      expect(container.querySelector('[data-rfi-preview]')).not.toBeNull()
+      expect(container.querySelector('[data-rx-file-preview]')).not.toBeNull()
     })
-    const first = container.querySelector('[data-rfi-preview]')!.getAttribute('src')
+    const first = container.querySelector('[data-rx-file-preview]')!.getAttribute('src')
     await pick(container, [makeFile('b.png', { type: 'image/png', at: 2 })])
     await vi.waitFor(() => {
-      expect(container.querySelectorAll('[data-rfi-preview]')).toHaveLength(2)
+      expect(container.querySelectorAll('[data-rx-file-preview]')).toHaveLength(2)
     })
-    expect(container.querySelector('[data-rfi-preview]')!.getAttribute('src')).toBe(first)
+    expect(container.querySelector('[data-rx-file-preview]')!.getAttribute('src')).toBe(first)
   })
 })
 
@@ -420,7 +420,7 @@ describe('states', () => {
       />,
     )
     expect(names(container)).toEqual(['locked.txt'])
-    expect(container.querySelector('[data-rfi-remove]')).toBeNull()
+    expect(container.querySelector('[data-rx-file-remove]')).toBeNull()
     expect(zone(container)).toBeDisabled()
   })
 })

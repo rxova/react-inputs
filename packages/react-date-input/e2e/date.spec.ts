@@ -18,8 +18,8 @@ test('lays out segments in the locale order, in every engine', async ({ page }) 
   // different ICU build, and this is the only place that claim is checked.
   const read = (testId: string) =>
     page
-      .locator(`[data-testid="${testId}"] [data-rdi-segment]`)
-      .evaluateAll((elements) => elements.map((el) => el.getAttribute('data-rdi-segment')))
+      .locator(`[data-testid="${testId}"] [data-rx-date-segment]`)
+      .evaluateAll((elements) => elements.map((el) => el.getAttribute('data-rx-date-segment')))
 
   expect(await read('locale-us')).toEqual(['month', 'day', 'year'])
   expect(await read('locale-gb')).toEqual(['day', 'month', 'year'])
@@ -28,14 +28,14 @@ test('lays out segments in the locale order, in every engine', async ({ page }) 
 })
 
 test('never starts or ends with a separator, in any locale', async ({ page }) => {
-  const roots = page.locator('[data-testid="locales"] [data-rdi-root]')
+  const roots = page.locator('[data-testid="locales"] [data-rx-date-root]')
   for (let index = 0; index < (await roots.count()); index++) {
     const kinds = await roots
       .nth(index)
       .locator(':scope > span')
       .evaluateAll((elements) =>
         elements.map((element) =>
-          element.hasAttribute('data-rdi-segment') ? 'segment' : 'literal',
+          element.hasAttribute('data-rx-date-segment') ? 'segment' : 'literal',
         ),
       )
     expect(kinds.at(0)).toBe('segment')
@@ -45,18 +45,18 @@ test('never starts or ends with a separator, in any locale', async ({ page }) =>
 
 test('fills a date by typing, with auto-advance', async ({ page }) => {
   const section = page.locator('[data-testid="controlled"]')
-  await section.locator('[data-rdi-segment="day"]').click()
+  await section.locator('[data-rx-date-segment="day"]').click()
   await page.keyboard.type('01011999')
 
-  await expect(section.locator('[data-rdi-segment="day"]')).toHaveText('01')
-  await expect(section.locator('[data-rdi-segment="month"]')).toHaveText('01')
-  await expect(section.locator('[data-rdi-segment="year"]')).toHaveText('1999')
+  await expect(section.locator('[data-rx-date-segment="day"]')).toHaveText('01')
+  await expect(section.locator('[data-rx-date-segment="month"]')).toHaveText('01')
+  await expect(section.locator('[data-rx-date-segment="year"]')).toHaveText('1999')
   await expect(page.getByTestId('value')).toHaveText('1999-01-01')
 })
 
 test('steps with the arrow keys and wraps at the ends', async ({ page }) => {
   const section = page.locator('[data-testid="controlled"]')
-  const month = section.locator('[data-rdi-segment="month"]')
+  const month = section.locator('[data-rx-date-segment="month"]')
   await month.click()
   await page.keyboard.press('ArrowUp')
   await expect(month).toHaveText('04')
@@ -68,56 +68,56 @@ test('steps with the arrow keys and wraps at the ends', async ({ page }) => {
 test('re-clamps the day when the month can no longer hold it', async ({ page }) => {
   const section = page.locator('[data-testid="controlled"]')
   await page.getByRole('button', { name: 'Set leap day' }).click()
-  await expect(section.locator('[data-rdi-segment="day"]')).toHaveText('29')
+  await expect(section.locator('[data-rx-date-segment="day"]')).toHaveText('29')
 
-  await section.locator('[data-rdi-segment="year"]').click()
+  await section.locator('[data-rx-date-segment="year"]').click()
   await page.keyboard.type('2023')
   // 28, never a rollover into March.
-  await expect(section.locator('[data-rdi-segment="day"]')).toHaveText('28')
-  await expect(section.locator('[data-rdi-segment="month"]')).toHaveText('02')
+  await expect(section.locator('[data-rx-date-segment="day"]')).toHaveText('28')
+  await expect(section.locator('[data-rx-date-segment="month"]')).toHaveText('02')
   await expect(page.getByTestId('value')).toHaveText('2023-02-28')
 })
 
 test('moves between segments with the arrow keys and stops at the ends', async ({ page }) => {
   const section = page.locator('[data-testid="controlled"]')
-  await section.locator('[data-rdi-segment="day"]').click()
+  await section.locator('[data-rx-date-segment="day"]').click()
   await page.keyboard.press('ArrowRight')
-  await expect(section.locator('[data-rdi-segment="month"]')).toBeFocused()
+  await expect(section.locator('[data-rx-date-segment="month"]')).toBeFocused()
   await page.keyboard.press('ArrowRight')
   await page.keyboard.press('ArrowRight')
-  await expect(section.locator('[data-rdi-segment="year"]')).toBeFocused()
+  await expect(section.locator('[data-rx-date-segment="year"]')).toBeFocused()
 })
 
 test('gives each segment its own tab stop', async ({ page }) => {
   const section = page.locator('[data-testid="controlled"]')
-  await section.locator('[data-rdi-segment="day"]').click()
+  await section.locator('[data-rx-date-segment="day"]').click()
   await page.keyboard.press('Tab')
-  await expect(section.locator('[data-rdi-segment="month"]')).toBeFocused()
+  await expect(section.locator('[data-rx-date-segment="month"]')).toBeFocused()
   await page.keyboard.press('Tab')
-  await expect(section.locator('[data-rdi-segment="year"]')).toBeFocused()
+  await expect(section.locator('[data-rx-date-segment="year"]')).toBeFocused()
 })
 
 test('clears a segment with Backspace', async ({ page }) => {
   const section = page.locator('[data-testid="controlled"]')
-  await section.locator('[data-rdi-segment="day"]').click()
+  await section.locator('[data-rx-date-segment="day"]').click()
   await page.keyboard.press('Backspace')
-  await expect(section.locator('[data-rdi-segment="day"]')).toHaveText('dd')
+  await expect(section.locator('[data-rx-date-segment="day"]')).toHaveText('dd')
   await expect(page.getByTestId('value')).toHaveText('null')
 })
 
 test('marks an out-of-range date without discarding it', async ({ page }) => {
   const section = page.locator('[data-testid="range"]')
-  await section.locator('[data-rdi-segment="day"]').click()
+  await section.locator('[data-rx-date-segment="day"]').click()
   await page.keyboard.type('15031999')
-  await expect(section.locator('[data-rdi-root]')).toHaveAttribute('data-out-of-range', '')
+  await expect(section.locator('[data-rx-date-root]')).toHaveAttribute('data-out-of-range', '')
   await expect(page.getByTestId('range-value')).toHaveText('1999-03-15')
 })
 
 test('accepts a date inside the range without marking it', async ({ page }) => {
   const section = page.locator('[data-testid="range"]')
-  await section.locator('[data-rdi-segment="day"]').click()
+  await section.locator('[data-rx-date-segment="day"]').click()
   await page.keyboard.type('15032026')
-  await expect(section.locator('[data-rdi-root]')).not.toHaveAttribute('data-out-of-range', '')
+  await expect(section.locator('[data-rx-date-root]')).not.toHaveAttribute('data-out-of-range', '')
 })
 
 test('strips the diagnostics path from a production build', async ({ page }) => {
@@ -128,7 +128,9 @@ test('strips the diagnostics path from a production build', async ({ page }) => 
   // behaviour of the same field is covered in dev.browser.test.tsx.
   await expect(page.getByTestId('warning-codes')).toBeEmpty()
   // And the field still renders, empty, rather than crashing on the bad prop.
-  await expect(page.locator('[data-testid="warnings"] [data-rdi-segment="day"]')).toHaveText('dd')
+  await expect(page.locator('[data-testid="warnings"] [data-rx-date-segment="day"]')).toHaveText(
+    'dd',
+  )
 })
 
 test('posts the ISO value through a native form submit', async ({ page }) => {
@@ -137,7 +139,7 @@ test('posts the ISO value through a native form submit', async ({ page }) => {
 })
 
 test('a disabled field is out of the tab order and refuses input', async ({ page }) => {
-  const day = page.locator('[data-testid="state-disabled"] [data-rdi-segment="day"]')
+  const day = page.locator('[data-testid="state-disabled"] [data-rx-date-segment="day"]')
   await expect(day).toHaveAttribute('tabindex', '-1')
   await day.click({ force: true })
   await page.keyboard.type('27')
@@ -145,7 +147,7 @@ test('a disabled field is out of the tab order and refuses input', async ({ page
 })
 
 test('a read-only field is focusable but refuses input', async ({ page }) => {
-  const day = page.locator('[data-testid="state-readonly"] [data-rdi-segment="day"]')
+  const day = page.locator('[data-testid="state-readonly"] [data-rx-date-segment="day"]')
   await expect(day).toHaveAttribute('tabindex', '0')
   await day.click()
   await page.keyboard.press('ArrowUp')

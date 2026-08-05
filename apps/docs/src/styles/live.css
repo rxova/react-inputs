@@ -48,19 +48,19 @@
   color: var(--rx-fg);
 
   /* Rating */
-  --rfs-color-filled: var(--rx-primary);
-  --rfs-color-empty: var(--rx-rule-strong);
-  --rfs-color-hover: var(--rx-primary-light);
-  --rfs-focus-ring: 2px solid var(--rx-primary);
-  --rfs-focus-ring-offset: 2px;
+  --rx-rating-color-filled: var(--rx-primary);
+  --rx-rating-color-empty: var(--rx-rule-strong);
+  --rx-rating-color-hover: var(--rx-primary-light);
+  --rx-rating-focus-ring: 2px solid var(--rx-primary);
+  --rx-rating-focus-ring-offset: 2px;
 
   /* OTP */
-  --otp-color: var(--rx-fg);
-  --otp-bg: var(--rx-bg);
-  --otp-border: 1px solid var(--rx-rule-strong);
-  --otp-radius: var(--rx-radius-sm);
-  --otp-active-ring: 2px solid var(--rx-primary);
-  --otp-caret-color: var(--rx-primary);
-  --otp-placeholder-color: var(--rx-faint);
-  --otp-separator-color: var(--rx-faint);
+  --rx-otp-color: var(--rx-fg);
+  --rx-otp-bg: var(--rx-bg);
+  --rx-otp-border: 1px solid var(--rx-rule-strong);
+  --rx-otp-radius: var(--rx-radius-sm);
+  --rx-otp-active-ring: 2px solid var(--rx-primary);
+  --rx-otp-caret-color: var(--rx-primary);
+  --rx-otp-placeholder-color: var(--rx-faint);
+  --rx-otp-separator-color: var(--rx-faint);
 }

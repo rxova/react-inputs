@@ -16,11 +16,11 @@ import { OtpSeparator } from '../OtpSeparator'
 describe('server rendering', () => {
   it('renders one real input plus decorative slots without a DOM', () => {
     const html = renderToStaticMarkup(<OtpInput length={6} label="Code" />)
-    expect(html).toContain('data-otp-root')
-    expect(html).toContain('data-otp-input')
+    expect(html).toContain('data-rx-otp-root')
+    expect(html).toContain('data-rx-otp-input')
     expect(html).toContain('aria-label="Code"')
     // Six painted slots, all hidden from the a11y tree.
-    expect(html.match(/data-otp-slot/g)).toHaveLength(6)
+    expect(html.match(/data-rx-otp-slot/g)).toHaveLength(6)
     expect(html).toContain('aria-hidden="true"')
   })
 
@@ -52,9 +52,9 @@ describe('server rendering', () => {
         </OtpGroup>
       </OtpInput>,
     )
-    expect(html).toContain('data-otp-group')
-    expect(html).toContain('data-otp-separator')
-    expect(html.match(/data-otp-slot/g)).toHaveLength(6)
+    expect(html).toContain('data-rx-otp-group')
+    expect(html).toContain('data-rx-otp-separator')
+    expect(html.match(/data-rx-otp-slot/g)).toHaveLength(6)
   })
 
   it('does not throw for any documented mode / mask / length combination', () => {

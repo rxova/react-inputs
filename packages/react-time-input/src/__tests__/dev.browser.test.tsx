@@ -12,7 +12,7 @@ import { useTimeInput } from '../useTimeInput'
  */
 type Seg = 'hour' | 'minute' | 'second' | 'dayPeriod'
 function seg(container: HTMLElement, type: Seg) {
-  return container.querySelector<HTMLElement>(`[data-rti-segment="${type}"]`)!
+  return container.querySelector<HTMLElement>(`[data-rx-time-segment="${type}"]`)!
 }
 
 describe('onWarn', () => {
@@ -86,7 +86,7 @@ describe('onWarn', () => {
 describe('labels', () => {
   it('takes a string label as the group name', async () => {
     const { container } = await render(<TimeInput label="Start" locale="en-GB" />)
-    const group = container.querySelector('[data-rti-root]')!
+    const group = container.querySelector('[data-rx-time-root]')!
     expect(group).toHaveAttribute('aria-label', 'Start')
     expect(group).not.toHaveAttribute('aria-labelledby')
   })
@@ -102,7 +102,7 @@ describe('labels', () => {
         locale="en-GB"
       />,
     )
-    const group = container.querySelector('[data-rti-root]')!
+    const group = container.querySelector('[data-rx-time-root]')!
     const labelledBy = group.getAttribute('aria-labelledby')
     expect(labelledBy).toBeTruthy()
     expect(document.getElementById(labelledBy!)?.textContent).toContain('Start')
@@ -110,7 +110,7 @@ describe('labels', () => {
 
   it('has neither attribute when no label is given', async () => {
     const { container } = await render(<TimeInput locale="en-GB" aria-describedby="hint" />)
-    const group = container.querySelector('[data-rti-root]')!
+    const group = container.querySelector('[data-rx-time-root]')!
     expect(group).not.toHaveAttribute('aria-label')
     expect(group).not.toHaveAttribute('aria-labelledby')
   })
@@ -208,7 +208,7 @@ describe('arrow-down and clearing', () => {
     seg(container, 'minute').focus()
     await userEvent.keyboard('15')
     // 3 PM, not 3 AM: the earlier choice survived.
-    expect(container.querySelector('[data-rti-root]')).toHaveAttribute('data-complete')
+    expect(container.querySelector('[data-rx-time-root]')).toHaveAttribute('data-complete')
     expect(seg(container, 'dayPeriod')).toHaveTextContent('PM')
   })
 

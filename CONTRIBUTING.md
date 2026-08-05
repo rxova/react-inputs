@@ -106,6 +106,12 @@ Also:
   `radiogroup` of real radios, real `<input>`s) so the browser provides keyboard, focus, and form
   behaviour. Reimplementing one of those in JavaScript is a signal the markup is wrong.
 - The `data-*` attributes in each README are **public API** and covered by semver.
+- **Namespace the styling hooks.** A component's custom properties and structural attributes are
+  `--rx-<slug>-*` and `data-rx-<slug>-*`, where `<slug>` is the `rxova.slug` in its own
+  package.json. State hooks that mean the same thing everywhere — `data-invalid`, `data-disabled`,
+  `data-readonly`, `data-focused` — stay unprefixed, so one selector reaches every input in the
+  suite. `pnpm check:tokens` enforces it; before it existed the suite drifted into `--rpi-` for
+  password and `--rphi-` for phone, one character apart on two fields that share a sign-up form.
 - Conventional Commits, enforced by `commitlint` locally and on PRs.
 
 ## Release
