@@ -337,6 +337,9 @@ importers:
       '@size-limit/preset-small-lib':
         specifier: ^12.1.0
         version: 12.1.0(size-limit@12.1.0(jiti@2.6.1))
+      '@tanstack/react-form':
+        specifier: ^1.33.2
+        version: 1.33.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@types/node':
         specifier: ^26.1.1
         version: 26.1.2
@@ -358,6 +361,12 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^4.1.10
         version: 4.1.10(@vitest/browser@4.1.10)(vitest@4.1.10)
+      final-form:
+        specifier: ^5.0.1
+        version: 5.0.1
+      formik:
+        specifier: ^2.4.9
+        version: 2.4.9(@types/react@19.2.18)(react@19.2.8)
       playwright:
         specifier: ^1.61.1
         version: 1.62.1
@@ -370,6 +379,9 @@ importers:
       react-dom:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
+      react-final-form:
+        specifier: ^7.0.1
+        version: 7.0.1(final-form@5.0.1)(react@19.2.8)
       react-hook-form:
         specifier: ^7.82.0
         version: 7.83.0(react@19.2.8)
@@ -403,6 +415,9 @@ importers:
       '@size-limit/preset-small-lib':
         specifier: ^12.1.0
         version: 12.1.0(size-limit@12.1.0(jiti@2.6.1))
+      '@tanstack/react-form':
+        specifier: ^1.33.2
+        version: 1.33.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@types/node':
         specifier: ^26.1.1
         version: 26.1.2
@@ -424,6 +439,12 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^4.1.10
         version: 4.1.10(@vitest/browser@4.1.10)(vitest@4.1.10)
+      final-form:
+        specifier: ^5.0.1
+        version: 5.0.1
+      formik:
+        specifier: ^2.4.9
+        version: 2.4.9(@types/react@19.2.18)(react@19.2.8)
       playwright:
         specifier: ^1.61.1
         version: 1.62.1
@@ -436,6 +457,9 @@ importers:
       react-dom:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
+      react-final-form:
+        specifier: ^7.0.1
+        version: 7.0.1(final-form@5.0.1)(react@19.2.8)
       react-hook-form:
         specifier: ^7.82.0
         version: 7.83.0(react@19.2.8)
@@ -689,6 +713,9 @@ importers:
       '@size-limit/preset-small-lib':
         specifier: ^12.1.0
         version: 12.1.0(size-limit@12.1.0(jiti@2.6.1))
+      '@tanstack/react-form':
+        specifier: ^1.33.2
+        version: 1.33.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@types/node':
         specifier: ^26.1.1
         version: 26.1.2
@@ -710,6 +737,12 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^4.1.10
         version: 4.1.10(@vitest/browser@4.1.10)(vitest@4.1.10)
+      final-form:
+        specifier: ^5.0.1
+        version: 5.0.1
+      formik:
+        specifier: ^2.4.9
+        version: 2.4.9(@types/react@19.2.18)(react@19.2.8)
       playwright:
         specifier: ^1.61.1
         version: 1.62.1
@@ -722,6 +755,9 @@ importers:
       react-dom:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
+      react-final-form:
+        specifier: ^7.0.1
+        version: 7.0.1(final-form@5.0.1)(react@19.2.8)
       react-hook-form:
         specifier: ^7.82.0
         version: 7.83.0(react@19.2.8)
@@ -755,6 +791,9 @@ importers:
       '@size-limit/preset-small-lib':
         specifier: ^12.1.0
         version: 12.1.0(size-limit@12.1.0(jiti@2.6.1))
+      '@tanstack/react-form':
+        specifier: ^1.33.2
+        version: 1.33.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@types/node':
         specifier: ^26.1.1
         version: 26.1.2
@@ -776,6 +815,12 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^4.1.10
         version: 4.1.10(@vitest/browser@4.1.10)(vitest@4.1.10)
+      final-form:
+        specifier: ^5.0.1
+        version: 5.0.1
+      formik:
+        specifier: ^2.4.9
+        version: 2.4.9(@types/react@19.2.18)(react@19.2.8)
       playwright:
         specifier: ^1.61.1
         version: 1.62.1
@@ -788,6 +833,9 @@ importers:
       react-dom:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
+      react-final-form:
+        specifier: ^7.0.1
+        version: 7.0.1(final-form@5.0.1)(react@19.2.8)
       react-hook-form:
         specifier: ^7.82.0
         version: 7.83.0(react@19.2.8)
@@ -899,6 +947,9 @@ importers:
       '@size-limit/preset-small-lib':
         specifier: ^12.1.0
         version: 12.1.0(size-limit@12.1.0(jiti@2.6.1))
+      '@tanstack/react-form':
+        specifier: ^1.33.2
+        version: 1.33.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@types/node':
         specifier: ^26.1.1
         version: 26.1.2
@@ -920,6 +971,12 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^4.1.10
         version: 4.1.10(@vitest/browser@4.1.10)(vitest@4.1.10)
+      final-form:
+        specifier: ^5.0.1
+        version: 5.0.1
+      formik:
+        specifier: ^2.4.9
+        version: 2.4.9(@types/react@19.2.18)(react@19.2.8)
       playwright:
         specifier: ^1.61.1
         version: 1.62.1
@@ -932,6 +989,9 @@ importers:
       react-dom:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
+      react-final-form:
+        specifier: ^7.0.1
+        version: 7.0.1(final-form@5.0.1)(react@19.2.8)
       react-hook-form:
         specifier: ^7.82.0
         version: 7.83.0(react@19.2.8)
@@ -965,6 +1025,9 @@ importers:
       '@size-limit/preset-small-lib':
         specifier: ^12.1.0
         version: 12.1.0(size-limit@12.1.0(jiti@2.6.1))
+      '@tanstack/react-form':
+        specifier: ^1.33.2
+        version: 1.33.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@types/node':
         specifier: ^26.1.1
         version: 26.1.2
@@ -986,6 +1049,12 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^4.1.10
         version: 4.1.10(@vitest/browser@4.1.10)(vitest@4.1.10)
+      final-form:
+        specifier: ^5.0.1
+        version: 5.0.1
+      formik:
+        specifier: ^2.4.9
+        version: 2.4.9(@types/react@19.2.18)(react@19.2.8)
       playwright:
         specifier: ^1.61.1
         version: 1.62.1
@@ -998,6 +1067,9 @@ importers:
       react-dom:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
+      react-final-form:
+        specifier: ^7.0.1
+        version: 7.0.1(final-form@5.0.1)(react@19.2.8)
       react-hook-form:
         specifier: ^7.82.0
         version: 7.83.0(react@19.2.8)
