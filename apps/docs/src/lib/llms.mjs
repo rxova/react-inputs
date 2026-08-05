@@ -121,10 +121,10 @@ export function llmsIndex(pages, components, origin) {
     `    npx shadcn@latest add ${origin}/r/otp-field.json`,
     '',
     `Registry index: ${origin}/r/registry.json — currency-field, otp-field,`,
-    'rating-field, password-field, phone-field, date-field, time-field,',
-    'tags-field, file-field. Each copies a label/description/error wrapper plus a',
-    'stylesheet into your project and keeps the component itself as an npm',
-    'dependency.',
+    'rating-field. Each copies a label/description/error wrapper plus a stylesheet',
+    'into your project and keeps the component itself as an npm dependency. The',
+    'other six components are installed from npm directly; their registry items',
+    'ship with the release that publishes those packages.',
     '',
   ]
 
