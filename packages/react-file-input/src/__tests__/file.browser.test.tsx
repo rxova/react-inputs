@@ -193,6 +193,11 @@ describe('dropping files', () => {
   it('does not flicker when the pointer crosses a child element', async () => {
     // `dragleave` fires on every crossing into a child, so a naive handler
     // turns the highlight off as the user moves over the hint text.
+    //
+    // The enters have to be `dragenter`. This test used to raise the depth with
+    // two `dragover`s, which is not a sequence any browser produces and hid the
+    // fact that `dragover` was being counted at all — see the depth counter in
+    // `useFileInput.ts` and `sequences.browser.test.tsx`.
     const { container } = await render(<FileInput label="Files" />)
     const data = new DataTransfer()
     data.items.add(makeFile('a.txt'))
@@ -200,8 +205,8 @@ describe('dropping files', () => {
     const event = (type: string) =>
       new DragEvent(type, { dataTransfer: data, bubbles: true, cancelable: true })
 
-    target.dispatchEvent(event('dragover'))
-    target.dispatchEvent(event('dragover'))
+    target.dispatchEvent(event('dragenter'))
+    target.dispatchEvent(event('dragenter'))
     target.dispatchEvent(event('dragleave'))
     await vi.waitFor(() => {
       expect(container.querySelector('[data-rx-file-root]')).toHaveAttribute('data-dragging')

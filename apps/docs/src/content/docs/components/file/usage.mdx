@@ -114,15 +114,15 @@ drag-depth counter, the URL revocation, the focus handoff after a removal — li
 const field = useFileInput({ multiple: true, previews: true, maxSize: 1_000_000 })
 ```
 
-| Returned            | What it is                                                        |
-| ------------------- | ----------------------------------------------------------------- |
-| `files` / `entries` | The selection, and the same list with stable keys and previews    |
-| `dragging` / `full` | A file drag is over the zone; the count or single-file cap is hit |
-| `open()`            | Opens the native picker                                           |
-| `addFiles(list)`    | Applies every rule, then commits what passed                      |
-| `removeAt(i)`       | Removes one file and moves focus                                  |
-| `clear()`           | Empties the selection                                             |
-| `handle*`           | `InputChange`, `DragOver`, `DragLeave`, `Drop`, `Focus`, `Blur`   |
+| Returned            | What it is                                                                   |
+| ------------------- | ---------------------------------------------------------------------------- |
+| `files` / `entries` | The selection, and the same list with stable keys and previews               |
+| `dragging` / `full` | A file drag is over the zone; the count or single-file cap is hit            |
+| `open()`            | Opens the native picker                                                      |
+| `addFiles(list)`    | Applies every rule, then commits what passed                                 |
+| `removeAt(i)`       | Removes one file and moves focus                                             |
+| `clear()`           | Empties the selection                                                        |
+| `handle*`           | `InputChange`, `DragEnter`, `DragOver`, `DragLeave`, `Drop`, `Focus`, `Blur` |
 
 ## Styling
 

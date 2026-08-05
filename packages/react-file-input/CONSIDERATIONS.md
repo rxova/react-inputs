@@ -97,3 +97,9 @@ Decisions I made without asking, and why. Each is reversible; flag any you disag
 - **No directory drops.** `DataTransferItem.webkitGetAsEntry` traversal is uneven across engines
   and unbounded in depth.
 - **No upload, progress or retry.** Out of scope by design — see the manifest.
+- **`dragover` does not move the drag-depth counter, and must be bound separately from
+  `dragenter`.** A browser repeats `dragover` for as long as the pointer hovers, so counting it
+  makes the depth climb without bound and the highlight never clears. It still has to be prevented
+  on every tick, or the browser refuses the drop.
+- **A drop carrying no files is left to the browser**, matching the drag handlers rather than
+  swallowing the page's own default for a dragged link.

@@ -141,6 +141,7 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
       removeAt,
       sizeOf,
       handleInputChange,
+      handleDragEnter,
       handleDragOver,
       handleDragLeave,
       handleDrop,
@@ -236,7 +237,7 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
           disabled={disabled || readOnly}
           style={zoneStyle}
           onClick={open}
-          onDragEnter={handleDragOver}
+          onDragEnter={handleDragEnter}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}

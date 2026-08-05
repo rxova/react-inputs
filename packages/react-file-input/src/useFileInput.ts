@@ -77,6 +77,11 @@ export interface UseFileInputResult {
   /** A human-readable size for one file. */
   sizeOf: (file: File) => string
   handleInputChange: (event: ChangeEvent<HTMLInputElement>) => void
+  /**
+   * Bind to `onDragEnter`. This is the handler that counts the drag depth, so
+   * binding `onDragOver` to it as well makes the highlight stick.
+   */
+  handleDragEnter: (event: DragEvent<HTMLElement>) => void
   handleDragOver: (event: DragEvent<HTMLElement>) => void
   handleDragLeave: (event: DragEvent<HTMLElement>) => void
   handleDrop: (event: DragEvent<HTMLElement>) => void
@@ -147,8 +152,18 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
   const inputRef = useRef<HTMLInputElement | null>(null)
   const zoneRef = useRef<HTMLElement | null>(null)
   const removeRefs = useRef<(HTMLElement | null)[]>([])
-  /** Set when a removal should move focus, applied after the list re-renders. */
-  const pendingFocus = useRef<number | 'zone' | null>(null)
+  /**
+   * Set when a removal should move focus, applied after the list re-renders.
+   *
+   * `expect` is the length the list should have when the move is applied. A
+   * controlled parent is free to refuse the removal, and refusing still causes
+   * renders — the announcement is state — so an unvalidated stash gets replayed
+   * against a list that never changed, moving focus to a different file's
+   * button while the one the user tried to remove is still on screen. Worse,
+   * the stash survives until the parent's *next* unrelated render, so the yank
+   * arrives several interactions later.
+   */
+  const pendingFocus = useRef<{ target: number | 'zone'; expect: number } | null>(null)
 
   /**
    * Depth counter for the drag state.
@@ -157,6 +172,13 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
    * zone, so a naive `onDragLeave -> setDragging(false)` flickers the highlight
    * off and on as the user moves over the hint text or an existing file row.
    * Counting enters and leaves is the only thing that survives nesting.
+   *
+   * Only `dragenter` and `dragleave` are counted. `dragover` repeats for as
+   * long as the pointer hovers — every few hundred milliseconds and on every
+   * pointer move — so counting it too made the depth climb without bound, and
+   * the one matching `dragleave` could never bring it back to zero: the zone
+   * stayed lit for the life of the page after a drag that left without
+   * dropping.
    */
   const dragDepth = useRef(0)
 
@@ -343,20 +365,30 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
        * or the previous one if that was the last, or the drop zone if the list
        * is now empty.
        */
-      pendingFocus.current = next.length === 0 ? 'zone' : Math.min(index, next.length - 1)
+      pendingFocus.current = {
+        target: next.length === 0 ? 'zone' : Math.min(index, next.length - 1),
+        expect: next.length,
+      }
     },
     [disabled, readOnly, files, commitFiles, onRemove, announce],
   )
 
   useEffect(() => {
-    const target = pendingFocus.current
-    if (target === null) return
+    const pending = pendingFocus.current
+    if (pending === null) return
+    // Dropped, not deferred, when the list that arrived is not the one the
+    // removal asked for: a controlled parent refused it, and the button the
+    // user is on is still there.
+    if (files.length !== pending.expect) {
+      pendingFocus.current = null
+      return
+    }
     pendingFocus.current = null
-    if (target === 'zone') {
+    if (pending.target === 'zone') {
       zoneRef.current?.focus()
       return
     }
-    removeRefs.current[target]?.focus()
+    removeRefs.current[pending.target]?.focus()
   }, [files])
 
   const clear = useCallback(() => {
@@ -387,7 +419,7 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
     [addFiles],
   )
 
-  const handleDragOver = useCallback(
+  const handleDragEnter = useCallback(
     (event: DragEvent<HTMLElement>) => {
       if (disabled || readOnly) return
       // Only react to a drag that actually carries files — dragging selected
@@ -395,6 +427,22 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
       if (!Array.from(event.dataTransfer.types).includes('Files')) return
       event.preventDefault()
       dragDepth.current += 1
+      setDragging(true)
+    },
+    [disabled, readOnly],
+  )
+
+  const handleDragOver = useCallback(
+    (event: DragEvent<HTMLElement>) => {
+      if (disabled || readOnly) return
+      if (!Array.from(event.dataTransfer.types).includes('Files')) return
+      // Preventing `dragover` on every tick is what makes the browser fire
+      // `drop` at all, so this cannot be skipped. It deliberately does not
+      // touch the depth counter — see the counter's own comment.
+      event.preventDefault()
+      // Still lights the zone, without counting: dragging in from outside the
+      // viewport does not always produce a `dragenter` the zone sees, and the
+      // depth reaching zero on the matching `dragleave` turns it off again.
       setDragging(true)
     },
     [disabled, readOnly],
@@ -413,9 +461,15 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
   const handleDrop = useCallback(
     (event: DragEvent<HTMLElement>) => {
       if (disabled || readOnly) return
-      event.preventDefault()
+      // Whatever was dropped, the drag is over: clear the highlight even for a
+      // payload this field will not take.
       dragDepth.current = 0
       setDragging(false)
+      // Symmetry with the drag handlers, which both refuse a drag carrying no
+      // files. Consuming the drop anyway would swallow the browser's own
+      // default for a dragged link or text selection.
+      if (!Array.from(event.dataTransfer.types).includes('Files')) return
+      event.preventDefault()
       addFiles(Array.from(event.dataTransfer.files))
     },
     [disabled, readOnly, addFiles],
@@ -461,6 +515,7 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
     clear,
     sizeOf,
     handleInputChange,
+    handleDragEnter,
     handleDragOver,
     handleDragLeave,
     handleDrop,

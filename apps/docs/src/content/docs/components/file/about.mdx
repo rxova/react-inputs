@@ -95,8 +95,20 @@ a state worth rendering, and `onWarn` says so.
 `onDragLeave → setDragging(false)` flickers the highlight off and on as the user moves over the hint
 text or an existing file row. A depth counter is the only thing that survives nesting.
 
+Only `dragenter` and `dragleave` move that counter. `dragover` repeats for as long as the pointer
+hovers — every few hundred milliseconds and on every pointer move — so counting it too makes the
+depth climb without bound, and the one matching `dragleave` can never bring it back to zero: the
+zone stays lit for the life of the page after a drag that leaves without dropping. `dragover` still
+has to be prevented on every tick, because that is what makes the browser fire `drop` at all, and it
+still lights the zone, since dragging in from outside the viewport does not always produce a
+`dragenter` the zone sees.
+
+Binding your own zone therefore means binding `onDragEnter={field.handleDragEnter}` **and**
+`onDragOver={field.handleDragOver}` — they are different handlers on purpose.
+
 A drag carrying only text never lights the zone up at all — the handlers check that `Files` is among
-the transfer's types before reacting.
+the transfer's types before reacting, and a drop with no files is left to the browser rather than
+consumed.
 
 ## Native forms
 
