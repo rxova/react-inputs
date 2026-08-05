@@ -8,7 +8,6 @@ import {
   isComplete,
   pad,
   segmentRange,
-  snapToStep,
   toDayPeriod,
   toDisplayHour,
   toISO,
@@ -167,25 +166,6 @@ describe('wrap', () => {
   it('wraps the two-state day period', () => {
     expect(wrap(PM + 1, AM, PM)).toBe(AM)
     expect(wrap(AM - 1, AM, PM)).toBe(PM)
-  })
-})
-
-describe('snapToStep', () => {
-  it('rounds onto a grid that divides an hour', () => {
-    expect(snapToStep(7, 15)).toBe(0)
-    expect(snapToStep(8, 15)).toBe(15)
-    expect(snapToStep(31, 15)).toBe(30)
-  })
-
-  it('wraps a round-up past the hour back to zero', () => {
-    // 58 rounds to 60, which is not a minute.
-    expect(snapToStep(58, 15)).toBe(0)
-  })
-
-  it('leaves the value alone for a step that cannot form a grid', () => {
-    expect(snapToStep(37, 7)).toBe(37)
-    expect(snapToStep(37, 1)).toBe(37)
-    expect(snapToStep(37, 0)).toBe(37)
   })
 })
 

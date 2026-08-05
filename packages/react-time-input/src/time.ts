@@ -139,14 +139,15 @@ export function wrap(value: number, min: number, max: number): number {
   return ((((value - min) % span) + span) % span) + min
 }
 
-/**
- * Round a minute or second onto a step grid, wrapping past 59 back to 0.
+/*
+ * There is deliberately no `snapToStep` here.
  *
- * `step` is in the segment's own units, so a 15-minute grid is `step: 15` on
- * the minute segment. A step that does not divide 60 is left alone rather than
- * producing an uneven final bucket — see `inspectStep`.
+ * One existed, fully unit-tested, exported from this module and called from
+ * nowhere — the kind of dead code that reads as a feature. `minuteStep` and
+ * `secondStep` move the arrow keys onto a grid and stop there; a typed or
+ * controlled value is left exactly as given, because enforcing the grid
+ * mid-entry fights the user and validating the final value is the form's job.
+ * That is limitation 35 in CONSIDERATIONS.md, and it is the intended contract
+ * rather than an omission. Anything that snaps belongs in `stepFor`, next to
+ * the arrows it serves.
  */
-export function snapToStep(value: number, step: number): number {
-  if (step <= 1 || 60 % step !== 0) return value
-  return Math.round(value / step) * step === 60 ? 0 : Math.round(value / step) * step
-}
