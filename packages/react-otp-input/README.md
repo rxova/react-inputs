@@ -146,22 +146,49 @@ the [form-library guide](https://rxova.org/packages/react-inputs/components/otp/
 
 ## Styling
 
-No stylesheet to import. Layout-critical CSS is inlined; everything visual is a token or a `data-*` hook.
+No stylesheet to import. Layout-critical CSS is inlined; everything visual is a custom property or a
+`data-*` hook.
 
-```css
-[data-rx-otp-root] {
-  --rx-otp-slot-size: 2.5rem;
-  --rx-otp-gap: 0.5rem;
-  --rx-otp-radius: 0.5rem;
-  --rx-otp-border: 1px solid #d4d4d8;
-  --rx-otp-active-ring: 2px solid Highlight;
-  --rx-otp-caret-color: currentColor;
-}
-```
+| Property                                | Default                   | Applies to                     |
+| --------------------------------------- | ------------------------- | ------------------------------ |
+| `--rx-otp-slot-size`                    | `2.5rem`                  | Slot width and height          |
+| `--rx-otp-gap`                          | `0.5rem`                  | Space between slots            |
+| `--rx-otp-font` / `-font-size`          | inherited / `1.125rem`    | Slot typography                |
+| `--rx-otp-color` / `-bg`                | inherited / `transparent` | Slot foreground and background |
+| `--rx-otp-border`                       | `1px solid #d4d4d8`       | Slot border                    |
+| `--rx-otp-radius`                       | `0.5rem`                  | Slot corners                   |
+| `--rx-otp-active-ring`                  | `2px solid Highlight`     | Ring on the active slot        |
+| `--rx-otp-caret-color` / `-caret-width` | `currentColor` / `2px`    | The painted caret              |
+| `--rx-otp-placeholder-color`            | inherited, dimmed         | Per-slot placeholder           |
+| `--rx-otp-separator-color`              | inherited                 | `<OtpSeparator>`               |
+| `--rx-otp-transition`                   | a short ease              | Slot state changes             |
 
-Stable selector hooks (semver-covered): `[data-rx-otp-root]`, `[data-rx-otp-input]`, `[data-rx-otp-slot]`,
-`[data-rx-otp-group]`, `[data-rx-otp-separator]`, `[data-rx-otp-caret]`, plus per-slot
-`[data-state="filled|active|empty"]`, `[data-active]`, `[data-filled]`, `[data-invalid]`.
+### `data-*` attributes
+
+These are **public API**, covered by semver.
+
+| Attribute                                          | On        | Meaning                         |
+| -------------------------------------------------- | --------- | ------------------------------- |
+| `data-rx-otp-root`                                 | wrapper   | Always present                  |
+| `data-rx-otp-input`                                | `<input>` | The single real control         |
+| `data-rx-otp-group`                                | group     | `<OtpGroup>`                    |
+| `data-rx-otp-slot`                                 | slot      | One painted slot                |
+| `data-rx-otp-separator`                            | separator | `<OtpSeparator>`                |
+| `data-rx-otp-caret`                                | caret     | The painted caret               |
+| `data-state`                                       | slot      | `filled`, `active` or `empty`   |
+| `data-filled` / `data-active`                      | slot      | Convenience flags for the above |
+| `data-disabled` / `data-readonly` / `data-invalid` | wrapper   | Mirrors the props               |
+
+## Keyboard
+
+| Key                   | Effect                                                  |
+| --------------------- | ------------------------------------------------------- |
+| any allowed character | Fills the active slot and advances                      |
+| `Backspace`           | Clears the slot, or steps back when it is already empty |
+| `←` / `→`             | Move between slots                                      |
+| `Home` / `End`        | Jump to the first or last slot                          |
+| `Ctrl`/`Cmd` + `V`    | Paste and distribute, after `pasteTransform`            |
+| `Tab`                 | Leave the field — it is one tab stop, not one per slot  |
 
 ## Accessibility
 

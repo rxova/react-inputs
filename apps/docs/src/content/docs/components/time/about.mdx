@@ -159,3 +159,133 @@ passing `"2:30 PM"` tells you to pass `"14:30"`.
 
 With no handler these go to `console.warn`. **The entire path is stripped from production builds**,
 and the E2E suite asserts that against a real production bundle.
+
+## Styling
+
+There is no stylesheet to import.
+
+### Custom properties
+
+Set them on `[data-rx-time-root]` or any ancestor:
+
+```css
+[data-rx-time-root] {
+  --rx-time-gap: 0.0625rem;
+  --rx-time-segment-padding: 0 0.0625rem;
+  --rx-time-segment-radius: 0.125rem;
+  --rx-time-literal-opacity: 0.7;
+  --rx-time-focus-ring: 2px solid Highlight;
+  --rx-time-focus-ring-offset: 1px;
+}
+```
+
+The focused segment paints a ring by default: a `<span role="spinbutton">` gets none from the
+browser, and shipping `outline: none` with nothing in its place leaves a keyboard user unable to
+tell which segment they are on. Restyle it through those two properties rather than removing it.
+
+### Stable `data-*` hooks
+
+These are public API, covered by semver.
+
+| Attribute                                          | On           | Meaning                                   |
+| -------------------------------------------------- | ------------ | ----------------------------------------- |
+| `data-rx-time-root`                                | wrapper      | Always present                            |
+| `data-complete`                                    | wrapper      | Every needed segment filled               |
+| `data-out-of-range`                                | wrapper      | Complete but outside `min`/`max`          |
+| `data-invalid` / `data-disabled` / `data-readonly` | wrapper      | Mirrors the props                         |
+| `data-rx-time-segment`                             | segment      | `hour`, `minute`, `second` or `dayPeriod` |
+| `data-placeholder`                                 | segment      | The segment is empty                      |
+| `data-focused`                                     | segment      | The segment has focus                     |
+| `data-rx-time-value`                               | hidden input | The 24-hour value a form posts            |
+
+## Form libraries
+
+Every recipe below is transcribed from `src/__tests__/form.browser.test.tsx`, so it is code that
+runs on every commit. What a form stores is 24-hour `HH:mm` even when the field displays `9:30 AM`, so a stored time can be compared and sorted without knowing which locale produced it.
+
+### Native forms
+
+With a `name`, the component emits a hidden input carrying the 24-hour value:
+
+```tsx
+<form action="/booking" method="post">
+  <TimeInput name="start" label="Start" locale="en-US" />
+  <button type="submit">Save</button>
+</form>
+```
+
+`formData.get('start')` is `'09:30'`, even though the field showed `9:30 AM`.
+
+### React Hook Form
+
+`onChange` emits the 24-hour string (or `null`), so `field.onChange` binds directly. It fires only once the time is complete:
+
+```tsx
+<Controller
+  name="start"
+  control={control}
+  render={({ field }) => (
+    <TimeInput
+      label="Time"
+      value={field.value}
+      onChange={field.onChange}
+      onBlur={field.onBlur}
+      name={field.name}
+    />
+  )}
+/>
+```
+
+### Formik
+
+```tsx
+function Field() {
+  const [field, , helpers] = useField<string | null>('start')
+  return (
+    <TimeInput
+      label="Time"
+      name="start"
+      value={field.value}
+      onChange={(value) => helpers.setValue(value)}
+      onBlur={() => helpers.setTouched(true)}
+    />
+  )
+}
+```
+
+`onBlur` fires when focus leaves the **whole field**, not when it moves from the hour segment to the minute.
+
+### React Final Form
+
+```tsx
+<Field name="start">
+  {({ input }) => (
+    <TimeInput
+      label="Time"
+      name={input.name}
+      value={input.value === '' ? null : String(input.value)}
+      onChange={input.onChange}
+      onBlur={input.onBlur}
+    />
+  )}
+</Field>
+```
+
+### TanStack Form
+
+```tsx
+<form.Field name="start">
+  {(field) => (
+    <TimeInput
+      label="Time"
+      name="start"
+      value={field.state.value}
+      onChange={(value) => field.handleChange(value)}
+      onBlur={field.handleBlur}
+    />
+  )}
+</form.Field>
+```
+
+React Final Form starts a field as `''`, which is not a time. The guard above is the binding's job:
+the component takes `null` for empty.

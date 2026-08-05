@@ -7,8 +7,9 @@ slug: overview
 ---
 
 **The tricky React inputs, done right.** Headless, accessible, zero-dependency
-React input components that each solve a problem the ecosystem keeps getting wrong —
-correct localized formatting, exact fractional ratings, and a true one-time-code field.
+Nine React input components, each solving a problem the ecosystem keeps getting wrong — correct
+localized formatting, exact fractional ratings, a true one-time-code field, passwords, phone
+numbers, dates, times, tags and files.
 The same design principles throughout: one native `<input>` where it matters, native
 form submission, keyboard and screen-reader support, and a small typed API backed by
 tests. No stylesheet to import.
@@ -72,11 +73,124 @@ tests. No stylesheet to import.
   </div>
 </div>
 
+<div class="rx-suite__item">
+  <h3 id="password" class="rx-suite__title">
+    <img src={`${import.meta.env.BASE_URL}img/logos/password.svg`} alt="" width="24" height="24" />
+    <span>Password</span>
+  </h3>
+  <div>
+    <p>
+      A reveal toggle that keeps the caret, a Caps Lock warning read off the real modifier, a
+      requirements checklist, and a strength meter that costs about 1 kB instead of the 400 kB a
+      wordlist estimator costs.
+    </p>
+    <p class="rx-suite__links">
+      <a href="/components/password/introduction">Introduction</a>
+      <a href="/components/password/api">API</a>
+    </p>
+  </div>
+</div>
+
+<div class="rx-suite__item">
+  <h3 id="phone" class="rx-suite__title">
+    <img src={`${import.meta.env.BASE_URL}img/logos/phone.svg`} alt="" width="24" height="24" />
+    <span>Phone</span>
+  </h3>
+  <div>
+    <p>
+      International numbers with no metadata blob: country names from
+      <code>Intl.DisplayNames</code>, flags from Unicode, and about 4 kB of dial codes. E.164 in and
+      out, so the grouping a country happens to use never becomes a database concern.
+    </p>
+    <p class="rx-suite__links">
+      <a href="/components/phone/introduction">Introduction</a>
+      <a href="/components/phone/api">API</a>
+    </p>
+  </div>
+</div>
+
+<div class="rx-suite__item">
+  <h3 id="date" class="rx-suite__title">
+    <img src={`${import.meta.env.BASE_URL}img/logos/date.svg`} alt="" width="24" height="24" />
+    <span>Date</span>
+  </h3>
+  <div>
+    <p>
+      A segmented, keyboard-first date field with no calendar and no date library. Ordered by locale
+      through <code>Intl</code>, and valued as a <code>YYYY-MM-DD</code> string — never a
+      <code>Date</code>, which would drag a timezone into a calendar date.
+    </p>
+    <p class="rx-suite__links">
+      <a href="/components/date/introduction">Introduction</a>
+      <a href="/components/date/api">API</a>
+    </p>
+  </div>
+</div>
+
+<div class="rx-suite__item">
+  <h3 id="time" class="rx-suite__title">
+    <img src={`${import.meta.env.BASE_URL}img/logos/time.svg`} alt="" width="24" height="24" />
+    <span>Time</span>
+  </h3>
+  <div>
+    <p>
+      A segmented time field with no clock popup. 12- or 24-hour by locale, and always valued as
+      canonical 24-hour <code>HH:mm</code>, so a stored time sorts and compares without knowing
+      which locale produced it.
+    </p>
+    <p class="rx-suite__links">
+      <a href="/components/time/introduction">Introduction</a>
+      <a href="/components/time/api">API</a>
+    </p>
+  </div>
+</div>
+
+<div class="rx-suite__item">
+  <h3 id="tags" class="rx-suite__title">
+    <img src={`${import.meta.env.BASE_URL}img/logos/tags.svg`} alt="" width="24" height="24" />
+    <span>Tags</span>
+  </h3>
+  <div>
+    <p>
+      Tags and tokens where the keyboard actually works: one tab stop for the whole list, focus that
+      never lands on <code>&lt;body&gt;</code> after a removal, and a two-step Backspace that shows
+      you what you are about to delete.
+    </p>
+    <p class="rx-suite__links">
+      <a href="/components/tags/introduction">Introduction</a>
+      <a href="/components/tags/api">API</a>
+    </p>
+  </div>
+</div>
+
+<div class="rx-suite__item">
+  <h3 id="file" class="rx-suite__title">
+    <img src={`${import.meta.env.BASE_URL}img/logos/file.svg`} alt="" width="24" height="24" />
+    <span>File</span>
+  </h3>
+  <div>
+    <p>
+      A picker and drop zone that validates, deduplicates and revokes its own preview URLs — and
+      never uploads anything. You get the <code>File</code> objects; the transport stays yours.
+    </p>
+    <p class="rx-suite__links">
+      <a href="/components/file/introduction">Introduction</a>
+      <a href="/components/file/api">API</a>
+    </p>
+  </div>
+</div>
+
 </div>
 
 ## Shared conventions
 
-Every component in the suite emits a plain value from `onChange` (a `number`, a `number`,
-and a `string` respectively), posts natively under `name`, ships zero runtime
-dependencies and no stylesheet, and is documented with a live playground plus an API
-reference generated from source with TypeDoc.
+Every component emits a plain value from `onChange` rather than an event, posts natively under
+`name`, ships zero runtime dependencies and no stylesheet, and is documented with a live playground
+plus an API reference generated from source with TypeDoc.
+
+The value's _type_ follows the thing being collected, and they differ on purpose: a `number` for
+currency and rating, a `string` for otp, password and phone, a `string | null` for date and time,
+a `string[]` for tags, and a `File[]` for file. Styling hooks follow one scheme —
+`--rx-<component>-*` and `data-rx-<component>-*` — with the state hooks (`data-invalid`,
+`data-disabled`, `data-readonly`, `data-focused`) deliberately unprefixed, so one selector reaches
+every input in the suite.

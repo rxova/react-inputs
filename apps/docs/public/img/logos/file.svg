@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" color="#0f9aa8" role="img" aria-labelledby="title">
+  <title id="title">@rxova/react-file-input logo</title>
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
+    <path d="M14 30V16a6 6 0 0 1 6-6h14l14 14v6" />
+    <path d="M34 10v12a2 2 0 0 0 2 2h12" />
+    <rect x="8" y="34" width="48" height="20" rx="6" stroke-dasharray="7 6" />
+    <path d="M32 50V38m-5 5 5-5 5 5" />
+  </g>
+</svg>

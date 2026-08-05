@@ -156,6 +156,19 @@ CSS Modules, CSS-in-JS, or utility classes. The `invalid` prop supplies both the
 }
 ```
 
+### `data-*` attributes
+
+These are **public API**, covered by semver. This component renders a single element, so the root
+_is_ the input — hence one selector hook where the composite inputs in the suite carry several.
+
+| Attribute               | On        | Meaning                    |
+| ----------------------- | --------- | -------------------------- |
+| `data-rx-currency-root` | `<input>` | Always present             |
+| `data-invalid`          | `<input>` | Mirrors the `invalid` prop |
+
+It defines no CSS custom properties: there is nothing painted on top of the input to configure, so
+`className` and ordinary CSS reach everything.
+
 See the **[complete styling guide](https://rxova.org/packages/react-inputs/components/currency/about/#styling)**
 for labeled fields, CSS Modules, Tailwind, wrapper adornments, design-system variants, and RTL-safe
 layout.

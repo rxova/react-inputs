@@ -18,6 +18,8 @@ A headless, zero-dependency React password input.
 npm install @rxova/react-password-input
 ```
 
+📖 **[Documentation & live examples →](https://rxova.org/packages/react-inputs/components/password/introduction/)** — guides, form recipes, theming, breach checks, and migration from another password field.
+
 - **A strength meter you can actually ship** — 1.2 kB brotli, no wordlists. Swap in zxcvbn with
   one prop if you want them.
 - **A reveal toggle that keeps your caret** — every engine loses the selection when an input's
@@ -385,8 +387,15 @@ function CustomField() {
 
 ## Part of rxova
 
-One suite, one set of conventions: [`@rxova/react-inputs`](https://www.npmjs.com/package/@rxova/react-inputs).
+Part of the [rxova headless React inputs](https://rxova.org/packages/react-inputs/overview) suite —
+install the whole set from
+[`@rxova/react-inputs`](https://www.npmjs.com/package/@rxova/react-inputs), or read the full
+generated [API reference](https://rxova.org/packages/react-inputs/components/password/api) for this package.
+
+Cross-cutting guidance lives on this component's About page:
+[styling](https://rxova.org/packages/react-inputs/components/password/about/#styling) and [form libraries](https://rxova.org/packages/react-inputs/components/password/about/#form-libraries). Coming from
+another library? The [migration guide](https://rxova.org/packages/react-inputs/components/password/migrating/) maps the props across.
 
 ## License
 
-MIT
+[MIT](https://github.com/rxova/react-inputs/blob/main/LICENSE) © rxova

@@ -9,6 +9,25 @@ sidebar:
 
 3.6 kB brotli for the whole component, 2.5 kB for the headless hook, zero runtime dependencies.
 
+```tsx live
+function Attachments() {
+  const [files, setFiles] = useState([])
+  return (
+    <FileInput
+      label="Attachments"
+      multiple
+      accept=".pdf,image/*"
+      maxSize={5_000_000}
+      previews
+      value={files}
+      onChange={setFiles}
+    />
+  )
+}
+```
+
+The value is a `File[]`. Nothing is uploaded: you get the files, and the transport stays yours.
+
 ## The gap
 
 The category splits into two camps, and there is an empty quadrant between them.

@@ -193,25 +193,48 @@ With a plain `<form>`, just pass `name` and the value posts natively.
 
 ## Styling
 
-No stylesheet to import. Only layout-critical CSS is inlined; everything visual is a custom
-property.
+No stylesheet to import. Only layout-critical CSS is inlined; everything visual is a custom property
+or a `data-*` hook.
 
-```css
-[data-rx-rating-root] {
-  --rx-rating-size: 1.25rem;
-  --rx-rating-gap: 0.125rem;
-  --rx-rating-color-filled: #f5a623;
-  --rx-rating-color-empty: #d8d8d8;
-  --rx-rating-color-hover: var(--rx-rating-color-filled);
-  --rx-rating-empty-filter: grayscale(1) opacity(0.35);
-  --rx-rating-transition: 120ms;
-  --rx-rating-focus-ring: 2px solid Highlight;
-}
-```
+| Property                        | Default                         | Applies to                       |
+| ------------------------------- | ------------------------------- | -------------------------------- |
+| `--rx-rating-size`              | `1.25rem`                       | Icon size                        |
+| `--rx-rating-gap`               | `0.125rem`                      | Space between icons              |
+| `--rx-rating-color-filled`      | `#f5a623`                       | Filled portion                   |
+| `--rx-rating-color-empty`       | `#d8d8d8`                       | Track                            |
+| `--rx-rating-color-hover`       | `var(--rx-rating-color-filled)` | Hover/keyboard preview           |
+| `--rx-rating-empty-filter`      | `grayscale(1) opacity(0.35)`    | Dims the empty layer — see Emoji |
+| `--rx-rating-transition`        | `120ms`                         | Fill transitions                 |
+| `--rx-rating-focus-ring`        | `2px solid Highlight`           | Ring on the focused icon         |
+| `--rx-rating-focus-ring-offset` | `2px`                           | Its offset                       |
+| `--rx-rating-focus-ring-radius` | `2px`                           | Its corner radius                |
 
-Stable selector hooks, covered by semver: `[data-rx-rating-root]`, `[data-rx-rating-item]`,
-`[data-rx-rating-layer="fill"|"empty"]`, `[data-state="full"|"partial"|"empty"]`, `[data-active]`,
-`[data-readonly]`, `[data-disabled]`, `[data-invalid]`.
+### `data-*` attributes
+
+These are **public API**, covered by semver.
+
+| Attribute                                          | On      | Meaning                        |
+| -------------------------------------------------- | ------- | ------------------------------ |
+| `data-rx-rating-root`                              | wrapper | Always present                 |
+| `data-rx-rating-item`                              | icon    | The icon's index               |
+| `data-rx-rating-layer`                             | layer   | `fill` or `empty`              |
+| `data-state`                                       | icon    | `full`, `partial` or `empty`   |
+| `data-fill`                                        | icon    | Fraction filled, `0`–`1`       |
+| `data-active`                                      | icon    | Under the pointer or keyboard  |
+| `data-idx`                                         | icon    | Index, for nth-style selectors |
+| `data-invalid` / `data-disabled` / `data-readonly` | wrapper | Mirrors the props              |
+
+## Keyboard
+
+Interactive ratings are a real `radiogroup` of real radios, so this comes from the browser rather
+than from JavaScript:
+
+| Key                  | Effect                                            |
+| -------------------- | ------------------------------------------------- |
+| `←` / `→`, `↑` / `↓` | Move between values, wrapping at the ends         |
+| `Home` / `End`       | First or last value                               |
+| `Space`              | Select the focused value                          |
+| `Tab`                | Leave the group — one tab stop, whatever `max` is |
 
 ### Emoji
 

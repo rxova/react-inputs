@@ -18,6 +18,8 @@ Headless, zero-dependency, 12/24-hour from `Intl`.
 npm install @rxova/react-time-input
 ```
 
+📖 **[Documentation & live examples →](https://rxova.org/packages/react-inputs/components/time/introduction/)** — guides, form recipes, theming, locale handling, and migration from another time picker.
+
 - **No popup.** A time is three short numbers. Typing `14:30` beats scrolling a column of 60.
 - **No date library.** 12/24-hour, segment order, separators and the AM/PM words all come from
   `Intl`, which every engine already ships. `react-time-picker` brings seven dependencies and
@@ -251,8 +253,15 @@ console noise in production. The E2E suite asserts this against a real productio
 
 ## Part of rxova
 
-One suite, one set of conventions: [`@rxova/react-inputs`](https://www.npmjs.com/package/@rxova/react-inputs).
+Part of the [rxova headless React inputs](https://rxova.org/packages/react-inputs/overview) suite —
+install the whole set from
+[`@rxova/react-inputs`](https://www.npmjs.com/package/@rxova/react-inputs), or read the full
+generated [API reference](https://rxova.org/packages/react-inputs/components/time/api) for this package.
+
+Cross-cutting guidance lives on this component's About page:
+[styling](https://rxova.org/packages/react-inputs/components/time/about/#styling) and [form libraries](https://rxova.org/packages/react-inputs/components/time/about/#form-libraries). Coming from
+another library? The [migration guide](https://rxova.org/packages/react-inputs/components/time/migrating/) maps the props across.
 
 ## License
 
-MIT
+[MIT](https://github.com/rxova/react-inputs/blob/main/LICENSE) © rxova

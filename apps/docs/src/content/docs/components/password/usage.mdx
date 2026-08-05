@@ -53,6 +53,28 @@ change-password forms** — with the wrong value, password managers offer the ol
 generating a new one. `onWarn` catches an empty or `off` value, but it cannot detect this mix-up,
 because only your app knows which form it is.
 
+## Props
+
+The full surface is `PasswordInputProps` in the published types; the
+[API reference](/components/password/api) is generated from them. The ones you reach for first:
+
+| Prop                                             | Type                                     | Default              | Notes                                                            |
+| ------------------------------------------------ | ---------------------------------------- | -------------------- | ---------------------------------------------------------------- |
+| `value` / `defaultValue` / `onChange`            | `string`                                 | —                    | `onChange` emits the string, not an event                        |
+| `label`                                          | `ReactNode`                              | —                    | Accessible name. Not rendered — bring your own visible `<label>` |
+| `autoComplete`                                   | `string`                                 | `'current-password'` | Set `'new-password'` to sign up or change a password             |
+| `showStrength`                                   | `boolean`                                | `false`              | Renders the meter                                                |
+| `minScore`                                       | `PasswordScore \| null`                  | `null`               | Minimum 0–4 score for validity                                   |
+| `rules` / `showRules`                            | `PasswordRule[]` / `boolean`             | one length rule      | NIST leads with length, so the default is length alone           |
+| `minLength` / `maxLength`                        | `number`                                 | `8` / unset          | `maxLength` is unset so passphrases are never truncated          |
+| `onValidityChange`                               | `(valid: boolean) => void`               | —                    | Fires when "all rules met and `minScore` reached" flips          |
+| `checkCompromised`                               | `(password, signal) => Promise<boolean>` | —                    | Your breach lookup; the library never makes a request            |
+| `hideRevealToggle` / `hideOnBlur`                | `boolean`                                | `false` / `true`     | The reveal button, and whether leaving re-masks                  |
+| `capsLockWarning`                                | `boolean`                                | `true`               | Read off the real modifier state                                 |
+| `autoFocus` / `aria-label`                       | `boolean` / `string`                     | —                    | `aria-label` wins over `label`                                   |
+| `invalid` / `disabled` / `readOnly` / `required` | `boolean`                                | `false`              | Mirrored onto `aria-*` and `data-*`                              |
+| `onWarn`                                         | `(warning: PasswordWarning) => void`     | `console.warn`       | Development only; stripped from production builds                |
+
 ## Controlled and uncontrolled
 
 Both the value and the reveal state can be controlled independently.

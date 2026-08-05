@@ -175,3 +175,146 @@ prop it cannot use as given.
 With no handler these go to `console.warn`. **The entire path is stripped from production builds** —
 it sits behind a `process.env.NODE_ENV !== 'production'` branch, so there is no runtime cost and no
 console noise in production. The E2E suite asserts this against a real production bundle.
+
+## Styling
+
+There is no stylesheet to import. Only layout-critical declarations are inlined; everything visual
+is a CSS custom property or a `data-*` hook.
+
+### Custom properties
+
+Set them on `[data-rx-password-root]` or any ancestor:
+
+```css
+[data-rx-password-root] {
+  --rx-password-gap: 0.375rem;
+  --rx-password-field-gap: 0.25rem;
+  --rx-password-toggle-size: 1.75rem;
+  --rx-password-meter-height: 0.25rem;
+  --rx-password-meter-gap: 0.125rem;
+  --rx-password-meter-radius: 999px;
+  --rx-password-meter-track: rgba(0 0 0 / 0.15);
+  --rx-password-meter-fill: currentColor;
+  --rx-password-rules-indent: 1.25rem;
+}
+```
+
+`--rx-password-meter-fill-1` through `-4` colour the meter per score, each falling back to
+`--rx-password-meter-fill`. Keep `--rx-password-toggle-size` at `1.5rem` or above: at the default
+font size that is the 24×24 CSS pixels WCAG 2.5.8 Target Size (Minimum) requires.
+
+### Stable `data-*` hooks
+
+These are public API, covered by semver.
+
+| Attribute                         | On            | Meaning                                     |
+| --------------------------------- | ------------- | ------------------------------------------- |
+| `data-rx-password-root`           | wrapper       | Always present                              |
+| `data-revealed`                   | wrapper       | Password is showing as text                 |
+| `data-valid`                      | wrapper       | All rules met and `minScore` hit            |
+| `data-score`                      | wrapper       | `0`–`4`, only when `showStrength`           |
+| `data-disabled` / `data-readonly` | wrapper       | Mirrors the props                           |
+| `data-invalid`                    | wrapper       | Mirrors the prop                            |
+| `data-rx-password-field`          | input row     | Input plus toggle                           |
+| `data-rx-password-input`          | `<input>`     | The control itself                          |
+| `data-rx-password-toggle`         | `<button>`    | The reveal toggle                           |
+| `data-rx-password-caps-lock`      | warning       | Present only while Caps Lock is on          |
+| `data-rx-password-meter`          | meter         | `role="meter"`                              |
+| `data-rx-password-segment`        | meter segment | `0`–`3`                                     |
+| `data-filled`                     | meter segment | Segment is lit                              |
+| `data-rx-password-strength-label` | caption       | The score caption                           |
+| `data-rx-password-rules`          | `<ul>`        | The requirement checklist                   |
+| `data-rule` / `data-met`          | rule row      | The rule's id, and whether it passes        |
+| `data-rx-password-compromised`    | message       | Shown when `checkCompromised` resolves true |
+| `data-rx-password-announcement`   | live region   | Off-screen, `aria-live="polite"`            |
+
+## Form libraries
+
+`label` names the field but renders nothing, so pair it with your own `<label htmlFor={id}>` when
+the design calls for visible text. Every recipe below is transcribed from
+`src/__tests__/form.browser.test.tsx`, so it is code that runs on every commit.
+
+### Native forms
+
+With a `name`, the input posts itself. No adapter, no controlled state:
+
+```tsx
+<form action="/sign-in" method="post">
+  <PasswordInput name="password" label="Password" autoComplete="current-password" />
+  <button type="submit">Sign in</button>
+</form>
+```
+
+### React Hook Form
+
+`onChange` emits a string rather than an event, so `field.onChange` binds directly. The forwarded
+ref lands on the `<input>`, which is what `setFocus()` and focus-first-error patterns expect:
+
+```tsx
+<Controller
+  name="password"
+  control={control}
+  render={({ field }) => (
+    <PasswordInput
+      label="Password"
+      value={field.value}
+      onChange={field.onChange}
+      onBlur={field.onBlur}
+      name={field.name}
+      ref={field.ref}
+    />
+  )}
+/>
+```
+
+### Formik
+
+```tsx
+function PasswordField() {
+  const [field, , helpers] = useField<string>('password')
+  return (
+    <PasswordInput
+      label="Password"
+      name="password"
+      value={field.value}
+      onChange={(value) => helpers.setValue(value)}
+      onBlur={() => helpers.setTouched(true)}
+    />
+  )
+}
+```
+
+`onBlur` fires when focus leaves the **whole field**, not when it moves from the input to the
+reveal toggle — so a field is not marked touched the moment someone clicks the eye.
+
+### React Final Form
+
+```tsx
+<Field name="password">
+  {({ input }) => (
+    <PasswordInput
+      label="Password"
+      name={input.name}
+      value={String(input.value)}
+      onChange={input.onChange}
+      onBlur={input.onBlur}
+    />
+  )}
+</Field>
+```
+
+### TanStack Form
+
+```tsx
+<form.Field name="password">
+  {(field) => (
+    <PasswordInput
+      label="Password"
+      name="password"
+      value={field.state.value}
+      onChange={(value) => field.handleChange(value)}
+      onBlur={field.handleBlur}
+    />
+  )}
+</form.Field>
+```

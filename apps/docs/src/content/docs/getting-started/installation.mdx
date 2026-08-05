@@ -38,7 +38,8 @@ yarn add @rxova/react-inputs
 </Tabs>
 
 ```tsx
-import { CurrencyInput, Rating, OtpInput } from '@rxova/react-inputs'
+import { CurrencyInput, Rating, OtpInput, PasswordInput, PhoneInput } from '@rxova/react-inputs'
+import { DateInput, TimeInput, TagsInput, FileInput } from '@rxova/react-inputs'
 ```
 
 ## Individual packages
@@ -50,6 +51,15 @@ Prefer the smallest dependency surface? Install only what you use:
 | Currency            | `@rxova/react-intl-currency-input` |
 | Rating              | `@rxova/react-rating-input`        |
 | OTP / one-time code | `@rxova/react-otp-input`           |
+| Password            | `@rxova/react-password-input`      |
+| Phone               | `@rxova/react-phone-input`         |
+| Date                | `@rxova/react-date-input`          |
+| Time                | `@rxova/react-time-input`          |
+| Tags                | `@rxova/react-tags-input`          |
+| File                | `@rxova/react-file-input`          |
+
+`sideEffects: false` everywhere, so this makes no difference to what reaches your bundle — an
+unused component is dropped either way. Install whichever suits the project.
 
 ```bash
 npm install @rxova/react-otp-input

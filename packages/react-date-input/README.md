@@ -18,6 +18,8 @@ Headless, zero-dependency, locale-aware through `Intl`.
 npm install @rxova/react-date-input
 ```
 
+📖 **[Documentation & live examples →](https://rxova.org/packages/react-inputs/components/date/introduction/)** — guides, form recipes, theming, locale handling, and migration from another date picker.
+
 - **No calendar.** For a birthday or an invoice date, typing `15/03/1999` is faster than eleven
   clicks through a month grid. This is the field for dates you already know.
 - **No date library.** Segment order, separators and month names come from `Intl`, which every
@@ -277,8 +279,15 @@ production bundle.
 
 ## Part of rxova
 
-One suite, one set of conventions: [`@rxova/react-inputs`](https://www.npmjs.com/package/@rxova/react-inputs).
+Part of the [rxova headless React inputs](https://rxova.org/packages/react-inputs/overview) suite —
+install the whole set from
+[`@rxova/react-inputs`](https://www.npmjs.com/package/@rxova/react-inputs), or read the full
+generated [API reference](https://rxova.org/packages/react-inputs/components/date/api) for this package.
+
+Cross-cutting guidance lives on this component's About page:
+[styling](https://rxova.org/packages/react-inputs/components/date/about/#styling) and [form libraries](https://rxova.org/packages/react-inputs/components/date/about/#form-libraries). Coming from
+another library? The [migration guide](https://rxova.org/packages/react-inputs/components/date/migrating/) maps the props across.
 
 ## License
 
-MIT
+[MIT](https://github.com/rxova/react-inputs/blob/main/LICENSE) © rxova

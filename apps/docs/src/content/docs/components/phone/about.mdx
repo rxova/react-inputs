@@ -132,3 +132,130 @@ console noise in production. The E2E suite asserts this against a real productio
   area codes are 2 to 5 digits and telling them apart needs the metadata this package deliberately
   does not carry.
 - **US and Canada cannot be distinguished from the number alone.** That needs NANP area-code data.
+
+## Styling
+
+There is no stylesheet to import.
+
+### Custom properties
+
+Set them on `[data-rx-phone-root]` or any ancestor:
+
+```css
+[data-rx-phone-root] {
+  --rx-phone-gap: 0.375rem;
+  --rx-phone-select-width: 9rem;
+}
+```
+
+### Stable `data-*` hooks
+
+These are public API, covered by semver.
+
+| Attribute                        | On           | Meaning                          |
+| -------------------------------- | ------------ | -------------------------------- |
+| `data-rx-phone-root`             | wrapper      | Always present                   |
+| `data-country`                   | wrapper      | ISO code of the resolved country |
+| `data-possible`                  | wrapper      | The number is a possible length  |
+| `data-invalid` / `data-disabled` | wrapper      | Mirrors the props                |
+| `data-readonly`                  | wrapper      | Mirrors the prop                 |
+| `data-rx-phone-country`          | `<select>`   | The country picker               |
+| `data-rx-phone-input`            | `<input>`    | The number field                 |
+| `data-rx-phone-value`            | hidden input | The E.164 value a form posts     |
+| `data-rx-phone-validity`         | message      | The `showValidity` message       |
+
+## Form libraries
+
+Every recipe below is transcribed from `src/__tests__/form.browser.test.tsx`, so it is code that
+runs on every commit. What a form stores is always E.164 — never the formatted display text, whose
+grouping changes with the country.
+
+### Native forms
+
+With a `name`, the component emits a hidden input carrying the E.164 value:
+
+```tsx
+<form action="/profile" method="post">
+  <PhoneInput name="phone" label="Phone" defaultCountry="GB" />
+  <button type="submit">Save</button>
+</form>
+```
+
+`formData.get('phone')` is `'+442071234567'`, not `'020 7123 4567'`.
+
+### React Hook Form
+
+`onChange` takes a second argument — the `PhoneDetails` object — so it cannot be passed to
+`field.onChange` by reference. Forward the first argument:
+
+```tsx
+<Controller
+  name="phone"
+  control={control}
+  render={({ field }) => (
+    <PhoneInput
+      label="Phone"
+      value={field.value}
+      onChange={(value) => field.onChange(value)}
+      onBlur={field.onBlur}
+      name={field.name}
+      ref={field.ref}
+    />
+  )}
+/>
+```
+
+To validate on possibility, read the second argument: `onChange={(value, details) => { … }}` gives
+you `details.possible` and `details.country` alongside the value.
+
+### Formik
+
+```tsx
+function PhoneField() {
+  const [field, , helpers] = useField<string>('phone')
+  return (
+    <PhoneInput
+      label="Phone"
+      name="phone"
+      value={field.value}
+      onChange={(value) => helpers.setValue(value)}
+      onBlur={() => helpers.setTouched(true)}
+    />
+  )
+}
+```
+
+`onBlur` fires when focus leaves the **whole field**, not when it moves between the country select
+and the number box — so picking a country does not mark the field touched before a digit is typed.
+
+### React Final Form
+
+```tsx
+<Field name="phone">
+  {({ input }) => (
+    <PhoneInput
+      label="Phone"
+      name={input.name}
+      value={String(input.value)}
+      onChange={(value) => input.onChange(value)}
+      onBlur={input.onBlur}
+    />
+  )}
+</Field>
+```
+
+### TanStack Form
+
+```tsx
+<form.Field name="phone">
+  {(field) => (
+    <PhoneInput
+      label="Phone"
+      name="phone"
+      value={field.state.value}
+      onChange={(value) => field.handleChange(value)}
+      onBlur={field.handleBlur}
+    />
+  )}
+</form.Field>
+```

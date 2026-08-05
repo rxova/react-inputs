@@ -17,6 +17,8 @@
 npm install @rxova/react-tags-input
 ```
 
+📖 **[Documentation & live examples →](https://rxova.org/packages/react-inputs/components/tags/introduction/)** — guides, form recipes, theming, the keyboard model, and migration from another tags library.
+
 - **Focus never lands on `<body>`** after you remove a tag — it goes to the next one, or the
   previous, or the entry box.
 - **One tab stop for the whole list**, not one per tag, with Arrow/Home/End inside it.
@@ -241,8 +243,15 @@ console noise in production. The E2E suite asserts this against a real productio
 
 ## Part of rxova
 
-One suite, one set of conventions: [`@rxova/react-inputs`](https://www.npmjs.com/package/@rxova/react-inputs).
+Part of the [rxova headless React inputs](https://rxova.org/packages/react-inputs/overview) suite —
+install the whole set from
+[`@rxova/react-inputs`](https://www.npmjs.com/package/@rxova/react-inputs), or read the full
+generated [API reference](https://rxova.org/packages/react-inputs/components/tags/api) for this package.
+
+Cross-cutting guidance lives on this component's About page:
+[styling](https://rxova.org/packages/react-inputs/components/tags/about/#styling) and [form libraries](https://rxova.org/packages/react-inputs/components/tags/about/#form-libraries). Coming from
+another library? The [migration guide](https://rxova.org/packages/react-inputs/components/tags/migrating/) maps the props across.
 
 ## License
 
-MIT
+[MIT](https://github.com/rxova/react-inputs/blob/main/LICENSE) © rxova

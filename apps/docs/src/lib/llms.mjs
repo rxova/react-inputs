@@ -20,10 +20,14 @@
  */
 const SUMMARY = [
   'Headless, accessible, zero-dependency React input components: locale-aware',
-  'currency, fractional ratings, and one-time codes. One native <input> where it',
-  'matters, so paste, autofill, IME and native form submission come from the',
-  'platform. No stylesheet to import — styling is CSS custom properties and',
-  'data-* attributes. React >= 18 is the only peer dependency.',
+  'currency, fractional ratings, one-time codes, passwords, international phone',
+  'numbers, segmented date and time fields, tags and files. One native <input>',
+  'where it matters, so paste, autofill, IME and native form submission come from',
+  'the platform. No stylesheet to import — styling is CSS custom properties named',
+  '--rx-<component>-* and data-rx-<component>-* attributes, plus unprefixed state',
+  'hooks (data-invalid, data-disabled, data-readonly, data-focused) shared across',
+  'the suite. Each onChange emits a plain value, never an event. React >= 18 is',
+  'the only peer dependency.',
 ]
 
 /** Sections in reading order. Anything not named here is appended before Optional. */
@@ -117,8 +121,10 @@ export function llmsIndex(pages, components, origin) {
     `    npx shadcn@latest add ${origin}/r/otp-field.json`,
     '',
     `Registry index: ${origin}/r/registry.json — currency-field, otp-field,`,
-    'rating-field. Each copies a label/description/error wrapper plus a stylesheet',
-    'into your project and keeps the component itself as an npm dependency.',
+    'rating-field, password-field, phone-field, date-field, time-field,',
+    'tags-field, file-field. Each copies a label/description/error wrapper plus a',
+    'stylesheet into your project and keeps the component itself as an npm',
+    'dependency.',
     '',
   ]
 

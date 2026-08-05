@@ -118,3 +118,168 @@ you accumulate across several picks.
   which asserts the diagnostics path is absent from that bundle.
 - Where an engine cannot express something (synthesising a file `DataTransfer`), the test skips
   **visibly** rather than passing quietly.
+
+## Diagnostics
+
+`onWarn` reports a prop the component could not use as given — a `maxFiles` below one, a `minSize`
+above `maxSize`, an `accept` string that will match nothing. The coerced result is what renders, so
+this is never an error, and the whole path is stripped from production builds.
+
+```tsx
+<FileInput
+  label="Documents"
+  accept="png"
+  onWarn={(warning) => {
+    // { code: 'accept-suspicious', prop: 'accept', received: 'png', message: '…' }
+    console.warn(warning.code, warning.received)
+  }}
+/>
+```
+
+Codes: `max-files-invalid`, `size-range-invalid`, `negative-size`, `accept-suspicious`,
+`single-with-max`. The `accept` one is worth knowing about — `png` without its dot, or a wildcard
+like `image/*.png`, silently matches no file at all, which reads as a broken field rather than a
+typo in a prop.
+
+Warnings are deduplicated per instance on `code:received`, so a re-rendering parent reports once
+per distinct mistake rather than once per render.
+
+## Styling
+
+There is no stylesheet to import.
+
+### Custom properties
+
+Set them on `[data-rx-file-root]` or any ancestor:
+
+```css
+[data-rx-file-root] {
+  --rx-file-gap: 0.5rem;
+  --rx-file-zone-gap: 0.5rem;
+  --rx-file-zone-padding: 1rem;
+  --rx-file-zone-border: 1px dashed currentColor;
+  --rx-file-zone-radius: 0.375rem;
+  --rx-file-zone-background: transparent;
+  --rx-file-list-gap: 0.25rem;
+  --rx-file-row-gap: 0.5rem;
+  --rx-file-preview-size: 2.5rem;
+  --rx-file-preview-radius: 0.25rem;
+  --rx-file-remove-size: 1.5rem;
+}
+```
+
+`--rx-file-list-gap` is the space _between_ files and `--rx-file-row-gap` the space _inside_ one
+row. Keep `--rx-file-remove-size` at `1.5rem` or above for WCAG 2.5.8 Target Size (Minimum).
+
+### Stable `data-*` hooks
+
+These are public API, covered by semver.
+
+| Attribute                                          | On                    | Meaning                           |
+| -------------------------------------------------- | --------------------- | --------------------------------- |
+| `data-rx-file-root`                                | wrapper               | Always present                    |
+| `data-dragging`                                    | wrapper               | A drag is over the zone           |
+| `data-count`                                       | wrapper               | Number of files                   |
+| `data-full`                                        | wrapper               | `maxFiles` reached                |
+| `data-invalid` / `data-disabled` / `data-readonly` | wrapper               | Mirrors the props                 |
+| `data-rx-file-input`                               | `<input type="file">` | The real control, visually hidden |
+| `data-rx-file-zone`                                | `<button>`            | The drop zone                     |
+| `data-rx-file-list`                                | `<ul>`                | The selection                     |
+| `data-rx-file-file`                                | `<li>`                | One file row                      |
+| `data-rx-file-name` / `data-rx-file-size`          | row                   | Name and human-readable size      |
+| `data-rx-file-preview`                             | `<img>`               | Only when `previews` is on        |
+| `data-rx-file-remove`                              | `<button>`            | The remove button                 |
+| `data-rx-file-announcement`                        | live region           | Off-screen, `aria-live="polite"`  |
+
+## Form libraries
+
+Every recipe below is transcribed from `src/__tests__/form.browser.test.tsx`, so it is code that
+runs on every commit. The value is a `File[]`. Nothing here uploads: you get the `File` objects and the transport stays yours.
+
+### Native forms
+
+With a `name`, the real `<input type="file">` posts itself — which is why it is visually hidden
+rather than absent:
+
+```tsx
+<form action="/upload" method="post" encType="multipart/form-data">
+  <FileInput name="docs" label="Documents" multiple />
+  <button type="submit">Upload</button>
+</form>
+```
+
+`formData.getAll('docs')` returns the real `File` objects.
+
+### React Hook Form
+
+`onChange` emits the whole array, so `field.onChange` binds directly:
+
+```tsx
+<Controller
+  name="docs"
+  control={control}
+  render={({ field }) => (
+    <FileInput
+      label="File"
+      value={field.value}
+      onChange={field.onChange}
+      onBlur={field.onBlur}
+      name={field.name}
+    />
+  )}
+/>
+```
+
+### Formik
+
+```tsx
+function Field() {
+  const [field, , helpers] = useField<File[]>('docs')
+  return (
+    <FileInput
+      label="File"
+      name="docs"
+      value={field.value}
+      onChange={(files) => helpers.setValue(files)}
+      onBlur={() => helpers.setTouched(true)}
+    />
+  )
+}
+```
+
+`onBlur` fires when focus leaves the **whole field**, not when it moves to the drop zone or a remove button — so curating the selection does not mark the field touched.
+
+### React Final Form
+
+```tsx
+<Field name="docs">
+  {({ input }) => (
+    <FileInput
+      label="File"
+      name={input.name}
+      value={Array.isArray(input.value) ? input.value : []}
+      onChange={input.onChange}
+      onBlur={input.onBlur}
+    />
+  )}
+</Field>
+```
+
+### TanStack Form
+
+```tsx
+<form.Field name="docs">
+  {(field) => (
+    <FileInput
+      label="File"
+      name="docs"
+      value={field.state.value}
+      onChange={(value) => field.handleChange(value)}
+      onBlur={field.handleBlur}
+    />
+  )}
+</form.Field>
+```
+
+React Final Form starts a field as `''`, which is not an array. The guard above is the binding's
+job, not the component's.

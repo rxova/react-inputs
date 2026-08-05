@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" color="#2b7fd4" role="img" aria-labelledby="title">
+  <title id="title">@rxova/react-date-input logo</title>
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="8" y="14" width="48" height="42" rx="8" stroke-width="4" />
+    <path d="M8 26h48M21 8v10M43 8v10" stroke-width="4" />
+    <path d="M20 37h6M29 37h6M38 37h6M20 46h6M29 46h6" stroke-width="3.4" />
+  </g>
+</svg>

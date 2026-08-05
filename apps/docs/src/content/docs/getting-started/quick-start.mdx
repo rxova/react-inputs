@@ -7,7 +7,7 @@ sidebar:
 Every rxova input is a **controlled component**: give it a `value` and an
 `onChange` and it behaves like any other form field. `onChange` always hands you
 the _value_ — never a DOM event — so these drop straight into a form library's
-controlled adapter. Here's one of each.
+controlled adapter. Here are three of the nine; the rest follow the same shape.
 
 ```tsx
 import { useState } from 'react'
@@ -28,7 +28,7 @@ function Example() {
 }
 ```
 
-That single install covers all three. If you'd rather depend on just one, the
+That single install covers all nine. If you'd rather depend on just one, the
 individual packages (`@rxova/react-intl-currency-input`,
 `@rxova/react-rating-input`, `@rxova/react-otp-input`) are equivalent — install
 the one you want and import from its own name instead. See
@@ -40,7 +40,13 @@ Each component's own page has live, editable examples and its full prop referenc
 - [Currency input](/components/currency/introduction) — locale-aware money entry with no cursor bugs.
 - [Rating input](/components/rating/introduction) — any icon, any precision, accessible.
 - [OTP input](/components/otp/introduction) — one-time-code entry with paste and WebOTP support.
+- [Password input](/components/password/introduction) — reveal toggle, Caps Lock warning, 1 kB strength meter.
+- [Phone input](/components/phone/introduction) — international numbers, E.164 in and out, no metadata blob.
+- [Date input](/components/date/introduction) — segmented and locale-ordered, `YYYY-MM-DD`, no calendar.
+- [Time input](/components/time/introduction) — segmented, 12/24-hour by locale, canonical 24-hour value.
+- [Tags input](/components/tags/introduction) — delimiters, paste splitting, a real roving tab order.
+- [File input](/components/file/introduction) — picker and drop zone, managed preview URLs, no upload.
 
-From there, the shared guides cover the cross-cutting concerns:
-[Accessibility](/components/currency/about), [Styling](/components/currency/about), and
-[Form libraries](/components/currency/about).
+Each component's own **About** page carries the cross-cutting guides for that component —
+accessibility, styling tokens, and recipes for React Hook Form, Formik, React Final Form and
+TanStack Form.

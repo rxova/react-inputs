@@ -145,3 +145,139 @@ worked around silently:
   skips with a message; the path is still covered in Chromium, WebKit and the browser suite.
 - **Emoji tags are filled, not typed.** The CDP keyboard channel mangles astral characters into
   replacement characters.
+
+## Styling
+
+There is no stylesheet to import.
+
+### Custom properties
+
+Set them on `[data-rx-tags-root]` or any ancestor:
+
+```css
+[data-rx-tags-root] {
+  --rx-tags-gap: 0.25rem;
+  --rx-tags-tag-gap: 0.25rem;
+  --rx-tags-tag-padding: 0.125rem 0.375rem;
+  --rx-tags-tag-radius: 0.25rem;
+  --rx-tags-tag-background: rgba(0 0 0 / 0.08);
+  --rx-tags-remove-size: 1.5rem;
+}
+```
+
+Keep `--rx-tags-remove-size` at `1.5rem` or above: at the default font size that is the 24×24 CSS
+pixels WCAG 2.5.8 Target Size (Minimum) requires. The entry box keeps the browser's own focus ring;
+to ring the whole field instead, draw one from `[data-rx-tags-root]:focus-within` and suppress the
+inner one — but only once the replacement is in place.
+
+### Stable `data-*` hooks
+
+These are public API, covered by semver.
+
+| Attribute                                          | On            | Meaning                            |
+| -------------------------------------------------- | ------------- | ---------------------------------- |
+| `data-rx-tags-root`                                | wrapper       | Always present                     |
+| `data-count`                                       | wrapper       | Number of tags                     |
+| `data-full`                                        | wrapper       | `max` reached                      |
+| `data-invalid` / `data-disabled` / `data-readonly` | wrapper       | Mirrors the props                  |
+| `data-rx-tags-list`                                | `<ul>`        | The tag list                       |
+| `data-rx-tags-tag`                                 | `<li>`        | The tag's index                    |
+| `data-rx-tags-label`                               | `<span>`      | The tag's rendered contents        |
+| `data-rx-tags-remove`                              | `<button>`    | The remove button                  |
+| `data-focused`                                     | remove button | This tag holds the roving tab stop |
+| `data-rx-tags-input`                               | `<input>`     | The entry box                      |
+| `data-rx-tags-value`                               | hidden input  | One per tag, for form submission   |
+| `data-rx-tags-announcement`                        | live region   | Off-screen, `aria-live="polite"`   |
+
+## Form libraries
+
+Every recipe below is transcribed from `src/__tests__/form.browser.test.tsx`, so it is code that
+runs on every commit. The value is a `string[]`, and a native submit emits one hidden input per tag rather than a joined string — so nobody downstream has to guess which separator was used, or what happens to a tag containing it.
+
+### Native forms
+
+With a `name`, the component emits one hidden input per tag:
+
+```tsx
+<form action="/profile" method="post">
+  <TagsInput name="skills" label="Skills" defaultValue={['react', 'a11y']} />
+  <button type="submit">Save</button>
+</form>
+```
+
+`formData.getAll('skills')` is `['react', 'a11y']`. `required` applies to the entry box only while
+the list is empty.
+
+### React Hook Form
+
+`onChange` emits the whole array, so `field.onChange` binds directly:
+
+```tsx
+<Controller
+  name="skills"
+  control={control}
+  render={({ field }) => (
+    <TagsInput
+      label="Tags"
+      value={field.value}
+      onChange={field.onChange}
+      onBlur={field.onBlur}
+      name={field.name}
+    />
+  )}
+/>
+```
+
+### Formik
+
+```tsx
+function Field() {
+  const [field, , helpers] = useField<string[]>('skills')
+  return (
+    <TagsInput
+      label="Tags"
+      name="skills"
+      value={field.value}
+      onChange={(tags) => helpers.setValue(tags)}
+      onBlur={() => helpers.setTouched(true)}
+    />
+  )
+}
+```
+
+`onBlur` fires when focus leaves the **whole field**, not when it moves onto a tag's remove button — so navigating what you have already entered does not fire a validation error.
+
+### React Final Form
+
+```tsx
+<Field name="skills">
+  {({ input }) => (
+    <TagsInput
+      label="Tags"
+      name={input.name}
+      value={Array.isArray(input.value) ? input.value : []}
+      onChange={input.onChange}
+      onBlur={input.onBlur}
+    />
+  )}
+</Field>
+```
+
+### TanStack Form
+
+```tsx
+<form.Field name="skills">
+  {(field) => (
+    <TagsInput
+      label="Tags"
+      name="skills"
+      value={field.state.value}
+      onChange={(value) => field.handleChange(value)}
+      onBlur={field.handleBlur}
+    />
+  )}
+</form.Field>
+```
+
+React Final Form starts a field as `''`, which is not an array. The guard above is the binding's
+job, not the component's.
