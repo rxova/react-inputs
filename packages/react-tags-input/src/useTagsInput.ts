@@ -10,6 +10,7 @@ import {
   inspectValueShape,
 } from './warn'
 import type { TagsWarning } from './types'
+import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect'
 
 const DEFAULT_DELIMITERS = ['Enter', ',']
 
@@ -172,8 +173,18 @@ export function useTagsInput(options: UseTagsInputOptions): UseTagsInputResult {
 
   const inputRef = useRef<HTMLInputElement | null>(null)
   const tagRefs = useRef<(HTMLElement | null)[]>([])
-  /** Set when a removal should move focus, applied after the list re-renders. */
-  const pendingFocus = useRef<number | 'input' | null>(null)
+  /**
+   * Set when a removal should move focus, applied after the list re-renders.
+   *
+   * `expect` is the length the list should have when the move is applied. A
+   * controlled parent may refuse the removal, and refusing still causes renders
+   * — the announcement is state — so an unvalidated stash gets replayed against
+   * a list that never changed, and survives until the parent's next unrelated
+   * render before yanking focus off whatever the user is on.
+   */
+  const pendingFocus = useRef<{ target: number | 'input'; expect: number } | null>(null)
+  /** Where the caret belongs after a paste the component consumed. */
+  const pendingCaret = useRef<number | null>(null)
 
   const full = max !== undefined && tags.length >= max
 
@@ -326,22 +337,32 @@ export function useTagsInput(options: UseTagsInputOptions): UseTagsInputResult {
        * next tag takes it, or the previous one if that was the last, or the
        * entry box if the list is now empty.
        */
-      pendingFocus.current = next.length === 0 ? 'input' : Math.min(index, next.length - 1)
+      pendingFocus.current = {
+        target: next.length === 0 ? 'input' : Math.min(index, next.length - 1),
+        expect: next.length,
+      }
     },
     [disabled, readOnly, tags, commitTags, onRemove, say],
   )
 
   useEffect(() => {
-    const target = pendingFocus.current
-    if (target === null) return
+    const pending = pendingFocus.current
+    if (pending === null) return
+    // Dropped, not deferred, when the list that arrived is not the one the
+    // removal asked for: a controlled parent refused it, and the control the
+    // user is on is still there.
+    if (tags.length !== pending.expect) {
+      pendingFocus.current = null
+      return
+    }
     pendingFocus.current = null
-    if (target === 'input') {
+    if (pending.target === 'input') {
       focusInput()
       setActiveIndex(0)
       return
     }
-    setActiveIndex(target)
-    focusTag(target)
+    setActiveIndex(pending.target)
+    focusTag(pending.target)
   }, [tags, focusInput, focusTag])
 
   const moveActive = useCallback(
@@ -366,6 +387,17 @@ export function useTagsInput(options: UseTagsInputOptions): UseTagsInputResult {
     (event: KeyboardEvent<HTMLInputElement>) => {
       if (disabled || readOnly) return
       if (event.altKey || event.ctrlKey || event.metaKey) return
+      /**
+       * Every key belongs to the IME while a composition is in flight.
+       *
+       * With a Japanese, Chinese or Korean IME the `Enter` that *confirms a
+       * candidate* arrives as an ordinary keydown. Treating it as a delimiter
+       * committed the half-composed text and ate the keystroke meant to accept
+       * the candidate, which made the field unusable in those languages;
+       * Backspace, which deletes a candidate character, reached for the last
+       * tag instead.
+       */
+      if (event.nativeEvent.isComposing) return
 
       if (delimiters.includes(event.key)) {
         // Tab is only a delimiter if the caller asked for it, and even then it
@@ -450,6 +482,19 @@ export function useTagsInput(options: UseTagsInputOptions): UseTagsInputResult {
       if (candidates.length <= 1) return
 
       event.preventDefault()
+      /**
+       * What the box keeps.
+       *
+       * Preventing the paste makes the surrounding text the component's
+       * responsibility. Clearing the box outright — which is what this did —
+       * destroyed anything the user had already typed: it was neither committed
+       * as a tag nor left behind to be corrected. Only the range the paste
+       * would have replaced is consumed.
+       */
+      const element = event.currentTarget
+      const start = element.selectionStart ?? text.length
+      const end = element.selectionEnd ?? start
+      const kept = text.slice(0, start) + text.slice(end)
       const { tags: next, results } = attemptAll(tags, candidates, rules)
       const added = results.filter((result) => result.accepted)
       for (const result of results) if (!result.accepted) onReject?.(result)
@@ -457,7 +502,8 @@ export function useTagsInput(options: UseTagsInputOptions): UseTagsInputResult {
 
       commitTags(next)
       for (const result of added) onAdd?.(result.tag, next)
-      setText('')
+      setText(kept)
+      pendingCaret.current = start
       // One announcement for the batch. Saying each of forty pasted tags in
       // turn is not information, it is a denial of service on the screen reader.
       // `added` is non-empty here, so the lookup always hits; the `??` exists
@@ -466,8 +512,19 @@ export function useTagsInput(options: UseTagsInputOptions): UseTagsInputResult {
       const label = added.length === 1 ? (added[0]?.tag ?? '') : `${String(added.length)} tags`
       setAnnouncement(`Added ${label}. ${String(next.length)} tags.`)
     },
-    [disabled, readOnly, splitOnPaste, delimiters, tags, rules, onReject, commitTags, onAdd],
+    [disabled, readOnly, splitOnPaste, delimiters, text, tags, rules, onReject, commitTags, onAdd],
   )
+
+  useIsomorphicLayoutEffect(() => {
+    const caret = pendingCaret.current
+    if (caret === null) return
+    pendingCaret.current = null
+    const element = inputRef.current
+    /* v8 ignore next */
+    if (element === null) return
+    if (document.activeElement !== element) return
+    element.setSelectionRange(caret, caret)
+  }, [text])
 
   const handleFocus = useCallback(
     (event: FocusEvent<HTMLElement>) => {

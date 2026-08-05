@@ -106,3 +106,9 @@ review; each entry says what was decided and why.
 39. **The entry box is not a combobox even if you add your own suggestion list.** If you build one,
     you own the `aria-*` wiring for it — this component will not claim semantics it does not
     implement.
+40. **A consumed paste keeps the text around it.** Only the range the paste would have replaced is
+    taken, and the caret stays put. Clearing the box would destroy half-typed input the user never
+    asked to lose.
+41. **Keys arriving mid-composition belong to the IME.** The `Enter` that confirms a Japanese,
+    Chinese or Korean candidate is an ordinary keydown; treating it as a delimiter commits
+    half-composed text and eats the keystroke.

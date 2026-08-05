@@ -102,6 +102,14 @@ Pasting splits on the delimiters **and on newlines regardless**, because a paste
 column arrives newline-separated whatever the field was configured for. A single-value paste is
 left to the browser. Set `splitPaste={false}` to turn it off.
 
+A multi-value paste consumes only the range it would have replaced: text already in the box survives
+either side of the caret, and the caret stays where it was. Anything the user had half-typed is
+theirs to finish, not something the paste throws away.
+
+Keys arriving while an input method editor is composing are left to the IME. With a Japanese,
+Chinese or Korean keyboard the `Enter` that confirms a candidate is an ordinary keydown, and taking
+it as a delimiter would commit half-composed text and swallow the keystroke.
+
 ## Forms
 
 ```tsx
