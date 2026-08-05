@@ -25,6 +25,7 @@
   "sideEffects": false,
   "files": [
     "dist",
+    "assets/logo.svg",
     "llms.txt"
   ],
   "exports": {

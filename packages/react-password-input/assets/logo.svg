@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" color="#5a45d6" role="img" aria-labelledby="title">
+  <title id="title">@rxova/react-password-input logo</title>
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6" y="17" width="52" height="30" rx="7" stroke-width="4" />
+    <g stroke-width="4">
+      <path d="M24 32h.02M32 32h.02M40 32h.02" />
+    </g>
+  </g>
+</svg>

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/logo.svg" width="112" alt="@rxova/react-otp-input logo" />
+  <img src="./assets/logo.svg" width="180" alt="@rxova/react-otp-input logo" />
 </p>
 
 <h1 align="center">@rxova/react-otp-input</h1>

@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/logo.svg" alt="@rxova/react-file-input logo" width="180" />
+</p>
+
 <h1 align="center">@rxova/react-file-input</h1>
 
 <p align="center">
@@ -139,6 +143,7 @@ function CustomDropZone() {
   return (
     <div
       ref={field.zoneRef}
+      onDragEnter={field.handleDragEnter}
       onDragOver={field.handleDragOver}
       onDragLeave={field.handleDragLeave}
       onDrop={field.handleDrop}

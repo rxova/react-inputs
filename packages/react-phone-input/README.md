@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/logo.svg" alt="@rxova/react-phone-input logo" width="180" />
+</p>
+
 <h1 align="center">@rxova/react-phone-input</h1>
 
 <p align="center">

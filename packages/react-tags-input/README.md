@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/logo.svg" alt="@rxova/react-tags-input logo" width="180" />
+</p>
+
 <h1 align="center">@rxova/react-tags-input</h1>
 
 <p align="center">
