@@ -163,16 +163,44 @@ export function useTimeInput(options: UseTimeInputOptions): UseTimeInputResult {
    * current segments, because mid-entry the segments have no canonical form at
    * all and a comparison against `null` would wipe them on every keystroke.
    */
+  /**
+   * Digits typed so far in the segment being typed into. Cleared on focus
+   * change, and stamped with the controlled `value` they were typed against —
+   * see `liveBuffer`.
+   */
+  const buffer = useRef<{
+    segment: TimeSegment
+    digits: string
+    basis: string | null | undefined
+  } | null>(null)
+
   const [previousValueProp, setPreviousValueProp] = useState(valueProp)
   if (isControlled && valueProp !== previousValueProp) {
     setPreviousValueProp(valueProp)
     setParts(fromISO(valueProp ?? '') ?? EMPTY_PARTS)
   }
 
+  /**
+   * The buffer, unless a controlled `value` has landed since it was filled.
+   *
+   * A half-typed number belongs to the segment it was typed into, and a value
+   * arriving from outside replaces that segment. Keeping the digits lets the
+   * next keystroke extend a number that is no longer on screen: type `1` into
+   * the minute, let the parent write a new time, type `5`, and the minute
+   * becomes 15 — a number the user never typed.
+   *
+   * Clearing the ref inside the re-sync above would be a ref write during
+   * render, which React forbids. Stamping the buffer with the prop it was typed
+   * against and checking that stamp here is the same guarantee, synchronously,
+   * from the handlers that actually read it.
+   */
+  const liveBuffer = useCallback(
+    () => (buffer.current?.basis === previousValueProp ? buffer.current : null),
+    [previousValueProp],
+  )
+
   const [focused, setFocused] = useState<TimeSegment | null>(null)
   const segmentRefs = useRef<Partial<Record<TimeSegment, HTMLElement | null>>>({})
-  /** Digits typed so far in the segment being typed into. Cleared on focus change. */
-  const buffer = useRef<{ segment: TimeSegment; digits: string } | null>(null)
 
   const pieces = useMemo(
     () => timePieces(locale, showSeconds, hour12),
@@ -384,7 +412,8 @@ export function useTimeInput(options: UseTimeInputOptions): UseTimeInputResult {
       if (segment === 'dayPeriod') return
 
       const { min: low, max: high } = segmentRange(segment, hour12)
-      const previous = buffer.current?.segment === segment ? buffer.current.digits : ''
+      const live = liveBuffer()
+      const previous = live?.segment === segment ? live.digits : ''
 
       let digits = previous + digit
       let next = Number(digits)
@@ -398,11 +427,11 @@ export function useTimeInput(options: UseTimeInputOptions): UseTimeInputResult {
       // A lone leading zero is a legitimate intermediate state in a 12-hour
       // field, where 0 is not an hour, but it is not a value.
       if (next < low) {
-        buffer.current = { segment, digits }
+        buffer.current = { segment, digits, basis: previousValueProp }
         return
       }
 
-      buffer.current = { segment, digits }
+      buffer.current = { segment, digits, basis: previousValueProp }
       const finished = digits.length >= SEGMENT_WIDTH || next * 10 > high
       commit(withSegment(segment, next), !finished)
 
@@ -411,7 +440,7 @@ export function useTimeInput(options: UseTimeInputOptions): UseTimeInputResult {
         moveFocus(segment, 1)
       }
     },
-    [disabled, readOnly, hour12, commit, withSegment, moveFocus],
+    [disabled, readOnly, hour12, commit, withSegment, moveFocus, liveBuffer, previousValueProp],
   )
 
   const typeLetter = useCallback(
@@ -451,12 +480,13 @@ export function useTimeInput(options: UseTimeInputOptions): UseTimeInputResult {
     (segment: TimeSegment, event: FocusEvent<HTMLElement>) => {
       // A fresh segment starts a fresh number, and leaving a half-typed one
       // settles it so a minute abandoned at `1` is reported rather than withheld.
-      if (buffer.current !== null && buffer.current.segment !== segment) flush()
+      const live = liveBuffer()
+      if (live !== null && live.segment !== segment) flush()
       buffer.current = null
       setFocused(segment)
       onFocus?.(event)
     },
-    [onFocus, flush],
+    [onFocus, flush, liveBuffer],
   )
 
   /**
@@ -469,12 +499,12 @@ export function useTimeInput(options: UseTimeInputOptions): UseTimeInputResult {
     (event: FocusEvent<HTMLElement>) => {
       const next = event.relatedTarget
       if (next instanceof Node && event.currentTarget.contains(next)) return
-      if (buffer.current !== null) flush()
+      if (liveBuffer() !== null) flush()
       buffer.current = null
       setFocused(null)
       onBlur?.(event)
     },
-    [onBlur, flush],
+    [onBlur, flush, liveBuffer],
   )
 
   return {

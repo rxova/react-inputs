@@ -122,3 +122,6 @@ review; each entry says what was decided and why.
 42. **A controlled `value` re-syncs only when the prop changes**, not when it merely differs from
     the segments. Mid-entry the segments have no ISO form at all, and comparing against `null`
     would wipe them on every keystroke.
+43. **A half-typed digit is dropped when a controlled `value` arrives.** The buffer belongs to a
+    number the user has not finished, and the segment it belongs to has just been replaced — keeping
+    it would let the next keystroke extend a number no longer on screen.

@@ -104,3 +104,6 @@ review; each entry says what was decided and why.
 35. **`minuteStep` snaps arrow stepping, not typing.** A user can type `09:07` under a 15-minute
     step. Enforcing the grid on typed input would fight the user mid-entry; validating the final
     value is the form's job.
+36. **A half-typed digit is dropped when a controlled `value` arrives.** The buffer belongs to a
+    number the user has not finished, and the segment it belongs to has just been replaced — keeping
+    it would let the next keystroke extend a number no longer on screen.

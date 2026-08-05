@@ -127,6 +127,17 @@ export function useDateInput(options: UseDateInputOptions): UseDateInputResult {
   )
 
   /**
+   * Digits typed so far in the segment being typed into. Cleared on focus
+   * change, and stamped with the controlled `value` they were typed against —
+   * see `liveBuffer`.
+   */
+  const buffer = useRef<{
+    segment: DateSegment
+    digits: string
+    basis: string | null | undefined
+  } | null>(null)
+
+  /**
    * Re-sync from a controlled `value` when the *prop* changes.
    *
    * Adjusting state during render rather than in an effect, which is React's
@@ -142,10 +153,27 @@ export function useDateInput(options: UseDateInputOptions): UseDateInputResult {
     setParts(fromISO(valueProp ?? '') ?? EMPTY_PARTS)
   }
 
+  /**
+   * The buffer, unless a controlled `value` has landed since it was filled.
+   *
+   * A half-typed number belongs to the segment it was typed into, and a value
+   * arriving from outside replaces that segment. Keeping the digits lets the
+   * next keystroke extend a number that is no longer on screen: type `2` into
+   * the day, let the parent write a new date, type `3`, and the day becomes 23
+   * — a number the user never typed.
+   *
+   * Clearing the ref inside the re-sync above would be a ref write during
+   * render, which React forbids. Stamping the buffer with the prop it was typed
+   * against and checking that stamp here is the same guarantee, synchronously,
+   * from the handlers that actually read it.
+   */
+  const liveBuffer = useCallback(
+    () => (buffer.current?.basis === previousValueProp ? buffer.current : null),
+    [previousValueProp],
+  )
+
   const [focused, setFocused] = useState<DateSegment | null>(null)
   const segmentRefs = useRef<Partial<Record<DateSegment, HTMLElement | null>>>({})
-  /** Digits typed so far in the segment being typed into. Cleared on focus change. */
-  const buffer = useRef<{ segment: DateSegment; digits: string } | null>(null)
 
   const pieces = useMemo(() => datePieces(locale), [locale])
   const order = useMemo(
@@ -320,7 +348,8 @@ export function useDateInput(options: UseDateInputOptions): UseDateInputResult {
       if (disabled || readOnly) return
       const { min: low, max: high } = segmentRange(segment, parts)
       const width = segmentWidth(segment)
-      const previous = buffer.current?.segment === segment ? buffer.current.digits : ''
+      const live = liveBuffer()
+      const previous = live?.segment === segment ? live.digits : ''
 
       let digits = previous + digit
       let next = Number(digits)
@@ -336,11 +365,11 @@ export function useDateInput(options: UseDateInputOptions): UseDateInputResult {
       // segment (`0` on the way to `05`), but it is not a value — so it is held
       // in the buffer without being committed.
       if (next < low) {
-        buffer.current = { segment, digits }
+        buffer.current = { segment, digits, basis: previousValueProp }
         return
       }
 
-      buffer.current = { segment, digits }
+      buffer.current = { segment, digits, basis: previousValueProp }
 
       // The number is finished when no further digit could keep it in range —
       // after `3` in a month, after `31` in a day, after four digits in a year.
@@ -352,7 +381,7 @@ export function useDateInput(options: UseDateInputOptions): UseDateInputResult {
         moveFocus(segment, 1)
       }
     },
-    [disabled, readOnly, parts, commit, moveFocus],
+    [disabled, readOnly, parts, commit, moveFocus, liveBuffer, previousValueProp],
   )
 
   const clearSegment = useCallback(
@@ -374,12 +403,13 @@ export function useDateInput(options: UseDateInputOptions): UseDateInputResult {
       // mid-entry and back would append to digits typed a minute ago. Leaving
       // a half-typed number also settles it, so a year abandoned at `199` is
       // reported rather than silently withheld.
-      if (buffer.current !== null && buffer.current.segment !== segment) flush()
+      const live = liveBuffer()
+      if (live !== null && live.segment !== segment) flush()
       buffer.current = null
       setFocused(segment)
       onFocus?.(event)
     },
-    [onFocus, flush],
+    [onFocus, flush, liveBuffer],
   )
 
   /**
@@ -392,12 +422,12 @@ export function useDateInput(options: UseDateInputOptions): UseDateInputResult {
     (event: FocusEvent<HTMLElement>) => {
       const next = event.relatedTarget
       if (next instanceof Node && event.currentTarget.contains(next)) return
-      if (buffer.current !== null) flush()
+      if (liveBuffer() !== null) flush()
       buffer.current = null
       setFocused(null)
       onBlur?.(event)
     },
-    [onBlur, flush],
+    [onBlur, flush, liveBuffer],
   )
 
   return {
