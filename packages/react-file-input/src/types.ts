@@ -86,7 +86,12 @@ export interface FileInputProps {
   previews?: boolean
 
   // ---- Presentation ---------------------------------------------------------
-  /** Accessible name for the field. */
+  /**
+   * Accessible name for the field. **Not rendered** — supply your own visible
+   * `<label htmlFor={`${id}-input`}>` when the design calls for one, exactly as
+   * every other input in the suite expects. A node is exposed through a hidden
+   * element, since `aria-label` only takes a string.
+   */
   label?: ReactNode
   /** Text inside the drop zone. @default a stock sentence */
   hint?: ReactNode

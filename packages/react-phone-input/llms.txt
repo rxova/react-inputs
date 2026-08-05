@@ -60,7 +60,7 @@ export function Field() {
 | `countryLabel` | `string` | `'Country'` | Accessible name for the country select. |
 | `renderCountry` | `(state: PhoneCountryState) => ReactNode` | flag, name and calling code | Custom option contents. |
 | `locale` | `string` | the runtime's locale | BCP 47 tag for country names. |
-| `label` | `ReactNode` | — | Accessible name for the number field. |
+| `label` | `ReactNode` | — | Accessible name for the number field. **Not rendered** — supply your own `<label htmlFor={`${id}-input`}>` for a visible one. |
 | `placeholder` | `string` | — | |
 | `className` | `string` | — | |
 | `style` | `CSSProperties` | — | |

@@ -130,7 +130,7 @@ export function useTimeInput(options: UseTimeInputOptions): UseTimeInputResult {
   } = options
 
   const reactId = useId()
-  const baseId = idProp ?? `rti-${reactId}`
+  const baseId = idProp ?? `rx-time-${reactId}`
 
   const hour12 = hour12Prop ?? usesHour12(locale)
   const minuteStep = usableStep(minuteStepProp)

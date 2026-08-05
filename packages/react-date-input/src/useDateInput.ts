@@ -106,7 +106,7 @@ export function useDateInput(options: UseDateInputOptions): UseDateInputResult {
   } = options
 
   const reactId = useId()
-  const baseId = idProp ?? `rdi-${reactId}`
+  const baseId = idProp ?? `rx-date-${reactId}`
 
   // A range no date can satisfy is dropped entirely rather than enforced — a
   // field nothing can be entered into is worse than a missing bound.

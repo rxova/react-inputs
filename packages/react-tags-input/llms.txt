@@ -73,7 +73,7 @@ export function Constrained() {
 | `maxLength` | `number` | — | Maximum length of one tag, in codepoints. |
 | `transform` | `(raw: string) => string` | — | Rewrites an entry before it is checked. |
 | `validate` | `(tag: string, existing: string[]) => boolean \| string` | — | Final say; a string is the refusal message. |
-| `label` | `ReactNode` | — | Accessible name for the whole field. |
+| `label` | `ReactNode` | — | Accessible name for the field. **Not rendered** — supply your own `<label htmlFor={`${id}-input`}>` for a visible one. |
 | `removeLabel` | `(tag: string) => string` | ``Remove ${tag}`` | Accessible name for a tag's remove button. |
 | `renderTag` | `(state: TagState) => ReactNode` | the tag text | Custom rendering for one tag's contents. |
 | `announce` | `(event: { type: 'add' \| 'remove' \| 'reject'; tag: string; tags: string[] }) => string` | `Added ${tag}, 3 tags` | Live-region text. Return `''` to say nothing. |

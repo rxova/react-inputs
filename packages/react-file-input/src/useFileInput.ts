@@ -48,7 +48,15 @@ export interface UseFileInputResult {
   disabled: boolean
   readOnly: boolean
   multiple: boolean
-  ids: { root: string; input: string; zone: string; list: string; announcement: string }
+  ids: {
+    root: string
+    input: string
+    /** Only referenced when `label` is a node rather than a string. */
+    label: string
+    zone: string
+    list: string
+    announcement: string
+  }
   /**
    * Structural rather than `RefObject`: in @types/react 18 `RefObject.current`
    * is readonly, in 19 it is mutable. Declaring the shape keeps this assignable
@@ -108,7 +116,7 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
   } = options
 
   const reactId = useId()
-  const baseId = idProp ?? `rfi-${reactId}`
+  const baseId = idProp ?? `rx-file-${reactId}`
 
   // A bound that cannot bound anything is dropped rather than enforced.
   const usableMax =
@@ -158,6 +166,7 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
     () => ({
       root: baseId,
       input: `${baseId}-input`,
+      label: `${baseId}-label`,
       zone: `${baseId}-zone`,
       list: `${baseId}-list`,
       announcement: `${baseId}-announcement`,

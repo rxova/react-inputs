@@ -45,16 +45,16 @@ test('stays clean while the meter, checklist and breach alert are all showing', 
 })
 
 test('every password field has an accessible name', async ({ page }) => {
-  const names = await page.locator('[data-rx-password-input]').evaluateAll((elements) =>
-    elements.map((element) => {
-      const labelled = element.id
-        ? document.querySelector(`label[for="${element.id}"]`)?.textContent
-        : null
-      return labelled ?? element.getAttribute('aria-label')
-    }),
-  )
-  expect(names.length).toBeGreaterThan(0)
-  expect(names.every((name) => typeof name === 'string' && name.trim().length > 0)).toBe(true)
+  // Playwright's own accessible-name computation rather than a hand-rolled
+  // read of `label[for]`: `label` on this component is the accessible name and
+  // renders no element, so the only honest check is the one the browser's
+  // accessibility tree would answer.
+  const fields = page.locator('[data-rx-password-input]')
+  const count = await fields.count()
+  expect(count).toBeGreaterThan(0)
+  for (let i = 0; i < count; i++) {
+    await expect(fields.nth(i)).toHaveAccessibleName(/\S/)
+  }
 })
 
 test('every aria-describedby points at an element that exists', async ({ page }) => {

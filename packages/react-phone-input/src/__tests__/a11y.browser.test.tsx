@@ -28,6 +28,32 @@ describe('semantics', () => {
     expect(container.querySelector('[data-rx-phone-country]')?.tagName).toBe('SELECT')
   })
 
+  it('names the field without rendering a <label> element', async () => {
+    // `label` is the accessible name, the same as it is on every other input in
+    // the suite. A component that also painted a visible <label> would be a
+    // layout decision the caller never asked for, and one its neighbours do not
+    // make — so a form built from two of them could not line up.
+    const { container } = await render(<PhoneInput label="Phone number" />)
+
+    expect(container.querySelector('label')).toBeNull()
+    expect(container.querySelector('[data-rx-phone-input]')).toHaveAccessibleName('Phone number')
+  })
+
+  it('takes a node label through a hidden element rather than dropping it', async () => {
+    const { container } = await render(
+      <PhoneInput
+        label={
+          <>
+            Phone <abbr title="required">*</abbr>
+          </>
+        }
+      />,
+    )
+
+    expect(container.querySelector('label')).toBeNull()
+    expect(container.querySelector('[data-rx-phone-input]')).toHaveAccessibleName('Phone *')
+  })
+
   it('names the country select', async () => {
     await render(<PhoneInput label="Phone" />)
     await expect.element(page.getByRole('combobox', { name: 'Country' })).toBeInTheDocument()

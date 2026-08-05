@@ -42,20 +42,26 @@ test('stays clean after adding and rejecting files', async ({ page }) => {
 test('every file input has an accessible name and stays in the tree', async ({ page }) => {
   // `display: none` would hide the control from assistive technology entirely;
   // the visually-hidden clip technique keeps it reachable.
-  const fields = await page.locator('[data-rx-file-input]').evaluateAll((elements) =>
+  const styles = await page.locator('[data-rx-file-input]').evaluateAll((elements) =>
     elements.map((element) => ({
-      label: element.id
-        ? (document.querySelector(`label[for="${element.id}"]`)?.textContent ?? null)
-        : null,
       display: getComputedStyle(element).display,
       visibility: getComputedStyle(element).visibility,
     })),
   )
-  expect(fields.length).toBeGreaterThan(0)
-  for (const field of fields) {
-    expect(field.label?.trim()).toBeTruthy()
-    expect(field.display).not.toBe('none')
-    expect(field.visibility).not.toBe('hidden')
+  expect(styles.length).toBeGreaterThan(0)
+  for (const style of styles) {
+    expect(style.display).not.toBe('none')
+    expect(style.visibility).not.toBe('hidden')
+  }
+
+  // Playwright's own accessible-name computation rather than a hand-rolled read
+  // of `label[for]`: `label` on this component is the accessible name and
+  // renders no element, so the only honest check is the one the browser's
+  // accessibility tree would answer.
+  const fields = page.locator('[data-rx-file-input]')
+  const count = await fields.count()
+  for (let i = 0; i < count; i++) {
+    await expect(fields.nth(i)).toHaveAccessibleName(/\S/)
   }
 })
 

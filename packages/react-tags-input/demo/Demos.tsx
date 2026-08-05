@@ -87,7 +87,13 @@ export function TagsDemos() {
             setSubmitted(new FormData(event.currentTarget).getAll('skills').map(String))
           }}
         >
-          <TagsInput label="Skills" name="skills" defaultValue={['react', 'a11y']} />
+          {/*
+            The recommended shape for a visible label: the component names the
+            field for assistive technology, and the page owns the text a sighted
+            user reads. The entry box derives its id as `${id}-input`.
+          */}
+          <label htmlFor="skills-input">Skills</label>
+          <TagsInput id="skills" name="skills" defaultValue={['react', 'a11y']} />
           <button type="submit">Save</button>
         </form>
         <p data-testid="submitted">{submitted === null ? '' : submitted.join('|')}</p>

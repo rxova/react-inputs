@@ -364,8 +364,10 @@ function CustomField() {
 
 ## Accessibility
 
-- A real `<input>`, labelled by a real `<label>`. The browser supplies keyboard behaviour, form
-  participation and password-manager integration; none of those can be faithfully reimplemented.
+- A real `<input>`, named by `label` (or `aria-label`). The browser supplies keyboard behaviour,
+  form participation and password-manager integration; none of those can be faithfully
+  reimplemented. Nothing visible is rendered for the name — pair it with your own
+  `<label htmlFor={id}>` when the design wants text on screen.
 - The reveal control is a **toggle button** with `aria-pressed` and `aria-controls`, an explicit
   `tabindex="0"` so Safari includes it in the tab order without Full Keyboard Access, and a hit
   area that meets WCAG 2.5.8.

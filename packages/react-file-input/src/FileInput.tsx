@@ -164,12 +164,24 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
         onBlur={handleBlur}
         onFocus={handleFocus}
       >
-        {label !== undefined ? <label htmlFor={ids.input}>{label}</label> : null}
+        {/*
+          `label` names the field; it does not render one. Every component in
+          the suite reads it that way, and a component that quietly emitted a
+          visible `<label>` while its neighbour did not is a layout the caller
+          cannot compose against. A node goes into a hidden span the control
+          points at, because `aria-label` only takes a string.
+        */}
+        {label !== undefined && typeof label !== 'string' ? (
+          <span id={ids.label} style={{ display: 'none' }}>
+            {label}
+          </span>
+        ) : null}
 
         {/*
           The real control. Hidden visually but present, focusable and named, so
           it carries `name`, `accept` and `required` into a native submit and so
-          `<label for>` points at something that exists.
+          the field has something for `aria-label` to name. The drop zone below
+          is the visible affordance; this is what the platform submits.
         */}
         <input
           ref={(node) => {
@@ -185,6 +197,8 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
           multiple={multiple}
           required={required && files.length === 0}
           disabled={disabled || readOnly}
+          aria-label={typeof label === 'string' ? label : undefined}
+          aria-labelledby={label !== undefined && typeof label !== 'string' ? ids.label : undefined}
           aria-invalid={invalid ? true : undefined}
           aria-describedby={describedBy}
           style={hiddenInputStyle}

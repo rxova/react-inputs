@@ -249,8 +249,9 @@ console noise in production. The E2E suite asserts this against a real productio
 
 ## Accessibility
 
-- A real `<input type="tel">` with `inputmode="tel"` and `autocomplete="tel"`, labelled by a real
-  `<label>`, beside a real `<select>`. Both are native controls on purpose: on a phone the select
+- A real `<input type="tel">` with `inputmode="tel"` and `autocomplete="tel"`, beside a real
+  `<select>`. `label` names it; supply your own `<label htmlFor={`${id}-input`}>` when the design
+  wants visible text. Both are native controls on purpose: on a phone the select
   is the platform's own picker, already searchable and localised, which no custom listbox of 234
   options matches.
 - The select carries an accessible name of its own (`countryLabel`), so it is not announced as an

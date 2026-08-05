@@ -42,7 +42,15 @@ export interface UsePhoneInputResult {
   international: boolean
   disabled: boolean
   readOnly: boolean
-  ids: { root: string; input: string; select: string; hidden: string; validity: string }
+  ids: {
+    root: string
+    input: string
+    /** Only referenced when `label` is a node rather than a string. */
+    label: string
+    select: string
+    hidden: string
+    validity: string
+  }
   /**
    * Structural rather than `RefObject`: in @types/react 18 `RefObject.current`
    * is readonly, in 19 it is mutable. Declaring the shape keeps this assignable
@@ -90,7 +98,7 @@ export function usePhoneInput(options: UsePhoneInputOptions): UsePhoneInputResul
   } = options
 
   const reactId = useId()
-  const baseId = idProp ?? `rphi-${reactId}`
+  const baseId = idProp ?? `rx-phone-${reactId}`
 
   /** The list the picker shows. An unusable `countries` prop is ignored, not obeyed. */
   const countries = useMemo(() => {
@@ -370,6 +378,7 @@ export function usePhoneInput(options: UsePhoneInputOptions): UsePhoneInputResul
     ids: {
       root: baseId,
       input: `${baseId}-input`,
+      label: `${baseId}-label`,
       select: `${baseId}-country`,
       hidden: `${baseId}-value`,
       validity: `${baseId}-validity`,

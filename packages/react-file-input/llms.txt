@@ -59,7 +59,7 @@ export function Attachments() {
 | `dedupe` | `boolean` | `true` | Same name + size + timestamp counts as the same file. |
 | `validate` | `(file: File, existing: File[]) => boolean \| string` | — | Final say; a string is the refusal message. |
 | `previews` | `boolean` | `false` | Object URLs for image files, revoked on removal and unmount. |
-| `label` | `ReactNode` | — | Accessible name for the field. |
+| `label` | `ReactNode` | — | Accessible name for the field. **Not rendered** — supply your own `<label htmlFor={`${id}-input`}>` for a visible one. |
 | `hint` | `ReactNode` | a stock sentence | Text inside the drop zone. |
 | `removeLabel` | `(file: File) => string` | ``Remove ${name}`` | Accessible name for a file's remove button. |
 | `renderFile` | `(state: FileEntryState) => ReactNode` | the default row | Replaces a row's contents; the remove button stays. |

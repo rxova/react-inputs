@@ -32,6 +32,32 @@ describe('semantics', () => {
     expect(page.getByRole('listitem').elements()).toHaveLength(3)
   })
 
+  it('names the field without rendering a <label> element', async () => {
+    // `label` is the accessible name, the same as it is on every other input in
+    // the suite. A component that also painted a visible <label> would be a
+    // layout decision the caller never asked for, and one its neighbours do not
+    // make — so a form built from two of them could not line up.
+    const { container } = await render(<TagsInput label="Topics" />)
+
+    expect(container.querySelector('label')).toBeNull()
+    expect(box(container)).toHaveAccessibleName('Topics')
+  })
+
+  it('takes a node label through a hidden element rather than dropping it', async () => {
+    const { container } = await render(
+      <TagsInput
+        label={
+          <>
+            Topics <abbr title="required">*</abbr>
+          </>
+        }
+      />,
+    )
+
+    expect(container.querySelector('label')).toBeNull()
+    expect(box(container)).toHaveAccessibleName('Topics *')
+  })
+
   it('is a text box, not a combobox', async () => {
     // Claiming `role="combobox"` with no popup is a promise to assistive
     // technology that this component cannot keep.

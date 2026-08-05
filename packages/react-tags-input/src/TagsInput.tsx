@@ -143,7 +143,18 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
         onBlur={handleBlur}
         onFocus={handleFocus}
       >
-        {label !== undefined ? <label htmlFor={ids.input}>{label}</label> : null}
+        {/*
+          `label` names the field; it does not render one. Every component in
+          the suite reads it that way, and a component that quietly emitted a
+          visible `<label>` while its neighbour did not is a layout the caller
+          cannot compose against. A node goes into a hidden span the control
+          points at, because `aria-label` only takes a string.
+        */}
+        {label !== undefined && typeof label !== 'string' ? (
+          <span id={ids.label} style={{ display: 'none' }}>
+            {label}
+          </span>
+        ) : null}
 
         {/*
           A real list, so a screen reader announces "list, 3 items" and the user
@@ -218,6 +229,8 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
           // A tag field is a text box, not a combobox: there is no popup and
           // nothing to expand. Claiming `role="combobox"` without one is a
           // promise to assistive technology that this component cannot keep.
+          aria-label={typeof label === 'string' ? label : undefined}
+          aria-labelledby={label !== undefined && typeof label !== 'string' ? ids.label : undefined}
           aria-invalid={invalid ? true : undefined}
           aria-describedby={describedBy}
           autoComplete="off"

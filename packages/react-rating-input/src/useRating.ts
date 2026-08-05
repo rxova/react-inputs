@@ -96,7 +96,7 @@ export function useRating(options: UseRatingOptions): UseRatingResult {
 
   const max = normalizeMax(maxProp, DEFAULT_MAX)
   const reactId = useId()
-  const baseId = idProp ?? `rfs-${reactId}`
+  const baseId = idProp ?? `rx-rating-${reactId}`
   const name = nameProp ?? `rfs-name-${reactId}`
 
   const isControlled = valueProp !== undefined

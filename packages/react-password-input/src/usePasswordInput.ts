@@ -91,6 +91,8 @@ export interface UsePasswordInputResult {
   /** Stable ids for the input and each piece of describing text. */
   ids: {
     input: string
+    /** Only referenced when `label` is a node rather than a string. */
+    label: string
     strength: string
     rules: string
     capsLock: string
@@ -150,7 +152,7 @@ export function usePasswordInput(options: UsePasswordInputOptions): UsePasswordI
   } = options
 
   const reactId = useId()
-  const baseId = idProp ?? `rpi-${reactId}`
+  const baseId = idProp ?? `rx-password-${reactId}`
 
   const isControlled = valueProp !== undefined
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue)
@@ -484,6 +486,7 @@ export function usePasswordInput(options: UsePasswordInputOptions): UsePasswordI
     disabled,
     ids: {
       input: baseId,
+      label: `${baseId}-label`,
       strength: `${baseId}-strength`,
       rules: `${baseId}-rules`,
       capsLock: `${baseId}-caps`,

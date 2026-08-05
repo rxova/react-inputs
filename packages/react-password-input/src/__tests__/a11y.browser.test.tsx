@@ -27,6 +27,32 @@ describe('semantics', () => {
     await expect.element(input).toHaveAttribute('type', 'password')
   })
 
+  it('names the field without rendering a <label> element', async () => {
+    // `label` is the accessible name, the same as it is on every other input in
+    // the suite. A component that also painted a visible <label> would be a
+    // layout decision the caller never asked for, and one its neighbours do not
+    // make — so a form built from two of them could not line up.
+    const { container } = await render(<PasswordInput label="Password" />)
+
+    expect(container.querySelector('label')).toBeNull()
+    expect(container.querySelector('[data-rx-password-input]')).toHaveAccessibleName('Password')
+  })
+
+  it('takes a node label through a hidden element rather than dropping it', async () => {
+    const { container } = await render(
+      <PasswordInput
+        label={
+          <>
+            Password <abbr title="required">*</abbr>
+          </>
+        }
+      />,
+    )
+
+    expect(container.querySelector('label')).toBeNull()
+    expect(container.querySelector('[data-rx-password-input]')).toHaveAccessibleName('Password *')
+  })
+
   it('names the reveal control as a toggle button', async () => {
     const { container } = await render(<PasswordInput label="Password" />)
     const button = container.querySelector('[data-rx-password-toggle]')!

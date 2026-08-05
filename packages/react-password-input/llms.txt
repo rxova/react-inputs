@@ -96,7 +96,7 @@ export function SignUp({ email }: { email: string }) {
 | `onFocus` | `(event: FocusEvent<HTMLElement>) => void` | — | |
 | `invalid` | `boolean` | `false` | Sets `aria-invalid` and `data-invalid`. |
 | `aria-describedby` | `string` | — | ids of external error/help text; merged with the ids this component owns. |
-| `label` | `ReactNode` | — | Accessible name for the field. |
+| `label` | `ReactNode` | — | Accessible name for the field. **Not rendered** — supply your own `<label htmlFor={id}>` for a visible one. |
 | `id` | `string` | — | Base id; input, meter, checklist and warnings derive theirs from it. |
 | `className` | `string` | — | |
 | `style` | `CSSProperties` | — | |

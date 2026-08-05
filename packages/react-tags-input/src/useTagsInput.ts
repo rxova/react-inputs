@@ -52,7 +52,14 @@ export interface UseTagsInputResult {
   full: boolean
   disabled: boolean
   readOnly: boolean
-  ids: { root: string; list: string; input: string; announcement: string }
+  ids: {
+    root: string
+    list: string
+    input: string
+    /** Only referenced when `label` is a node rather than a string. */
+    label: string
+    announcement: string
+  }
   /**
    * Structural rather than `RefObject`: in @types/react 18 `RefObject.current`
    * is readonly, in 19 it is mutable. Declaring the shape keeps this assignable
@@ -112,7 +119,7 @@ export function useTagsInput(options: UseTagsInputOptions): UseTagsInputResult {
   } = options
 
   const reactId = useId()
-  const baseId = idProp ?? `rtg-${reactId}`
+  const baseId = idProp ?? `rx-tags-${reactId}`
 
   // A `max` that cannot bound anything is dropped rather than enforced: a field
   // that can hold no tags is not a field.
@@ -173,6 +180,7 @@ export function useTagsInput(options: UseTagsInputOptions): UseTagsInputResult {
       root: baseId,
       list: `${baseId}-list`,
       input: `${baseId}-input`,
+      label: `${baseId}-label`,
       announcement: `${baseId}-announcement`,
     }),
     [baseId],

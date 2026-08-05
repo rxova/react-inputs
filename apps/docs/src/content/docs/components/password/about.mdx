@@ -140,8 +140,9 @@ get this behaviour.
 
 ## Accessibility
 
-- A real `<input>` labelled by a real `<label>`. The browser supplies keyboard behaviour, form
-  participation and password-manager integration.
+- A real `<input>`, named by `label` (or `aria-label`). The browser supplies keyboard behaviour,
+  form participation and password-manager integration. The name is not rendered — pair it with your
+  own `<label htmlFor={id}>` for visible text.
 - The reveal control is a **toggle button** — `aria-pressed`, `aria-controls`, and an explicit
   `tabindex="0"` so **Safari** includes it in the tab order without Full Keyboard Access. Without
   that attribute the toggle is unreachable by keyboard on a default macOS install.

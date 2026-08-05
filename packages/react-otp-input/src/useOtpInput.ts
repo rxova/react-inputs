@@ -146,7 +146,7 @@ export function useOtpInput(options: UseOtpInputOptions = {}): UseOtpInputResult
 
   const length = normalizeLength(options.length)
   const reactId = useId()
-  const baseId = idProp ?? `otp-${reactId}`
+  const baseId = idProp ?? `rx-otp-${reactId}`
 
   const isAllowed = useMemo(() => resolveIsAllowed(mode, pattern), [mode, pattern])
   const maskChar = resolveMaskChar(mask)

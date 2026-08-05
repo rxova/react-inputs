@@ -188,7 +188,18 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
         data-valid={valid ? '' : undefined}
         data-score={showStrength ? strength.score : undefined}
       >
-        {label !== undefined ? <label htmlFor={ids.input}>{label}</label> : null}
+        {/*
+          `label` names the field; it does not render one. Every component in
+          the suite reads it that way, and a component that quietly emitted a
+          visible `<label>` while its neighbour did not is a layout the caller
+          cannot compose against. A node goes into a hidden span the input
+          points at, because `aria-label` only takes a string.
+        */}
+        {label !== undefined && typeof label !== 'string' ? (
+          <span id={ids.label} style={{ display: 'none' }}>
+            {label}
+          </span>
+        ) : null}
 
         <div style={fieldStyle} data-rx-password-field="">
           <input
@@ -218,6 +229,10 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
             autoCorrect="off"
             spellCheck={false}
             aria-invalid={invalid ? true : undefined}
+            aria-label={typeof label === 'string' ? label : undefined}
+            aria-labelledby={
+              label !== undefined && typeof label !== 'string' ? ids.label : undefined
+            }
             aria-describedby={describedByIds === '' ? undefined : describedByIds}
             style={inputStyle}
             onChange={(event) => {

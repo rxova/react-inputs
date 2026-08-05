@@ -185,7 +185,12 @@ export interface PasswordInputProps {
   invalid?: boolean
   /** ids of external error/help text. Merged with the ids this component owns. */
   'aria-describedby'?: string
-  /** Accessible name for the field. */
+  /**
+   * Accessible name for the field. **Not rendered** — supply your own visible
+   * `<label htmlFor={`${id}-input`}>` when the design calls for one, exactly as
+   * every other input in the suite expects. A node is exposed through a hidden
+   * element, since `aria-label` only takes a string.
+   */
   label?: ReactNode
   /** Base id; the input, meter, checklist and warnings derive ids from it. */
   id?: string

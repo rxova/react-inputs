@@ -106,7 +106,18 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
         onBlur={handleBlur}
         onFocus={handleFocus}
       >
-        {label !== undefined ? <label htmlFor={ids.input}>{label}</label> : null}
+        {/*
+          `label` names the field; it does not render one. Every component in
+          the suite reads it that way, and a component that quietly emitted a
+          visible `<label>` while its neighbour did not is a layout the caller
+          cannot compose against. A node goes into a hidden span the control
+          points at, because `aria-label` only takes a string.
+        */}
+        {label !== undefined && typeof label !== 'string' ? (
+          <span id={ids.label} style={{ display: 'none' }}>
+            {label}
+          </span>
+        ) : null}
 
         {hideCountrySelect ? null : (
           // A real <select>. On a phone this is the platform's own picker —
@@ -169,6 +180,8 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
           required={required}
           disabled={disabled}
           readOnly={readOnly}
+          aria-label={typeof label === 'string' ? label : undefined}
+          aria-labelledby={label !== undefined && typeof label !== 'string' ? ids.label : undefined}
           aria-invalid={(invalid ?? (showFeedback && !details.possible)) ? true : undefined}
           aria-describedby={
             [describedBy, showFeedback ? ids.validity : undefined].filter(Boolean).join(' ') ||

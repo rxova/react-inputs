@@ -34,17 +34,17 @@ test('stays clean after adding and rejecting tags', async ({ page }) => {
 })
 
 test('every entry box has an accessible name', async ({ page }) => {
-  const names = await page
-    .locator('[data-rx-tags-input]')
-    .evaluateAll((elements) =>
-      elements.map((element) =>
-        element.id
-          ? (document.querySelector(`label[for="${element.id}"]`)?.textContent ?? null)
-          : null,
-      ),
-    )
-  expect(names.length).toBeGreaterThan(0)
-  expect(names.every((name) => typeof name === 'string' && name.trim().length > 0)).toBe(true)
+  // Playwright's own accessible-name computation rather than a hand-rolled
+  // read of `label[for]`: `label` on this component is the accessible name and
+  // renders no element, so the only honest check is the one the browser's
+  // accessibility tree would answer. The native-form demo supplies its own
+  // visible `<label for>`, which this must also accept.
+  const fields = page.locator('[data-rx-tags-input]')
+  const count = await fields.count()
+  expect(count).toBeGreaterThan(0)
+  for (let i = 0; i < count; i++) {
+    await expect(fields.nth(i)).toHaveAccessibleName(/\S/)
+  }
 })
 
 test('every remove button names its own tag', async ({ page }) => {

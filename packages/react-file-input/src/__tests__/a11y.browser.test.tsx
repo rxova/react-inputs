@@ -34,6 +34,32 @@ describe('semantics', () => {
     await expect.element(page.getByLabelText('Attachments')).toBeInTheDocument()
   })
 
+  it('names the field without rendering a <label> element', async () => {
+    // `label` is the accessible name, the same as it is on every other input in
+    // the suite. A component that also painted a visible <label> would be a
+    // layout decision the caller never asked for, and one its neighbours do not
+    // make — so a form built from two of them could not line up.
+    const { container } = await render(<FileInput label="Attachments" />)
+
+    expect(container.querySelector('label')).toBeNull()
+    expect(input(container)).toHaveAccessibleName('Attachments')
+  })
+
+  it('takes a node label through a hidden element rather than dropping it', async () => {
+    const { container } = await render(
+      <FileInput
+        label={
+          <>
+            Attachments <abbr title="required">*</abbr>
+          </>
+        }
+      />,
+    )
+
+    expect(container.querySelector('label')).toBeNull()
+    expect(input(container)).toHaveAccessibleName('Attachments *')
+  })
+
   it('makes the drop zone a real button, not a clickable div', async () => {
     // Drag-and-drop has no keyboard equivalent, so the click path *is* the
     // accessible path — and a button gives Enter, Space, focus and a role free.
