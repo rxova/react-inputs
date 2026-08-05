@@ -70,6 +70,9 @@ export function Field() {
 | `readOnly` | `boolean` | `false` | |
 | `showValidity` | `boolean` | `false` | After blur, reports whether the digits are a length this country uses. |
 | `validityLabel` | `(state: { possible: boolean; country: Country \| undefined; details: PhoneDetails }) => ReactNode` | a stock sentence | Return `''` to say nothing. |
+| `dir` | `'ltr' \| 'rtl'` | inherited | Lays the field out; segment order still comes from the locale. |
+| `autoFocus` | `boolean` | `false` | Focuses the number field on mount. |
+| `aria-label` | `string` | — | Accessible name when there is no `label`. Wins over `label`. |
 | `invalid` | `boolean` | `false` | Sets `aria-invalid` and `data-invalid`. |
 | `aria-describedby` | `string` | — | ids of external error/help text. |
 | `id` | `string` | — | Base id; input, select and hidden field derive theirs from it. |
@@ -77,7 +80,8 @@ export function Field() {
 | `onFocus` | `(event: FocusEvent<HTMLElement>) => void` | — | |
 | `onWarn` | `(warning: PhoneWarning) => void` | `console.warn` | Development-only notice that a prop was coerced. Stripped from production builds. |
 
-Also exported: the `usePhoneInput` hook, the country helpers `COUNTRIES`,
+Also exported: the `usePhoneInput` hook (its result carries `clear()`, which
+empties the number and keeps the selected country), the country helpers `COUNTRIES`,
 `countryByISO2`, `countryForDial`, `countryName`, `flagEmoji`, and the pure
 functions `parsePhone`, `formatPhone`, `formatNational`, `isPossible`,
 `lengthsFor`, `digitsOnly`.

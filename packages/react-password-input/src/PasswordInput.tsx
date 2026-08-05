@@ -132,6 +132,8 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
       label,
       className,
       style,
+      autoFocus,
+      'aria-label': ariaLabel,
       'aria-describedby': describedBy,
     } = props
 
@@ -184,6 +186,7 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
         data-rx-password-root=""
         data-revealed={revealed ? '' : undefined}
         data-disabled={disabled ? '' : undefined}
+        data-readonly={readOnly ? '' : undefined}
         data-invalid={invalid ? '' : undefined}
         data-valid={valid ? '' : undefined}
         data-score={showStrength ? strength.score : undefined}
@@ -210,6 +213,8 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
             }}
             id={ids.input}
             data-rx-password-input=""
+            // Opt-in, and the same prop `@rxova/react-otp-input` exposes.
+            autoFocus={autoFocus}
             // Driven by the hook so the headless and rendered paths can never
             // disagree about what "revealed" means.
             type={type}
@@ -229,9 +234,11 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
             autoCorrect="off"
             spellCheck={false}
             aria-invalid={invalid ? true : undefined}
-            aria-label={typeof label === 'string' ? label : undefined}
+            aria-label={ariaLabel ?? (typeof label === 'string' ? label : undefined)}
             aria-labelledby={
-              label !== undefined && typeof label !== 'string' ? ids.label : undefined
+              ariaLabel === undefined && label !== undefined && typeof label !== 'string'
+                ? ids.label
+                : undefined
             }
             aria-describedby={describedByIds === '' ? undefined : describedByIds}
             style={inputStyle}

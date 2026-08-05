@@ -106,6 +106,8 @@ export interface UsePasswordInputResult {
    */
   inputRef: { current: HTMLInputElement | null }
   setValue: (next: string) => void
+  /** Empty the field. Present on every input hook in the suite. */
+  clear: () => void
   setRevealed: (next: boolean) => void
   toggleReveal: () => void
   /** Wire to the toggle's `onMouseDown` so the caret survives the reveal. */
@@ -313,8 +315,13 @@ export function usePasswordInput(options: UsePasswordInputOptions): UsePasswordI
     const seen = (warnedRef.current ??= new Set<string>())
     const emit = (warning: PasswordWarning | null) => {
       if (!warning) return
-      if (seen.has(warning.code)) return
-      seen.add(warning.code)
+      // Keyed on the value as well as the code, matching every other package.
+      // On the code alone, a component rendered with `minLength={-1}` and then
+      // with `minLength={-5}` warned once and swallowed the second, distinct
+      // misconfiguration — which is the case a developer most needs told.
+      const key = `${warning.code}:${warning.received}`
+      if (seen.has(key)) return
+      seen.add(key)
       if (onWarn) onWarn(warning)
       // The library ships no console noise in production; this line is only
       // reached in development and is dropped from production builds.
@@ -336,6 +343,10 @@ export function usePasswordInput(options: UsePasswordInputOptions): UsePasswordI
     },
     [disabled, readOnly, isControlled, onChange],
   )
+
+  const clear = useCallback(() => {
+    setValue('')
+  }, [setValue])
 
   const setRevealed = useCallback(
     (next: boolean) => {
@@ -495,6 +506,7 @@ export function usePasswordInput(options: UsePasswordInputOptions): UsePasswordI
     },
     inputRef,
     setValue,
+    clear,
     setRevealed,
     toggleReveal,
     captureSelection,

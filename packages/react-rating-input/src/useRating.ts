@@ -97,7 +97,7 @@ export function useRating(options: UseRatingOptions): UseRatingResult {
   const max = normalizeMax(maxProp, DEFAULT_MAX)
   const reactId = useId()
   const baseId = idProp ?? `rx-rating-${reactId}`
-  const name = nameProp ?? `rfs-name-${reactId}`
+  const name = nameProp ?? `rx-rating-name-${reactId}`
 
   const isControlled = valueProp !== undefined
   const [uncontrolled, setUncontrolled] = useState(defaultValue)
@@ -145,7 +145,7 @@ export function useRating(options: UseRatingOptions): UseRatingResult {
       // The library ships no console noise in production; this line is only
       // reached in development and is dropped from production builds.
       // eslint-disable-next-line no-console
-      else console.warn(`[react-feedback-stars] ${warning.message}`)
+      else console.warn(`[react-rating-input] ${warning.message}`)
     }
     emit(inspectValue(rawValue, max, isControlled ? 'value' : 'defaultValue'))
     emit(inspectMax(maxProp, max))

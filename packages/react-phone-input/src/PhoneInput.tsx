@@ -56,6 +56,9 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
       invalid,
       showValidity = false,
       validityLabel,
+      dir,
+      autoFocus,
+      'aria-label': ariaLabel,
       'aria-describedby': describedBy,
     } = props
 
@@ -98,11 +101,13 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
       <div
         className={className}
         style={{ ...rootStyle, ...style }}
+        dir={dir}
         data-rx-phone-root=""
         data-country={country?.iso2}
         data-possible={details.possible ? '' : undefined}
         data-invalid={invalid ? '' : undefined}
         data-disabled={disabled ? '' : undefined}
+        data-readonly={readOnly ? '' : undefined}
         onBlur={handleBlur}
         onFocus={handleFocus}
       >
@@ -169,6 +174,8 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
           }}
           id={ids.input}
           data-rx-phone-input=""
+          // Opt-in, and the same prop `@rxova/react-otp-input` exposes.
+          autoFocus={autoFocus}
           // `tel`, so mobile keyboards show the dial pad. Not `number`: that
           // strips leading zeros, offers a spinner nobody wants on a phone
           // number, and refuses the `+` entirely.
@@ -180,8 +187,12 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
           required={required}
           disabled={disabled}
           readOnly={readOnly}
-          aria-label={typeof label === 'string' ? label : undefined}
-          aria-labelledby={label !== undefined && typeof label !== 'string' ? ids.label : undefined}
+          aria-label={ariaLabel ?? (typeof label === 'string' ? label : undefined)}
+          aria-labelledby={
+            ariaLabel === undefined && label !== undefined && typeof label !== 'string'
+              ? ids.label
+              : undefined
+          }
           aria-invalid={(invalid ?? (showFeedback && !details.possible)) ? true : undefined}
           aria-describedby={
             [describedBy, showFeedback ? ids.validity : undefined].filter(Boolean).join(' ') ||

@@ -15,7 +15,7 @@ import {
 } from '../core'
 
 /**
- * `react-otp-slots` renders a real DOM `<input>` with CSS custom properties and
+ * `@rxova/react-otp-input` renders a real DOM `<input>` with CSS custom properties and
  * spatial layout measured via `getComputedStyle` — it does **not** render in
  * React Native, which has no DOM. What *is* portable is the pure logic in
  * `core.ts`: sanitizing/distributing a code, mapping it to slots, and the

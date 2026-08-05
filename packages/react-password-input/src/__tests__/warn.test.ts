@@ -83,3 +83,18 @@ describe('inspectAutoComplete', () => {
     expect(message).toContain('new-password')
   })
 })
+
+describe('received', () => {
+  it('is carried by every inspector, since it is half the dedupe key', () => {
+    // `usePasswordInput` deduplicates on `code:received`. An inspector that
+    // returned a warning without one would collapse every distinct mistake in
+    // that prop into a single report.
+    expect(inspectMinLength(-3, 8)?.received).toBe('-3')
+    expect(inspectMinLength(8.5, 8)?.received).toBe('8.5')
+    expect(inspectMaxLength(4, 8)?.received).toBe('4')
+    expect(inspectAutoComplete('off')?.received).toBe('off')
+    expect(inspectRuleIds([commonRules.digit, commonRules.digit])?.received).toBe(
+      commonRules.digit.id,
+    )
+  })
+})

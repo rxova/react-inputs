@@ -112,6 +112,14 @@ export interface TimeInputProps {
   segmentLabels?: TimeSegmentLabels
   /** Custom rendering for one segment. */
   renderSegment?: (state: TimeSegmentState) => ReactNode
+  /**
+   * Writing direction for the field. Inherited from the document when unset.
+   *
+   * Distinct from the locale: `locale` decides which segments there are and in
+   * what order, `dir` decides which way the box lays them out. A Hebrew page
+   * showing a Gregorian date needs one without the other.
+   */
+  dir?: 'ltr' | 'rtl'
   /** Accessible name for the whole field. */
   label?: ReactNode
   className?: string

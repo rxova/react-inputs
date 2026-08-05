@@ -3,7 +3,7 @@ import { useOtpContext } from './OtpContext'
 import type { OtpSlotState } from './types'
 
 /** Class the root's injected stylesheet animates; kept here so the caret and its keyframes agree. */
-export const CARET_CLASS = 'otp-slots-caret'
+export const CARET_CLASS = 'rx-otp-caret'
 
 const slotStyle: CSSProperties = {
   position: 'relative',

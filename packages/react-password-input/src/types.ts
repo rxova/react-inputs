@@ -72,6 +72,16 @@ export interface PasswordWarning {
   code: PasswordWarningCode
   /** The prop that carried the offending value. */
   prop: string
+  /**
+   * The value as received.
+   *
+   * Also the reason a second, different misconfiguration of the same prop is
+   * still reported: warnings are deduplicated per instance on `code:received`,
+   * so `minLength={-1}` followed by `minLength={-5}` warns twice rather than
+   * once. Every other package in the suite carries this field for the same
+   * reason.
+   */
+  received: string
   /** Human-readable explanation, safe to log as-is. */
   message: string
 }
@@ -181,6 +191,13 @@ export interface PasswordInputProps {
   placeholder?: string
   onBlur?: (event: FocusEvent<HTMLElement>) => void
   onFocus?: (event: FocusEvent<HTMLElement>) => void
+  /** Focus the field on mount. @default false */
+  autoFocus?: boolean
+  /**
+   * Accessible name, when there is no visible text to point `label` at. Wins
+   * over `label` if both are given.
+   */
+  'aria-label'?: string
   /** Sets `aria-invalid` and `data-invalid` on the field. */
   invalid?: boolean
   /** ids of external error/help text. Merged with the ids this component owns. */

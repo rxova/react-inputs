@@ -179,3 +179,42 @@ describe('caret restoration', () => {
     expect(box.selectionStart).toBe(box.value.length)
   })
 })
+
+describe('clear', () => {
+  function ClearHarness(props: UsePhoneInputOptions) {
+    const field = usePhoneInput(props)
+    return (
+      <div>
+        <output data-testid="value">{field.value || 'empty'}</output>
+        <output data-testid="country">{field.country?.iso2 ?? 'none'}</output>
+        <button type="button" onClick={field.clear}>
+          Clear
+        </button>
+      </div>
+    )
+  }
+
+  it('empties the number and keeps the country the user chose', async () => {
+    // Country and number are separate choices. Resetting to the default country
+    // on clear would silently throw away the one they picked.
+    const onChange = vi.fn()
+    await render(
+      <ClearHarness defaultCountry="GB" defaultValue="+442071234567" onChange={onChange} />,
+    )
+
+    await userEvent.click(page.getByRole('button', { name: 'Clear' }))
+
+    await expect.element(page.getByTestId('value')).toHaveTextContent('empty')
+    await expect.element(page.getByTestId('country')).toHaveTextContent('GB')
+    expect(onChange).toHaveBeenLastCalledWith('', expect.objectContaining({ e164: '' }))
+  })
+
+  it('refuses to clear a read-only field', async () => {
+    const onChange = vi.fn()
+    await render(<ClearHarness defaultValue="+14155552671" readOnly onChange={onChange} />)
+
+    await userEvent.click(page.getByRole('button', { name: 'Clear' }))
+
+    expect(onChange).not.toHaveBeenCalled()
+  })
+})

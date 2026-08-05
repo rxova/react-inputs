@@ -63,7 +63,7 @@ describe('useRating — development warnings', () => {
     await renderHook(() => useRating({ value: 7, max: 5 }))
 
     await expect.poll(() => warn.mock.calls.length).toBe(1)
-    expect(warn).toHaveBeenCalledWith(expect.stringMatching(/^\[react-feedback-stars\].*exceeds/))
+    expect(warn).toHaveBeenCalledWith(expect.stringMatching(/^\[react-rating-input\].*exceeds/))
   })
 
   it('does not warn for in-range props', async () => {

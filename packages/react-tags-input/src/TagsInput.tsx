@@ -106,6 +106,9 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
       disabled = false,
       readOnly = false,
       invalid,
+      dir,
+      autoFocus,
+      'aria-label': ariaLabel,
       'aria-describedby': describedBy,
     } = props
 
@@ -134,6 +137,7 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
       <div
         className={className}
         style={{ ...rootStyle, ...style }}
+        dir={dir}
         data-rx-tags-root=""
         data-disabled={disabled ? '' : undefined}
         data-readonly={readOnly ? '' : undefined}
@@ -220,6 +224,8 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
           }}
           id={ids.input}
           data-rx-tags-input=""
+          // Opt-in, and the same prop `@rxova/react-otp-input` exposes.
+          autoFocus={autoFocus}
           type="text"
           value={text}
           placeholder={placeholder}
@@ -229,8 +235,12 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
           // A tag field is a text box, not a combobox: there is no popup and
           // nothing to expand. Claiming `role="combobox"` without one is a
           // promise to assistive technology that this component cannot keep.
-          aria-label={typeof label === 'string' ? label : undefined}
-          aria-labelledby={label !== undefined && typeof label !== 'string' ? ids.label : undefined}
+          aria-label={ariaLabel ?? (typeof label === 'string' ? label : undefined)}
+          aria-labelledby={
+            ariaLabel === undefined && label !== undefined && typeof label !== 'string'
+              ? ids.label
+              : undefined
+          }
           aria-invalid={invalid ? true : undefined}
           aria-describedby={describedBy}
           autoComplete="off"

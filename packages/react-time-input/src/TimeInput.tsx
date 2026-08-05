@@ -88,6 +88,7 @@ export const TimeInput = /* @__PURE__ */ forwardRef<HTMLDivElement, TimeInputPro
       disabled = false,
       readOnly = false,
       invalid,
+      dir,
       'aria-describedby': describedBy,
     } = props
 
@@ -178,6 +179,7 @@ export const TimeInput = /* @__PURE__ */ forwardRef<HTMLDivElement, TimeInputPro
         ref={ref}
         className={className}
         style={{ ...rootStyle, ...style }}
+        dir={dir}
         data-rx-time-root=""
         data-disabled={disabled ? '' : undefined}
         data-readonly={readOnly ? '' : undefined}

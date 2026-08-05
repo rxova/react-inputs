@@ -424,3 +424,24 @@ describe('states', () => {
     expect(zone(container)).toBeDisabled()
   })
 })
+
+describe('autoFocus and aria-label', () => {
+  it('focuses the drop zone on mount, not the hidden input', async () => {
+    // The real <input type="file"> is visually hidden, so focusing it would put
+    // the focus ring somewhere a sighted keyboard user cannot see. The zone is
+    // the visible affordance and the thing they operate.
+    const { container } = await render(<FileInput label="Files" autoFocus />)
+
+    expect(document.activeElement).toBe(container.querySelector('[data-rx-file-zone]'))
+  })
+
+  it('takes an aria-label, which wins over label', async () => {
+    const { container } = await render(
+      <FileInput label="Files" aria-label="Supporting documents" />,
+    )
+
+    expect(container.querySelector('[data-rx-file-input]')).toHaveAccessibleName(
+      'Supporting documents',
+    )
+  })
+})

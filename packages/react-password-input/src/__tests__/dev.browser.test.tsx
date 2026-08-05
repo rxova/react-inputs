@@ -75,6 +75,36 @@ describe('onWarn', () => {
     await userEvent.fill(container.querySelector('[data-rx-password-input]')!, 'abcdef')
     expect(onWarn.mock.calls.filter(([w]) => w.code === 'min-length-negative')).toHaveLength(1)
   })
+
+  it('warns again when the same prop is misconfigured differently', async () => {
+    // Deduplication is per `code:received`, not per code. Keyed on the code
+    // alone — which is how this package shipped, and the only warning type in
+    // the suite without a `received` to key on — a second, distinct mistake in
+    // the same prop was swallowed, which is exactly the one a developer most
+    // needs told about.
+    const onWarn = vi.fn()
+    function Harness() {
+      const [min, setMin] = useState(-1)
+      return (
+        <>
+          <PasswordInput label="Password" minLength={min} onWarn={onWarn} />
+          <button
+            type="button"
+            onClick={() => {
+              setMin(-5)
+            }}
+          >
+            Worse
+          </button>
+        </>
+      )
+    }
+    await render(<Harness />)
+    await userEvent.click(page.getByRole('button', { name: 'Worse' }))
+
+    const negatives = onWarn.mock.calls.filter(([w]) => w.code === 'min-length-negative')
+    expect(negatives.map(([w]) => w.received)).toEqual(['-1', '-5'])
+  })
 })
 
 describe('refs', () => {

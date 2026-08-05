@@ -50,10 +50,10 @@ describe('single-input semantics', () => {
 describe('CSP nonce', () => {
   it('stamps the injected caret stylesheet with the nonce', async () => {
     // Injection is once-per-document; clear it so this render performs it.
-    document.getElementById('otp-slots-caret-style')?.remove()
+    document.getElementById('rx-otp-caret-style')?.remove()
     await render(<OtpInput length={4} label="Code" nonce="test-nonce" />)
     await expect.element(page.getByRole('textbox')).toBeInTheDocument()
-    const style = document.getElementById('otp-slots-caret-style') as HTMLStyleElement | null
+    const style = document.getElementById('rx-otp-caret-style') as HTMLStyleElement | null
     expect(style?.nonce).toBe('test-nonce')
   })
 })

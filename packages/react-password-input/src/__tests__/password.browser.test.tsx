@@ -4,6 +4,8 @@ import { render } from 'vitest-browser-react'
 import { useState } from 'react'
 import { PasswordInput } from '../PasswordInput'
 import { commonRules } from '../rules'
+import { usePasswordInput } from '../usePasswordInput'
+import type { UsePasswordInputOptions } from '../usePasswordInput'
 
 /**
  * Chromium, not jsdom. Every assertion here depends on something jsdom either
@@ -542,5 +544,62 @@ describe('refs and form integration', () => {
     )
     await page.getByRole('button', { name: 'Sign in' }).click()
     expect(submitted).toBe('hunter2')
+  })
+})
+
+describe('autoFocus, aria-label and readOnly', () => {
+  it('focuses the field on mount with autoFocus', async () => {
+    const { container } = await render(<PasswordInput label="Password" autoFocus />)
+
+    expect(document.activeElement).toBe(container.querySelector('[data-rx-password-input]'))
+  })
+
+  it('takes an aria-label, which wins over label', async () => {
+    const { container } = await render(
+      <PasswordInput label="Password" aria-label="Current password" />,
+    )
+
+    expect(container.querySelector('[data-rx-password-input]')).toHaveAccessibleName(
+      'Current password',
+    )
+  })
+
+  it('marks a read-only field, which styling needs and every sibling already did', async () => {
+    const { container } = await render(<PasswordInput label="Password" readOnly />)
+
+    expect(container.querySelector('[data-rx-password-root]')).toHaveAttribute('data-readonly')
+  })
+})
+
+describe('clear', () => {
+  function ClearHarness(props: UsePasswordInputOptions) {
+    const field = usePasswordInput(props)
+    return (
+      <div>
+        <output data-testid="value">{field.value || 'empty'}</output>
+        <button type="button" onClick={field.clear}>
+          Clear
+        </button>
+      </div>
+    )
+  }
+
+  it('empties the field', async () => {
+    const onChange = vi.fn()
+    await render(<ClearHarness defaultValue="hunter2hunter2" onChange={onChange} />)
+
+    await userEvent.click(page.getByRole('button', { name: 'Clear' }))
+
+    await expect.element(page.getByTestId('value')).toHaveTextContent('empty')
+    expect(onChange).toHaveBeenCalledWith('')
+  })
+
+  it('refuses to clear a read-only field, like every other write path', async () => {
+    const onChange = vi.fn()
+    await render(<ClearHarness defaultValue="hunter2hunter2" readOnly onChange={onChange} />)
+
+    await userEvent.click(page.getByRole('button', { name: 'Clear' }))
+
+    expect(onChange).not.toHaveBeenCalled()
   })
 })

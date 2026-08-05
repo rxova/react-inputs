@@ -3,6 +3,8 @@ import { page, userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-react'
 import { useState } from 'react'
 import { TagsInput } from '../TagsInput'
+import { useTagsInput } from '../useTagsInput'
+import type { UseTagsInputOptions } from '../useTagsInput'
 
 /**
  * Chromium, not jsdom. Everything here depends on real focus movement between
@@ -403,5 +405,66 @@ describe('states', () => {
     expect(removeButtons(container)).toHaveLength(0)
     expect(tagLabels(container)).toEqual(['a', 'b'])
     expect(box(container)).toHaveAttribute('readonly')
+  })
+})
+
+describe('dir, autoFocus and aria-label', () => {
+  it('lays the field out right-to-left', async () => {
+    const { container } = await render(<TagsInput label="Topics" dir="rtl" />)
+
+    expect(
+      getComputedStyle(container.querySelector<HTMLElement>('[data-rx-tags-root]')!).direction,
+    ).toBe('rtl')
+  })
+
+  it('focuses the entry box on mount with autoFocus', async () => {
+    const { container } = await render(<TagsInput label="Topics" autoFocus />)
+
+    expect(document.activeElement).toBe(container.querySelector('[data-rx-tags-input]'))
+  })
+
+  it('takes an aria-label, which wins over label', async () => {
+    // Both are names; a caller passing both means the visible text and the
+    // announced name differ on purpose, so the explicit one has to win.
+    const { container } = await render(<TagsInput label="Topics" aria-label="Article topics" />)
+
+    expect(container.querySelector('[data-rx-tags-input]')).toHaveAccessibleName('Article topics')
+  })
+})
+
+describe('clear', () => {
+  function ClearHarness(props: UseTagsInputOptions) {
+    const field = useTagsInput(props)
+    return (
+      <div>
+        <output data-testid="tags">{field.tags.join('|') || 'empty'}</output>
+        <output data-testid="text">{field.text || 'empty'}</output>
+        <button type="button" onClick={field.clear}>
+          Clear
+        </button>
+      </div>
+    )
+  }
+
+  it('empties the tags and the entry box together', async () => {
+    // Half-clearing is the bug this exists to avoid: a caller who clears a form
+    // and leaves a half-typed tag in the box has a field that still submits.
+    const onChange = vi.fn()
+    await render(<ClearHarness defaultValue={['react', 'a11y']} onChange={onChange} />)
+
+    await userEvent.click(page.getByRole('button', { name: 'Clear' }))
+
+    await expect.element(page.getByTestId('tags')).toHaveTextContent('empty')
+    await expect.element(page.getByTestId('text')).toHaveTextContent('empty')
+    expect(onChange).toHaveBeenCalledWith([])
+  })
+
+  it('refuses to clear a read-only field', async () => {
+    const onChange = vi.fn()
+    await render(<ClearHarness defaultValue={['react']} readOnly onChange={onChange} />)
+
+    await userEvent.click(page.getByRole('button', { name: 'Clear' }))
+
+    expect(onChange).not.toHaveBeenCalled()
   })
 })

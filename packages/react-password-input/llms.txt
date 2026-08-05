@@ -94,6 +94,8 @@ export function SignUp({ email }: { email: string }) {
 | `placeholder` | `string` | — | |
 | `onBlur` | `(event: FocusEvent<HTMLElement>) => void` | — | Fires when focus leaves the whole control, not the input alone. |
 | `onFocus` | `(event: FocusEvent<HTMLElement>) => void` | — | |
+| `autoFocus` | `boolean` | `false` | Focuses the field on mount. |
+| `aria-label` | `string` | — | Accessible name when there is no `label`. Wins over `label`. |
 | `invalid` | `boolean` | `false` | Sets `aria-invalid` and `data-invalid`. |
 | `aria-describedby` | `string` | — | ids of external error/help text; merged with the ids this component owns. |
 | `label` | `ReactNode` | — | Accessible name for the field. **Not rendered** — supply your own `<label htmlFor={id}>` for a visible one. |
@@ -102,7 +104,8 @@ export function SignUp({ email }: { email: string }) {
 | `style` | `CSSProperties` | — | |
 | `onWarn` | `(warning: PasswordWarning) => void` | `console.warn` | Development-only notice that a prop was coerced. Stripped from production builds. |
 
-Also exported: `usePasswordInput` for your own markup, `estimateStrength` and
+Also exported: `usePasswordInput` for your own markup — its result carries
+`clear()` alongside `setValue`, matching every other hook in the suite — `estimateStrength` and
 `STRENGTH_LABELS`, and the rule helpers `commonRules`, `defaultRules`,
 `evaluateRules`, `rulesSatisfied`.
 

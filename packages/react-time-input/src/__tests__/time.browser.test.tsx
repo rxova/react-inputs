@@ -397,3 +397,19 @@ describe('forms', () => {
     expect(onBlur).toHaveBeenCalledTimes(1)
   })
 })
+
+describe('dir', () => {
+  it('lays the field out right-to-left without reordering the segments', async () => {
+    // Direction and segment order are different questions: the order comes from
+    // the locale, so `dir` must move the box without touching what is in it.
+    const { container } = await render(<TimeInput label="Time" locale="en-GB" dir="rtl" />)
+    const root = container.querySelector<HTMLElement>('[data-rx-time-root]')!
+
+    expect(getComputedStyle(root).direction).toBe('rtl')
+    expect(
+      Array.from(container.querySelectorAll('[data-rx-time-segment]')).map((node) =>
+        node.getAttribute('data-rx-time-segment'),
+      ),
+    ).toEqual(['hour', 'minute'])
+  })
+})

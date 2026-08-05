@@ -62,6 +62,8 @@ export interface UsePhoneInputResult {
   /** Flag emoji for an ISO code. */
   flagFor: (iso2: string) => string
   handleInputChange: (event: ChangeEvent<HTMLInputElement>) => void
+  /** Empty the number, keeping the selected country. Present on every input hook in the suite. */
+  clear: () => void
   selectCountry: (iso2: string) => void
   handleBlur: (event: FocusEvent<HTMLElement>) => void
   handleFocus: (event: FocusEvent<HTMLElement>) => void
@@ -243,6 +245,15 @@ export function usePhoneInput(options: UsePhoneInputOptions): UsePhoneInputResul
     [onChange],
   )
 
+  const clear = useCallback(() => {
+    if (disabled || readOnly) return
+    setText('')
+    // The country survives: it is a separate choice from the number, and a
+    // field that reset to the default country on clear would silently discard
+    // the one the user picked.
+    report('', selectedIso2)
+  }, [disabled, readOnly, report, selectedIso2])
+
   /**
    * Reformat as the user types, keeping the caret on the same digit.
    *
@@ -387,6 +398,7 @@ export function usePhoneInput(options: UsePhoneInputOptions): UsePhoneInputResul
     nameFor,
     flagFor,
     handleInputChange,
+    clear,
     selectCountry,
     handleBlur,
     handleFocus,

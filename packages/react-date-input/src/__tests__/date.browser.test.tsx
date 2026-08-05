@@ -472,3 +472,20 @@ describe('forms', () => {
     expect(onBlur).toHaveBeenCalledTimes(1)
   })
 })
+
+describe('dir', () => {
+  it('lays the field out right-to-left without reordering the segments', async () => {
+    // Direction and segment order are different questions. The order comes from
+    // the locale — a Hebrew page showing an en-GB date still wants day, month,
+    // year — so `dir` must move the box without touching what is in it.
+    const { container } = await render(<DateInput label="Date" locale="en-GB" dir="rtl" />)
+    const root = container.querySelector<HTMLElement>('[data-rx-date-root]')!
+
+    expect(getComputedStyle(root).direction).toBe('rtl')
+    expect(
+      Array.from(container.querySelectorAll('[data-rx-date-segment]')).map((node) =>
+        node.getAttribute('data-rx-date-segment'),
+      ),
+    ).toEqual(['day', 'month', 'year'])
+  })
+})

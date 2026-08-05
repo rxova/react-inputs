@@ -116,6 +116,13 @@ export interface FileInputProps {
   disabled?: boolean
   /** Show the selection but refuse changes. */
   readOnly?: boolean
+  /** Focus the field on mount. @default false */
+  autoFocus?: boolean
+  /**
+   * Accessible name, when there is no visible text to point `label` at. Wins
+   * over `label` if both are given.
+   */
+  'aria-label'?: string
   /** Sets `aria-invalid` and `data-invalid`. */
   invalid?: boolean
   /** ids of external error/help text. */

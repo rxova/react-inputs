@@ -67,6 +67,7 @@ so). For every keystroke, use `onPartsChange`.
 | `required` | `boolean` | `false` | |
 | `disabled` | `boolean` | `false` | |
 | `readOnly` | `boolean` | `false` | |
+| `dir` | `'ltr' \| 'rtl'` | inherited | Lays the field out; segment order still comes from `locale`. |
 | `invalid` | `boolean` | `false` | Sets `aria-invalid` and `data-invalid` on the group. |
 | `aria-describedby` | `string` | — | ids of external error/help text. |
 | `id` | `string` | — | Base id; segments derive `${id}-day`, `${id}-month`, `${id}-year`. |

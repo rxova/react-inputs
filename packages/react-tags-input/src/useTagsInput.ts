@@ -70,6 +70,8 @@ export interface UseTagsInputResult {
   setText: (next: string) => void
   /** Commit whatever is in the entry box. Returns whether anything was added. */
   commit: () => boolean
+  /** Empty the field — every tag and the entry box — and announce it. */
+  clear: () => void
   /** Add one candidate directly, applying every rule. */
   addTag: (raw: string) => boolean
   removeAt: (index: number) => void
@@ -287,6 +289,16 @@ export function useTagsInput(options: UseTagsInputOptions): UseTagsInputResult {
     return added
   }, [text, addTag])
 
+  const clear = useCallback(() => {
+    if (disabled || readOnly) return
+    setText('')
+    if (tags.length === 0) return
+    commitTags([])
+    setAnnouncement(
+      announce ? announce({ type: 'remove', tag: '', tags: [] }) : 'Removed all tags.',
+    )
+  }, [disabled, readOnly, tags.length, commitTags, announce])
+
   const focusTag = useCallback((index: number) => {
     tagRefs.current[index]?.focus()
   }, [])
@@ -495,6 +507,7 @@ export function useTagsInput(options: UseTagsInputOptions): UseTagsInputResult {
     tagRefs,
     setText,
     commit,
+    clear,
     addTag,
     removeAt,
     moveActive,

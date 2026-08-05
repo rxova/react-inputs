@@ -15,6 +15,7 @@ export function inspectMinLength(raw: number, used: number): PasswordWarning | n
     return {
       code: 'min-length-negative',
       prop: 'minLength',
+      received: String(raw),
       message: `\`minLength\` must be a non-negative number; received ${String(raw)}. Using ${String(used)}.`,
     }
   }
@@ -22,6 +23,7 @@ export function inspectMinLength(raw: number, used: number): PasswordWarning | n
     return {
       code: 'min-length-non-integer',
       prop: 'minLength',
+      received: String(raw),
       message: `\`minLength\` must be an integer; received ${String(raw)}. Using ${String(used)}.`,
     }
   }
@@ -37,6 +39,7 @@ export function inspectMaxLength(
   return {
     code: 'max-length-below-min',
     prop: 'maxLength',
+    received: String(maxLength),
     message: `\`maxLength\` (${String(maxLength)}) is below \`minLength\` (${String(minLength)}); no password can satisfy both. Ignoring \`maxLength\`.`,
   }
 }
@@ -52,6 +55,7 @@ export function inspectRuleIds(rules: PasswordRule[]): PasswordWarning | null {
       return {
         code: 'duplicate-rule-id',
         prop: 'rules',
+        received: rule.id,
         message: `Two rules share the id "${rule.id}". Ids are used as React keys and as \`data-rule\` values, so they must be unique.`,
       }
     }
@@ -71,6 +75,7 @@ export function inspectAutoComplete(autoComplete: string): PasswordWarning | nul
   return {
     code: 'autocomplete-missing',
     prop: 'autoComplete',
+    received: autoComplete,
     message:
       '`autoComplete` is empty or "off", which stops password managers from filling or generating this field. Use "current-password" to sign in, or "new-password" to sign up or change a password.',
   }
@@ -86,6 +91,7 @@ export function inspectEstimate(threw: boolean): PasswordWarning | null {
   return {
     code: 'estimate-threw',
     prop: 'estimate',
+    received: 'threw',
     message:
       '`estimate` threw and was ignored; the built-in estimator was used for this password instead.',
   }

@@ -70,6 +70,8 @@ export function Attachments() {
 | `required` | `boolean` | `false` | |
 | `disabled` | `boolean` | `false` | |
 | `readOnly` | `boolean` | `false` | Shows the selection but refuses changes. |
+| `autoFocus` | `boolean` | `false` | Focuses the drop zone on mount — the visible affordance, not the hidden input. |
+| `aria-label` | `string` | — | Accessible name when there is no `label`. Wins over `label`. |
 | `invalid` | `boolean` | `false` | Sets `aria-invalid` and `data-invalid`. |
 | `aria-describedby` | `string` | — | ids of external error/help text. |
 | `id` | `string` | — | Base id; the input, drop zone, list and live region derive theirs from it. |

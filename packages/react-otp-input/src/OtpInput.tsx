@@ -44,8 +44,8 @@ const inputOverlayStyle: CSSProperties = {
   cursor: 'text',
 }
 
-const CARET_KEYFRAMES = 'otp-slots-blink'
-const CARET_STYLE_ID = 'otp-slots-caret-style'
+const CARET_KEYFRAMES = 'rx-otp-blink'
+const CARET_STYLE_ID = 'rx-otp-caret-style'
 
 /**
  * Inject the caret blink keyframes once per document (CSP-noncable). Reduced
@@ -132,14 +132,14 @@ function runDevChecks(children: ReactNode, length: number, labelled: boolean): v
     if (bad) {
       // eslint-disable-next-line no-console
       console.warn(
-        `react-otp-slots: <OtpSlot> indices must tile [0, ${String(length)}) exactly once. Rendering what was given.`,
+        `[react-otp-input] <OtpSlot> indices must tile [0, ${String(length)}) exactly once. Rendering what was given.`,
       )
     }
   }
   if (!labelled) {
     // eslint-disable-next-line no-console
     console.warn(
-      'react-otp-slots: <OtpInput> has no accessible name. Pass `label` or `aria-label`.',
+      '[react-otp-input] <OtpInput> has no accessible name. Pass `label` or `aria-label`.',
     )
   }
 }

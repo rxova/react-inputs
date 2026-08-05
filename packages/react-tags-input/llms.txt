@@ -83,6 +83,9 @@ export function Constrained() {
 | `required` | `boolean` | `false` | |
 | `disabled` | `boolean` | `false` | |
 | `readOnly` | `boolean` | `false` | |
+| `dir` | `'ltr' \| 'rtl'` | inherited | |
+| `autoFocus` | `boolean` | `false` | Focuses the entry box on mount. |
+| `aria-label` | `string` | — | Accessible name when there is no `label`. Wins over `label`. |
 | `invalid` | `boolean` | `false` | Sets `aria-invalid` and `data-invalid`. |
 | `aria-describedby` | `string` | — | ids of external error/help text. |
 | `id` | `string` | — | Base id; the list, entry box and live region derive theirs from it. |
@@ -90,7 +93,8 @@ export function Constrained() {
 | `onFocus` | `(event: FocusEvent<HTMLElement>) => void` | — | |
 | `onWarn` | `(warning: TagsWarning) => void` | `console.warn` | Development-only notice that a prop was coerced. Stripped from production builds. |
 
-Also exported: the `useTagsInput` hook and the pure helpers `attempt`,
+Also exported: the `useTagsInput` hook (its result carries `clear()`, which
+empties the tags and the entry box together) and the pure helpers `attempt`,
 `attemptAll`, `sanitize`, `comparable`, `contains`, `splitPasted`.
 
 ## Styling

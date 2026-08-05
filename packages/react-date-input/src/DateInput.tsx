@@ -89,6 +89,7 @@ export const DateInput = /* @__PURE__ */ forwardRef<HTMLDivElement, DateInputPro
       disabled = false,
       readOnly = false,
       invalid,
+      dir,
       'aria-describedby': describedBy,
     } = props
 
@@ -169,6 +170,7 @@ export const DateInput = /* @__PURE__ */ forwardRef<HTMLDivElement, DateInputPro
         ref={ref}
         className={className}
         style={{ ...rootStyle, ...style }}
+        dir={dir}
         data-rx-date-root=""
         data-disabled={disabled ? '' : undefined}
         data-readonly={readOnly ? '' : undefined}

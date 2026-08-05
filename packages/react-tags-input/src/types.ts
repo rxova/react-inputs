@@ -103,6 +103,8 @@ export interface TagsInputProps {
    * @default `Added ${tag}, 3 tags` / `Removed ${tag}, 2 tags`
    */
   announce?: (event: { type: 'add' | 'remove' | 'reject'; tag: string; tags: string[] }) => string
+  /** Writing direction for the field. Inherited from the document when unset. */
+  dir?: 'ltr' | 'rtl'
   className?: string
   style?: CSSProperties
 
@@ -112,6 +114,13 @@ export interface TagsInputProps {
   required?: boolean
   disabled?: boolean
   readOnly?: boolean
+  /** Focus the field on mount. @default false */
+  autoFocus?: boolean
+  /**
+   * Accessible name, when there is no visible text to point `label` at. Wins
+   * over `label` if both are given.
+   */
+  'aria-label'?: string
   /** Sets `aria-invalid` and `data-invalid`. */
   invalid?: boolean
   /** ids of external error/help text. */

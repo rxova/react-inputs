@@ -474,3 +474,49 @@ describe('validity feedback', () => {
     expect(input(container)).not.toHaveAttribute('aria-invalid')
   })
 })
+
+describe('dir, autoFocus, aria-label and readOnly', () => {
+  it('lays the field out right-to-left', async () => {
+    const { container } = await render(<PhoneInput label="Phone" dir="rtl" />)
+
+    expect(
+      getComputedStyle(container.querySelector<HTMLElement>('[data-rx-phone-root]')!).direction,
+    ).toBe('rtl')
+  })
+
+  it('focuses the number field on mount with autoFocus', async () => {
+    const { container } = await render(<PhoneInput label="Phone" autoFocus />)
+
+    expect(document.activeElement).toBe(container.querySelector('[data-rx-phone-input]'))
+  })
+
+  it('takes an aria-label, which wins over label', async () => {
+    const { container } = await render(<PhoneInput label="Phone" aria-label="Mobile number" />)
+
+    expect(container.querySelector('[data-rx-phone-input]')).toHaveAccessibleName('Mobile number')
+  })
+
+  it('marks a read-only field, which styling needs and every sibling already did', async () => {
+    const { container } = await render(<PhoneInput label="Phone" readOnly />)
+
+    expect(container.querySelector('[data-rx-phone-root]')).toHaveAttribute('data-readonly')
+  })
+
+  it('clears the number and keeps the country', async () => {
+    const seen: string[] = []
+    const { container } = await render(
+      <PhoneInput
+        label="Phone"
+        defaultCountry="GB"
+        defaultValue="+442071234567"
+        onChange={(value) => seen.push(value)}
+      />,
+    )
+    const box = container.querySelector<HTMLInputElement>('[data-rx-phone-input]')!
+    await userEvent.tripleClick(box)
+    await userEvent.keyboard('{Backspace}')
+
+    expect(seen.at(-1)).toBe('')
+    expect(container.querySelector<HTMLSelectElement>('[data-rx-phone-country]')!.value).toBe('GB')
+  })
+})

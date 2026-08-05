@@ -108,8 +108,8 @@ describe('useRating', () => {
 
   it('generates a stable group name when none is given', async () => {
     const { result } = await renderHook(() => useRating({ value: 1, onChange: () => undefined }))
-    expect(result.current.name).toMatch(/^rfs-name-/)
-    expect(result.current.baseId).toMatch(/^rfs-/)
+    expect(result.current.name).toMatch(/^rx-rating-name-/)
+    expect(result.current.baseId).toMatch(/^rx-rating-/)
   })
 
   it('emits blur without a hover to clear', async () => {

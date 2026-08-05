@@ -120,6 +120,8 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
       readOnly = false,
       invalid,
       previews = false,
+      autoFocus,
+      'aria-label': ariaLabel,
       'aria-describedby': describedBy,
     } = props
 
@@ -197,8 +199,12 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
           multiple={multiple}
           required={required && files.length === 0}
           disabled={disabled || readOnly}
-          aria-label={typeof label === 'string' ? label : undefined}
-          aria-labelledby={label !== undefined && typeof label !== 'string' ? ids.label : undefined}
+          aria-label={ariaLabel ?? (typeof label === 'string' ? label : undefined)}
+          aria-labelledby={
+            ariaLabel === undefined && label !== undefined && typeof label !== 'string'
+              ? ids.label
+              : undefined
+          }
           aria-invalid={invalid ? true : undefined}
           aria-describedby={describedBy}
           style={hiddenInputStyle}
@@ -221,6 +227,10 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
           // WebKit leaves buttons out of the tab order unless Full Keyboard
           // Access is on; without this the drop zone is unreachable in Safari.
           tabIndex={0}
+          // On the zone, not on the `<input type="file">`: the input is
+          // visually hidden, so focusing it would put the ring nowhere a
+          // sighted keyboard user can see.
+          autoFocus={autoFocus}
           data-rx-file-zone=""
           data-dragging={dragging ? '' : undefined}
           disabled={disabled || readOnly}

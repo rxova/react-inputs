@@ -97,6 +97,8 @@ export interface PhoneInputProps {
    * element, since `aria-label` only takes a string.
    */
   label?: ReactNode
+  /** Writing direction for the field. Inherited from the document when unset. */
+  dir?: 'ltr' | 'rtl'
   placeholder?: string
   className?: string
   style?: CSSProperties
@@ -124,6 +126,13 @@ export interface PhoneInputProps {
     details: PhoneDetails
   }) => ReactNode
 
+  /** Focus the field on mount. @default false */
+  autoFocus?: boolean
+  /**
+   * Accessible name, when there is no visible text to point `label` at. Wins
+   * over `label` if both are given.
+   */
+  'aria-label'?: string
   /** Sets `aria-invalid` and `data-invalid`. */
   invalid?: boolean
   /** ids of external error/help text. */
