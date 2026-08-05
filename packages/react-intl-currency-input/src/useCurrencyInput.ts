@@ -117,6 +117,10 @@ export function useCurrencyInput(options: UseCurrencyInputOptions): UseCurrencyI
       // Both fire when both are given, which is what a caller migrating one call
       // site at a time would expect.
       if (onValueChange) {
+        // A bundler folds this to a constant and drops the warning in a
+        // production build, so the other arm is unreachable once compiled and
+        // cannot be exercised by the (always-development) test build.
+        /* v8 ignore next */
         if (process.env.NODE_ENV !== 'production') {
           devWarnOnce(
             'onValueChange',
