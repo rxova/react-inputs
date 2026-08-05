@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
 import react from '@astrojs/react'
@@ -67,7 +69,30 @@ const component = (name, pkg) => {
   })
 }
 
-const typeDocPlugins = COMPONENTS.map(({ slug, dir }) => component(slug, dir))
+/**
+ * Regenerating every component's API reference costs more than `astro dev`
+ * allows for startup.
+ *
+ * TypeDoc runs once per component, each taking a few seconds. At three
+ * components that was tolerable; at nine it crosses the 30-second budget the
+ * dev server gives startup, and `astro dev` exits with "Dev server failed to
+ * start within 30s" — so the site became undevelopable the moment the suite
+ * grew, with nothing pointing at the cause.
+ *
+ * The generated pages live in the content directory and survive between runs,
+ * so dev reuses the last build's output instead of rebuilding it. A component
+ * whose pages are missing is still generated, which keeps a fresh clone
+ * working and means the skip can never leave the sidebar pointing at nothing.
+ * `DOCS_API=1 pnpm dev` forces a full regeneration when a signature changed.
+ */
+const apiIsCurrent = (slug) =>
+  existsSync(fileURLToPath(new URL(`./src/content/docs/components/${slug}/api`, import.meta.url)))
+
+const regenerateApi = process.env.DOCS_API === '1' || process.env.npm_lifecycle_event === 'build'
+
+const typeDocPlugins = COMPONENTS.filter(({ slug }) => regenerateApi || !apiIsCurrent(slug)).map(
+  ({ slug, dir }) => component(slug, dir),
+)
 
 /**
  * A component's landing page. Starlight only emits routes for files that exist,
