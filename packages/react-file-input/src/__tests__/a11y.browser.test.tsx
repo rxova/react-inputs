@@ -217,6 +217,19 @@ describe('semantics', () => {
     expect(input(container)).toBeDisabled()
     expect(zone(container)).toBeDisabled()
   })
+
+  it('renders a visible focus indicator on the drop zone', async () => {
+    // Tabbed to, not focused programmatically: Chromium gates a button's UA
+    // ring on `:focus-visible`, which a script-driven `.focus()` does not
+    // satisfy. A keyboard user is who this is for, so a keyboard is what the
+    // test uses.
+    const { container } = await render(<FileInput label="Files" />)
+    await userEvent.tab()
+    await userEvent.tab()
+
+    expect(document.activeElement).toBe(zone(container))
+    expect(getComputedStyle(zone(container)).outlineStyle).not.toBe('none')
+  })
 })
 
 describe('axe', () => {

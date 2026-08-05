@@ -120,6 +120,19 @@ describe('semantics', () => {
     await userEvent.tab()
     expect(document.activeElement).toBe(segment(container, 'year'))
   })
+
+  it('renders a visible focus indicator on the focused segment', async () => {
+    // A `<span role="spinbutton">` gets no ring from the browser, and the
+    // package suppresses the UA outline to control its own. Without something
+    // in its place a keyboard user cannot tell which of three segments they are
+    // on — WCAG 2.4.7 with no mitigation, and invisible to every other test.
+    const { container } = await render(<DateInput label="Date" />)
+    await userEvent.tab()
+
+    const focused = container.querySelector<HTMLElement>('[data-rx-date-segment][data-focused]')
+    expect(focused).not.toBeNull()
+    expect(getComputedStyle(focused!).outlineStyle).not.toBe('none')
+  })
 })
 
 describe('axe', () => {

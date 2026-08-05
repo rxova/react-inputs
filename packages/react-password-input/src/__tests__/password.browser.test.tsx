@@ -603,3 +603,27 @@ describe('clear', () => {
     expect(onChange).not.toHaveBeenCalled()
   })
 })
+
+describe('blur', () => {
+  it('fires onBlur only when focus leaves the whole field', async () => {
+    // The one claim in this package that had no test. `usePasswordInput`
+    // checks containment before forwarding the event, and the reveal toggle is
+    // *inside* the field — so moving to it must stay silent. Every other input
+    // in the suite pins this; the odd one out is where it quietly regresses.
+    const onBlur = vi.fn()
+    const { container } = await render(
+      <>
+        <PasswordInput label="Password" onBlur={onBlur} />
+        <button type="button">Elsewhere</button>
+      </>,
+    )
+    container.querySelector<HTMLInputElement>('[data-rx-password-input]')!.focus()
+    container.querySelector<HTMLButtonElement>('[data-rx-password-toggle]')!.focus()
+
+    expect(onBlur).not.toHaveBeenCalled()
+
+    await page.getByRole('button', { name: 'Elsewhere' }).click()
+
+    expect(onBlur).toHaveBeenCalledTimes(1)
+  })
+})

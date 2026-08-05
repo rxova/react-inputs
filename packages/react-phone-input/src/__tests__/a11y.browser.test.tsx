@@ -96,6 +96,14 @@ describe('semantics', () => {
     const hidden = container.querySelector<HTMLInputElement>('[data-rx-phone-value]')!
     expect(hidden.type).toBe('hidden')
   })
+
+  it('renders a visible focus indicator on the number field', async () => {
+    const { container } = await render(<PhoneInput label="Phone" />)
+    const input = container.querySelector<HTMLInputElement>('[data-rx-phone-input]')!
+    input.focus()
+
+    expect(getComputedStyle(input).outlineStyle).not.toBe('none')
+  })
 })
 
 describe('axe', () => {

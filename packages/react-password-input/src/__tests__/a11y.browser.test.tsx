@@ -126,6 +126,14 @@ describe('semantics', () => {
     expect(box.width).toBeGreaterThanOrEqual(24)
     expect(box.height).toBeGreaterThanOrEqual(24)
   })
+
+  it('renders a visible focus indicator on the field', async () => {
+    const { container } = await render(<PasswordInput label="Password" />)
+    const input = container.querySelector<HTMLInputElement>('[data-rx-password-input]')!
+    input.focus()
+
+    expect(getComputedStyle(input).outlineStyle).not.toBe('none')
+  })
 })
 
 describe('axe', () => {

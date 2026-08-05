@@ -19,9 +19,9 @@ export default defineConfig({
         },
       },
       {
-        // Everything about this component is geometry, clipping, hover and
-        // focus. jsdom has no layout engine, so a jsdom assertion about a
-        // partial fill would be asserting a string, not a rendering.
+        // Segment focus, arrow stepping and the focus ring are all real browser
+        // behaviour. jsdom has no layout engine and only a sketch of focus, so
+        // an assertion there would be asserting our own mock back at us.
         extends: true,
         test: {
           name: 'browser',

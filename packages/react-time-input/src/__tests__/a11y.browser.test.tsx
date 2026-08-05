@@ -116,6 +116,18 @@ describe('semantics', () => {
     await userEvent.tab()
     expect(document.activeElement).toBe(seg(container, 'dayPeriod'))
   })
+
+  it('renders a visible focus indicator on the focused segment', async () => {
+    // A `<span role="spinbutton">` gets no ring from the browser, and the
+    // package suppresses the UA outline to control its own. Without something
+    // in its place a keyboard user cannot tell which segment they are on.
+    const { container } = await render(<TimeInput label="Time" />)
+    await userEvent.tab()
+
+    const focused = container.querySelector<HTMLElement>('[data-rx-time-segment][data-focused]')
+    expect(focused).not.toBeNull()
+    expect(getComputedStyle(focused!).outlineStyle).not.toBe('none')
+  })
 })
 
 describe('axe', () => {

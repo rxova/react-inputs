@@ -190,6 +190,8 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
         data-invalid={invalid ? '' : undefined}
         data-valid={valid ? '' : undefined}
         data-score={showStrength ? strength.score : undefined}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
       >
         {/*
           `label` names the field; it does not render one. Every component in
@@ -248,8 +250,6 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
             onKeyDown={handleModifierEvent}
             onKeyUp={handleModifierEvent}
             onClick={handleModifierEvent}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
           />
 
           {hideRevealToggle ? null : (

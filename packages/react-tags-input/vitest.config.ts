@@ -19,9 +19,9 @@ export default defineConfig({
         },
       },
       {
-        // Everything about this component is geometry, clipping, hover and
-        // focus. jsdom has no layout engine, so a jsdom assertion about a
-        // partial fill would be asserting a string, not a rendering.
+        // The roving tab order, the focus handoff after a removal and paste
+        // splitting are all real browser behaviour — and focus landing on
+        // `<body>` is the bug being prevented, which jsdom cannot show.
         extends: true,
         test: {
           name: 'browser',

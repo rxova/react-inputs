@@ -468,3 +468,16 @@ describe('clear', () => {
     expect(onChange).not.toHaveBeenCalled()
   })
 })
+
+describe('Delete', () => {
+  it('removes the focused tag, which the keyboard table promises and nothing asserted', async () => {
+    const onChange = vi.fn()
+    const { container } = await render(
+      <TagsInput label="Topics" defaultValue={['react', 'vue']} onChange={onChange} />,
+    )
+    removeButtons(container)[0]!.focus()
+    await userEvent.keyboard('{Delete}')
+
+    expect(onChange).toHaveBeenCalledWith(['vue'])
+  })
+})

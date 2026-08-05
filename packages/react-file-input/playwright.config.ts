@@ -6,10 +6,11 @@ import { defineConfig, devices } from '@playwright/test'
  * library to source, so the specs exercise the same component the browser suite
  * does, composed into a full page.
  *
- * All three engines, not just Chromium. This component's whole segment order is
- * decided by `Intl.DateTimeFormat().formatToParts`, and the three engines ship
- * three different ICU builds — so "does `en-GB` really put the day first here"
- * is a question only a real run in each engine can answer.
+ * All three engines, not just Chromium. File selection is the part of the
+ * platform the engines agree on least: `DataTransfer` construction, what a
+ * synthesised drop carries, whether a hidden `<input type="file">` opens its
+ * picker from `.click()`, and — in WebKit — whether the drop zone button is in
+ * the tab order at all. None of that is answerable outside a real engine.
  */
 export default defineConfig({
   testDir: './e2e',

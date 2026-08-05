@@ -19,9 +19,9 @@ export default defineConfig({
         },
       },
       {
-        // Everything about this component is geometry, clipping, hover and
-        // focus. jsdom has no layout engine, so a jsdom assertion about a
-        // partial fill would be asserting a string, not a rendering.
+        // As-you-type formatting is caret arithmetic: the offset the browser
+        // reports stops meaning what it meant the moment a separator moves.
+        // jsdom has no selection model worth asserting against.
         extends: true,
         test: {
           name: 'browser',

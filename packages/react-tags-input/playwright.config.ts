@@ -6,10 +6,12 @@ import { defineConfig, devices } from '@playwright/test'
  * library to source, so the specs exercise the same component the browser suite
  * does, composed into a full page.
  *
- * All three engines, not just Chromium. This component's whole segment order is
- * decided by `Intl.DateTimeFormat().formatToParts`, and the three engines ship
- * three different ICU builds — so "does `en-GB` really put the day first here"
- * is a question only a real run in each engine can answer.
+ * All three engines, not just Chromium. Two of this component's promises are
+ * engine-specific and cannot be checked anywhere else: WebKit leaves buttons out
+ * of the tab order unless Full Keyboard Access is on, which is why every remove
+ * button carries an explicit `tabindex` — and Firefox ignores `clipboardData`
+ * passed to a synthesised `ClipboardEvent`, so the paste-splitting path behaves
+ * differently there than the browser suite can show.
  */
 export default defineConfig({
   testDir: './e2e',

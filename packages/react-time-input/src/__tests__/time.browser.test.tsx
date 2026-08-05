@@ -413,3 +413,15 @@ describe('dir', () => {
     ).toEqual(['hour', 'minute'])
   })
 })
+
+describe('Delete', () => {
+  it('clears a segment, which the keyboard table promises and nothing asserted', async () => {
+    const { container } = await render(
+      <TimeInput label="Time" locale="en-GB" defaultValue="09:30" />,
+    )
+    seg(container, 'minute').focus()
+    await userEvent.keyboard('{Delete}')
+
+    expect(text(container, 'minute')).toBe('mm')
+  })
+})

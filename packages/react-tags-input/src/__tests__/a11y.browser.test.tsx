@@ -134,6 +134,15 @@ describe('semantics', () => {
     const tabbable = removeButtons(container).filter((button) => button.tabIndex === 0)
     expect(tabbable).toHaveLength(1)
   })
+
+  it('renders a visible focus indicator on the entry box', async () => {
+    // The package used to set `outline: none` here with nothing in its place,
+    // which left the field's only text tab stop invisible to a keyboard user.
+    const { container } = await render(<TagsInput label="Topics" />)
+    box(container).focus()
+
+    expect(getComputedStyle(box(container)).outlineStyle).not.toBe('none')
+  })
 })
 
 describe('axe', () => {

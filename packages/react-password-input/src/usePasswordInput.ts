@@ -467,9 +467,15 @@ export function usePasswordInput(options: UsePasswordInputOptions): UsePasswordI
       // Focus moving to the reveal button is still "inside the field" — hiding
       // the password on the way to the button that shows it would make the
       // button impossible to use with a keyboard.
+      //
+      // Wire this to the element that *contains* the input and the toggle, not
+      // to the input: `focusout` bubbles, so a root-level handler sees focus
+      // leaving from either one. Attached to the input alone it never fires
+      // when the user tabs away from the toggle — which is the ordinary way out
+      // of this field, and was unreported for exactly as long as this package
+      // had no `onBlur` test.
       const next = event.relatedTarget
-      const insideField =
-        next instanceof Node && event.currentTarget.parentElement?.contains(next) === true
+      const insideField = next instanceof Node && event.currentTarget.contains(next)
       if (!insideField) {
         setCapsLock(false)
         // Guarded on `revealed`: an unguarded call reported `false` on every

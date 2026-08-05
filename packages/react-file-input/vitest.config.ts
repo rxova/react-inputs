@@ -19,9 +19,9 @@ export default defineConfig({
         },
       },
       {
-        // Everything about this component is geometry, clipping, hover and
-        // focus. jsdom has no layout engine, so a jsdom assertion about a
-        // partial fill would be asserting a string, not a rendering.
+        // Drag-and-drop, `DataTransfer`, object URLs and the file picker are
+        // browser APIs jsdom stubs rather than implements — and the URL leak
+        // this component exists to avoid is only observable in a real one.
         extends: true,
         test: {
           name: 'browser',
