@@ -4,6 +4,8 @@ sidebar:
   order: 3
 ---
 
+import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+
 The decisions behind the component, and the ones you should disagree with deliberately rather than
 by accident.
 
@@ -265,3 +267,10 @@ and the number box — so picking a country does not mark the field touched befo
   )}
 </form.Field>
 ```
+
+## UI-library recipes
+
+The country selector and number input are one field. These recipes preserve that focus and blur
+boundary while using the design system for labels, help text, and errors.
+
+<IntegrationRecipes slug="phone" />

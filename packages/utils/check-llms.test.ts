@@ -53,8 +53,21 @@ const LLMS = [
 const TYPES = ['export interface ThingProps {', '  length?: number', '}', ''].join('\n')
 
 /** A published package with everything in place, which is the passing shape. */
-function validPackage({ llms = LLMS, types = TYPES, files = ['dist', 'llms.txt'] } = {}) {
-  write('packages/thing/package.json', JSON.stringify({ name: '@rxova/thing', files }))
+function validPackage({
+  llms = LLMS,
+  types = TYPES,
+  files = ['dist', 'llms.txt'],
+  slug,
+}: {
+  llms?: string
+  types?: string
+  files?: string[]
+  slug?: string
+} = {}) {
+  write(
+    'packages/thing/package.json',
+    JSON.stringify({ name: '@rxova/thing', files, rxova: slug ? { slug } : undefined }),
+  )
   write('packages/thing/llms.txt', llms)
   write('packages/thing/src/types.ts', types)
 }
@@ -162,6 +175,15 @@ describe('checkLlms', () => {
     validPackage({ llms: LLMS.replace('## Docs', '## Elsewhere') })
 
     expect(reasons()).toEqual(['llms.txt is missing a "## Docs" section'])
+  })
+
+  it('requires registry and recipe links for a component package', () => {
+    validPackage({ slug: 'thing' })
+
+    expect(reasons()).toEqual([
+      'llms.txt is missing its copyable registry URL (/r/thing-field.json)',
+      'llms.txt is missing its UI-library recipes URL (/components/thing/about/#ui-library-recipes)',
+    ])
   })
 
   // @rxova/codemod is a CLI invoked with npx, so demanding an Install section

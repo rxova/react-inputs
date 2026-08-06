@@ -1,31 +1,24 @@
 'use client'
 
-/**
- * A labelled currency field, ready to drop into a form.
- *
- * Distributed through the registry at /r/currency-field.json, so `shadcn add`
- * copies this file into your project and you own it from there. The component
- * itself stays an npm dependency — this is the wiring around it.
- *
- * Unlike the OTP and rating fields this one uses a real `<label htmlFor>`: the
- * currency input IS a plain `<input>`, so the label points at something a click
- * can usefully focus.
- */
 import { useId } from 'react'
 import { CurrencyInput, type CurrencyInputProps } from '@rxova/react-intl-currency-input'
 
 import './currency-field.css'
 
-export interface CurrencyFieldProps extends CurrencyInputProps {
-  /** Visible label, and the accessible name. */
-  children?: React.ReactNode
-  /** Helper text under the field. Announced via `aria-describedby`. */
+export interface CurrencyFieldProps extends Omit<
+  CurrencyInputProps,
+  'aria-label' | 'aria-describedby' | 'invalid'
+> {
+  /** Visible and accessible label. */
+  label: string
+  /** Helper text announced with the input. */
   description?: string
-  /** Error text. Its presence is what marks the field invalid. */
+  /** Error text; its presence marks the input invalid. */
   error?: string
 }
 
-export function CurrencyField({ children, description, error, id, ...props }: CurrencyFieldProps) {
+/** A labelled currency field copied into the consumer by the Rxova registry. */
+export function CurrencyField({ label, description, error, id, ...props }: CurrencyFieldProps) {
   const generated = useId()
   const fieldId = id ?? generated
   const describedBy = [description && `${fieldId}-description`, error && `${fieldId}-error`]
@@ -34,19 +27,15 @@ export function CurrencyField({ children, description, error, id, ...props }: Cu
 
   return (
     <div className="rx-field" data-invalid={error ? '' : undefined}>
-      {children ? (
-        <label className="rx-field__label" htmlFor={fieldId}>
-          {children}
-        </label>
-      ) : null}
-
+      <label className="rx-field__label" htmlFor={fieldId}>
+        {label}
+      </label>
       <CurrencyInput
         {...props}
         id={fieldId}
         invalid={Boolean(error)}
         aria-describedby={describedBy || undefined}
       />
-
       {description ? (
         <p className="rx-field__description" id={`${fieldId}-description`}>
           {description}

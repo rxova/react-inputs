@@ -1,0 +1,33 @@
+---
+title: 'Framework compatibility'
+description: Production-build and browser evidence for using all nine Rxova inputs with Vite, Next.js and Remix.
+sidebar:
+  order: 5
+---
+
+import FrameworkCompatibilityMatrix from '@components/FrameworkCompatibilityMatrix.astro'
+
+The meta-package is continuously exercised through three real application fixtures. Each fixture
+imports all nine inputs from `@rxova/react-inputs`, builds in production mode, starts the production
+output, hydrates it in Chromium, performs a meaningful interaction with every component, runs axe,
+and fails on browser console errors.
+
+<FrameworkCompatibilityMatrix />
+
+The dependency ranges in this table are read directly from the fixture manifests during the docs
+build, so this page cannot silently drift from CI. These are proven configurations, not a claim that
+other bundlers or framework versions are unsupported.
+
+## What the fixtures protect
+
+- The Vite fixture covers the conventional client-rendered package-consumer path.
+- The Next.js App Router fixture catches server/client boundary, RSC and hydration problems.
+- The Remix-lineage fixture uses current React Router framework mode, the official successor that
+  Remix v2 applications are encouraged to adopt. It catches a second SSR and hydration toolchain
+  with Vite-based production output without pinning the proof to Remix 2's vulnerable legacy tree.
+- Every fixture imports the public meta-package, so package exports and cross-package boundaries are
+  tested as consumers see them.
+
+Package tarballs also pass an isolated install-and-import smoke test before release. Framework proof
+does not replace each component's Chromium, Firefox and WebKit E2E suite; it complements those suites
+at the application boundary.

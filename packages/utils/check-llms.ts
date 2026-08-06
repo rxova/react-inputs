@@ -49,11 +49,19 @@ export function publishedPackages(repoRoot: string) {
     .filter(({ manifestPath }) => existsSync(manifestPath))
     .map(({ dir, manifestPath }) => ({ dir, manifest: readManifest(manifestPath) }))
     .filter(({ manifest }) => manifest.private !== true)
-    .map(({ dir, manifest }) => ({
-      dir,
-      name: manifest.name,
-      files: Array.isArray(manifest.files) ? (manifest.files as string[]) : [],
-    }))
+    .map(({ dir, manifest }) => {
+      const rxova = manifest.rxova
+      const slug =
+        typeof rxova === 'object' && rxova !== null && 'slug' in rxova
+          ? (rxova as { slug?: unknown }).slug
+          : undefined
+      return {
+        dir,
+        name: manifest.name,
+        files: Array.isArray(manifest.files) ? (manifest.files as string[]) : [],
+        slug: typeof slug === 'string' ? slug : undefined,
+      }
+    })
 }
 
 /**
@@ -159,6 +167,16 @@ export function checkLlms(repoRoot: string = process.cwd()): Failure[] {
     }
     if (!/^## Docs$/m.test(body)) {
       add(`${LLMS_FILE} is missing a "## Docs" section`)
+    }
+    if (pkg.slug !== undefined) {
+      const registryPath = `/r/${pkg.slug}-field.json`
+      if (!body.includes(registryPath)) {
+        add(`${LLMS_FILE} is missing its copyable registry URL (${registryPath})`)
+      }
+      const recipesPath = `/components/${pkg.slug}/about/#ui-library-recipes`
+      if (!body.includes(recipesPath)) {
+        add(`${LLMS_FILE} is missing its UI-library recipes URL (${recipesPath})`)
+      }
     }
 
     // A package with a props table must keep it honest. Packages without one

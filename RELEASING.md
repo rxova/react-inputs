@@ -7,6 +7,12 @@ The published packages (all `@rxova/*`, public):
 | `@rxova/react-intl-currency-input` | — (new name; `react-intl-currency-input` is a third party's, not ours) |
 | `@rxova/react-rating-input`        | `react-feedback-stars`                                                 |
 | `@rxova/react-otp-input`           | -                                                                      |
+| `@rxova/react-password-input`      | -                                                                      |
+| `@rxova/react-phone-input`         | -                                                                      |
+| `@rxova/react-date-input`          | -                                                                      |
+| `@rxova/react-time-input`          | -                                                                      |
+| `@rxova/react-tags-input`          | -                                                                      |
+| `@rxova/react-file-input`          | -                                                                      |
 | `@rxova/react-inputs` (meta)       | —                                                                      |
 | `@rxova/codemod`                   | -                                                                      |
 
@@ -37,12 +43,14 @@ pnpm -r --filter='./packages/*' --filter='!@rxova/utils' exec npm publish --acce
 
 ## Cutting a release
 
-- **First release:** there are no changesets yet, so the Release workflow's publish step runs
-  `pnpm run release` (`turbo run build && changeset publish`) and publishes every public package
-  at its **current** version (none are on npm yet). Trigger it from the Actions tab →
-  _Release_ → _Run workflow_ on `main`.
-- **Subsequent releases:** add a changeset per user-facing change (`pnpm exec changeset`), merge
-  to `main`. The workflow opens a "version packages" PR; merging that PR publishes.
+- Add a changeset per user-facing change (`pnpm exec changeset`) and merge to `main`. The workflow
+  opens a "version packages" PR; merging that PR publishes. New packages start at `0.1.0` through
+  a `minor` changeset rather than publishing the placeholder `0.0.0` from source.
+- Never edit package versions or changelogs by hand. The generated version PR is the review point
+  for the exact version set and release notes.
+- After Changesets publishes, the release job installs the exact reported versions from npm in a
+  fresh project and resolves each React package through ESM and CommonJS. This catches registry
+  propagation or a missing publication after the pre-release tarball checks have passed.
 
 ## Deprecating the old packages
 

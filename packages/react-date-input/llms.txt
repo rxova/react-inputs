@@ -112,6 +112,9 @@ plus the state hooks `data-complete`, `data-out-of-range`, `data-placeholder`,
 
 ## Docs
 
+- Copyable labelled field: https://rxova.org/packages/react-inputs/r/date-field.json
+- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/date/about/#ui-library-recipes
+
 - Introduction: https://rxova.org/packages/react-inputs/components/date/introduction/
 - Usage: https://rxova.org/packages/react-inputs/components/date/usage/
 - Everything else (forms, ranges, theming, SSR): https://rxova.org/packages/react-inputs/components/date/about/

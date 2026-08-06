@@ -109,6 +109,7 @@ jobs:
       # renamed in types.ts would leave the table describing an API that no
       # longer exists with every other check still green.
       - run: pnpm exec turbo run check:llms
+      - run: pnpm run check:a11y-manual
       - run: pnpm run lint
       - run: pnpm run typecheck
 
@@ -276,6 +277,30 @@ jobs:
           path: |
             packages/*/playwright-report
             packages/*/test-results
+          if-no-files-found: ignore
+
+  frameworks:
+    name: Vite · Next · Remix compatibility
+    needs: [commitlint]
+    if: github.head_ref != 'changeset-release/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-pnpm
+      - uses: ./.github/actions/turbo-cache
+      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup-playwright
+        with:
+          browsers: chromium
+      - run: pnpm run test:frameworks
+      - name: Upload compatibility reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: framework-compatibility-report
+          path: |
+            apps/compat-*/playwright-report
+            apps/compat-*/test-results
           if-no-files-found: ignore
 
   changeset:

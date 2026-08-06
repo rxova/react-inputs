@@ -56,6 +56,8 @@ const [code, setCode] = useState('')
   `<form>` submission all come from the platform, not from hand-rolled JavaScript across N inputs.
 - **Tap any slot to edit it.** The input's characters sit at their true slot pitch, so a click or tap
   lands the caret where you touched — which a collapsed single-input field physically can't do.
+- **Type immediately after clicking.** Keyboard input cancels any still-pending pointer placement,
+  so a delayed browser frame cannot move the caret and reorder a rapidly typed code.
 - **WebOTP** — programmatic SMS retrieval ([`useWebOTP`](/components/otp/about)) that no other OTP
   library ships.
 - **Headless** — zero runtime dependencies, no stylesheet, ~3.6 kB brotli, styled entirely with

@@ -1,0 +1,37 @@
+{
+  "component": "rating",
+  "scenarioVersion": 1,
+  "sourceHash": "sha256:e855f8d63e82bd86f7009a8813378984aadafa90be0bb6965b5ae4872c8003a1",
+  "results": [
+    {
+      "combination": "voiceover-safari",
+      "status": "pending",
+      "testedAt": null,
+      "tester": null,
+      "osVersion": null,
+      "browserVersion": null,
+      "assistiveTechnologyVersion": null,
+      "notes": ""
+    },
+    {
+      "combination": "nvda-chrome",
+      "status": "pending",
+      "testedAt": null,
+      "tester": null,
+      "osVersion": null,
+      "browserVersion": null,
+      "assistiveTechnologyVersion": null,
+      "notes": ""
+    },
+    {
+      "combination": "nvda-firefox",
+      "status": "pending",
+      "testedAt": null,
+      "tester": null,
+      "osVersion": null,
+      "browserVersion": null,
+      "assistiveTechnologyVersion": null,
+      "notes": ""
+    }
+  ]
+}

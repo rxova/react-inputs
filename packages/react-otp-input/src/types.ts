@@ -84,7 +84,8 @@ export interface OtpInputProps {
   blurOnComplete?: boolean
   /**
    * 'spatial' = tap any slot to edit it (auto-degrades to 'crush' on iOS, which
-   * cannot fully hide `::selection`); 'crush' = collapsed-input behaviour everywhere.
+   * cannot fully hide `::selection`); keyboard input always takes precedence over
+   * deferred pointer placement. 'crush' = collapsed-input behaviour everywhere.
    * @default 'spatial'
    */
   slotInteraction?: OtpSlotInteraction

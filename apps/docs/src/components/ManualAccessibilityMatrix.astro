@@ -1,0 +1,50 @@
+---
+import { manualA11yRecords } from '../lib/manual-a11y-proof.mjs'
+
+const combinations = [
+  ['voiceover-safari', 'VoiceOver + Safari'],
+  ['nvda-chrome', 'NVDA + Chrome'],
+  ['nvda-firefox', 'NVDA + Firefox'],
+]
+---
+
+<div class="sl-table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>Component</th>
+        {combinations.map(([, label]) => <th>{label}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {
+        manualA11yRecords.map((record) => (
+          <tr>
+            <th scope="row">{record.component}</th>
+            {combinations.map(([combination]) => {
+              const result = record.results.find(
+                (candidate) => candidate.combination === combination,
+              )
+              return result?.status === 'pass' ? (
+                <td>
+                  <strong>Pass</strong>
+                  <br />
+                  <small>
+                    {result.testedAt} · {result.tester}
+                  </small>
+                  <br />
+                  <small>
+                    {result.osVersion} · {result.browserVersion} ·{' '}
+                    {result.assistiveTechnologyVersion}
+                  </small>
+                </td>
+              ) : (
+                <td>Pending human test</td>
+              )
+            })}
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>

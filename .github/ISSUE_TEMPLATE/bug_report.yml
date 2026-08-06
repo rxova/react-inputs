@@ -1,18 +1,35 @@
 name: 'Bug report'
-description: 'Report a reproducible problem in react-intl-currency-input.'
+description: 'Report a reproducible problem in an Rxova input package.'
 title: 'bug: '
 labels: ['bug']
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for the report. The fields below are the axes this component actually
-        varies on — filling them in usually identifies the cause immediately.
+        Thanks for the report. Please identify the exact package and include the
+        smallest reproduction that still shows the problem.
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      options:
+        - '@rxova/react-intl-currency-input'
+        - '@rxova/react-rating-input'
+        - '@rxova/react-otp-input'
+        - '@rxova/react-password-input'
+        - '@rxova/react-phone-input'
+        - '@rxova/react-date-input'
+        - '@rxova/react-time-input'
+        - '@rxova/react-tags-input'
+        - '@rxova/react-file-input'
+        - '@rxova/react-inputs (meta-package)'
+    validations:
+      required: true
   - type: input
     id: version
     attributes:
       label: Version
-      placeholder: 'react-intl-currency-input@x.y.z'
+      placeholder: '@rxova/react-date-input@x.y.z'
     validations:
       required: true
   - type: input
@@ -42,25 +59,15 @@ body:
         - Controlled (value + onChange)
         - Uncontrolled (defaultValue)
         - Inside a form library
-        - The useCurrencyInput hook directly
+        - The package hook directly
     validations:
       required: true
   - type: input
-    id: locale
+    id: environment
     attributes:
-      label: locale / currency
-      description: 'The pair in use. Most formatting differences trace back to this — please include it.'
-      placeholder: "locale='bg-BG' currency='EUR'"
-    validations:
-      required: true
-  - type: input
-    id: value
-    attributes:
-      label: The amount involved
-      description: 'The numeric value and, if relevant, what the field displayed vs. what you expected.'
-      placeholder: '50000 → showed "50000 €", expected "50 000 €"'
-    validations:
-      required: true
+      label: Browser, locale, writing direction, and assistive technology
+      description: 'Include everything relevant; write “not applicable” for non-browser build issues.'
+      placeholder: 'Safari 18, he-IL, RTL, VoiceOver'
   - type: textarea
     id: expected
     attributes:
@@ -83,4 +90,4 @@ body:
         - label: 'The page is right-to-left'
         - label: 'The user prefers reduced motion'
         - label: 'A strict Content Security Policy is in effect'
-        - label: 'Custom `--rx-rating-*` CSS variables are set'
+        - label: 'Custom `--rx-<component>-*` CSS variables are set'

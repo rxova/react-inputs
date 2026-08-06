@@ -1,0 +1,32 @@
+---
+title: 'Accessibility evidence'
+description: Automated WCAG checks and the current manual VoiceOver and NVDA test status for every Rxova input.
+sidebar:
+  order: 4
+---
+
+import ManualAccessibilityMatrix from '@components/ManualAccessibilityMatrix.astro'
+
+Automated browser checks run axe against every component in Chromium, Firefox, and WebKit. They
+catch invalid semantics and ARIA relationships, but they cannot report what a screen reader
+announced. The matrix below comes from version-controlled human test records tied to a hash of each
+component's shippable source.
+
+<ManualAccessibilityMatrix />
+
+## Required manual matrix
+
+Every component must pass VoiceOver with Safari, NVDA with Chrome, and NVDA with Firefox before a
+release can proceed. Any non-test source change invalidates that component's record. Evidence does
+not expire solely by age.
+
+The complete shared and component-specific procedure lives in the repository's
+[manual testing checklist](https://github.com/rxova/react-inputs/blob/main/accessibility/MANUAL_TESTING.md).
+
+## What automation still proves
+
+- Per-file unit and browser coverage protects the state machines and rendering branches.
+- Whole-page Playwright suites cover native form submission, focus order, RTL, and axe scans.
+- Framework fixtures exercise production SSR/RSC and hydration rather than a synthetic DOM.
+- Native controls provide keyboard semantics; the components do not reimplement platform behavior
+  with speculative key handlers.

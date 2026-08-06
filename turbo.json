@@ -167,6 +167,12 @@
       "outputs": ["playwright-report/**", "test-results/**"],
       "outputLogs": "new-only"
     },
+    "compat": {
+      "dependsOn": ["build"],
+      "inputs": ["e2e/**", "playwright.config.ts"],
+      "outputs": ["playwright-report/**", "test-results/**"],
+      "outputLogs": "new-only"
+    },
     // No `start` task. It was the Docusaurus-era name for the docs dev server,
     // and after the Starlight migration no package declared it — so
     // `turbo run start` matched nothing, printed "No tasks were executed" and

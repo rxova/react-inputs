@@ -1,8 +1,25 @@
 name: 'Feature request'
-description: 'Suggest a capability for react-intl-currency-input.'
+description: 'Suggest a capability for the Rxova React Inputs suite.'
 title: 'feat: '
 labels: ['enhancement']
 body:
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      options:
+        - '@rxova/react-intl-currency-input'
+        - '@rxova/react-rating-input'
+        - '@rxova/react-otp-input'
+        - '@rxova/react-password-input'
+        - '@rxova/react-phone-input'
+        - '@rxova/react-date-input'
+        - '@rxova/react-time-input'
+        - '@rxova/react-tags-input'
+        - '@rxova/react-file-input'
+        - '@rxova/react-inputs (whole suite)'
+    validations:
+      required: true
   - type: textarea
     id: problem
     attributes:
@@ -20,7 +37,7 @@ body:
     id: workaround
     attributes:
       label: Current workaround
-      description: 'Can you achieve this today with the existing formatting options, the `useCurrencyInput` hook, or `Intl.NumberFormat` options? If so, what makes that unsatisfying?'
+      description: 'Can you achieve this with the existing component, its hook, or native platform APIs? If so, what remains unsatisfying?'
   - type: checkboxes
     id: constraints
     attributes:

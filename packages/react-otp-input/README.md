@@ -29,6 +29,8 @@ recipes, theming, WebOTP, and migration guides from other OTP libraries.
   semantics all come from the platform, not from hand-rolled JavaScript
 - **Tap any slot to edit it** — the input's characters sit at their true slot pitch, so a click or tap
   lands the caret where you touched, which a collapsed single-input field physically can't do
+- **Rapid typing stays ordered** — if keyboard input begins before a click's caret placement has
+  settled, the keyboard wins; a delayed pointer frame never moves the caret midway through the code
 - **WebOTP** — programmatic SMS retrieval (`useWebOTP`) that no other OTP library ships
 - **Headless** — zero runtime dependencies, no stylesheet to import, ~4.3 kB brotli
 - **Form-ready** — string `onChange`, native `name`, and first-class React Hook Form / Formik / React
@@ -199,6 +201,17 @@ repeated. Slots are `aria-hidden` decoration. `label` / `aria-label` name the fi
 > **iOS note:** the default `slotInteraction="spatial"` auto-degrades to `"crush"` on iOS, which cannot
 > fully hide the native `::selection`. Tap-to-edit stays keyboard-plus-caret there; it is full spatial
 > everywhere else. Force either mode explicitly with the `slotInteraction` prop.
+
+## UI-library recipes
+
+The docs contain maintained examples for shadcn/ui, Radix Themes, Material UI, Chakra UI, Mantine
+and Ant Design. Copy a ready-labelled wrapper with:
+
+```bash
+npx shadcn@latest add https://rxova.org/packages/react-inputs/r/otp-field.json
+```
+
+[Open the recipes](https://rxova.org/packages/react-inputs/components/otp/about/#ui-library-recipes).
 
 ## Part of rxova
 

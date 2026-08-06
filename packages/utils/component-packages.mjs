@@ -32,7 +32,7 @@ const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'))
 /**
  * Every self-declared component package, alphabetically by label.
  *
- * Returns `{ dir, name, slug, label, title }` — `dir` is the directory under
+ * Returns `{ dir, name, slug, label, title, description }` — `dir` is the directory under
  * packages/ and the segment CI uses, `name` the npm name, `slug` the URL and
  * route segment, `label` the sidebar entry, `title` a human heading.
  *
@@ -66,6 +66,7 @@ export function componentPackages(repoRoot = REPO_ROOT) {
           slug: rxova.slug,
           label: rxova.label ?? rxova.slug,
           title: rxova.title ?? rxova.label ?? rxova.slug,
+          description: manifest.description ?? rxova.title ?? rxova.label ?? rxova.slug,
         },
       ]
     })

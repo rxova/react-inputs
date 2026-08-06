@@ -212,6 +212,17 @@ etc.). See the
 [form-library guide](https://rxova.org/packages/react-inputs/components/currency/about/#form-libraries)
 for React Hook Form, Formik, React Final Form and TanStack Form.
 
+## UI-library recipes
+
+The docs contain maintained examples for shadcn/ui, Radix Themes, Material UI, Chakra UI, Mantine
+and Ant Design. Copy a ready-labelled wrapper with:
+
+```bash
+npx shadcn@latest add https://rxova.org/packages/react-inputs/r/currency-field.json
+```
+
+[Open the recipes](https://rxova.org/packages/react-inputs/components/currency/about/#ui-library-recipes).
+
 ## Part of rxova
 
 Part of the [rxova headless React inputs](https://rxova.org/packages/react-inputs/overview) suite —

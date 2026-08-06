@@ -100,6 +100,10 @@ describe('verify gate', () => {
     expect(steps.some((step) => step.script === 'check:llms')).toBe(true)
   })
 
+  it('blocks a release without current manual assistive-technology evidence', () => {
+    expect(steps.some((step) => step.script === 'check:a11y-manual')).toBe(true)
+  })
+
   it('keeps e2e out of the gate', () => {
     const ids = steps
       .flatMap((step) => (step.turbo !== undefined ? [...step.turbo] : [step.script]))

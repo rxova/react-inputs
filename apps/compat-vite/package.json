@@ -1,0 +1,26 @@
+{
+  "name": "@rxova/compat-vite",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "preview": "vite preview --port 4301 --strictPort",
+    "typecheck": "tsc --noEmit",
+    "compat": "playwright test"
+  },
+  "dependencies": {
+    "@rxova/react-inputs": "workspace:*",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@playwright/test": "1.62.1",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "typescript": "6.0.3",
+    "@vitejs/plugin-react": "^6.0.5",
+    "vite": "^8.2.0"
+  }
+}

@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: 'Questions and ideas (GitHub Discussions)'
-    url: 'https://github.com/rxova/react-intl-currency-input/discussions'
+    url: 'https://github.com/rxova/react-inputs/discussions'
     about: 'Usage questions, ideas, or open-ended discussion.'
   - name: 'Security reports'
-    url: 'https://github.com/rxova/react-intl-currency-input/security/policy'
+    url: 'https://github.com/rxova/react-inputs/security/policy'
     about: 'Please report security issues privately via the policy page.'

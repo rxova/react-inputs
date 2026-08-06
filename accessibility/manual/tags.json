@@ -1,0 +1,37 @@
+{
+  "component": "tags",
+  "scenarioVersion": 1,
+  "sourceHash": "sha256:51e90347c0f68503b21d5dcd1e0ed82e8a3d85652654c2bc02266425553d177c",
+  "results": [
+    {
+      "combination": "voiceover-safari",
+      "status": "pending",
+      "testedAt": null,
+      "tester": null,
+      "osVersion": null,
+      "browserVersion": null,
+      "assistiveTechnologyVersion": null,
+      "notes": ""
+    },
+    {
+      "combination": "nvda-chrome",
+      "status": "pending",
+      "testedAt": null,
+      "tester": null,
+      "osVersion": null,
+      "browserVersion": null,
+      "assistiveTechnologyVersion": null,
+      "notes": ""
+    },
+    {
+      "combination": "nvda-firefox",
+      "status": "pending",
+      "testedAt": null,
+      "tester": null,
+      "osVersion": null,
+      "browserVersion": null,
+      "assistiveTechnologyVersion": null,
+      "notes": ""
+    }
+  ]
+}

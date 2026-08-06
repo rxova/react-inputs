@@ -301,6 +301,17 @@ Also handled: visible focus ring that the fill layer's `overflow: hidden` cannot
 §2.5.8 24×24 px minimum. That is inherent to half-star input. Use `precision={1}` or a larger
 `--rx-rating-size` where that matters.
 
+## UI-library recipes
+
+The docs contain maintained examples for shadcn/ui, Radix Themes, Material UI, Chakra UI, Mantine
+and Ant Design. Copy a ready-labelled wrapper with:
+
+```bash
+npx shadcn@latest add https://rxova.org/packages/react-inputs/r/rating-field.json
+```
+
+[Open the recipes](https://rxova.org/packages/react-inputs/components/rating/about/#ui-library-recipes).
+
 ## Part of rxova
 
 Part of the [rxova headless React inputs](https://rxova.org/packages/react-inputs/overview) suite —

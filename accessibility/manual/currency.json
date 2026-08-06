@@ -1,0 +1,37 @@
+{
+  "component": "currency",
+  "scenarioVersion": 1,
+  "sourceHash": "sha256:331633164e7e14ca78ac5e2d2e8154f666269cd544f20c4318140a97a16a0230",
+  "results": [
+    {
+      "combination": "voiceover-safari",
+      "status": "pending",
+      "testedAt": null,
+      "tester": null,
+      "osVersion": null,
+      "browserVersion": null,
+      "assistiveTechnologyVersion": null,
+      "notes": ""
+    },
+    {
+      "combination": "nvda-chrome",
+      "status": "pending",
+      "testedAt": null,
+      "tester": null,
+      "osVersion": null,
+      "browserVersion": null,
+      "assistiveTechnologyVersion": null,
+      "notes": ""
+    },
+    {
+      "combination": "nvda-firefox",
+      "status": "pending",
+      "testedAt": null,
+      "tester": null,
+      "osVersion": null,
+      "browserVersion": null,
+      "assistiveTechnologyVersion": null,
+      "notes": ""
+    }
+  ]
+}

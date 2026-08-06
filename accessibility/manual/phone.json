@@ -1,0 +1,37 @@
+{
+  "component": "phone",
+  "scenarioVersion": 1,
+  "sourceHash": "sha256:72c2b40126767f66f1c82d1b126b4f9cb39bee011fa58287ab51028e3f91a467",
+  "results": [
+    {
+      "combination": "voiceover-safari",
+      "status": "pending",
+      "testedAt": null,
+      "tester": null,
+      "osVersion": null,
+      "browserVersion": null,
+      "assistiveTechnologyVersion": null,
+      "notes": ""
+    },
+    {
+      "combination": "nvda-chrome",
+      "status": "pending",
+      "testedAt": null,
+      "tester": null,
+      "osVersion": null,
+      "browserVersion": null,
+      "assistiveTechnologyVersion": null,
+      "notes": ""
+    },
+    {
+      "combination": "nvda-firefox",
+      "status": "pending",
+      "testedAt": null,
+      "tester": null,
+      "osVersion": null,
+      "browserVersion": null,
+      "assistiveTechnologyVersion": null,
+      "notes": ""
+    }
+  ]
+}

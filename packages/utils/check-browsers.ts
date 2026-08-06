@@ -1,72 +1,99 @@
+/**
+ * Keeps the installed browser list and bounded local concurrency in step with
+ * every component package's Playwright config.
+ *
+ * The checks are pure over a supplied repository root so tests can exercise
+ * broken fixtures without mutating this checkout. The CLI adapter is guarded at
+ * the bottom, matching the other release-gate scripts in this package.
+ */
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 import process from 'node:process'
+import { pathToFileURL } from 'node:url'
+
 import { readManifest } from './manifest'
 
-/**
- * Keeps the browser list in the root `e2e:install` in step with the projects
- * every package's Playwright config actually launches.
- *
- * These drifted once already: a `playwright.config.ts` gained firefox and webkit
- * while the release workflow still installed only chromium, and the release job
- * died at launch with "Executable doesn't exist at .../webkit-2311/pw_run.sh".
- * That is a slow, expensive way to discover a one-word mismatch. In the monorepo
- * `e2e:install` lives at the root and each package owns its own config, so this
- * checks every config against the single install list.
- */
-
-const root = process.cwd()
-
-const rootPkg = readManifest(resolve(root, 'package.json'))
-const install = rootPkg.scripts?.['e2e:install']
-if (!install) {
-  console.error('✖ root package.json has no `e2e:install` script')
-  process.exit(1)
+export interface BrowserCheckResult {
+  readonly configs: number
+  readonly projects: readonly string[]
+  readonly failures: readonly string[]
 }
 
-const packagesDir = resolve(root, 'packages')
-const configs = readdirSync(packagesDir, { withFileTypes: true })
-  .filter((entry) => entry.isDirectory())
-  .map((entry) => resolve(packagesDir, entry.name, 'playwright.config.ts'))
-  .filter(existsSync)
+export function checkBrowserConfigs(repoRoot: string = process.cwd()): BrowserCheckResult {
+  const failures: string[] = []
+  const rootPkg = readManifest(resolve(repoRoot, 'package.json'))
+  const install = rootPkg.scripts?.['e2e:install']
+  const e2e = rootPkg.scripts?.e2e
+  const serial = rootPkg.scripts?.['e2e:serial']
 
-if (configs.length === 0) {
-  console.error('✖ found no packages/*/playwright.config.ts to check')
-  process.exit(1)
-}
-
-let failed = false
-const allProjects = new Set()
-
-for (const configPath of configs) {
-  const config = readFileSync(configPath, 'utf8')
-  const projects = [...config.matchAll(/name:\s*'([a-z]+)'/g)]
-    .map((m) => m[1])
-    .filter((name): name is string => name !== undefined)
-  const relative = configPath.slice(root.length + 1)
-
-  if (projects.length === 0) {
-    console.error(`✖ could not find any Playwright projects in ${relative}`)
-    failed = true
-    continue
+  if (!install) failures.push('root package.json has no `e2e:install` script')
+  if (!e2e?.includes('--concurrency=3')) {
+    failures.push('root `e2e` must cap Turbo package concurrency at 3')
+  }
+  if (!serial?.includes('--concurrency=1')) {
+    failures.push('root `e2e:serial` must cap Turbo package concurrency at 1')
   }
 
-  const missing = projects.filter((browser) => !install.includes(browser))
-  if (missing.length > 0) {
-    console.error(
-      `✖ ${relative} launches [${projects.join(', ')}] but root \`e2e:install\` only installs:\n` +
-        `    ${install}\n` +
-        `  Missing: ${missing.join(', ')}\n` +
-        '  Add them to the root `e2e:install` script; CI derives its browser set from it.',
-    )
-    failed = true
+  const configRoots = [
+    { dir: resolve(repoRoot, 'packages'), include: () => true },
+    { dir: resolve(repoRoot, 'apps'), include: (name: string) => name.startsWith('compat-') },
+  ]
+  const configs = configRoots.flatMap(({ dir, include }) =>
+    existsSync(dir)
+      ? readdirSync(dir, { withFileTypes: true })
+          .filter((entry) => entry.isDirectory() && include(entry.name))
+          .map((entry) => resolve(dir, entry.name, 'playwright.config.ts'))
+          .filter(existsSync)
+      : [],
+  )
+
+  if (configs.length === 0) failures.push('found no component or compatibility Playwright configs')
+
+  const allProjects = new Set<string>()
+  for (const configPath of configs) {
+    const config = readFileSync(configPath, 'utf8')
+    const projects = [...config.matchAll(/name:\s*'([a-z]+)'/g)]
+      .map((match) => match[1])
+      .filter((name): name is string => name !== undefined)
+    const relative = configPath.slice(repoRoot.length + 1)
+
+    if (projects.length === 0) {
+      failures.push(`${relative} declares no Playwright projects`)
+      continue
+    }
+    if (!/\bworkers:\s*1\s*,/.test(config)) {
+      failures.push(`${relative} must set \`workers: 1\``)
+    }
+
+    if (install) {
+      const missing = projects.filter((browser) => !install.includes(browser))
+      if (missing.length > 0) {
+        failures.push(
+          `${relative} launches [${projects.join(', ')}], but e2e:install omits ${missing.join(', ')}`,
+        )
+      }
+    }
+    projects.forEach((project) => allProjects.add(project))
   }
-  projects.forEach((p) => allProjects.add(p))
+
+  return {
+    configs: configs.length,
+    projects: [...allProjects],
+    failures,
+  }
 }
 
-if (failed) process.exit(1)
+const isEntrypoint =
+  process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href
 
-console.log(
-  `✔ root e2e:install covers every Playwright project across ${String(configs.length)} packages ` +
-    `(${[...allProjects].join(', ')})`,
-)
+if (isEntrypoint) {
+  const result = checkBrowserConfigs()
+  if (result.failures.length > 0) {
+    console.error(`E2E configuration check failed:\n- ${result.failures.join('\n- ')}`)
+    process.exit(1)
+  }
+  console.log(
+    `✔ bounded E2E workers and installed browsers agree across ${String(result.configs)} packages ` +
+      `(${result.projects.join(', ')})`,
+  )
+}

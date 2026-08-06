@@ -3,10 +3,12 @@
 
 import type { APIRoute } from 'astro'
 
-import { items } from '../../lib/registry-items.mjs'
+import { registryItems } from '../../lib/registry-items.mjs'
 import { registryIndex } from '../../lib/registry.mjs'
 
 export const prerender = true
+
+const items = registryItems(__RXOVA_COMPONENTS__)
 
 export const GET: APIRoute = () =>
   new Response(JSON.stringify(registryIndex(items, import.meta.env.SITE), null, 2), {

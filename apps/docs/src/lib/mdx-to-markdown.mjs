@@ -139,6 +139,26 @@ export function expandLiveExamples(text) {
   )
 }
 
+/** `<IntegrationRecipes slug="otp" />` into the exact compiled recipe sources. */
+export function expandIntegrationRecipes(text, loadRecipes = () => []) {
+  return text.replace(/^[ \t]*<IntegrationRecipes\s+slug="([^"]+)"\s*\/>[ \t]*$/gm, (_, slug) =>
+    loadRecipes(slug)
+      .map(
+        ({ label, href, source }) =>
+          `### [${label}](${href})\n\n\`\`\`tsx\n${source.trim()}\n\`\`\``,
+      )
+      .join('\n\n'),
+  )
+}
+
+export function expandManualAccessibilityMatrix(text, matrix = '') {
+  return text.replace(/^[ \t]*<ManualAccessibilityMatrix\s*\/>[ \t]*$/gm, matrix)
+}
+
+export function expandFrameworkCompatibilityMatrix(text, matrix = '') {
+  return text.replace(/^[ \t]*<FrameworkCompatibilityMatrix\s*\/>[ \t]*$/gm, matrix)
+}
+
 /**
  * Site-root URLs into absolute ones.
  *
@@ -171,8 +191,24 @@ export function absolutizeUrls(text, { origin, base }) {
  * and `BASE_URL`), so a build for the aggregator and a build for a preview each
  * emit links to themselves.
  */
-export function mdxToMarkdown(source, { origin, base = '/' }) {
-  const expanded = mapUnfenced(source, expandLiveExamples)
+export function mdxToMarkdown(
+  source,
+  {
+    origin,
+    base = '/',
+    recipesFor = () => [],
+    manualA11yMatrix = '',
+    frameworkCompatibilityMatrix = '',
+  },
+) {
+  const withRecipes = mapUnfenced(source, (chunk) => expandIntegrationRecipes(chunk, recipesFor))
+  const withA11y = mapUnfenced(withRecipes, (chunk) =>
+    expandManualAccessibilityMatrix(chunk, manualA11yMatrix),
+  )
+  const withFrameworks = mapUnfenced(withA11y, (chunk) =>
+    expandFrameworkCompatibilityMatrix(chunk, frameworkCompatibilityMatrix),
+  )
+  const expanded = mapUnfenced(withFrameworks, expandLiveExamples)
 
   return (
     mapUnfenced(

@@ -112,6 +112,9 @@ Or target the `data-*` attributes, which are public API covered by semver:
 
 ## Docs
 
+- Copyable labelled field: https://rxova.org/packages/react-inputs/r/time-field.json
+- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/time/about/#ui-library-recipes
+
 - Introduction: https://rxova.org/packages/react-inputs/components/time/introduction/
 - Usage: https://rxova.org/packages/react-inputs/components/time/usage/
 - Everything else (forms, ranges, theming, SSR): https://rxova.org/packages/react-inputs/components/time/about/

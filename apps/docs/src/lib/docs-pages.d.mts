@@ -28,6 +28,7 @@ export interface ComponentRef {
   label?: string
   title?: string
   name?: string
+  description?: string
 }
 
 export declare const HOME: string

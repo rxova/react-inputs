@@ -4,7 +4,10 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "baseUrl": ".",
-    "paths": { "@components/*": ["src/components/*"] }
+    "paths": {
+      "@components/*": ["src/components/*"],
+      "@/components/rxova/*": ["src/registry/*"]
+    }
   },
   "include": [".astro/types.d.ts", "**/*"],
   // build/ is the old Docusaurus output; .astro/ and dist/ are generated.

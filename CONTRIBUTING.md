@@ -16,9 +16,6 @@ docs site.
 | `packages/react-password-input/`      | `@rxova/react-password-input` — password input, strength meter, reveal toggle.       |
 | `packages/react-date-input/`          | `@rxova/react-date-input` — segmented date field, no calendar.                       |
 | `packages/react-time-input/`          | `@rxova/react-time-input` — segmented time field, no popup.                          |
-| `packages/react-password-input/`      | `@rxova/react-password-input` — password input with strength and breach checks.      |
-| `packages/react-date-input/`          | `@rxova/react-date-input` — segmented date input (no calendar).                      |
-| `packages/react-time-input/`          | `@rxova/react-time-input` — segmented time input.                                    |
 | `packages/react-tags-input/`          | `@rxova/react-tags-input` — tag / token input.                                       |
 | `packages/react-file-input/`          | `@rxova/react-file-input` — file picker and drop zone (no uploading).                |
 | `packages/react-inputs/`              | `@rxova/react-inputs` — meta-package that re-exports the whole suite.                |
@@ -58,7 +55,8 @@ Orchestrated by Turborepo, so tasks run in dependency order and cache across pac
 pnpm build             # turbo run build — every package, ^build ordered
 pnpm test              # unit + browser suites across packages
 pnpm test:coverage     # enforces 95% per file
-pnpm e2e               # Playwright per package, against the built playground
+pnpm e2e               # Playwright per package, max three suites at once
+pnpm e2e:serial        # Same suites, one package at a time for constrained machines
 pnpm lint / typecheck / format
 pnpm size              # bundle-size budgets
 pnpm check:exports     # publint + attw
@@ -95,6 +93,8 @@ Also:
 - **If you changed behaviour, change the prose in the same PR.** Grep the package README and the
   docs for the prop you touched. A fix that ships with docs still teaching the old behaviour ships
   invisible.
+- **Run both gates before handoff.** `pnpm verify` is the local pre-push/release gate; whole-page
+  Playwright suites are intentionally separate, so follow it with `pnpm e2e`.
 
 ## Rules
 

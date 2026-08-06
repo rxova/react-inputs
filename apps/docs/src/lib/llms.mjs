@@ -90,6 +90,7 @@ export function groupPages(pages, components) {
  */
 export function llmsIndex(pages, components, origin) {
   const { groups, optional } = groupPages(pages, components)
+  const registryNames = components.map(({ slug }) => `${slug}-field`)
 
   const lines = [
     '# Rxova React Inputs',
@@ -120,11 +121,9 @@ export function llmsIndex(pages, components, origin) {
     '',
     `    npx shadcn@latest add ${origin}/r/otp-field.json`,
     '',
-    `Registry index: ${origin}/r/registry.json — currency-field, otp-field,`,
-    'rating-field. Each copies a label/description/error wrapper plus a stylesheet',
-    'into your project and keeps the component itself as an npm dependency. The',
-    'other six components are installed from npm directly; their registry items',
-    'ship with the release that publishes those packages.',
+    `Registry index: ${origin}/r/registry.json — ${registryNames.join(', ')}.`,
+    'Each item copies a label/description/error wrapper plus a stylesheet into',
+    'your project and keeps the component itself as a versioned npm dependency.',
     '',
   ]
 

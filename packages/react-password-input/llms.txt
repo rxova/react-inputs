@@ -148,6 +148,9 @@ Or target the `data-*` attributes, which are public API covered by semver:
 
 ## Docs
 
+- Copyable labelled field: https://rxova.org/packages/react-inputs/r/password-field.json
+- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/password/about/#ui-library-recipes
+
 - Introduction: https://rxova.org/packages/react-inputs/components/password/introduction/
 - Usage: https://rxova.org/packages/react-inputs/components/password/usage/
 - Everything else (forms, theming, breach checks, SSR): https://rxova.org/packages/react-inputs/components/password/about/

@@ -112,6 +112,9 @@ Or target the `data-*` attributes, which are public API covered by semver:
 
 ## Docs
 
+- Copyable labelled field: https://rxova.org/packages/react-inputs/r/phone-field.json
+- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/phone/about/#ui-library-recipes
+
 - Introduction: https://rxova.org/packages/react-inputs/components/phone/introduction/
 - Usage: https://rxova.org/packages/react-inputs/components/phone/usage/
 - Everything else (forms, validity, theming, SSR): https://rxova.org/packages/react-inputs/components/phone/about/

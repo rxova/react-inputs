@@ -6,12 +6,17 @@
 
 import type { APIRoute, GetStaticPaths } from 'astro'
 
-import { items } from '../../lib/registry-items.mjs'
+import { registryItems } from '../../lib/registry-items.mjs'
 
 export const prerender = true
 
+const items = registryItems(__RXOVA_COMPONENTS__)
+
 export const getStaticPaths: GetStaticPaths = () =>
-  items.map((item) => ({ params: { name: item.name }, props: { item } }))
+  items.map((item: { name: string; [key: string]: unknown }) => ({
+    params: { name: item.name },
+    props: { item },
+  }))
 
 export const GET: APIRoute = ({ props }) =>
   new Response(JSON.stringify(props.item, null, 2), {

@@ -4,6 +4,8 @@ sidebar:
   order: 3
 ---
 
+import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+
 The decisions behind the component, and the ones you should disagree with deliberately rather than
 by accident.
 
@@ -289,3 +291,10 @@ function Field() {
 
 React Final Form starts a field as `''`, which is not a time. The guard above is the binding's job:
 the component takes `null` for empty.
+
+## UI-library recipes
+
+Keep the segmented spinbuttons and localized day period intact; use the design system for the
+field's visible label, helper text, validation, and layout.
+
+<IntegrationRecipes slug="time" />

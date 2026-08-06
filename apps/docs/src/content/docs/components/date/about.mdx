@@ -4,6 +4,8 @@ sidebar:
   order: 3
 ---
 
+import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+
 The decisions behind the component, and the ones you should disagree with deliberately rather than
 by accident.
 
@@ -277,3 +279,10 @@ function Field() {
 
 React Final Form starts a field as `''`, which is not an ISO date. The guard above is the binding's
 job: the component takes `null` for empty.
+
+## UI-library recipes
+
+Keep the locale-ordered spinbutton segments as one widget. The surrounding design-system field
+provides visual hierarchy without flattening the date into a fictional native text input.
+
+<IntegrationRecipes slug="date" />

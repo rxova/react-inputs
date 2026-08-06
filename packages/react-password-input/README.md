@@ -389,6 +389,17 @@ function CustomField() {
 - axe (WCAG 2.1 A/AA) runs over the component in the browser suite and over the whole demo page in
   the E2E suite, in Chromium, Firefox and WebKit.
 
+## UI-library recipes
+
+The docs contain maintained examples for shadcn/ui, Radix Themes, Material UI, Chakra UI, Mantine
+and Ant Design. Copy a ready-labelled wrapper with:
+
+```bash
+npx shadcn@latest add https://rxova.org/packages/react-inputs/r/password-field.json
+```
+
+[Open the recipes](https://rxova.org/packages/react-inputs/components/password/about/#ui-library-recipes).
+
 ## Part of rxova
 
 Part of the [rxova headless React inputs](https://rxova.org/packages/react-inputs/overview) suite —

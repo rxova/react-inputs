@@ -4,6 +4,8 @@ sidebar:
   order: 3
 ---
 
+import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+
 The decisions behind the component, and the ones you should disagree with deliberately rather than
 by accident.
 
@@ -281,3 +283,10 @@ function Field() {
 
 React Final Form starts a field as `''`, which is not an array. The guard above is the binding's
 job, not the component's.
+
+## UI-library recipes
+
+The tag list, roving focus, entry box, and live region stay together. These recipes add design-system
+field chrome without claiming combobox semantics or replacing keyboard behavior.
+
+<IntegrationRecipes slug="tags" />

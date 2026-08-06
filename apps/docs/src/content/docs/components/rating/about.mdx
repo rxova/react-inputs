@@ -5,6 +5,7 @@ sidebar:
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
+import IntegrationRecipes from '@components/IntegrationRecipes.astro'
 
 ## Custom icons
 
@@ -954,3 +955,10 @@ function ReviewForm() {
   submission and surfaces the message.
 - **`field.state.meta.errors` is an array** and `!field.state.meta.isValid` is true whenever it is
   non-empty — drive both the message and the `invalid` prop from it.
+
+## UI-library recipes
+
+The Rxova component remains the radiogroup; the design system supplies field layout and validation
+presentation without replacing native radio semantics.
+
+<IntegrationRecipes slug="rating" />

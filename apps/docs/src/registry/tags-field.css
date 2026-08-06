@@ -1,0 +1,35 @@
+.rx-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  --rx-tags-gap: 0.5rem;
+  --rx-tags-tag-gap: 0.25rem;
+  --rx-tags-tag-padding: 0.25rem 0.5rem;
+  --rx-tags-tag-radius: var(--radius, 0.5rem);
+  --rx-tags-tag-background: hsl(var(--muted, 210 40% 96%));
+  --rx-tags-remove-size: 1.25rem;
+}
+
+.rx-field input {
+  min-height: 2.5rem;
+  font: inherit;
+}
+
+.rx-field__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.rx-field__description,
+.rx-field__error {
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+.rx-field__description {
+  color: hsl(var(--muted-foreground, 215 16% 47%));
+}
+
+.rx-field__error {
+  color: hsl(var(--destructive, 0 84% 60%));
+}

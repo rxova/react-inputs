@@ -87,6 +87,9 @@ import. `data-invalid` is public API, covered by semver.
 
 ## Docs
 
+- Copyable labelled field: https://rxova.org/packages/react-inputs/r/currency-field.json
+- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/currency/about/#ui-library-recipes
+
 - Introduction: https://rxova.org/packages/react-inputs/components/currency/introduction/
 - Usage: https://rxova.org/packages/react-inputs/components/currency/usage/
 - Everything else (forms, design systems, theming, SSR): https://rxova.org/packages/react-inputs/components/currency/about/

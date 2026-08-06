@@ -4,6 +4,8 @@ sidebar:
   order: 3
 ---
 
+import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+
 The decisions behind the component, and the ones you should disagree with deliberately rather than
 by accident.
 
@@ -318,3 +320,10 @@ reveal toggle — so a field is not marked touched the moment someone clicks the
   )}
 </form.Field>
 ```
+
+## UI-library recipes
+
+Keep the password input, reveal button, meter, and announcements together. Use the design system
+around that composite control rather than rebuilding only its visible input.
+
+<IntegrationRecipes slug="password" />

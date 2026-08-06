@@ -1,0 +1,23 @@
+---
+import { recipesFor } from '../lib/recipe-sources.mjs'
+
+interface Props {
+  slug: string
+}
+
+const { slug } = Astro.props
+const recipes = recipesFor(slug)
+---
+
+{
+  recipes.map(({ id, label, href, source }) => (
+    <section class="rx-integration-recipe">
+      <h3 id={`integration-${id}`}>
+        <a href={href}>{label}</a>
+      </h3>
+      <pre class="astro-code">
+        <code>{source}</code>
+      </pre>
+    </section>
+  ))
+}

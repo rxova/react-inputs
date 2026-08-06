@@ -5,6 +5,7 @@ sidebar:
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
+import IntegrationRecipes from '@components/IntegrationRecipes.astro'
 
 ## Localization
 
@@ -49,6 +50,14 @@ function Demo() {
   )
 }
 ```
+
+## UI-library recipes
+
+These examples compile against the UI-library versions used by this repository. Single native
+inputs can hand their hook contract to the design system; composite widgets keep their tested
+semantics intact and use the design system for field chrome.
+
+<IntegrationRecipes slug="currency" />
 
 ### `locale`, or `language` + `country`
 

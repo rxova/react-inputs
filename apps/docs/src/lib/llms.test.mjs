@@ -147,6 +147,8 @@ describe('llmsIndex', () => {
       /npx shadcn@latest add https:\/\/rxova\.org\/packages\/react-inputs\/r\/otp-field\.json/,
     )
     assert.match(doc, /https:\/\/rxova\.org\/packages\/react-inputs\/r\/registry\.json/)
+    assert.match(doc, /currency-field/)
+    assert.match(doc, /otp-field/)
   })
 })
 

@@ -126,6 +126,9 @@ plus the state hooks `data-count`, `data-full`, `data-focused`, `data-disabled`,
 
 ## Docs
 
+- Copyable labelled field: https://rxova.org/packages/react-inputs/r/tags-field.json
+- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/tags/about/#ui-library-recipes
+
 - Introduction: https://rxova.org/packages/react-inputs/components/tags/introduction/
 - Usage: https://rxova.org/packages/react-inputs/components/tags/usage/
 - Everything else (forms, keyboard, theming, SSR): https://rxova.org/packages/react-inputs/components/tags/about/

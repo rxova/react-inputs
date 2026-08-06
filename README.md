@@ -179,6 +179,12 @@ packages/
   react-intl-currency-input   currency input
   react-rating-input          rating input
   react-otp-input             OTP input
+  react-password-input        password input
+  react-phone-input           international phone input
+  react-date-input            segmented date input
+  react-time-input            segmented time input
+  react-tags-input            tags / token input
+  react-file-input            file picker and drop zone
   react-inputs                meta-package, re-exports the suite
   codemod                     jscodeshift migration transforms
   demo-kit                    shared demo primitives (private, dev-only)
@@ -195,8 +201,9 @@ apps/
 - **Vitest** (unit + browser), **Playwright** e2e, **`@axe-core/playwright`** a11y,
   **size-limit** budgets, **publint** / **attw** export checks
 - **ESLint** flat config (type-checked), **Prettier**, **commitlint** + **husky** + **lint-staged**
-- `pnpm verify` runs the full release gate. `pnpm check:docs` type-checks every snippet in this
-  README and in each package README, so the examples above cannot rot.
+- `pnpm verify` runs the local release gate; `pnpm e2e` runs the whole-page suites with bounded
+  concurrency. `pnpm check:docs` type-checks every snippet in this README and in each package
+  README, so the examples above cannot rot.
 
 </details>
 

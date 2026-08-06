@@ -56,6 +56,7 @@ describe('componentPackages', () => {
         slug: 'otp',
         label: 'OTP',
         title: 'otp input',
+        description: 'otp input',
       },
     ])
   })

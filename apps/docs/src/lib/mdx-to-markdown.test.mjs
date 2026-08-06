@@ -8,6 +8,8 @@ import { describe, it } from 'vitest'
 import assert from 'node:assert/strict'
 
 import {
+  expandIntegrationRecipes,
+  expandFrameworkCompatibilityMatrix,
   mdxToMarkdown,
   mapUnfenced,
   stripImports,
@@ -95,6 +97,43 @@ describe('expandLiveExamples', () => {
   it('undoes the template-literal escaping a fence does not want', () => {
     const out = expandLiveExamples('<LiveExample code={`const a = \\`x\\${y}\\``} />')
     assert.match(out, /const a = `x\$\{y\}`/)
+  })
+})
+
+describe('expandIntegrationRecipes', () => {
+  it('turns the authored component into labelled copy-paste code', () => {
+    const source = '<IntegrationRecipes slug="otp" />'
+    const output = expandIntegrationRecipes(source, (slug) => [
+      { label: 'Material UI', href: 'https://mui.com', source: `// ${slug}` },
+    ])
+
+    assert.match(output, /^### \[Material UI\]\(https:\/\/mui\.com\)$/m)
+    assert.match(output, /```tsx\n\/\/ otp\n```/)
+  })
+
+  it('does not expand a component-looking line inside a fence', () => {
+    const source = ['```mdx', '<IntegrationRecipes slug="otp" />', '```'].join('\n')
+    assert.equal(
+      mapUnfenced(source, (chunk) => expandIntegrationRecipes(chunk, () => [])),
+      source,
+    )
+  })
+})
+
+describe('expandFrameworkCompatibilityMatrix', () => {
+  it('turns the authored component into the derived proof table', () => {
+    assert.equal(
+      expandFrameworkCompatibilityMatrix('<FrameworkCompatibilityMatrix />', '| Vite | pass |'),
+      '| Vite | pass |',
+    )
+  })
+
+  it('does not expand a component-looking line inside a fence', () => {
+    const source = ['```mdx', '<FrameworkCompatibilityMatrix />', '```'].join('\n')
+    assert.equal(
+      mapUnfenced(source, (chunk) => expandFrameworkCompatibilityMatrix(chunk, 'proof')),
+      source,
+    )
   })
 })
 

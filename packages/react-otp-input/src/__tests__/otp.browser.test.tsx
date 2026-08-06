@@ -423,6 +423,41 @@ describe('disabled & readonly', () => {
 })
 
 describe('pointer focus', () => {
+  it('never moves the caret mid-code when typing starts before pointer placement settles', async () => {
+    const { container } = await render(<Controlled length={6} />)
+    await vi.waitFor(() => {
+      expect(parseFloat(input().style.letterSpacing)).toBeGreaterThan(0)
+    })
+
+    const slots = [...container.querySelectorAll('[data-rx-otp-slot]')]
+    const inputBox = input().getBoundingClientRect()
+    const slotBox = slots[2]!.getBoundingClientRect()
+    const clientX = slotBox.x + slotBox.width / 2
+    const clientY = slotBox.y + slotBox.height / 2
+
+    input().dispatchEvent(
+      new PointerEvent('pointerdown', { bubbles: true, clientX, clientY, pointerId: 1 }),
+    )
+    input().focus()
+    input().dispatchEvent(
+      new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        clientX,
+        clientY,
+        detail: 1,
+      }),
+    )
+
+    // Do not yield a frame between click and typing. The deferred spatial
+    // placement is now stale and must not splice later digits before the third.
+    await userEvent.keyboard('246810')
+    await new Promise((resolve) => requestAnimationFrame(resolve))
+    expect(inputBox.width).toBeGreaterThan(0)
+    expect(input().value).toBe('246810')
+    expect(slotChars(container)).toEqual(['2', '4', '6', '8', '1', '0'])
+  })
+
   it('clicking an unfocused field at a middle slot never flashes another slot active', async () => {
     const { container } = await render(<OtpInput length={6} defaultValue="482913" label="Code" />)
     await expect.element(page.getByRole('textbox')).toBeInTheDocument()

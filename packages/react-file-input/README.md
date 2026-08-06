@@ -192,6 +192,17 @@ Fires when a prop is coerced rather than honoured — `max-files-invalid`, `size
 
 Verified with `axe-core` at component level and `@axe-core/playwright` over the whole demo page, on all three engines.
 
+## UI-library recipes
+
+The docs contain maintained examples for shadcn/ui, Radix Themes, Material UI, Chakra UI, Mantine
+and Ant Design. Copy a ready-labelled wrapper with:
+
+```bash
+npx shadcn@latest add https://rxova.org/packages/react-inputs/r/file-field.json
+```
+
+[Open the recipes](https://rxova.org/packages/react-inputs/components/file/about/#ui-library-recipes).
+
 ## Part of rxova
 
 Part of the [rxova headless React inputs](https://rxova.org/packages/react-inputs/overview) suite —

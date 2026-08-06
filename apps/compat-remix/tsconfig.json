@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "types": ["node", "vite/client"],
+    "rootDirs": [".", "./.react-router/types"]
+  },
+  "include": [
+    "app",
+    ".react-router/types",
+    "react-router.config.ts",
+    "vite.config.ts",
+    "playwright.config.ts",
+    "e2e"
+  ]
+}

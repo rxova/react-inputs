@@ -1,0 +1,39 @@
+.rx-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  --rx-file-gap: 0.75rem;
+  --rx-file-zone-gap: 0.5rem;
+  --rx-file-zone-padding: 1.25rem;
+  --rx-file-zone-radius: var(--radius, 0.5rem);
+  --rx-file-zone-border: 1px dashed hsl(var(--border, 214 32% 91%));
+  --rx-file-zone-background: hsl(var(--background, 0 0% 100%));
+  --rx-file-list-gap: 0.5rem;
+  --rx-file-row-gap: 0.5rem;
+  --rx-file-remove-size: 2rem;
+  --rx-file-preview-size: 2.5rem;
+  --rx-file-preview-radius: calc(var(--radius, 0.5rem) / 2);
+}
+
+.rx-field[data-invalid] {
+  --rx-file-zone-border: 1px dashed hsl(var(--destructive, 0 84% 60%));
+}
+
+.rx-field__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.rx-field__description,
+.rx-field__error {
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+.rx-field__description {
+  color: hsl(var(--muted-foreground, 215 16% 47%));
+}
+
+.rx-field__error {
+  color: hsl(var(--destructive, 0 84% 60%));
+}

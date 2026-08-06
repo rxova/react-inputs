@@ -4,6 +4,8 @@ sidebar:
   order: 3
 ---
 
+import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+
 ## The object-URL lifecycle
 
 This is the part that is usually left to the caller, and the reason the package exists.
@@ -295,3 +297,10 @@ function Field() {
 
 React Final Form starts a field as `''`, which is not an array. The guard above is the binding's
 job, not the component's.
+
+## UI-library recipes
+
+Keep the real file input, drop-zone button, selection list, and live announcements together. The
+design system supplies field chrome; upload transport remains outside this package.
+
+<IntegrationRecipes slug="file" />
