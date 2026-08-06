@@ -1,7 +1,7 @@
 {
   "component": "otp",
   "scenarioVersion": 1,
-  "sourceHash": "sha256:d80d6bb5af19b24fc63d84d3bb5cc724487acfdf35f3e19eb4fcb5b54d41ddf0",
+  "sourceHash": "sha256:745c5262f90aef546706a3d52923ef22b7fef581315df71a037bd78c624fb86f",
   "results": [
     {
       "combination": "voiceover-safari",

@@ -175,6 +175,10 @@ export function useOtpInput(options: UseOtpInputOptions = {}): UseOtpInputResult
   const isPointerFocusRef = useRef(false)
   // Where the last press landed, for the geometric caret placement below.
   const pointerDownXRef = useRef<number | null>(null)
+  // Pointer placement waits one frame for Chrome's native click caret to
+  // settle. A key can arrive first under load; versioning lets keyboard input
+  // cancel that stale frame instead of having it move the caret mid-code.
+  const pointerSettleVersionRef = useRef(0)
   // The selection as of the previous sync — the overwrite expansion needs it
   // to tell an arrow-left collapse from an arrow-right one.
   const prevSelectionRef = useRef<SelectionRange | null>(null)
@@ -268,21 +272,28 @@ export function useOtpInput(options: UseOtpInputOptions = {}): UseOtpInputResult
   // the browser's own guess is wrong at the slot borders (the invisible line
   // box doesn't cover the overlay's height), off by the field's scroll once
   // full, and Chrome may still collapse the selection after the click event
-  // without firing `select`. `focusing` also commits the focus state, and
-  // falls back to the browser caret when the renderer paints no slot ids.
+  // without firing `select`. The last pending placement commits focus state
+  // and falls back to the browser caret when the renderer paints no slot ids.
   const settleFromPointer = useCallback(
-    (el: HTMLInputElement, x: number, focusing: boolean) => {
+    (el: HTMLInputElement, x: number) => {
+      const version = ++pointerSettleVersionRef.current
       requestAnimationFrame(() => {
         /* v8 ignore next -- only when the press is followed by an immediate blur or unmount */
         if (inputRef.current !== el || document.activeElement !== el) return
-        if (focusing) setIsFocused(true)
+        if (pointerSettleVersionRef.current !== version) return
+        setIsFocused(true)
         const slot = slotFromPointerX(x)
         if (slot !== null) placeCaretAtSlot(el, slot)
-        else if (focusing) syncSelection(el, true)
+        else syncSelection(el, true)
       })
     },
     [slotFromPointerX, placeCaretAtSlot, syncSelection],
   )
+
+  const interruptPointerSettle = useCallback(() => {
+    pointerSettleVersionRef.current += 1
+    setIsFocused(true)
+  }, [])
 
   const commit = useCallback(
     (next: string) => {
@@ -323,15 +334,17 @@ export function useOtpInput(options: UseOtpInputOptions = {}): UseOtpInputResult
       // the controlled value under the composer, cancelling the composition —
       // so wait for compositionend to commit the final result.
       if (isComposingRef.current) return
+      interruptPointerSettle()
       commit(event.currentTarget.value)
       syncSelection(event.currentTarget)
     },
-    [commit, syncSelection],
+    [commit, syncSelection, interruptPointerSettle],
   )
 
   const handleCompositionStart = useCallback(() => {
+    interruptPointerSettle()
     isComposingRef.current = true
-  }, [])
+  }, [interruptPointerSettle])
 
   const handleCompositionEnd = useCallback(
     (event: { currentTarget: HTMLInputElement }) => {
@@ -363,6 +376,7 @@ export function useOtpInput(options: UseOtpInputOptions = {}): UseOtpInputResult
   const handlePaste = useCallback(
     (event: ClipboardEvent<HTMLInputElement>) => {
       event.preventDefault()
+      interruptPointerSettle()
       const el = event.currentTarget
       const cleaned = pasteTransform(event.clipboardData.getData('text'))
       let insert = ''
@@ -374,7 +388,7 @@ export function useOtpInput(options: UseOtpInputOptions = {}): UseOtpInputResult
       commit(spliced.value)
       pendingCaretRef.current = spliced.caret
     },
-    [pasteTransform, isAllowed, value, length, commit],
+    [pasteTransform, isAllowed, value, length, commit, interruptPointerSettle],
   )
 
   const slots = useMemo(
@@ -484,6 +498,10 @@ export function useOtpInput(options: UseOtpInputOptions = {}): UseOtpInputResult
           // landing for an arrow-key step.
           prevSelectionRef.current = null
         },
+        onKeyDown: (event) => {
+          props.onKeyDown?.(event)
+          interruptPointerSettle()
+        },
         onFocus: (event) => {
           props.onFocus?.(event)
           const el = event.currentTarget
@@ -495,7 +513,7 @@ export function useOtpInput(options: UseOtpInputOptions = {}): UseOtpInputResult
             // frame for the caret, then commit focus + selection in one render
             // — placed from the press's own x, not the browser's guess.
             /* v8 ignore next -- pointerdown always records its x before focus can see the flag */
-            settleFromPointer(el, pointerDownXRef.current ?? 0, true)
+            settleFromPointer(el, pointerDownXRef.current ?? 0)
           } else {
             // Keyboard/programmatic focus: browsers land the caret wherever
             // they please (select-all, a restored range, position 0). Park it
@@ -532,7 +550,7 @@ export function useOtpInput(options: UseOtpInputOptions = {}): UseOtpInputResult
           // travelled is a drag selection that must stay untouched.
           const downX = pointerDownXRef.current
           if (event.detail === 0 || downX === null || Math.abs(event.clientX - downX) > 5) return
-          settleFromPointer(el, event.clientX, false)
+          settleFromPointer(el, event.clientX)
         },
       }
     },
@@ -559,6 +577,7 @@ export function useOtpInput(options: UseOtpInputOptions = {}): UseOtpInputResult
       handlePaste,
       handleCompositionStart,
       handleCompositionEnd,
+      interruptPointerSettle,
       syncSelection,
       settleFromPointer,
       onBlur,

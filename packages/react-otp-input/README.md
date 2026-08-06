@@ -29,6 +29,8 @@ recipes, theming, WebOTP, and migration guides from other OTP libraries.
   semantics all come from the platform, not from hand-rolled JavaScript
 - **Tap any slot to edit it** — the input's characters sit at their true slot pitch, so a click or tap
   lands the caret where you touched, which a collapsed single-input field physically can't do
+- **Rapid typing stays ordered** — if keyboard input begins before a click's caret placement has
+  settled, the keyboard wins; a delayed pointer frame never moves the caret midway through the code
 - **WebOTP** — programmatic SMS retrieval (`useWebOTP`) that no other OTP library ships
 - **Headless** — zero runtime dependencies, no stylesheet to import, ~4.3 kB brotli
 - **Form-ready** — string `onChange`, native `name`, and first-class React Hook Form / Formik / React
