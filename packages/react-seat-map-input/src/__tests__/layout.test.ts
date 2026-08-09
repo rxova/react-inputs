@@ -97,6 +97,37 @@ describe('parseLayout', () => {
     expect(() => parseLayout(' : ##')).toThrow(/row on line 1 has no label/)
   })
 
+  it('reads a spec written with Windows line endings', () => {
+    const sections = parseLayout('Main cabin\r\n12: ##_##\r\n13: ##_##\r\n')
+    expect(sections).toHaveLength(1)
+    expect(sections[0]?.label).toBe('Main cabin')
+    expect(sections[0]?.rows.map((row) => row.label)).toEqual(['12', '13'])
+  })
+
+  it('reads a spec indented with tabs', () => {
+    expect(parseLayout('\t12:\t##\t_\t##\t')).toEqual(parseLayout('12: ##_##'))
+  })
+
+  it('keeps non-Latin and emoji row labels intact', () => {
+    const [section] = parseLayout('Верхняя палуба\n🎫: ##')
+    expect(section?.label).toBe('Верхняя палуба')
+    expect(section?.rows[0]?.label).toBe('🎫')
+    expect(section?.rows[0]?.cells[0]?.id).toBe('🎫A')
+  })
+
+  it('handles a row far wider than the alphabet', () => {
+    const [section] = parseLayout(`1: ${'#'.repeat(60)}`)
+    expect(section?.columns?.at(25)).toBe('Z')
+    expect(section?.columns?.at(26)).toBe('AA')
+    expect(section?.rows[0]?.cells.at(-1)?.id).toBe('1BH')
+  })
+
+  it('reports the offending line number in a long spec', () => {
+    const spec = Array.from({ length: 40 }, (_, i) => `${String(i + 1)}: ##`)
+    spec[29] = '30: #?#'
+    expect(() => parseLayout(spec.join('\n'))).toThrow(/on line 30/)
+  })
+
   it('accepts an empty spec', () => {
     expect(parseLayout('')).toEqual([])
   })
