@@ -6,7 +6,7 @@ import { contextFor } from './rules'
 import { useSeatMap } from './useSeatMap'
 import type { SeatMapMove } from './useSeatMap'
 import { usePrefersReducedMotion } from './usePrefersReducedMotion'
-import type { SeatMapProps, SeatState, SeatStatus } from './types'
+import type { SeatContext, SeatMapProps, SeatState, SeatStatus } from './types'
 
 /**
  * Non-colour status marks. Conveying "sold" with a grey fill alone fails WCAG
@@ -142,6 +142,29 @@ function defaultSeatName(gridSeat: GridSeat, row: GridRow): string {
   return parts.join(', ')
 }
 
+/**
+ * Consumer formatters run once per seat, during render. One that throws would
+ * take the whole map down; one that returns a non-string would leave a seat
+ * with no accessible name at all, which is the single worst outcome this
+ * component has. Both degrade to the built-in name instead.
+ */
+function seatName(
+  format: SeatMapProps['formatSeatLabel'],
+  gridSeat: GridSeat,
+  row: GridRow,
+  context: SeatContext,
+): string {
+  if (format) {
+    try {
+      const custom = format(gridSeat.seat, context)
+      if (typeof custom === 'string' && custom !== '') return custom
+    } catch {
+      // fall through to the built-in name
+    }
+  }
+  return defaultSeatName(gridSeat, row)
+}
+
 const MOVE_BY_KEY: Record<string, SeatMapMove> = {
   ArrowUp: 'up',
   ArrowDown: 'down',
@@ -181,6 +204,7 @@ export const SeatMap = /* @__PURE__ */ forwardRef<HTMLDivElement, SeatMapProps>(
     const {
       grid,
       value,
+      selectedIds,
       interactive,
       canChange,
       minSeats,
@@ -213,12 +237,21 @@ export const SeatMap = /* @__PURE__ */ forwardRef<HTMLDivElement, SeatMapProps>(
     useEffect(() => {
       const node = firstInput.current
       if (!node) return
-      node.setCustomValidity(
-        belowMinimum && canChange
-          ? (formatValidationMessage?.({ selected: value.length, min: minSeats }) ??
-              `Choose at least ${String(minSeats)} ${minSeats === 1 ? 'seat' : 'seats'}.`)
-          : '',
-      )
+      if (!belowMinimum || !canChange) {
+        node.setCustomValidity('')
+        return
+      }
+      const built = `Choose at least ${String(minSeats)} ${minSeats === 1 ? 'seat' : 'seats'}.`
+      let message = built
+      try {
+        const custom = formatValidationMessage?.({ selected: value.length, min: minSeats })
+        if (typeof custom === 'string' && custom !== '') message = custom
+      } catch {
+        message = built
+      }
+      // An empty custom validity means "valid" to the browser, so a formatter
+      // that returns nothing must not be allowed to silently pass the form.
+      node.setCustomValidity(message)
     }, [belowMinimum, canChange, formatValidationMessage, minSeats, value.length])
 
     const focusSeat = useCallback(
@@ -290,11 +323,11 @@ export const SeatMap = /* @__PURE__ */ forwardRef<HTMLDivElement, SeatMapProps>(
         // Shift extends the block, the same gesture a file list uses. It only
         // ever adds: making Shift+Arrow able to unpick seats turns a slip into
         // a lost booking.
-        if (event.shiftKey && (move === 'left' || move === 'right') && !value.includes(next)) {
+        if (event.shiftKey && (move === 'left' || move === 'right') && !selectedIds.has(next)) {
           toggle(next)
         }
       },
-      [focusSeat, resolveMove, rootRef, toggle, value],
+      [focusSeat, resolveMove, rootRef, selectedIds, toggle],
     )
 
     const renderCell = (
@@ -308,11 +341,11 @@ export const SeatMap = /* @__PURE__ */ forwardRef<HTMLDivElement, SeatMapProps>(
       }
 
       const seatId = cell.seat.id
-      const selected = value.includes(seatId)
+      const selected = selectedIds.has(seatId)
       const selectable = cell.status === 'available'
       const focused = focusedId === seatId && focusVisible
       const context = contextFor(grid, cell, value)
-      const accessibleName = formatSeatLabel?.(cell.seat, context) ?? defaultSeatName(cell, row)
+      const accessibleName = seatName(formatSeatLabel, cell, row, context)
       const tabbable = tabbableIds[sectionIndex] === seatId
 
       const state: SeatState = {
@@ -324,9 +357,7 @@ export const SeatMap = /* @__PURE__ */ forwardRef<HTMLDivElement, SeatMapProps>(
         hovered: hoveredId === seatId,
       }
 
-      const visual = renderSeat ? (
-        renderSeat(state)
-      ) : (
+      const fallbackVisual = (
         <span
           data-rx-seat-map-visual=""
           aria-hidden="true"
@@ -335,6 +366,18 @@ export const SeatMap = /* @__PURE__ */ forwardRef<HTMLDivElement, SeatMapProps>(
           {selected ? STATUS_MARK.selected : STATUS_MARK[cell.status]}
         </span>
       )
+
+      // A throwing `renderSeat` falls back to the built-in artwork. It is called
+      // here rather than mounted as a component, so the throw is catchable and
+      // one bad seat cannot unmount the booking form.
+      let visual: ReactNode = fallbackVisual
+      if (renderSeat) {
+        try {
+          visual = renderSeat(state)
+        } catch {
+          visual = fallbackVisual
+        }
+      }
 
       const registerNode = (node: HTMLElement | null) => {
         if (node) seatNodes.current.set(seatId, node)

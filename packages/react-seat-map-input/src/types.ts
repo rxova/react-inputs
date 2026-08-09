@@ -179,7 +179,10 @@ export interface SeatMapProps {
   contiguous?: boolean
   /** Refuse any pick that would leave a single empty seat stranded in a row. */
   noOrphanSeats?: boolean
-  /** Last word on whether a seat can be picked. Runs after the built-in rules. */
+  /**
+   * Last word on whether a seat can be picked. Runs after the built-in rules.
+   * A predicate that throws refuses the seat rather than unmounting the form.
+   */
   isSelectable?: (seat: Seat, context: SeatContext) => boolean
   /** Fires whenever a pick is refused, with the reason. */
   onReject?: (rejection: SeatMapRejection) => void
@@ -190,7 +193,11 @@ export interface SeatMapProps {
   /** Disables the whole field. Unavailable *seats* use `aria-disabled` instead. */
   disabled?: boolean
   onHoverChange?: (seat: Seat | null) => void
-  /** Rows moved by `PageUp` / `PageDown`. @default 5 */
+  /**
+   * Rows moved by `PageUp` / `PageDown`. Anything that is not a positive
+   * integer falls back to the default, so the page keys can never be inverted
+   * or silently disabled. @default 5
+   */
   pageSize?: number
 
   // ---- Form integration ------------------------------------------------------
@@ -212,13 +219,28 @@ export interface SeatMapProps {
   dir?: 'ltr' | 'rtl'
   className?: string
   style?: CSSProperties
-  /** Replace the seat's visual. The accessible name is unaffected. */
+  /**
+   * Replace the seat's visual. The accessible name is unaffected. One that
+   * throws falls back to the built-in artwork rather than taking the map down.
+   */
   renderSeat?: (state: SeatState) => ReactNode
-  /** Replace a seat's accessible name. */
+  /**
+   * Replace a seat's accessible name. One that throws, or returns anything but
+   * a non-empty string, falls back to the built-in name — an unnamed seat is
+   * the worst outcome this component has.
+   */
   formatSeatLabel?: (seat: Seat, context: SeatContext) => string
-  /** Replace the live-region wording. */
+  /**
+   * Replace the live-region wording. One that throws or returns nothing falls
+   * back to the built-in wording; a silent live region is the failure this
+   * mechanism exists to prevent.
+   */
   formatAnnouncement?: (announcement: SeatMapAnnouncement) => string
-  /** Replace the native validation message shown when below `minSeats`. */
+  /**
+   * Replace the native validation message shown when below `minSeats`. An empty
+   * string means "valid" to the browser, so one that throws or returns nothing
+   * falls back to the built-in message rather than waving the form through.
+   */
   formatValidationMessage?: (state: { selected: number; min: number }) => string
 
   // ---- Diagnostics -----------------------------------------------------------

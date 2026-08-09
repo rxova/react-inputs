@@ -69,6 +69,8 @@ export interface UseSeatMapResult {
   grid: Grid
   /** Selected seat ids, in selection order, filtered to ids the layout knows. */
   value: string[]
+  /** The same ids as a set, so a renderer can ask "is this seat chosen" in O(1). */
+  selectedIds: ReadonlySet<string>
   selectedSeats: Seat[]
   /** True when the component renders as a control rather than a static diagram. */
   interactive: boolean
@@ -151,6 +153,11 @@ export function useSeatMap(options: UseSeatMapOptions): UseSeatMapResult {
     id: idProp,
   } = options
 
+  // A `pageSize` of 0 or NaN would make PageUp/PageDown silently dead, and a
+  // negative one would swap them — a booking form where PageDown scrolls up is
+  // worse than one where it does nothing.
+  const pageRows = Number.isInteger(pageSize) && pageSize >= 1 ? pageSize : DEFAULT_PAGE_SIZE
+
   const reactId = useId()
   const baseId = idProp ?? `rx-seat-map-${reactId}`
   const name = nameProp ?? `rx-seat-map-name-${reactId}`
@@ -191,6 +198,9 @@ export function useSeatMap(options: UseSeatMapOptions): UseSeatMapResult {
       return true
     })
   }, [rawValue, grid])
+
+  /** Membership index for the value. Rendering asks it once per seat. */
+  const selectedIds = useMemo(() => new Set(value), [value])
 
   const selectedSeats = useMemo(
     () =>
@@ -239,12 +249,23 @@ export function useSeatMap(options: UseSeatMapOptions): UseSeatMapResult {
 
   const announce = useCallback(
     (event: SeatMapAnnouncement) => {
-      const text =
-        formatAnnouncement?.(event) ??
+      const fallback = () =>
         defaultAnnouncement(event, (seat) => {
           const found = grid.byId.get(seat.id)
           return found ? seatLabel(found) : seat.id
         })
+
+      // `formatAnnouncement` is consumer code on every pick. One that throws, or
+      // hands back something that is not a string, degrades to the built-in
+      // wording: a silent live region is the failure this whole mechanism exists
+      // to prevent.
+      let text: string
+      try {
+        const custom = formatAnnouncement?.(event)
+        text = typeof custom === 'string' && custom !== '' ? custom : fallback()
+      } catch {
+        text = fallback()
+      }
       // React only touches the text node when the string actually changes, so
       // pressing Space twice on the same sold seat would announce it once. The
       // alternating trailing space forces a new text node; it is not spoken.
@@ -355,17 +376,17 @@ export function useSeatMap(options: UseSeatMapOptions): UseSeatMapResult {
           next = lastSeatIn(section, from.sectionIndex)
           break
         case 'page-up':
-          next = pageMove(grid, position, -pageSize)
+          next = pageMove(grid, position, -pageRows)
           break
         default:
-          next = pageMove(grid, position, pageSize)
+          next = pageMove(grid, position, pageRows)
       }
 
       if (!next) return null
       const landed = seatAt(grid, next)
       return landed && landed.seat.id !== fromId ? landed.seat.id : null
     },
-    [grid, pageSize],
+    [grid, pageRows],
   )
 
   /**
@@ -380,18 +401,24 @@ export function useSeatMap(options: UseSeatMapOptions): UseSeatMapResult {
         const focused = focusedId === null ? undefined : grid.byId.get(focusedId)
         if (focused?.sectionIndex === sectionIndex) return focused.seat.id
 
-        const inSection = grid.order.filter((seat) => seat.sectionIndex === sectionIndex)
-        const chosen = inSection.find((seat) => value.includes(seat.seat.id))
+        // Set membership, not `Array.includes`: this runs per section on every
+        // render, and a stadium with a few hundred seats already booked would
+        // otherwise make it quadratic.
+        const chosen = grid.order.find(
+          (seat) => seat.sectionIndex === sectionIndex && selectedIds.has(seat.seat.id),
+        )
         if (chosen) return chosen.seat.id
 
-        const free = inSection.find((seat) => seat.status === 'available')
+        const free = grid.order.find(
+          (seat) => seat.sectionIndex === sectionIndex && seat.status === 'available',
+        )
         if (free) return free.seat.id
 
         const first = firstSeatIn(section, sectionIndex)
         const fallback = first ? seatAt(grid, first) : null
         return fallback ? fallback.seat.id : null
       }),
-    [grid, focusedId, value],
+    [grid, focusedId, selectedIds],
   )
 
   const setHovered = useCallback(
@@ -436,6 +463,7 @@ export function useSeatMap(options: UseSeatMapOptions): UseSeatMapResult {
   return {
     grid,
     value,
+    selectedIds,
     selectedSeats,
     interactive,
     canChange,

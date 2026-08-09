@@ -89,6 +89,24 @@ function reject(reason: SeatMapRejectionReason, seat: Seat, message: string): Se
 }
 
 /**
+ * `isSelectable` is consumer code, run on every pick and — inside
+ * {@link findBestSeats} — on every candidate in the map. A throwing one refuses
+ * the seat rather than taking the booking form down with it.
+ */
+function allows(
+  isSelectable: SelectionRules['isSelectable'],
+  seat: Seat,
+  context: SeatContext,
+): boolean {
+  if (!isSelectable) return true
+  try {
+    return isSelectable(seat, context)
+  } catch {
+    return false
+  }
+}
+
+/**
  * The whole rule engine, as one pure function over plain data. Deselecting is
  * never refused — a rule that traps a user in a selection they cannot undo is a
  * worse bug than any it prevents.
@@ -128,7 +146,7 @@ export function applySelection(
     }
   }
 
-  if (isSelectable && !isSelectable(gridSeat.seat, contextFor(grid, gridSeat, current))) {
+  if (!allows(isSelectable, gridSeat.seat, contextFor(grid, gridSeat, current))) {
     return {
       next: [...current],
       rejection: reject('not-selectable', gridSeat.seat, `${label} cannot be chosen.`),
@@ -207,7 +225,7 @@ export function findBestSeats(
           const cell = row.cells[start + offset]
           // Optional chain covers the gap: a `null` cell is not available either.
           if (cell?.status !== 'available') break
-          if (options.isSelectable?.(cell.seat, contextFor(grid, cell, [])) === false) break
+          if (!allows(options.isSelectable, cell.seat, contextFor(grid, cell, []))) break
           block.push(cell)
         }
         if (block.length < count) continue
