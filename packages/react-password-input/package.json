@@ -1,6 +1,6 @@
 {
   "name": "@rxova/react-password-input",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "Reveal toggle, Caps Lock warning, and a strength meter that costs 1 kB instead of 400. A headless, zero-dependency React password input.",
   "rxova": {
