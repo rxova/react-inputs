@@ -1,5 +1,18 @@
 # @rxova/react-inputs
 
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies [[`6aadf81`](https://github.com/rxova/react-inputs/commit/6aadf8109cf3ffdfecd6908daf7bdaee224b1a7a), [`6aadf81`](https://github.com/rxova/react-inputs/commit/6aadf8109cf3ffdfecd6908daf7bdaee224b1a7a), [`6aadf81`](https://github.com/rxova/react-inputs/commit/6aadf8109cf3ffdfecd6908daf7bdaee224b1a7a), [`6aadf81`](https://github.com/rxova/react-inputs/commit/6aadf8109cf3ffdfecd6908daf7bdaee224b1a7a), [`6aadf81`](https://github.com/rxova/react-inputs/commit/6aadf8109cf3ffdfecd6908daf7bdaee224b1a7a), [`6aadf81`](https://github.com/rxova/react-inputs/commit/6aadf8109cf3ffdfecd6908daf7bdaee224b1a7a), [`6aadf81`](https://github.com/rxova/react-inputs/commit/6aadf8109cf3ffdfecd6908daf7bdaee224b1a7a)]:
+  - @rxova/react-date-input@1.0.0
+  - @rxova/react-file-input@1.0.0
+  - @rxova/react-intl-currency-input@1.0.0
+  - @rxova/react-password-input@1.0.0
+  - @rxova/react-phone-input@1.0.0
+  - @rxova/react-tags-input@1.0.0
+  - @rxova/react-time-input@1.0.0
+
 ## 1.0.0
 
 ### Major Changes
