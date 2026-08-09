@@ -9,9 +9,13 @@ import {
   PasswordInput,
   PhoneInput,
   Rating,
+  SeatMap,
   TagsInput,
   TimeInput,
+  parseLayout,
 } from '@rxova/react-inputs'
+
+const SEATS = parseLayout('12: ##_##')
 
 export function InputsShowcase() {
   const [currency, setCurrency] = useState<number | null>(null)
@@ -23,6 +27,7 @@ export function InputsShowcase() {
   const [time, setTime] = useState<string | null>('14:30')
   const [tags, setTags] = useState(['react'])
   const [files, setFiles] = useState<File[]>([])
+  const [seats, setSeats] = useState<string[]>([])
 
   return (
     <main>
@@ -74,6 +79,9 @@ export function InputsShowcase() {
 
         <FileInput label="Attachments" name="files" value={files} onChange={setFiles} multiple />
         <output data-testid="files-value">{files.map((file) => file.name).join(',')}</output>
+
+        <SeatMap label="Seats" name="seats" sections={SEATS} value={seats} onChange={setSeats} />
+        <output data-testid="seats-value">{seats.join(',')}</output>
       </form>
     </main>
   )
