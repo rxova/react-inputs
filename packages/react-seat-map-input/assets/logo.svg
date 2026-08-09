@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" color="#1a56db" role="img" aria-labelledby="title">
+  <title id="title">@rxova/react-seat-map-input logo</title>
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
+    <rect x="6" y="8" width="17" height="17" rx="4" />
+    <rect x="6" y="35" width="17" height="17" rx="4" />
+    <rect x="41" y="8" width="17" height="17" rx="4" />
+    <rect x="41" y="35" width="17" height="17" rx="4" />
+    <path d="M32 14v36" stroke-dasharray="1 8" stroke-width="3" opacity="0.55" />
+  </g>
+  <path d="m10.5 43.5 3.6 3.6 7-7.4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" />
+</svg>

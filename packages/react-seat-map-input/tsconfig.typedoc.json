@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // `node` only: the source reads `process.env.NODE_ENV` to strip its
+    // development warnings, so the docs program has to know that global. It is
+    // not part of the public surface, so it never reaches the generated API.
+    "types": ["node"]
+  },
+  "include": ["src"],
+  "exclude": ["src/__tests__"]
+}

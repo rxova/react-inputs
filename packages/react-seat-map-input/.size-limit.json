@@ -1,0 +1,23 @@
+[
+  {
+    "name": "SeatMap (full import)",
+    "path": "dist/index.mjs",
+    "import": "{ SeatMap }",
+    "limit": "5.5 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  },
+  {
+    "name": "useSeatMap (headless only)",
+    "path": "dist/index.mjs",
+    "import": "{ useSeatMap }",
+    "limit": "3.25 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  },
+  {
+    "name": "findBestSeats (pure helper only)",
+    "path": "dist/index.mjs",
+    "import": "{ findBestSeats }",
+    "limit": "1 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  }
+]

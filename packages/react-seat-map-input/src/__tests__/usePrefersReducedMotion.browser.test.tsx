@@ -1,0 +1,95 @@
+import { afterEach, describe, expect, it } from 'vitest'
+import { render, renderHook } from 'vitest-browser-react'
+import { page } from 'vitest/browser'
+import { usePrefersReducedMotion } from '../usePrefersReducedMotion'
+import { SeatMap } from '../SeatMap'
+import { parseLayout } from '../layout'
+
+const ROW = parseLayout('12: ##')
+
+type MatchMedia = (query: string) => MediaQueryList
+// Bound up front: reading it back off `window` later would be an unbound method.
+const original: MatchMedia = window.matchMedia.bind(window)
+
+function stubMatchMedia(matches: boolean) {
+  const listeners = new Set<() => void>()
+  const mql = {
+    matches,
+    media: '',
+    addEventListener: (_: string, fn: () => void) => listeners.add(fn),
+    removeEventListener: (_: string, fn: () => void) => listeners.delete(fn),
+  } as unknown as MediaQueryList
+  window.matchMedia = () => mql
+  return {
+    emitChange: (next: boolean) => {
+      ;(mql as { matches: boolean }).matches = next
+      for (const fn of listeners) fn()
+    },
+    listenerCount: () => listeners.size,
+  }
+}
+
+afterEach(() => {
+  window.matchMedia = original
+})
+
+describe('usePrefersReducedMotion', () => {
+  it('reports false when the user has no preference', async () => {
+    stubMatchMedia(false)
+    const { result } = await renderHook(() => usePrefersReducedMotion())
+    expect(result.current).toBe(false)
+  })
+
+  it('reports true when the user prefers reduced motion', async () => {
+    stubMatchMedia(true)
+    const { result } = await renderHook(() => usePrefersReducedMotion())
+    expect(result.current).toBe(true)
+  })
+
+  it('reacts to a preference change and unsubscribes on unmount', async () => {
+    const stub = stubMatchMedia(false)
+    const { result, unmount } = await renderHook(() => usePrefersReducedMotion())
+    expect(result.current).toBe(false)
+    expect(stub.listenerCount()).toBe(1)
+
+    stub.emitChange(true)
+    await expect.poll(() => result.current).toBe(true)
+
+    await unmount()
+    expect(stub.listenerCount()).toBe(0)
+  })
+
+  it('falls back to false when matchMedia is missing', async () => {
+    // jsdom has no matchMedia, and plenty of consumers still run their own
+    // suites there. This branch is the reason the optional lookup exists.
+    // @ts-expect-error deliberately removing a standard API
+    delete window.matchMedia
+    const { result } = await renderHook(() => usePrefersReducedMotion())
+    expect(result.current).toBe(false)
+  })
+
+  it('renders without throwing when matchMedia is missing', async () => {
+    // @ts-expect-error deliberately removing a standard API
+    delete window.matchMedia
+    await render(<SeatMap sections={ROW} label="Seats" />)
+    await expect.element(page.getByRole('grid')).toBeInTheDocument()
+  })
+})
+
+describe('reduced motion in SeatMap', () => {
+  it('drops the seat transition when the user prefers reduced motion', async () => {
+    stubMatchMedia(true)
+    const { container } = await render(<SeatMap sections={ROW} label="Seats" />)
+    await expect.element(page.getByRole('grid')).toBeInTheDocument()
+    const visual = container.querySelector<HTMLElement>('[data-rx-seat-map-visual]')
+    expect(visual && getComputedStyle(visual).transitionDuration).toBe('0s')
+  })
+
+  it('keeps the transition when there is no preference', async () => {
+    stubMatchMedia(false)
+    const { container } = await render(<SeatMap sections={ROW} label="Seats" />)
+    await expect.element(page.getByRole('grid')).toBeInTheDocument()
+    const visual = container.querySelector<HTMLElement>('[data-rx-seat-map-visual]')
+    expect(visual && getComputedStyle(visual).transitionDuration).not.toBe('0s')
+  })
+})

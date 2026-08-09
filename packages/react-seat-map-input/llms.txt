@@ -1,0 +1,203 @@
+# @rxova/react-seat-map-input
+
+> A headless, accessible seat map input for React — aircraft cabins, theatres,
+> stadiums, parking bays. Each section is a real ARIA grid with two-dimensional
+> arrow-key navigation and one tab stop; each seat is a real
+> `<input type="checkbox">`, so checked state, form submission and screen-reader
+> announcements come from the browser. Sold seats stay focusable and say so.
+> Zero runtime dependencies. No stylesheet to import.
+
+## Install
+
+    npm install @rxova/react-seat-map-input
+
+`react >= 18` is the only peer dependency.
+
+## Minimal working example
+
+```tsx
+import { useState } from 'react'
+import { SeatMap, parseLayout } from '@rxova/react-seat-map-input'
+
+const CABIN = parseLayout(`
+  Main cabin
+  10: ###_###
+  11: ##x_x##
+  12: ###_###
+`)
+
+export function Booking() {
+  const [seats, setSeats] = useState<string[]>([])
+
+  return (
+    <SeatMap
+      sections={CABIN}
+      value={seats}
+      onChange={setSeats}
+      name="seats"
+      label="Choose your seats"
+      maxSeats={4}
+    />
+  )
+}
+```
+
+Passing `onChange` is what makes it interactive. Without it the component renders
+a read-only diagram — still a navigable grid, but with no controls in it.
+
+Hoist the layout, or `useMemo` it. `sections` is memoized by reference, so a
+layout built inline rebuilds the whole index on every render.
+
+## parseLayout
+
+Authoring sugar for fixtures, demos and docs. One character per column:
+`#` available, `x` occupied, `o` held, `.` blocked, `_` aisle. A line with a
+colon is a row; a line without one starts a new section. Seat ids come out as
+`<row label><column letter>`, with letters skipping columns that are an aisle in
+every row — and gaining a `<section>-` prefix once there is more than one
+section, because a theatre has a row A in the stalls and another in the circle.
+
+It throws on an unknown character rather than guessing. For anything generated,
+build `SeatMapSection[]` directly instead.
+
+## Props
+
+`<SeatMap>` — the full surface is `SeatMapProps` in the published types.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `sections` | `SeatMapSection[]` | — | Decks, cabins, tiers. Each renders as its own ARIA grid. |
+| `rows` | `SeatMapRow[]` | — | Shorthand for the single-section case. Ignored when `sections` is set. |
+| `value` | `string[]` | — | Controlled selection, as seat ids. Unknown ids are dropped. |
+| `defaultValue` | `string[]` | — | Uncontrolled initial selection. |
+| `onChange` | `(ids: string[], seats: Seat[]) => void` | — | **Providing this is what makes the component interactive.** |
+| `maxSeats` | `number` | — | Hard cap. Further picks are refused with a `max-seats` rejection. |
+| `minSeats` | `number` | — | Soft floor. Sets a native validation message so a real `<form>` refuses to submit. |
+| `contiguous` | `boolean` | `false` | Every pick must sit next to the others, in one row, with no gap. |
+| `noOrphanSeats` | `boolean` | `false` | Refuse any pick that would strand a single empty seat in a row. |
+| `isSelectable` | `(seat: Seat, context: SeatContext) => boolean` | — | Last word on a pick. Runs after the built-in rules. |
+| `onReject` | `(rejection: SeatMapRejection) => void` | — | Fires with the reason whenever a pick is refused. |
+| `readOnly` | `boolean` | `!onChange` | Force read-only even with `onChange` present. |
+| `disabled` | `boolean` | `false` | Disables the whole field. Unavailable *seats* use `aria-disabled` instead. |
+| `onHoverChange` | `(seat: Seat \| null) => void` | — | Pointer preview; `null` when it ends. |
+| `pageSize` | `number` | `5` | Rows moved by `PageUp` / `PageDown`. |
+| `name` | `string` | — | Checkbox name. Every chosen seat submits under it, so `formData.getAll(name)` returns an array. |
+| `required` | `boolean` | `false` | At least one seat, or `minSeats` when that is set. |
+| `invalid` | `boolean` | `false` | |
+| `onBlur` | `(event: FocusEvent<HTMLElement>) => void` | — | Fires when focus leaves the map, not when moving between seats. |
+| `label` | `string` | — | Accessible name for the whole field. |
+| `dir` | `'ltr' \| 'rtl'` | — | Arrow keys follow the resolved direction either way. |
+| `renderSeat` | `(state: SeatState) => ReactNode` | a bordered square | Replaces the visual only; the accessible name is unaffected. |
+| `formatSeatLabel` | `(seat: Seat, context: SeatContext) => string` | `12A, premium, window, taken` | Replaces a seat's accessible name. |
+| `formatAnnouncement` | `(announcement: SeatMapAnnouncement) => string` | English | Replaces the live-region wording. |
+| `formatValidationMessage` | `(state: { selected: number; min: number }) => string` | `Choose at least N seats.` | |
+| `className` | `string` | — | |
+| `style` | `CSSProperties` | — | |
+| `id` | `string` | — | Base id; each seat input derives `${id}-${seatId}`. |
+| `onWarn` | `(warning: SeatMapWarning) => void` | `console.warn` | Development-only notice. Stripped from production builds. |
+
+Also exported: the `useSeatMap` hook for building your own markup, `parseLayout`,
+and `findBestSeats`.
+
+## findBestSeats
+
+    findBestSeats(sections, 3) // → Seat[], or [] when the map has no run that long
+
+Returns the best run of adjacent free seats. "Best" is spelled out rather than
+tuned: earliest section, then earliest row, then the block closest to the centre
+of its row. Pass `{ noOrphanSeats: true }` to skip blocks whose booking would
+strand a lone seat, and `{ isSelectable }` to apply your own filter.
+
+## Keyboard
+
+One tab stop per section. Inside it:
+
+| Key | Action |
+| --- | --- |
+| Arrow keys | Move one seat, stepping over aisles, clamped at the edges. |
+| `Home` / `End` | First / last seat in the row. |
+| `Ctrl+Home` / `Ctrl+End` | First / last seat in the section. |
+| `PageUp` / `PageDown` | Move `pageSize` rows. |
+| `Space` | Toggle — the checkbox doing its own job. |
+| `Enter` | Toggle. Does not submit the surrounding form. |
+| `Shift`+`←`/`→` | Extend the block. Only ever adds. |
+
+Focus scrolls into view with `block: 'nearest'`, so a large map stays usable
+inside an `overflow: auto` container without moving the page.
+
+## Accessibility
+
+No opt-in flag, no config key. Every seat is a real checkbox inside a
+`role="gridcell"`, inside a `role="row"`, inside a named `role="grid"`.
+
+Unavailable seats carry `aria-disabled`, never the `disabled` attribute — a
+disabled checkbox is not focusable, so arrowing across a cabin would silently
+skip every sold seat and a keyboard user could never learn which ones are gone.
+Status is spoken in the accessible name (`12B, taken`) and drawn as a distinct
+mark, not colour alone. Refusals are announced in a polite live region, with the
+reason.
+
+A read-only map has no control to carry `checked`, so it states selection with
+`aria-selected` on the cell and `aria-readonly` on the grid. The two models are
+never mixed.
+
+The default `--rx-seat-map-seat-size` is `1.75rem`, which clears the 24×24 CSS
+pixel floor in WCAG 2.2 §2.5.8 out of the box.
+
+## Warnings
+
+A layout problem never throws. The component renders what it can and reports what
+it did through `onWarn`, which receives a `SeatMapWarning`:
+`{ code, message, seatId? }`.
+
+`SeatMapWarningCode` is one of `no-layout`, `duplicate-seat-id`,
+`unknown-seat-id`, `max-seats-invalid`, `min-above-max`. These are development
+signals — usually a value arriving from an API that no longer matches the
+layout — and are stripped from production builds.
+
+## Styling
+
+There is no stylesheet. Set CSS custom properties on any ancestor:
+
+`--rx-seat-map-seat-size`, `--rx-seat-map-gap`, `--rx-seat-map-row-gap`,
+`--rx-seat-map-section-gap`, `--rx-seat-map-aisle-width`,
+`--rx-seat-map-row-header-width`, `--rx-seat-map-radius`,
+`--rx-seat-map-border-width`, `--rx-seat-map-border`, `--rx-seat-map-mark-size`,
+`--rx-seat-map-label-size`, `--rx-seat-map-label-color`,
+`--rx-seat-map-transition`, `--rx-seat-map-focus-ring`,
+`--rx-seat-map-focus-ring-offset`, `--rx-seat-map-focus-ring-radius`, plus
+`--rx-seat-map-bg-*`, `--rx-seat-map-color-*` and `--rx-seat-map-border-*` for
+each of `available`, `selected`, `occupied`, `held` and `blocked`.
+
+Or target the `data-*` attributes, which are public API covered by semver:
+`data-rx-seat-map-root`, `data-rx-seat-map-section`, `data-rx-seat-map-row`,
+`data-rx-seat-map-row-header`, `data-rx-seat-map-column-header`,
+`data-rx-seat-map-corner`, `data-rx-seat-map-cell`, `data-rx-seat-map-seat`,
+`data-rx-seat-map-gap`, `data-rx-seat-map-visual`,
+`data-rx-seat-map-announcement`, `data-rx-seat-map-category`, plus the state hooks
+`data-state`, `data-focused`, `data-disabled`, `data-readonly`, `data-invalid`.
+
+## Three mistakes to avoid
+
+1. **Marking sold seats `disabled` in your own `renderSeat`.** The component
+   deliberately does not, and it is the single reason it is usable without a
+   mouse: a `disabled` checkbox drops out of the tab and arrow order, so the
+   occupied half of a cabin becomes invisible to a keyboard user.
+2. **Building `sections` inline in render.** It is memoized by reference. A
+   300-seat cabin re-indexed on every keystroke is the one performance cliff
+   this component has.
+3. **Reaching for `readOnly` to show a confirmed booking.** Omitting `onChange`
+   already does that, and it is the better route: the map then renders as a grid
+   of `aria-selected` cells rather than a set of checkboxes nobody can tick.
+
+## Docs
+
+- Copyable labelled field: https://rxova.org/packages/react-inputs/r/seat-map-field.json
+- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/seat-map/about/#ui-library-recipes
+
+- Introduction: https://rxova.org/packages/react-inputs/components/seat-map/introduction/
+- Usage: https://rxova.org/packages/react-inputs/components/seat-map/usage/
+- Everything else (forms, theming, rules, SSR): https://rxova.org/packages/react-inputs/components/seat-map/about/
+- Migrating from another seat picker: https://rxova.org/packages/react-inputs/components/seat-map/migrating/
+- Generated API reference: https://rxova.org/packages/react-inputs/components/seat-map/api/
+- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt
