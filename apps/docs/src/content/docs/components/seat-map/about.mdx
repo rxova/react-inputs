@@ -292,6 +292,40 @@ runs during render.
 
 Chosen seats render `checked` on the server, so there is no flash of an empty map before hydration.
 
+## Hostile input
+
+A seat map is fed by an inventory API and themed by someone else's code, so both
+are treated as hostile. Nothing in this table throws at you.
+
+| Given                                                       | It does                                                                       |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `maxSeats` of `0`, `-1`, `2.5`, `NaN` or `Infinity`         | ignores the cap and warns                                                     |
+| `pageSize` of `0`, `-3` or `NaN`                            | falls back to `5`                                                             |
+| `value` naming seats the layout does not have               | drops them and warns                                                          |
+| the same seat `id` twice                                    | keeps the first selectable, warns once                                        |
+| a ragged section, an empty section, a row of pure aisle     | pads to the widest row; renders an empty grid                                 |
+| seat ids containing quotes, brackets, spaces or backslashes | navigates fine — seats are looked up through a ref map, never `querySelector` |
+| markup in a seat label                                      | renders as text                                                               |
+| `isSelectable` that throws                                  | refuses that seat, with a `not-selectable` rejection                          |
+| `formatSeatLabel` that throws or returns nothing            | falls back to the built-in name                                               |
+| `formatAnnouncement` that throws or returns nothing         | falls back to the built-in wording                                            |
+| `renderSeat` that throws                                    | falls back to the built-in artwork                                            |
+| `formatValidationMessage` that throws or returns `''`       | keeps the form invalid, with the built-in message                             |
+| a five-thousand seat map                                    | one render — selection membership is a `Set`, not a scan                      |
+
+`pageSize` and the formatters matter more than they look. A negative `pageSize`
+would swap `PageUp` and `PageDown`, which is worse than doing nothing; a
+formatter returning `undefined` would leave a seat with **no accessible name**,
+the single worst outcome this component has; and an empty custom validity string
+means _valid_ to the browser, so a broken `formatValidationMessage` could
+otherwise wave an incomplete booking straight through.
+
+`onChange` is the one deliberate exception and propagates. It is your state
+setter: swallowing a throw would desync the map from you while hiding the bug.
+
+Every row above is an executable assertion in the package's
+`src/__tests__/adversarial.browser.test.tsx`.
+
 ## Development warnings
 
 A layout problem never throws. The component renders what it can and reports what it did through

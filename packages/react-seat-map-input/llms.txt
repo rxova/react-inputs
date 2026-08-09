@@ -80,7 +80,7 @@ build `SeatMapSection[]` directly instead.
 | `readOnly` | `boolean` | `!onChange` | Force read-only even with `onChange` present. |
 | `disabled` | `boolean` | `false` | Disables the whole field. Unavailable *seats* use `aria-disabled` instead. |
 | `onHoverChange` | `(seat: Seat \| null) => void` | — | Pointer preview; `null` when it ends. |
-| `pageSize` | `number` | `5` | Rows moved by `PageUp` / `PageDown`. |
+| `pageSize` | `number` | `5` | Rows moved by `PageUp` / `PageDown`. Anything but a positive integer falls back to `5`. |
 | `name` | `string` | — | Checkbox name. Every chosen seat submits under it, so `formData.getAll(name)` returns an array. |
 | `required` | `boolean` | `false` | At least one seat, or `minSeats` when that is set. |
 | `invalid` | `boolean` | `false` | |
@@ -154,6 +154,20 @@ it did through `onWarn`, which receives a `SeatMapWarning`:
 `unknown-seat-id`, `max-seats-invalid`, `min-above-max`. These are development
 signals — usually a value arriving from an API that no longer matches the
 layout — and are stripped from production builds.
+
+## Resilience
+
+Hostile data and hostile callbacks are contained rather than propagated. A
+`maxSeats` that is not a positive integer is ignored and warned about; a
+`pageSize` that is not is replaced by `5`, so the page keys are never inverted
+or dead; unknown ids in `value` are dropped; a duplicate seat id keeps the first
+selectable and warns once. `isSelectable` that throws refuses the seat;
+`formatSeatLabel`, `formatAnnouncement`, `renderSeat` and
+`formatValidationMessage` that throw or return nothing fall back to the built-in
+behaviour.
+
+`onChange` is the deliberate exception and propagates: it is your state setter,
+and swallowing it would desync the map from you while hiding the bug.
 
 ## Styling
 

@@ -205,6 +205,29 @@ Public API, covered by semver.
 The full surface is [`SeatMapProps`](./src/types.ts), whose TSDoc is the published
 [API reference](https://rxova.org/packages/react-inputs/components/seat-map/api).
 
+## Resilient input
+
+A seat map is fed by an inventory API and themed by someone else's code, so both
+are treated as hostile.
+
+| Given                                                 | It does                                                                                   |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `maxSeats` of `0`, `-1`, `2.5`, `NaN` or `Infinity`   | ignores the cap and warns                                                                 |
+| `pageSize` of `0`, `-3` or `NaN`                      | falls back to `5` — the page keys are never inverted or dead                              |
+| `value` naming seats the layout does not have         | drops them and warns                                                                      |
+| the same seat `id` twice                              | keeps the first selectable, warns once                                                    |
+| a ragged section                                      | pads every row to the widest, so columns cannot drift                                     |
+| `isSelectable` that throws                            | refuses that seat                                                                         |
+| `formatSeatLabel` that throws or returns nothing      | falls back to the built-in name                                                           |
+| `formatAnnouncement` that throws or returns nothing   | falls back to the built-in wording                                                        |
+| `renderSeat` that throws                              | falls back to the built-in artwork                                                        |
+| `formatValidationMessage` that throws or returns `''` | keeps the form invalid, with the built-in message                                         |
+| `onChange` that throws                                | **propagates** — it is your state setter, and swallowing it would desync the map from you |
+| a five-thousand seat map                              | one render; selection membership is a `Set`, not a scan                                   |
+
+Nothing here throws at you. `onWarn` reports what was coerced, in development
+only. The whole table is executable in `src/__tests__/adversarial.browser.test.tsx`.
+
 ## Headless
 
 `useSeatMap` returns the indexed grid, the selection, roving focus, the rule engine and the
