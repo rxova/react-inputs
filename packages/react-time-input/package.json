@@ -1,6 +1,6 @@
 {
   "name": "@rxova/react-time-input",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "A segmented, keyboard-first time field with no clock popup and no date library. 12/24-hour from Intl. Headless, zero-dependency.",
   "rxova": {

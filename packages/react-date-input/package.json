@@ -1,6 +1,6 @@
 {
   "name": "@rxova/react-date-input",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "A segmented, keyboard-first date field with no calendar and no date library. Headless, zero-dependency, locale-aware through Intl.",
   "rxova": {
