@@ -223,8 +223,8 @@ importers:
         specifier: ^3.3.0
         version: 3.3.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@rxova/brand':
-        specifier: ^0.11.0
-        version: 0.11.0(@astrojs/starlight@0.41.5(@astrojs/markdown-remark@7.2.2)(astro@7.1.6(@astrojs/markdown-remark@7.2.2)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(jiti@2.6.1)(rollup@4.62.2)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(typescript@6.0.3))(astro@7.1.6(@astrojs/markdown-remark@7.2.2)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(jiti@2.6.1)(rollup@4.62.2)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
+        specifier: ^0.12.0
+        version: 0.12.0(@astrojs/starlight@0.41.5(@astrojs/markdown-remark@7.2.2)(astro@7.1.6(@astrojs/markdown-remark@7.2.2)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(jiti@2.6.1)(rollup@4.62.2)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(typescript@6.0.3))(astro@7.1.6(@astrojs/markdown-remark@7.2.2)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(jiti@2.6.1)(rollup@4.62.2)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       '@rxova/react-date-input':
         specifier: workspace:*
         version: link:../../packages/react-date-input
@@ -4610,8 +4610,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@rxova/brand@0.11.0':
-    resolution: {integrity: sha512-a3ARNBjSKjlarEzjXanwuJWYXlci8hlGtbkwbnPjC/mdX3lbsHpj05I+fS3i3R+y1/YzShkMHQeFxtdnGyrF3w==}
+  '@rxova/brand@0.12.0':
+    resolution: {integrity: sha512-5SZG6S63s4I3y+QLo5riyH8yGyVHnek3hgoWrP7pTao6Searoe9Sut3yiORK5putPoxMqf3kgWccJrQQnCXGvA==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       '@astrojs/starlight': '>=0.36.0'
@@ -12978,7 +12978,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.62.2':
     optional: true
 
-  '@rxova/brand@0.11.0(@astrojs/starlight@0.41.5(@astrojs/markdown-remark@7.2.2)(astro@7.1.6(@astrojs/markdown-remark@7.2.2)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(jiti@2.6.1)(rollup@4.62.2)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(typescript@6.0.3))(astro@7.1.6(@astrojs/markdown-remark@7.2.2)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(jiti@2.6.1)(rollup@4.62.2)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))':
+  '@rxova/brand@0.12.0(@astrojs/starlight@0.41.5(@astrojs/markdown-remark@7.2.2)(astro@7.1.6(@astrojs/markdown-remark@7.2.2)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(jiti@2.6.1)(rollup@4.62.2)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(typescript@6.0.3))(astro@7.1.6(@astrojs/markdown-remark@7.2.2)(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@26.1.2)(jiti@2.6.1)(rollup@4.62.2)(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))':
     dependencies:
       '@fontsource/ibm-plex-mono': 5.3.0
       '@fontsource/space-grotesk': 5.3.0
