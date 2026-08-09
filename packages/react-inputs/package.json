@@ -49,6 +49,7 @@
     "@rxova/react-password-input": "workspace:^",
     "@rxova/react-phone-input": "workspace:^",
     "@rxova/react-rating-input": "workspace:^",
+    "@rxova/react-seat-map-input": "workspace:^",
     "@rxova/react-tags-input": "workspace:^",
     "@rxova/react-time-input": "workspace:^"
   },
