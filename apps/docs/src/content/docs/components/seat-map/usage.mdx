@@ -1,0 +1,225 @@
+---
+title: 'Seat map input — Usage'
+description: 'Use the seat map input in React: writing a layout, sections, selection rules, read-only diagrams and native form submission.'
+sidebar:
+  label: 'Usage'
+  order: 2
+---
+
+## Try it
+
+Pick seats with the pointer, or `Tab` into the grid once and walk it with the arrow keys — sold seats
+included. It renders and runs right here (`SeatMap`, `parseLayout`, `findBestSeats` and `useState`
+are already in scope).
+
+```tsx live
+function TryIt() {
+  const sections = parseLayout(`
+    Main cabin
+    10: ###_###
+    11: ##x_x##
+    12: ###_#x#
+    13: #x#_###
+    14: ###_###
+  `)
+  const [seats, setSeats] = useState([])
+  const [rejection, setRejection] = useState(null)
+
+  return (
+    <div>
+      <SeatMap
+        sections={sections}
+        value={seats}
+        onChange={setSeats}
+        onReject={setRejection}
+        label="Choose your seats"
+        maxSeats={4}
+      />
+      <p style={{ margin: '0.75rem 0 0', color: 'var(--rx-muted)' }}>
+        chosen: <b>{seats.join(', ') || 'none'}</b>
+        {rejection ? ` — ${rejection.message}` : ''}
+      </p>
+      <button
+        type="button"
+        style={{ marginTop: '0.5rem' }}
+        onClick={() => setSeats(findBestSeats(sections, 3).map((seat) => seat.id))}
+      >
+        Find 3 together
+      </button>
+    </div>
+  )
+}
+```
+
+## Writing a layout
+
+`parseLayout` turns a hand-written map into `SeatMapSection[]`. One character per column:
+
+| Character | Meaning   |
+| --------- | --------- |
+| `#`       | available |
+| `x`       | occupied  |
+| `o`       | held      |
+| `.`       | blocked   |
+| `_`       | aisle     |
+
+A line with a colon is a row — its label, then its columns. A line without one starts a new section.
+
+```tsx
+const CABIN = parseLayout(`
+  Main cabin
+  10: ###_###
+  11: ##x_x##
+`)
+```
+
+Seat ids come out as `<row label><column letter>`, with letters assigned left to right and skipping
+columns that are an aisle in every row — which is what makes `10A 10B 10C _ 10D 10E 10F` come out of
+a plain string. With more than one section the id gains a `<section>-` prefix, because a theatre
+really does have a row A in the stalls and another in the circle; the spoken and displayed label
+stays `AA` in both, and the grid each seat sits in is what tells them apart.
+
+`parseLayout` throws on an unknown character rather than guessing. It is authoring sugar for
+fixtures, demos and docs — for anything generated, build `SeatMapSection[]` directly:
+
+```tsx
+const sections: SeatMapSection[] = [
+  {
+    id: 'stalls',
+    label: 'Stalls',
+    rows: [
+      {
+        label: 'A',
+        note: 'wheelchair spaces',
+        cells: [
+          { id: 'stalls-A1', category: 'premium', features: ['aisle'] },
+          { id: 'stalls-A2', status: 'occupied' },
+          null, // an aisle
+          { id: 'stalls-A3' },
+        ],
+      },
+    ],
+  },
+]
+```
+
+:::caution[Hoist the layout]
+`sections` is memoized by reference. A layout built inline in render re-indexes the whole cabin on
+every keystroke — the one performance cliff this component has. Hoist it to a module constant, or
+wrap it in `useMemo`.
+:::
+
+## Interactive or read-only
+
+Providing `onChange` is the only thing that makes the map an input.
+
+```tsx
+// A booking form.
+<SeatMap sections={CABIN} value={seats} onChange={setSeats} name="seats" label="Choose your seats" />
+
+// A confirmation page. Still a navigable grid — just no controls in it.
+<SeatMap sections={CABIN} value={['10A', '10B']} label="Your seats" />
+```
+
+The two modes state selection differently, and never mix the models: interactive uses the checkbox's
+own `checked`, read-only uses `aria-selected` on the cell with `aria-readonly` on the grid.
+
+## Rules
+
+Four props, applied in this order. The first that refuses wins.
+
+| Prop            | Refuses when                                           | `rejection.reason` |
+| --------------- | ------------------------------------------------------ | ------------------ |
+| —               | the seat's `status` is not `available`                 | `unavailable`      |
+| `maxSeats`      | the cap is already reached                             | `max-seats`        |
+| `isSelectable`  | your predicate returns `false`                         | `not-selectable`   |
+| `contiguous`    | the pick is not adjacent to the block, in the same row | `not-contiguous`   |
+| `noOrphanSeats` | the pick would strand a single empty seat              | `orphan-seat`      |
+
+```tsx
+<SeatMap
+  sections={CABIN}
+  value={seats}
+  onChange={setSeats}
+  maxSeats={4}
+  contiguous
+  noOrphanSeats
+  onReject={(rejection) => toast(rejection.message)}
+/>
+```
+
+An aisle counts as a break for `contiguous`: two seats either side of one are adjacent on the diagram
+and nowhere near each other in the cabin.
+
+`noOrphanSeats` compares the row before and after the pick, so a seat already stranded by someone
+else's booking does not block every remaining pick in that row.
+
+### Finding seats together
+
+```tsx
+import { findBestSeats } from '@rxova/react-seat-map-input'
+
+const best = findBestSeats(CABIN, 3) // Seat[], or [] when there is no run that long
+setSeats(best.map((seat) => seat.id))
+```
+
+Earliest section, then earliest row, then the block closest to the centre of its row. Pass
+`{ noOrphanSeats: true }` to skip blocks whose booking would strand a lone seat, or `{ isSelectable }`
+to apply your own filter.
+
+## Labels
+
+The whole field takes `label`. Each seat's accessible name is composed from what a passenger would
+want read out, in the order they would want it:
+
+```
+12A, premium, exit row, window, taken
+└┬┘  └──┬──┘  └──┬───┘  └──┬─┘  └─┬─┘
+ │      │        │         │      └ status, only when not available
+ │      │        │         └ seat.features
+ │      │        └ row.note
+ │      └ seat.category
+ └ seat.label, or row label + column letter
+```
+
+`formatSeatLabel` replaces the whole thing — that is where a price belongs, since formatting money
+needs a locale and a currency this component has no business guessing:
+
+```tsx
+<SeatMap
+  sections={CABIN}
+  onChange={setSeats}
+  formatSeatLabel={(seat, ctx) =>
+    seat.price === undefined
+      ? `Seat ${ctx.rowLabel}${ctx.columnLabel}`
+      : `Seat ${ctx.rowLabel}${ctx.columnLabel}, ${money.format(seat.price)}`
+  }
+/>
+```
+
+`formatAnnouncement` does the same for the live region, which is where localisation of "12A
+selected. 2 of 4 seats chosen." lives.
+
+## Native forms
+
+Each chosen seat is a checkbox under one `name`, so a form posts a real array — no hidden inputs, no
+delimiter to agree on downstream.
+
+```tsx
+<form
+  onSubmit={(event) => {
+    event.preventDefault()
+    const seats = new FormData(event.currentTarget).getAll('seats') // ['12A', '12B']
+  }}
+>
+  <SeatMap sections={CABIN} name="seats" onChange={() => undefined} minSeats={2} label="Seats" />
+  <button type="submit">Book</button>
+</form>
+```
+
+`minSeats` never blocks a pick. It borrows the constraint-validation API on the first seat, so the
+browser refuses the submission and reports the reason itself — no JavaScript validation layer, and
+nothing to keep in sync. `formatValidationMessage` replaces the wording.
+
+Library integrations — React Hook Form, Formik, React Final Form, TanStack Form — are in
+[About](/components/seat-map/about).

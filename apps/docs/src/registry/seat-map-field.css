@@ -1,0 +1,67 @@
+/**
+ * Theming for @rxova/react-seat-map-input.
+ *
+ * The component ships no stylesheet: everything visual is a CSS custom property.
+ * This file is the bridge from those to your design tokens — no utility classes,
+ * no framework. Every value falls back, so it renders correctly in a project that
+ * has never heard of shadcn and improves automatically in one that has.
+ *
+ * Do not drop `--rx-seat-map-seat-size` below 24px: that is the WCAG 2.2 §2.5.8
+ * target-size floor, and the 1.75rem default exists to clear it.
+ */
+
+.rx-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  /* --- the component's own knobs ------------------------------------------ */
+  --rx-seat-map-seat-size: 1.75rem;
+  --rx-seat-map-gap: 0.25rem;
+  --rx-seat-map-row-gap: 0.25rem;
+  --rx-seat-map-aisle-width: 1rem;
+  --rx-seat-map-radius: var(--radius, 0.25rem);
+  --rx-seat-map-border: hsl(var(--border, 214 32% 78%));
+  --rx-seat-map-label-color: hsl(var(--muted-foreground, 215 16% 47%));
+
+  --rx-seat-map-bg-available: hsl(var(--background, 0 0% 100%));
+  --rx-seat-map-color-available: hsl(var(--foreground, 222 47% 11%));
+
+  --rx-seat-map-bg-selected: hsl(var(--primary, 222 47% 11%));
+  --rx-seat-map-color-selected: hsl(var(--primary-foreground, 210 40% 98%));
+  --rx-seat-map-border-selected: hsl(var(--primary, 222 47% 11%));
+
+  --rx-seat-map-bg-occupied: hsl(var(--muted, 210 40% 90%));
+  --rx-seat-map-color-occupied: hsl(var(--muted-foreground, 215 16% 35%));
+
+  --rx-seat-map-bg-held: hsl(var(--muted, 210 40% 96%));
+  --rx-seat-map-bg-blocked: hsl(var(--muted, 210 40% 96%));
+
+  --rx-seat-map-focus-ring: 2px solid hsl(var(--ring, 222 47% 11%));
+  --rx-seat-map-focus-ring-offset: 2px;
+  --rx-seat-map-focus-ring-radius: var(--radius, 0.25rem);
+  --rx-seat-map-transition: background 150ms ease;
+}
+
+.rx-field[data-invalid] {
+  --rx-seat-map-border: hsl(var(--destructive, 0 84% 60%));
+  --rx-seat-map-focus-ring: 2px solid hsl(var(--destructive, 0 84% 60%));
+}
+
+.rx-field__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.rx-field__description {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: hsl(var(--muted-foreground, 215 16% 47%));
+}
+
+.rx-field__error {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: hsl(var(--destructive, 0 84% 60%));
+}

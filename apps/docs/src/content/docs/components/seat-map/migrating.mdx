@@ -1,0 +1,164 @@
+---
+title: 'Seat map input — Migrating'
+description: 'Move to @rxova/react-seat-map-input from react-seat-picker, seatmap-canvas, react-svg-seatmap or a hand-rolled grid of divs.'
+sidebar:
+  label: 'Migrating'
+  order: 4
+---
+
+Whatever you are coming from, three things change shape:
+
+1. **Selection is a value, not a stream of callbacks.** `value: string[]` plus
+   `onChange(ids, seats)`, controlled or uncontrolled, instead of `addSeatCallback` /
+   `removeSeatCallback` pairs you have to reconcile yourself.
+2. **The layout is data.** A `SeatMapSection[]` — or `parseLayout('12: ###_###')` — instead of a
+   nested array whose shape is documented by example, or an SVG you have to author.
+3. **Rules are props.** `maxSeats`, `contiguous`, `noOrphanSeats` and `isSelectable` replace the
+   validation that normally accretes inside a click handler.
+
+## From `react-seat-picker`
+
+The most widely installed option, and the closest in spirit. It peers on `react@^15 || ^16`, ships no
+types, and its README contains no occurrence of `aria`, `keyboard`, `role=` or `tabindex`.
+
+```tsx
+// Before
+<SeatPicker
+  addSeatCallback={({ row, number, id }, addCb) => {
+    setSeats((current) => [...current, id])
+    addCb(row, number)
+  }}
+  removeSeatCallback={({ row, number, id }, removeCb) => {
+    setSeats((current) => current.filter((seat) => seat !== id))
+    removeCb(row, number)
+  }}
+  rows={rows}
+  maxReservableSeats={4}
+/>
+
+// After
+<SeatMap sections={sections} value={seats} onChange={setSeats} maxSeats={4} label="Choose your seats" />
+```
+
+| `react-seat-picker`                                    | Here                                                      |
+| ------------------------------------------------------ | --------------------------------------------------------- |
+| `rows` (nested arrays of `{ id, number, isReserved }`) | `sections[].rows[].cells` — `Seat` or `null` for an aisle |
+| `isReserved: true`                                     | `status: 'occupied'`                                      |
+| `isSelected: true`                                     | the id appears in `value`                                 |
+| `maxReservableSeats`                                   | `maxSeats`                                                |
+| `addSeatCallback` / `removeSeatCallback`               | one `onChange(ids, seats)`                                |
+| `loading`                                              | render your own; the component has no loading state       |
+| `alpha`, `visible`                                     | row and column labels come from the layout                |
+| `continuous`                                           | `contiguous`                                              |
+
+The callback pair is the substantive change. `addSeatCallback` handed you a callback you had to
+invoke to commit the change, which is how a failed async check was meant to veto a pick. Here that is
+`isSelectable` for synchronous rules, or a controlled `value` you simply do not update.
+
+Row shape converts mechanically:
+
+```tsx
+const sections = [
+  {
+    id: 'main',
+    label: 'Main cabin',
+    rows: rows.map((cells, index) => ({
+      label: String(index + 1),
+      cells: cells.map((cell) =>
+        cell === null || cell.isEnabled === false
+          ? null
+          : { id: cell.id, status: cell.isReserved ? 'occupied' : 'available' },
+      ),
+    })),
+  },
+]
+```
+
+## From `seatmap-canvas` / `@alisaitteke/seatmap-canvas`
+
+A D3-driven canvas renderer, around 1.6 MB unpacked, with an imperative event API and no documented
+accessibility.
+
+```tsx
+// Before
+seatmap.addEventListener('seat_click', (seat) => { /* … */ })
+seatmap.seatSelect(id)
+seatmap.getSelectedSeats()
+
+// After — the selection is state you already own
+<SeatMap sections={sections} value={seats} onChange={setSeats} />
+```
+
+| `seatmap-canvas`                      | Here                                                         |
+| ------------------------------------- | ------------------------------------------------------------ |
+| `addEventListener('seat_click')`      | `onChange`, or `onReject` when a rule refuses                |
+| `seatSelect(id)` / `seatUnselect(id)` | add or remove the id from `value`                            |
+| `getSelectedSeats()`                  | `value`, or `selectedSeats` from `useSeatMap`                |
+| `blocks`                              | `sections`                                                   |
+| Canvas styling config                 | CSS custom properties and `data-*` hooks                     |
+| Pan and zoom                          | an `overflow: auto` container plus `--rx-seat-map-seat-size` |
+
+There is no imperative handle to hold. If you need one — to jump to a seat, say — use `useSeatMap`
+and drive your own markup; `resolveMove` and `tabbableIds` are the parts worth keeping.
+
+## From `react-svg-seatmap`
+
+Renders from an SVG you supply, and lists `react`, `lodash`, `react-selecto` and `svg-pan-zoom` as
+runtime dependencies — `react` among them, which is a peer dependency mistake worth checking your
+lockfile for.
+
+The migration is really "stop authoring an SVG". A `SeatMapSection[]` carries the same information —
+rows, gaps, statuses, categories — in a form that is diffable, generatable from your inventory API,
+and navigable by a keyboard. Where the SVG encoded a seat's group, use `category`; where it encoded
+a row's nature ("exit row", "wheelchair spaces"), use `row.note`, which is spoken after every seat in
+that row.
+
+Drag-to-select has no equivalent by design: it is unreachable by keyboard and hard to undo.
+`Shift`+`←`/`→` extends a block, and `findBestSeats(sections, n)` does the common case in one call.
+
+## From a hand-rolled grid of `<div>`s
+
+The most common starting point, and the one that gains the most. A typical version looks like:
+
+```tsx
+{
+  rows.map((row) => (
+    <div key={row.id} className="row">
+      {row.seats.map((seat) => (
+        <div
+          key={seat.id}
+          className={cx('seat', { taken: seat.taken, picked: picked.includes(seat.id) })}
+          onClick={() => !seat.taken && toggle(seat.id)}
+        />
+      ))}
+    </div>
+  ))
+}
+```
+
+That has no role, no keyboard, no focus indicator, no announcement, and no form value — and every
+sold seat is invisible to anyone not using a mouse. Replacing it:
+
+```tsx
+<SeatMap sections={sections} value={picked} onChange={setPicked} name="seats" label="Seats" />
+```
+
+Keep your CSS. Point the class-based selectors at the `data-*` hooks instead — `data-state` covers
+what `taken` and `picked` were doing, and the whole styling surface is custom properties:
+
+```css
+/* Before */            /* After */
+.seat { … }             [data-rx-seat-map-cell] { … }
+.seat.taken { … }       [data-rx-seat-map-cell][data-state='occupied'] { … }
+.seat.picked { … }      [data-rx-seat-map-cell][data-state='selected'] { … }
+```
+
+## Things that intentionally have no equivalent
+
+| Feature elsewhere        | Why not here                                                                                                                             |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Pan and zoom             | Most of the bundle, and it breaks keyboard reachability. Use a scroll container and `--rx-seat-map-seat-size`.                           |
+| Drag to select           | Unreachable by keyboard. `Shift`+arrow and `findBestSeats` cover the intent.                                                             |
+| A built-in layout editor | A different product. `SeatMapSection[]` is plain JSON — build the editor against that.                                                   |
+| Tooltips on hover        | Hover-only information is inaccessible. Use `onHoverChange` and render your own, or put it in the accessible name via `formatSeatLabel`. |
+| A loading state          | Render your own skeleton. A component that owns loading owns your data fetching too.                                                     |

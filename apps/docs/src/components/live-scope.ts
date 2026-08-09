@@ -1,6 +1,7 @@
 import React from 'react'
 import * as currency from '@rxova/react-intl-currency-input'
 import * as rating from '@rxova/react-rating-input'
+import * as seatMap from '@rxova/react-seat-map-input'
 import * as otp from '@rxova/react-otp-input'
 import * as phone from '@rxova/react-phone-input'
 import * as password from '@rxova/react-password-input'
@@ -29,6 +30,7 @@ const liveScope = {
   ...React,
   ...currency,
   ...rating,
+  ...seatMap,
   ...otp,
   ...phone,
   ...password,

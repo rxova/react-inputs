@@ -1,0 +1,316 @@
+---
+title: 'Seat map input — About'
+description: 'The ARIA grid model, why sold seats stay focusable, styling with tokens and data attributes, form-library recipes and SSR notes.'
+sidebar:
+  label: 'About'
+  order: 3
+---
+
+import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+
+## Accessibility
+
+There is no opt-in flag. The semantics below are what the component _is_.
+
+### The grid model
+
+```html
+<div role="group" aria-label="Choose your seats">
+  <div role="grid" aria-label="Main cabin">
+    <div role="row">
+      <span role="columnheader"></span>
+      <span role="columnheader">A</span>…
+    </div>
+    <div role="row">
+      <span role="rowheader">12</span>
+      <span role="gridcell">
+        <span aria-hidden="true"><!-- the artwork --></span>
+        <input type="checkbox" name="seats" value="12A" aria-label="12A" tabindex="0" />
+      </span>
+      <span role="gridcell" data-rx-seat-map-gap></span>…
+    </div>
+  </div>
+  <span aria-live="polite" aria-atomic="true"><!-- announcements --></span>
+</div>
+```
+
+Three decisions worth stating explicitly:
+
+**Aisles are empty grid cells, not omitted.** Every row is padded to the widest row in its section,
+so the visual columns and the accessibility tree cannot drift apart.
+
+**Selection is stated once.** An interactive map says it with the checkbox's `checked` and nothing
+else; a read-only map has no control to carry that, so it uses `aria-selected` on the cell plus
+`aria-multiselectable` and `aria-readonly` on the grid. Setting both would make a screen reader
+announce "selected, checked".
+
+**One tab stop per section.** The roving `tabindex` prefers the focused seat, then the first seat
+already chosen in that section, then the first seat that can still be chosen, then the first seat at
+all — so tabbing in lands somewhere useful rather than in the corner of a sold-out block.
+
+### Why sold seats are `aria-disabled`
+
+A `disabled` checkbox is not focusable. Applied to sold seats, it means arrow keys skip straight past
+them, and a keyboard or screen-reader user can learn that _some_ seats are gone but never _which_ —
+which is most of the information a seat map exists to convey.
+
+So unavailable seats stay ordinary, focusable checkboxes marked `aria-disabled="true"`, with the
+status in the accessible name. Attempting one is refused, and the refusal is announced with its
+reason. Field-level `disabled` is a different thing and does use the real attribute, because a
+disabled _field_ genuinely should leave the tab order.
+
+### Status is never colour alone
+
+WCAG 1.4.1. Each state gets a distinct mark and border style as well as a colour:
+
+| State     | Mark | Border | Spoken as          |
+| --------- | ---- | ------ | ------------------ |
+| available | —    | solid  | `12A`              |
+| selected  | `✓`  | solid  | `12A` + checked    |
+| occupied  | `×`  | solid  | `12A, taken`       |
+| held      | `•`  | dashed | `12A, on hold`     |
+| blocked   | `/`  | dotted | `12A, unavailable` |
+
+A `renderSeat` function replaces the artwork only — the accessible name is untouched. If you replace
+it, keep a non-colour difference between states.
+
+### Keyboard
+
+| Key                      | Action                                                    |
+| ------------------------ | --------------------------------------------------------- |
+| Arrow keys               | Move one seat, stepping over aisles, clamped at the edges |
+| `Home` / `End`           | First / last seat in the row                              |
+| `Ctrl+Home` / `Ctrl+End` | First / last seat in the section                          |
+| `PageUp` / `PageDown`    | Move `pageSize` rows (default 5)                          |
+| `Space`                  | Toggle — the checkbox doing its own job                   |
+| `Enter`                  | Toggle. Does not submit the surrounding form              |
+| `Shift`+`←`/`→`          | Extend the block. Only ever adds                          |
+
+Arrow keys read the _resolved_ text direction, so RTL works whether it comes from the `dir` prop or
+an ancestor. Movement clamps rather than wraps — a grid that teleports you across the cabin at the
+row's edge is worse than one that stops — but the key is still swallowed, so the page does not scroll
+instead.
+
+### Target size
+
+The default `--rx-seat-map-seat-size` is `1.75rem` (28 px), clearing the WCAG 2.2 §2.5.8 24×24 CSS
+pixel floor out of the box. Every seat in the demo page is measured against it in the E2E suite.
+
+### Announcements
+
+A polite, atomic live region announces picks, clears and — the part no alternative ships — refusals,
+with the reason:
+
+- `12A selected. 2 of 4 seats chosen.`
+- `12A cleared. 1 of 4 seats chosen.`
+- `12B is already taken.`
+- `You can choose at most 4 seats.`
+- `Choosing 12B would leave a single empty seat.`
+
+`formatAnnouncement` replaces the wording. Repeated refusals are announced each time, not once.
+
+## Styling
+
+There is no stylesheet to import. Set custom properties on any ancestor:
+
+```css
+[data-rx-seat-map-root] {
+  --rx-seat-map-seat-size: 2rem;
+  --rx-seat-map-radius: 0.5rem;
+  --rx-seat-map-bg-selected: #0f766e;
+  --rx-seat-map-color-selected: #fff;
+  --rx-seat-map-bg-occupied: #e5e5e5;
+}
+```
+
+### Custom properties
+
+| Token                                         | Default                 | Controls                               |
+| --------------------------------------------- | ----------------------- | -------------------------------------- |
+| `--rx-seat-map-seat-size`                     | `1.75rem`               | seat width and height                  |
+| `--rx-seat-map-gap`                           | `0.25rem`               | space between seats                    |
+| `--rx-seat-map-row-gap`                       | `0.25rem`               | space between rows                     |
+| `--rx-seat-map-section-gap`                   | `1.5rem`                | space between grids                    |
+| `--rx-seat-map-aisle-width`                   | `1rem`                  | width of a gap cell                    |
+| `--rx-seat-map-row-header-width`              | `2rem`                  | width of the row-label column          |
+| `--rx-seat-map-radius`                        | `0.25rem`               | seat corner radius                     |
+| `--rx-seat-map-border-width`                  | `1px`                   | seat border width                      |
+| `--rx-seat-map-border`                        | `#767676`               | fallback border colour                 |
+| `--rx-seat-map-mark-size`                     | `0.75rem`               | the status glyph                       |
+| `--rx-seat-map-label-size` / `-label-color`   | `0.75rem` / `#525252`   | row and column headers                 |
+| `--rx-seat-map-transition`                    | `background 120ms ease` | dropped under `prefers-reduced-motion` |
+| `--rx-seat-map-focus-ring`                    | `2px solid Highlight`   | the focus outline                      |
+| `--rx-seat-map-focus-ring-offset` / `-radius` | `2px` / `0.25rem`       |                                        |
+| `--rx-seat-map-bg-*`, `-color-*`, `-border-*` | see below               | one of each per state                  |
+
+The per-state tokens take `available`, `selected`, `occupied`, `held` and `blocked` — for example
+`--rx-seat-map-bg-selected` and `--rx-seat-map-color-occupied`.
+
+### `data-*` attributes
+
+Public API, covered by semver.
+
+| Attribute                                                                                            | On                              |
+| ---------------------------------------------------------------------------------------------------- | ------------------------------- |
+| `data-rx-seat-map-root`                                                                              | the field wrapper               |
+| `data-rx-seat-map-section="{id}"`                                                                    | each grid                       |
+| `data-rx-seat-map-row="{label}"`                                                                     | each row                        |
+| `data-rx-seat-map-row-header`, `data-rx-seat-map-column-header="{label}"`, `data-rx-seat-map-corner` | the headers                     |
+| `data-rx-seat-map-cell`                                                                              | each seat cell                  |
+| `data-rx-seat-map-seat="{id}"`                                                                       | the focusable element inside it |
+| `data-rx-seat-map-gap`                                                                               | an aisle                        |
+| `data-rx-seat-map-visual`                                                                            | the default artwork             |
+| `data-rx-seat-map-announcement`                                                                      | the live region                 |
+| `data-state`, `data-focused`                                                                         | state hooks on the cell         |
+| `data-disabled`, `data-readonly`, `data-invalid`                                                     | state hooks on the root         |
+
+```css
+[data-rx-seat-map-cell][data-rx-seat-map-category='premium'] {
+  --rx-seat-map-border-available: #b45309;
+}
+```
+
+## Forms
+
+### React Hook Form
+
+`Controller`, because the value is an array rather than something a native `register` can read back:
+
+```tsx
+<Controller
+  name="seats"
+  control={control}
+  rules={{ validate: (seats) => seats.length > 0 || 'Choose a seat' }}
+  render={({ field, fieldState }) => (
+    <SeatMap
+      sections={CABIN}
+      value={field.value}
+      onChange={field.onChange}
+      onBlur={field.onBlur}
+      label="Seats"
+      invalid={fieldState.invalid}
+      aria-describedby={fieldState.error ? 'seat-err' : undefined}
+    />
+  )}
+/>
+```
+
+`field.onChange` matches the component's first argument exactly, so it passes straight through. The
+second argument — the resolved `Seat[]` — is there when you need the price or category alongside the
+ids.
+
+### Formik
+
+```tsx
+const [field, meta, helpers] = useField<string[]>('seats')
+
+<SeatMap
+  sections={CABIN}
+  name="seats"
+  value={field.value}
+  onChange={(ids) => void helpers.setValue(ids)}
+  onBlur={field.onBlur}
+  label="Seats"
+  invalid={meta.touched && Boolean(meta.error)}
+/>
+```
+
+Formik's `handleBlur` reads `event.target.name`, which works because the blur target is a real named
+checkbox rather than a `<div>` standing in for one.
+
+### React Final Form
+
+```tsx
+<Field name="seats">
+  {({ input }) => (
+    <SeatMap
+      sections={CABIN}
+      // RFF represents an empty field as '', which is not an array.
+      value={Array.isArray(input.value) ? input.value : []}
+      onChange={input.onChange}
+      onBlur={input.onBlur}
+      label="Seats"
+    />
+  )}
+</Field>
+```
+
+### TanStack Form
+
+```tsx
+<form.Field
+  name="seats"
+  validators={{ onChange: ({ value }) => (value.length === 0 ? 'Choose a seat' : undefined) }}
+>
+  {(field) => (
+    <SeatMap
+      sections={CABIN}
+      value={field.state.value}
+      onChange={(ids) => field.handleChange(ids)}
+      onBlur={field.handleBlur}
+      label="Seats"
+      invalid={!field.state.meta.isValid}
+    />
+  )}
+</form.Field>
+```
+
+### Group blur
+
+In every case, `onBlur` fires when focus leaves the **whole map**, not while arrowing between seats.
+A naive per-input blur would mark the field touched mid-selection and fire validation while the
+customer was still choosing.
+
+## Headless
+
+`useSeatMap` returns everything the renderer uses, for building your own markup:
+
+```tsx
+const {
+  grid, // the indexed layout: sections, rows, cells, per-seat position
+  value, // chosen ids, filtered to ids the layout knows
+  selectedSeats,
+  remaining, // seats left under maxSeats, or null
+  belowMinimum,
+  toggle, // runs every rule
+  setSelection, // replaces the selection, skipping the rules
+  resolveMove, // where a navigation key lands, or null
+  tabbableIds, // one seat id per section — the roving tabindex, resolved
+  announcement,
+} = useSeatMap({ sections, onChange })
+```
+
+`findBestSeats` and `parseLayout` are pure and importable on their own; neither pulls React in.
+
+## Server rendering
+
+Safe with no guard. The one browser API the component reads at render time is
+`matchMedia('(prefers-reduced-motion: reduce)')`, through `useSyncExternalStore` with a server
+snapshot of `false` — so the server emits the transition and hydration stays quiet unless the user
+actually prefers reduced motion. `getComputedStyle` is only read inside the key handler, which never
+runs during render.
+
+Chosen seats render `checked` on the server, so there is no flash of an empty map before hydration.
+
+## Development warnings
+
+A layout problem never throws. The component renders what it can and reports what it did through
+`onWarn`, which receives `{ code, message, seatId? }`:
+
+| Code                | Means                                                             |
+| ------------------- | ----------------------------------------------------------------- |
+| `no-layout`         | neither `sections` nor `rows` had any seats                       |
+| `duplicate-seat-id` | one id appears twice; the first is selectable, the rest mirror it |
+| `unknown-seat-id`   | `value` names a seat the layout does not have; it is dropped      |
+| `max-seats-invalid` | `maxSeats` is not a positive integer; it is ignored               |
+| `min-above-max`     | the field can never be valid                                      |
+
+These are stripped from production builds, and are deduplicated per instance so a controlled `value`
+re-rendering a hundred times warns once.
+
+## UI-library recipes
+
+The Rxova component remains the grid; the design system supplies field layout and validation
+presentation without replacing native checkbox semantics.
+
+<IntegrationRecipes slug="seat-map" />

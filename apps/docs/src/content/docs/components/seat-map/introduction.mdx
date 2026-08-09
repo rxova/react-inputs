@@ -1,0 +1,88 @@
+---
+title: 'Seat map input'
+description: 'A headless, zero-dependency React seat map — aircraft cabins, theatres and stadiums as a real ARIA grid of native checkboxes, accessible with no opt-in.'
+sidebar:
+  label: 'Introduction'
+  order: 1
+---
+
+**Cabins, theatres, stadiums, car parks.** A headless, zero-dependency React seat map that is an
+accessible ARIA grid by default — no flag to turn on, no config key to remember.
+
+Every React seat picker on npm makes at least one of four assumptions that fall apart the moment a
+real customer uses it:
+
+1. **Seats are `<div>`s with an `onClick`.** No role, no keyboard, invisible to a screen reader. The
+   most-installed option's README contains zero occurrences of `aria`, `keyboard` or `tabindex`.
+2. **Sold seats are inert or `disabled`.** Both remove the seat from the tab and arrow order, so a
+   keyboard user can tell that _some_ seats are gone but never _which_ — which is most of the
+   information a seat map exists to convey.
+3. **Accessibility is a config flag, off by default.** The one library that has done serious WCAG
+   work gates all of it behind a key, and says so plainly: if it is not set, nothing changes.
+4. **The map is a canvas.** D3, Fabric or `svg-pan-zoom`, and a megabyte of bundle, for a control
+   whose entire job is picking a few cells out of a grid.
+
+`@rxova/react-seat-map-input` treats a seat map as what it is — **a constrained multi-selection over
+a grid** — and hands appearance entirely to you.
+
+## A real grid of real checkboxes
+
+Each section renders as `role="grid"` → `role="row"` → `role="gridcell"`, and inside each cell sits a
+native, visually-hidden `<input type="checkbox">`. That single choice is what makes `checked`,
+`FormData`, constraint validation, `:focus-visible` and the screen-reader role announcement come
+from the browser rather than from JavaScript reimplementing them.
+
+Two-dimensional navigation is the one thing added on top, for the honest reason that no native
+element provides it: arrow keys walk the cabin, `Home`/`End` reach the ends of a row, `Ctrl+Home`
+and `Ctrl+End` the ends of the section, `PageUp`/`PageDown` a screenful of rows. A roving tabindex
+keeps a 400-seat stadium to **one** `Tab`.
+
+## Sold seats stay reachable
+
+| Approach            | Keyboard can reach it | Screen reader hears    |
+| ------------------- | --------------------- | ---------------------- |
+| Inert `<div>`       | ✗                     | nothing                |
+| `<input disabled>`  | ✗                     | nothing while arrowing |
+| **`aria-disabled`** | ✓                     | `12B, taken`           |
+
+This is the difference that matters most in practice, and it is why the component never puts the
+`disabled` attribute on an unavailable seat. Field-level `disabled` is a different thing and does
+use the real attribute.
+
+Status is never carried by colour alone either: each state draws a distinct mark and border style,
+and says itself in the accessible name.
+
+## Rules that are part of the control
+
+Booking rules normally live in an ad-hoc `onChange` handler and get re-derived in every application.
+Here they are props, and every refusal reaches both `onReject` and a polite live region — a seat that
+silently declines to tick is indistinguishable from a broken control.
+
+- `maxSeats` — a hard cap
+- `minSeats` — a native validation message, so a real `<form>` refuses to submit
+- `contiguous` — keep the party together
+- `noOrphanSeats` — never strand a lone empty seat
+- `findBestSeats(sections, 3)` — "give me three together", as an exported pure function
+
+Deselecting is never refused. A rule that traps someone in a selection they cannot undo is worse than
+any it prevents.
+
+:::note[Deliberately no pan and zoom]
+It is most of what the alternatives weigh, and it is the thing that breaks keyboard reachability.
+Put the map in an `overflow: auto` container and change `--rx-seat-map-seat-size`. Focus scrolls
+itself into view with `block: 'nearest'`, without moving the page.
+:::
+
+## Small, honest packaging
+
+- **Zero runtime dependencies.** `react` is the only peer.
+- **No stylesheet.** Only layout-critical CSS is inlined; everything visual is a `--rx-seat-map-*`
+  custom property or a `data-*` hook, both covered by semver.
+- **~5.3 kB brotli** for the full component; `useSeatMap` is ~3.1 kB on its own for a fully custom
+  renderer, and `findBestSeats` is ~0.8 kB importable alone.
+- **The default seat is 28×28 px**, clearing the WCAG 2.2 §2.5.8 target-size floor out of the box.
+- Dual ESM/CJS with correct types in both, verified in CI by `publint` and
+  `@arethetypeswrong/cli`, plus a pack-and-import smoke test.
+
+The result is a seat map you can drop into a booking flow without auditing it for accessibility
+first, and theme into a design system without inheriting one.
