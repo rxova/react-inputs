@@ -2,6 +2,7 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import type { FocusEvent } from 'react'
 import {
   EMPTY_PARTS,
+  boundsUsable,
   clamp,
   defaultPlaceholder,
   formatSegment,
@@ -196,9 +197,9 @@ export function useMeasurementInput(
   // — a field nothing can be entered into is worse than a missing bound. The
   // bounds may be written in any unit of the dimension, so they are compared
   // through `compareMeasurements`, never as strings.
-  const boundsUsable = inspectRange(minProp, maxProp) === null
-  const min = boundsUsable && minProp !== undefined ? minProp : undefined
-  const max = boundsUsable && maxProp !== undefined ? maxProp : undefined
+  const usable = boundsUsable(minProp, maxProp)
+  const min = usable ? minProp : undefined
+  const max = usable ? maxProp : undefined
 
   const isControlled = valueProp !== undefined
   const [parts, setParts] = useState<MeasurementParts>(
@@ -229,9 +230,45 @@ export function useMeasurementInput(
    * all and a comparison against `null` would wipe them on every keystroke.
    */
   const [previousValueProp, setPreviousValueProp] = useState(valueProp)
-  if (isControlled && valueProp !== previousValueProp) {
+  const valueArrived = isControlled && valueProp !== previousValueProp
+  if (valueArrived) {
     setPreviousValueProp(valueProp)
     setParts(fromMeasurement(valueProp ?? '', units, precision) ?? EMPTY_PARTS)
+  }
+
+  /**
+   * Re-shape the segments when `units` or `precision` changes under a value
+   * that is already there.
+   *
+   * Without this, a metric/imperial toggle — the first thing anyone builds with
+   * this component — silently erases what the user typed: the segments are keyed
+   * by unit, so `{ foot: 5, inch: 11 }` is simply absent from a metres-and-
+   * centimetres field and the height disappears. The measurement is converted
+   * instead, through the canonical value the *old* units produced.
+   *
+   * Keyed on the units' contents rather than the array's identity, because
+   * `units={['foot', 'inch']}` written inline is a new array on every render and
+   * comparing identity would reset the field continuously.
+   *
+   * Nothing is emitted here. A controlled parent asked for different units, not
+   * for a different value, and firing `onChange` from render is not allowed
+   * anyway; the next edit or blur reports the canonical value in the new units.
+   */
+  const shape = `${units.join(',')}/${String(precision)}`
+  const [previousShape, setPreviousShape] = useState({ key: shape, units, precision })
+  if (shape !== previousShape.key) {
+    setPreviousShape({ key: shape, units, precision })
+    // Unless a new `value` landed in the same render — that branch already
+    // rebuilt the segments from the new units, and it is the parent's
+    // instruction rather than our inference.
+    if (!valueArrived) {
+      const carried = toMeasurement(parts, previousShape.units, previousShape.precision)
+      setParts(
+        carried === null
+          ? EMPTY_PARTS
+          : (fromMeasurement(carried, units, precision) ?? EMPTY_PARTS),
+      )
+    }
   }
 
   const setEntry = useCallback(

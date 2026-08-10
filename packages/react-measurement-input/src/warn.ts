@@ -1,5 +1,5 @@
 import {
-  REFUSED_UNITS,
+  boundsUsable,
   compareMeasurements,
   compareUnitSize,
   dimensionOf,
@@ -9,6 +9,7 @@ import {
   isSigned,
   parseMeasurement,
   ratioBetween,
+  refusalOf,
   usablePrecision,
 } from './units'
 import type { MeasurementUnit } from './units'
@@ -49,7 +50,7 @@ function show(received: unknown): string {
 
 /** Why a refused-but-real `Intl` unit is refused, and what to reach for instead. */
 function refusalHint(unit: string): string {
-  return REFUSED_UNITS[unit] === 'time'
+  return refusalOf(unit) === 'time'
     ? `"${unit}" is a time unit. Durations are a different value with a different canonical form — use \`@rxova/react-duration-input\`, which speaks ISO 8601.`
     : `"${unit}" has no conversion partner in \`Intl\`'s unit list, so there is nothing for a converting field to convert it to.`
 }
@@ -162,12 +163,11 @@ export function inspectRange(
   min: string | undefined,
   max: string | undefined,
 ): MeasurementWarning | null {
-  if (min === undefined || max === undefined) return null
+  if (min === undefined || max === undefined || boundsUsable(min, max)) return null
+  // Everything past here is a range the hook has already dropped; this only
+  // says which of the two reasons it was.
   const order = compareMeasurements(min, max)
   if (order === null) {
-    // Two readable bounds in different dimensions. Neither is wrong on its own,
-    // and together they are unenforceable.
-    if (!parseMeasurement(min).ok || !parseMeasurement(max).ok) return null
     return {
       code: 'min-after-max',
       prop: 'min',
@@ -220,7 +220,7 @@ export function inspectUnits(units: readonly unknown[]): MeasurementWarning | nu
   const received = JSON.stringify(units)
 
   const refused = units.filter(
-    (unit): unit is string => typeof unit === 'string' && REFUSED_UNITS[unit] !== undefined,
+    (unit): unit is string => typeof unit === 'string' && refusalOf(unit) !== null,
   )
   const firstRefused = refused[0]
   if (firstRefused !== undefined) {
@@ -239,7 +239,7 @@ export function inspectUnits(units: readonly unknown[]): MeasurementWarning | nu
       code: 'units-invalid',
       prop: 'units',
       received,
-      message: `\`units\` contains ${show(firstUnknown)}, which is not a unit this field converts. Units are \`Intl\` identifiers — "centimeter", not "cm". Dropping it.`,
+      message: `\`units\` contains ${JSON.stringify(firstUnknown)}, which is not a unit this field converts. Units are \`Intl\` identifiers — "centimeter", not "cm". Dropping it.`,
     }
   }
 

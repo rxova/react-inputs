@@ -237,3 +237,28 @@ describe('inspectLocale', () => {
     expect(warning?.message).toContain('en-US')
   })
 })
+
+describe('hostile input to the diagnostics', () => {
+  it('describes a prototype key as an unknown unit, not a refused one', () => {
+    const warning = inspectUnits(['constructor'])
+    expect(warning?.code).toBe('units-invalid')
+    expect(warning?.message).toContain('"constructor"')
+    expect(warning?.message).not.toContain('conversion partner')
+
+    const value = inspectValue('5 constructor', 'value', FT_IN)
+    expect(value?.code).toBe('value-unknown-unit')
+  })
+
+  it('describes an amount too large to write and read back', () => {
+    const warning = inspectValue('1000000000000000000000 meter', 'value', FT_IN)
+    expect(warning?.code).toBe('value-unparseable')
+  })
+
+  it('still reports the impossible range the hook drops', () => {
+    // The rule itself moved to `units.ts` so the hook can read it in every
+    // build; this only has to keep describing the same two cases.
+    expect(inspectRange('2 meter', '1 meter')?.message).toContain('larger than')
+    expect(inspectRange('1 meter', '1 kilogram')?.message).toContain('different things')
+    expect(inspectRange('1 meter', '80 inch')).toBeNull()
+  })
+})

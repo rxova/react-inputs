@@ -13,6 +13,7 @@ import type { MeasurementWarning } from '@rxova/react-measurement-input'
 export function MeasurementDemos() {
   const [value, setValue] = useState<string | null>('71 inch')
   const [ranged, setRanged] = useState<string | null>(null)
+  const [metric, setMetric] = useState(false)
   const [warnings, setWarnings] = useState<MeasurementWarning[]>([])
   const [submitted, setSubmitted] = useState<string | null>(null)
 
@@ -145,6 +146,26 @@ export function MeasurementDemos() {
           }}
         >
           Clear
+        </button>
+      </Section>
+
+      <Section
+        id="toggle"
+        title="Switching units"
+        note="Changing units converts what is on screen rather than clearing it."
+      >
+        <MeasurementInput
+          label="Toggled height"
+          units={metric ? ['meter', 'centimeter'] : ['foot', 'inch']}
+          defaultValue="71 inch"
+        />
+        <button
+          type="button"
+          onClick={() => {
+            setMetric((on) => !on)
+          }}
+        >
+          Toggle units
         </button>
       </Section>
 

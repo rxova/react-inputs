@@ -113,6 +113,34 @@ function Conversion() {
 The value stays exactly what the parent set until the user edits the field; the same measurement in
 another unit is not a change. Once edited, it is reported in the smallest unit on screen.
 
+## Switching units at runtime
+
+Changing `units` converts what is on screen rather than clearing it:
+
+```tsx live
+function Toggle() {
+  const [metric, setMetric] = useState(false)
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <MeasurementInput
+        label="Height"
+        locale="en-GB"
+        units={metric ? ['meter', 'centimeter'] : ['foot', 'inch']}
+        defaultValue="71 inch"
+      />
+      <button type="button" onClick={() => setMetric((on) => !on)}>
+        {metric ? 'Show feet and inches' : 'Show metres and centimetres'}
+      </button>
+    </div>
+  )
+}
+```
+
+A half-filled field empties instead, because there is no complete measurement to
+carry over and guessing at the missing segment would be inventing data. Nothing
+is emitted by the switch itself — the parent asked for different units, not a
+different value — so `onChange` fires on the next edit or blur.
+
 ## Temperature
 
 ```tsx live

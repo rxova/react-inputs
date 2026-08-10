@@ -54,6 +54,24 @@ test('carries 14 inches into a foot and two when focus leaves', async ({ page })
   await expect(field.locator(seg('inch'))).toHaveText('02')
 })
 
+/**
+ * The defect the second adversarial pass found: segments are keyed by unit, so
+ * a metric/imperial toggle used to blank the field and lose the user's height.
+ */
+test('converts rather than clears when the unit system is toggled', async ({ page }) => {
+  const field = page.getByTestId('toggle')
+  await expect(field.locator(seg('foot'))).toHaveText('5')
+  await expect(field.locator(seg('inch'))).toHaveText('11')
+
+  await field.getByRole('button', { name: 'Toggle units' }).click()
+  await expect(field.locator(seg('meter'))).toHaveText('1')
+  await expect(field.locator(seg('centimeter'))).toHaveText('80')
+
+  await field.getByRole('button', { name: 'Toggle units' }).click()
+  await expect(field.locator(seg('foot'))).toHaveText('5')
+  await expect(field.locator(seg('inch'))).toHaveText('11')
+})
+
 test('lets a single-unit field hold a number no bounded segment would', async ({ page }) => {
   await expect(page.getByTestId('units-single').locator(seg('centimeter'))).toHaveText('180')
 })

@@ -456,3 +456,208 @@ describe('hostile timing', () => {
     expect(seg(again.container, 'inch').textContent).toBe('11')
   })
 })
+
+/**
+ * The second adversarial pass, written after the first shipped.
+ *
+ * Each of these reproduced a real defect before the fix beside it. They are
+ * kept as the regression net for exactly that reason: three of the four were
+ * invisible from the outside, and the fourth destroyed data on the most obvious
+ * feature anyone would build with this component.
+ */
+describe('hostile shape changes', () => {
+  /**
+   * The worst one. Segments are keyed by unit, so `{ foot: 5, inch: 11 }` is
+   * simply absent from a metres-and-centimetres field: toggling the unit system
+   * used to blank the field and silently lose the user's height.
+   */
+  it('keeps the measurement when the unit system is toggled', async () => {
+    function Harness() {
+      const [imperial, setImperial] = useState(true)
+      const [value, setValue] = useState<string | null>('71 inch')
+      return (
+        <>
+          <MeasurementInput
+            label="Height"
+            locale="en-GB"
+            units={imperial ? ['foot', 'inch'] : ['meter', 'centimeter']}
+            value={value}
+            onChange={setValue}
+            {...quiet}
+          />
+          <button
+            type="button"
+            onClick={() => {
+              setImperial((on) => !on)
+            }}
+          >
+            toggle
+          </button>
+        </>
+      )
+    }
+    const { container } = await render(<Harness />)
+    expect([seg(container, 'foot').textContent, seg(container, 'inch').textContent]).toEqual([
+      '5',
+      '11',
+    ])
+
+    await userEvent.click(page.getByRole('button', { name: 'toggle' }))
+    // 71 inches is 180.34 cm, which this field shows to the centimetre.
+    expect([seg(container, 'meter').textContent, seg(container, 'centimeter').textContent]).toEqual(
+      ['1', '80'],
+    )
+
+    await userEvent.click(page.getByRole('button', { name: 'toggle' }))
+    expect(seg(container, 'foot').textContent).toBe('5')
+  })
+
+  it('keeps an uncontrolled measurement across the same toggle', async () => {
+    function Harness() {
+      const [metric, setMetric] = useState(false)
+      return (
+        <>
+          <MeasurementInput
+            label="Height"
+            locale="en-GB"
+            units={metric ? ['meter', 'centimeter'] : ['foot', 'inch']}
+            defaultValue="71 inch"
+            {...quiet}
+          />
+          <button
+            type="button"
+            onClick={() => {
+              setMetric(true)
+            }}
+          >
+            metric
+          </button>
+        </>
+      )
+    }
+    const { container } = await render(<Harness />)
+    await userEvent.click(page.getByRole('button', { name: 'metric' }))
+    expect(seg(container, 'centimeter').textContent).toBe('80')
+  })
+
+  it('re-shapes a half-filled field without inventing the missing part', async () => {
+    function Harness() {
+      const [metric, setMetric] = useState(false)
+      return (
+        <>
+          <MeasurementInput
+            label="Height"
+            locale="en-GB"
+            units={metric ? ['meter', 'centimeter'] : ['foot', 'inch']}
+            {...quiet}
+          />
+          <button
+            type="button"
+            onClick={() => {
+              setMetric(true)
+            }}
+          >
+            metric
+          </button>
+        </>
+      )
+    }
+    const { container } = await render(<Harness />)
+    await userEvent.click(seg(container, 'foot'))
+    await userEvent.keyboard('05')
+    // Feet filled, inches empty: there is no measurement to carry over, so the
+    // field empties rather than guessing at the missing segment.
+    await userEvent.click(page.getByRole('button', { name: 'metric' }))
+    expect(seg(container, 'meter').textContent).toBe('--')
+  })
+
+  it('re-shapes when precision changes under a value', async () => {
+    function Harness() {
+      const [places, setPlaces] = useState(0)
+      return (
+        <>
+          <MeasurementInput
+            label="Fever"
+            locale="en-GB"
+            units={['celsius']}
+            precision={places}
+            defaultValue="37 celsius"
+            {...quiet}
+          />
+          <button
+            type="button"
+            onClick={() => {
+              setPlaces(1)
+            }}
+          >
+            tenths
+          </button>
+        </>
+      )
+    }
+    const { container } = await render(<Harness />)
+    expect(seg(container, 'celsius').textContent).toBe('37')
+    await userEvent.click(page.getByRole('button', { name: 'tenths' }))
+    expect(seg(container, 'celsius').textContent).toBe('37.0')
+  })
+
+  it('does not reset the field when an inline units array is re-created', async () => {
+    // `units={['foot', 'inch']}` written inline is a new array every render. The
+    // re-shape has to key on the units' contents, or typing would be wiped
+    // continuously by the component's own re-renders.
+    function Harness() {
+      const [, force] = useState(0)
+      return (
+        <>
+          <MeasurementInput label="H" locale="en-GB" units={['foot', 'inch']} {...quiet} />
+          <button
+            type="button"
+            onClick={() => {
+              force((count) => count + 1)
+            }}
+          >
+            rerender
+          </button>
+        </>
+      )
+    }
+    const { container } = await render(<Harness />)
+    await userEvent.click(seg(container, 'inch'))
+    await userEvent.keyboard('11')
+    await userEvent.click(page.getByRole('button', { name: 'rerender' }))
+    await userEvent.click(page.getByRole('button', { name: 'rerender' }))
+    expect(seg(container, 'inch').textContent).toBe('11')
+  })
+
+  it('lets a controlled value win when it lands in the same render as new units', async () => {
+    function Harness() {
+      const [state, setState] = useState({ metric: false, value: '71 inch' })
+      return (
+        <>
+          <MeasurementInput
+            label="H"
+            locale="en-GB"
+            units={state.metric ? ['meter', 'centimeter'] : ['foot', 'inch']}
+            value={state.value}
+            onChange={() => undefined}
+            {...quiet}
+          />
+          <button
+            type="button"
+            onClick={() => {
+              setState({ metric: true, value: '150 centimeter' })
+            }}
+          >
+            both
+          </button>
+        </>
+      )
+    }
+    const { container } = await render(<Harness />)
+    await userEvent.click(page.getByRole('button', { name: 'both' }))
+    // The parent's new value, not a conversion of the old one.
+    expect([seg(container, 'meter').textContent, seg(container, 'centimeter').textContent]).toEqual(
+      ['1', '50'],
+    )
+  })
+})

@@ -3,14 +3,14 @@
     "name": "MeasurementInput (full import)",
     "path": "dist/index.mjs",
     "import": "{ MeasurementInput }",
-    "limit": "6.75 kB",
+    "limit": "7 kB",
     "ignore": ["react", "react/jsx-runtime"]
   },
   {
     "name": "useMeasurementInput (headless only)",
     "path": "dist/index.mjs",
     "import": "{ useMeasurementInput }",
-    "limit": "5.75 kB",
+    "limit": "6 kB",
     "ignore": ["react", "react/jsx-runtime"]
   },
   {

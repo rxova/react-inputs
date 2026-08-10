@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/@rxova/react-measurement-input"><img src="https://img.shields.io/npm/v/@rxova/react-measurement-input?color=cb3837&logo=npm&logoColor=white" alt="npm version" /></a>
   <a href="https://github.com/rxova/react-inputs/actions/workflows/ci.yml"><img src="https://github.com/rxova/react-inputs/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI status" /></a>
-  <img src="https://img.shields.io/badge/brotli-%E2%89%A4%206.75%20kB-f5a623" alt="Brotli size at most 6.75 kB" />
+  <img src="https://img.shields.io/badge/brotli-%E2%89%A4%207%20kB-f5a623" alt="Brotli size at most 7 kB" />
   <img src="https://img.shields.io/badge/coverage%20threshold-95%25-brightgreen" alt="Coverage threshold: 95% per file" />
   <img src="https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white" alt="TypeScript strict mode" />
   <img src="https://img.shields.io/badge/dependencies-0-44cc11" alt="Zero runtime dependencies" />
@@ -37,7 +37,7 @@ npm install @rxova/react-measurement-input
   inches. `['meter', 'inch']` does not, because a metre is 39.37 of them and a segment whose
   overflow point falls mid-unit is not a segment — so it is refused, with an explanation.
 - **Real spinbuttons.** Every segment is `role="spinbutton"` with a name, a value and bounds.
-- **Zero runtime dependencies**, 6.6 kB brotli, no stylesheet to import.
+- **Zero runtime dependencies**, 6.7 kB brotli, no stylesheet to import.
 
 ## Basic use
 
@@ -142,6 +142,21 @@ Time units are refused on purpose and pointed at
 components owning the same value is worse than one component doing less. `percent` and `degree` are
 refused too: they have no conversion partner in `Intl`'s list, so a _converting_ field has nothing
 to do with them.
+
+## Switching units at runtime
+
+Changing `units` **converts** what is on screen rather than clearing it, so a
+metric/imperial toggle keeps the user's measurement:
+
+```tsx
+<MeasurementInput label="Height" units={metric ? ['meter', 'centimeter'] : ['foot', 'inch']} />
+```
+
+`5 ft 11 in` becomes `1 m 80 cm`. A half-filled field empties instead, because
+there is no complete measurement to carry over and guessing at the missing
+segment would be inventing data. Nothing is emitted by the switch itself — the
+parent asked for different units, not a different value — so `onChange` fires on
+the next edit or blur.
 
 ## Temperature
 

@@ -44,6 +44,12 @@ Time units are refused and pointed at `@rxova/react-duration-input`, which speak
 components owning the same value is worse than one doing less. `percent` and `degree` are refused
 because they have no conversion partner in `Intl`'s list.
 
+Changing `units` or `precision` at runtime converts what is on screen rather than clearing it, so a
+metric/imperial toggle keeps the user's measurement — `5 ft 11 in` becomes `1 m 80 cm`. Amounts are
+bounded at `Number.MAX_SAFE_INTEGER`, which is both where integer arithmetic stops being exact and
+below where `String` switches to exponent notation: past either the field would emit a value its own
+parser could not read back.
+
 Hostile data and hostile callbacks are contained rather than propagated: a `units` array with an
 unknown entry, a duplicate, two dimensions or the wrong order is repaired and warned about, a
 `precision` outside 0–6 falls back to whole numbers, a `step` the smallest segment cannot land on

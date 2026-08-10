@@ -144,7 +144,7 @@ export const BASE_UNIT: Readonly<Record<Dimension, MeasurementUnit>> = {
  * have no conversion partner in `Intl`'s list, so a *converting* field has
  * nothing to do with them.
  */
-export const REFUSED_UNITS: Readonly<Record<string, 'time' | 'no-partner'>> = {
+const REFUSED_UNITS: Readonly<Record<string, 'time' | 'no-partner'>> = {
   nanosecond: 'time',
   microsecond: 'time',
   millisecond: 'time',
@@ -157,6 +157,37 @@ export const REFUSED_UNITS: Readonly<Record<string, 'time' | 'no-partner'>> = {
   year: 'time',
   percent: 'no-partner',
   degree: 'no-partner',
+}
+
+/**
+ * Why a unit is refused, or `null` when it is not one of the refused ones.
+ *
+ * Through `hasOwnProperty`, never through a bare index. `REFUSED_UNITS` is an
+ * object literal, so a bare `REFUSED_UNITS[unit]` walks its prototype chain and
+ * `"constructor"` comes back truthy — which made `"5 constructor"` report
+ * `no-partner` ("has no conversion partner in Intl's unit list") instead of
+ * `unknown-unit`. Nonsense reached a message written for a real unit.
+ */
+export function refusalOf(unit: string): 'time' | 'no-partner' | null {
+  if (!Object.prototype.hasOwnProperty.call(REFUSED_UNITS, unit)) return null
+  return REFUSED_UNITS[unit] ?? null
+}
+
+/**
+ * The largest amount this field will hold.
+ *
+ * Two separate reasons converge on the same number. Past 2^53 an integer is no
+ * longer exactly representable, so a field whose whole claim is exactness has
+ * no business accepting one. And `String()` switches to exponent notation at
+ * 1e21 — which produced `"1e+21 meter"`, a value this component emitted and
+ * then could not read back, so a single round trip through the field destroyed
+ * the measurement.
+ */
+const LARGEST_AMOUNT = Number.MAX_SAFE_INTEGER
+
+/** Whether an amount is one this field can hold and re-read exactly. */
+export function isRepresentable(amount: number): boolean {
+  return Number.isFinite(amount) && Math.abs(amount) <= LARGEST_AMOUNT
 }
 
 /**
@@ -312,14 +343,14 @@ export function parseMeasurement(value: unknown): MeasurementParseResult {
   if (rawAmount === undefined || rawUnit === undefined) return { ok: false, error: 'malformed' }
 
   const unit = rawUnit.toLowerCase()
-  const refused = REFUSED_UNITS[unit]
-  if (refused !== undefined) {
+  const refused = refusalOf(unit)
+  if (refused !== null) {
     return { ok: false, error: refused === 'time' ? 'time-unit' : 'no-partner', unit }
   }
   if (!isMeasurementUnit(unit)) return { ok: false, error: 'unknown-unit', unit }
 
   const amount = Number(rawAmount.replace(',', '.'))
-  if (!Number.isFinite(amount)) return { ok: false, error: 'malformed' }
+  if (!isRepresentable(amount)) return { ok: false, error: 'malformed' }
   if (amount < 0 && !isSigned(UNITS[unit].dimension)) return { ok: false, error: 'malformed' }
 
   return { ok: true, amount, unit }
@@ -333,7 +364,13 @@ export function parseMeasurement(value: unknown): MeasurementParseResult {
  * field on the page needed two places.
  */
 export function formatMeasurement(amount: number, unit: MeasurementUnit): string {
-  return `${String(tidy(amount))} ${unit}`
+  // Not through `tidy`. That filter keeps twelve significant digits, which is
+  // right for a *computed* conversion and wrong here: it silently rewrote
+  // 9007199254740991 as 9007199254740000, so a large measurement lost precision
+  // just by being written down. Everything reaching this from inside the
+  // component has already been through `convert` or `roundTo`; a caller passing
+  // raw arithmetic gets exactly the number they passed.
+  return `${String(amount)} ${unit}`
 }
 
 /** An amount in its dimension's base unit, or `null` when the string is not one. */
@@ -360,6 +397,27 @@ export function compareMeasurements(a: string, b: string): number | null {
   /* v8 ignore next */
   if (inA === null) return null
   return left.amount < inA ? -1 : left.amount > inA ? 1 : 0
+}
+
+/**
+ * Whether a pair of bounds can be enforced at all.
+ *
+ * Lives here rather than in `warn.ts` even though the warning describes the
+ * same rule. The hook needs the answer in every build, and reaching into the
+ * diagnostics module for it kept `warn.ts` alive in production bundles — which
+ * quietly falsified the claim, made in this package's README and docs, that the
+ * whole diagnostics path is stripped.
+ *
+ * A bound that cannot be read at all is left in place and reported separately;
+ * it is inert, because comparing against it yields no ordering.
+ */
+export function boundsUsable(min?: string, max?: string): boolean {
+  if (min === undefined || max === undefined) return true
+  if (!parseMeasurement(min).ok || !parseMeasurement(max).ok) return true
+  const order = compareMeasurements(min, max)
+  // `null` here means two readable bounds measuring different things — neither
+  // wrong alone, and together unenforceable.
+  return order !== null && order <= 0
 }
 
 /** Whether a measurement sits within an optional inclusive range. */
@@ -552,7 +610,11 @@ export function partsToAmount(
     if (ratio === null) return null
     total += value * ratio
   }
-  return roundTo(total, precision)
+  const settled = roundTo(total, precision)
+  // A caller can reach `setSegment` directly, so the bound is enforced on the
+  // way out as well as on the way in — an amount past this point cannot be
+  // written and read back as the same number.
+  return isRepresentable(settled) ? settled : null
 }
 
 /**

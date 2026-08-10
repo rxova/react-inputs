@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   EMPTY_PARTS,
   MEASUREMENT_UNITS,
+  boundsUsable,
   clamp,
   compareMeasurements,
   compareUnitSize,
@@ -16,6 +17,7 @@ import {
   isComplete,
   isEmpty,
   isMeasurementUnit,
+  isRepresentable,
   isSigned,
   normalise,
   parseMeasurement,
@@ -23,6 +25,7 @@ import {
   partsToAmount,
   quantum,
   ratioBetween,
+  refusalOf,
   roundTo,
   splitAmount,
   tidy,
@@ -620,5 +623,98 @@ describe('isMeasurementUnit', () => {
   it('reports no dimension for a unit it does not know', () => {
     expect(dimensionOf('furlong')).toBeNull()
     expect(dimensionOf('minute')).toBeNull()
+  })
+})
+
+/**
+ * The second adversarial pass on the pure layer. Both of these reproduced a
+ * real defect before the fix beside them.
+ */
+describe('hostile input to the pure layer', () => {
+  /**
+   * `REFUSED_UNITS` is an object literal, so a bare index walks its prototype
+   * chain: `REFUSED_UNITS['constructor']` came back truthy and `"5 constructor"`
+   * was reported as `no-partner` — "has no conversion partner in Intl's unit
+   * list" — which is a sentence written for a real unit, about nonsense.
+   */
+  it('does not let a prototype key masquerade as a refused unit', () => {
+    for (const key of ['constructor', 'toString', 'valueOf', 'hasOwnProperty', 'isPrototypeOf']) {
+      expect(refusalOf(key)).toBeNull()
+      expect(refusal(`5 ${key}`)).toBe('unknown-unit')
+    }
+    // The real entries still resolve.
+    expect(refusalOf('minute')).toBe('time')
+    expect(refusalOf('percent')).toBe('no-partner')
+    expect(refusalOf('meter')).toBeNull()
+  })
+
+  it('does not let a prototype key reach the unit table either', () => {
+    for (const key of ['constructor', '__proto__', 'toString', 'prototype']) {
+      expect(isMeasurementUnit(key)).toBe(false)
+      expect(dimensionOf(key)).toBeNull()
+      expect(ratioBetween(key, 'meter')).toBeNull()
+      expect(convert(1, key, 'meter')).toBeNull()
+    }
+  })
+
+  /**
+   * The round-trip break. `String()` switches to exponent notation at 1e21, so
+   * the field emitted `"1e+21 meter"` — a value its own parser then rejected.
+   * One trip through the component destroyed the measurement.
+   */
+  it('refuses an amount it could not write and read back', () => {
+    expect(isRepresentable(Number.MAX_SAFE_INTEGER)).toBe(true)
+    expect(isRepresentable(Number.MAX_SAFE_INTEGER + 2)).toBe(false)
+    expect(isRepresentable(Infinity)).toBe(false)
+    expect(isRepresentable(Number.NaN)).toBe(false)
+
+    for (const raw of [
+      '1000000000000000000000 meter',
+      '99999999999999999999 meter',
+      '9007199254740993 meter',
+    ]) {
+      expect(refusal(raw)).toBe('malformed')
+    }
+    // And the largest it does accept still round-trips exactly.
+    const largest = `${String(Number.MAX_SAFE_INTEGER)} meter`
+    const parsed = parseMeasurement(largest)
+    expect(parsed.ok).toBe(true)
+    expect(toMeasurement({ meter: Number.MAX_SAFE_INTEGER }, ['meter'], 0)).toBe(largest)
+  })
+
+  it('refuses a total it could not write, however the segments were set', () => {
+    // `setSegment` is public on the hook, so the bound is enforced on the way
+    // out as well as on the way in.
+    expect(partsToAmount({ meter: 1e21 }, ['meter'], 0)).toBeNull()
+    expect(toMeasurement({ meter: 1e21 }, ['meter'], 0)).toBeNull()
+    expect(toMeasurement({ kilometer: 1e19, meter: 0 }, ['kilometer', 'meter'], 0)).toBeNull()
+  })
+
+  it('never emits a value its own parser rejects', () => {
+    // The property the two guards above exist to hold, checked directly.
+    for (const amount of [0, 1, 71, 999, 1e6, 1e15, Number.MAX_SAFE_INTEGER]) {
+      const written = toMeasurement({ meter: amount }, ['meter'], 0)
+      expect(written).not.toBeNull()
+      expect(parseMeasurement(written ?? '').ok).toBe(true)
+    }
+  })
+
+  /**
+   * The bounds rule moved out of `warn.ts` and into this module. It used to be
+   * read back from the diagnostics, which kept that module alive in production
+   * bundles and quietly falsified the "stripped from production builds" claim.
+   */
+  it('decides usable bounds without going through the diagnostics', () => {
+    expect(boundsUsable(undefined, undefined)).toBe(true)
+    expect(boundsUsable('1 meter', undefined)).toBe(true)
+    expect(boundsUsable('1 meter', '2 meter')).toBe(true)
+    // Different units, correct order.
+    expect(boundsUsable('1 meter', '80 inch')).toBe(true)
+    expect(boundsUsable('80 inch', '1 meter')).toBe(false)
+    // Different dimensions: readable individually, unenforceable together.
+    expect(boundsUsable('1 meter', '1 kilogram')).toBe(false)
+    // An unreadable bound is inert, and reported on its own.
+    expect(boundsUsable('nope', '1 meter')).toBe(true)
+    expect(boundsUsable('1 meter', 'nope')).toBe(true)
   })
 })
