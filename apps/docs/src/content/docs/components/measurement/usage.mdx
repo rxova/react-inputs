@@ -1,0 +1,294 @@
+---
+title: 'Measurement input — Usage'
+description: 'Use the segmented measurement input in React: units, the carry, decimals, temperature, controlled values, keyboard behaviour, forms and styling hooks.'
+sidebar:
+  label: 'Usage'
+  order: 2
+---
+
+## Try it
+
+Type digits — the field advances by itself. Arrows step, Backspace clears. Try typing `14` into the
+inches and then clicking away. (`MeasurementInput` and `useState` are already in scope.)
+
+```tsx live
+function TryIt() {
+  const [value, setValue] = useState(null)
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <MeasurementInput
+        label="Height"
+        locale="en-GB"
+        units={['foot', 'inch']}
+        value={value}
+        onChange={setValue}
+      />
+      <code>{value === null ? 'null' : value}</code>
+    </div>
+  )
+}
+```
+
+The value is `"<amount> <unit>"` in the smallest unit on screen. `14` in the inches reports
+`14 inch` — the segments keep showing what you typed until you leave, and then settle to `1 ft 2 in`.
+
+## Units
+
+```tsx live
+function Units() {
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <MeasurementInput label="Height" locale="en-GB" units={['foot', 'inch']} />
+      <MeasurementInput label="Height, metric" locale="en-GB" units={['meter', 'centimeter']} />
+      <MeasurementInput label="Weight" locale="en-GB" units={['stone', 'pound']} />
+      <MeasurementInput label="Parcel" locale="en-GB" units={['kilogram', 'gram']} />
+      <MeasurementInput label="Fuel" locale="en-GB" units={['gallon', 'fluid-ounce']} />
+    </div>
+  )
+}
+```
+
+`units` defaults to `['meter', 'centimeter']`. Every entry is an `Intl` unit identifier, and the
+array is repaired rather than trusted:
+
+| Written                     | Rendered           | Why                                      |
+| --------------------------- | ------------------ | ---------------------------------------- |
+| `['inch', 'foot']`          | `['foot', 'inch']` | Largest first, always                    |
+| `['foot', 'foot']`          | `['foot']`         | Deduped                                  |
+| `['meter', 'pound']`        | `['meter']`        | One dimension per field                  |
+| `['meter', 'inch']`         | `['meter']`        | 39.37 is not a whole number, so no carry |
+| `['celsius', 'fahrenheit']` | `['celsius']`      | A temperature is one point, not a sum    |
+| `['hour', 'minute']`        | the default        | Time belongs to the duration input       |
+
+Each repair emits a warning naming what changed, so nothing is silent.
+
+## The leading unit is unbounded
+
+The largest unit on screen has no maximum. In a centimetres-only field, `180` is a height:
+
+```tsx live
+function Unbounded() {
+  const [value, setValue] = useState('180 centimeter')
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <MeasurementInput
+        label="Centimetres only"
+        locale="en-GB"
+        units={['centimeter']}
+        value={value}
+        onChange={setValue}
+      />
+      <code>{value === null ? 'null' : value}</code>
+    </div>
+  )
+}
+```
+
+Every unit below it is bounded by its ratio to the one above — inches 0–11 under feet, pounds 0–13
+under stones, centimetres 0–99 under metres. Those bounds are enforced **on blur, not at the
+keystroke**, because `14` is a legitimate thing to type on the way to a foot and two.
+
+## Conversion
+
+The field takes a value in any unit of its dimension and shows it in the units you asked for:
+
+```tsx live
+function Conversion() {
+  const [value, setValue] = useState('1.8034 meter')
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <MeasurementInput
+        label="Height"
+        locale="en-GB"
+        units={['foot', 'inch']}
+        value={value}
+        onChange={setValue}
+      />
+      <code>{value === null ? 'null' : value}</code>
+    </div>
+  )
+}
+```
+
+The value stays exactly what the parent set until the user edits the field; the same measurement in
+another unit is not a change. Once edited, it is reported in the smallest unit on screen.
+
+## Temperature
+
+```tsx live
+function Temperature() {
+  const [value, setValue] = useState('36.6 celsius')
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <MeasurementInput
+        label="Body temperature"
+        locale="en-GB"
+        units={['celsius']}
+        precision={1}
+        step={0.1}
+        value={value}
+        onChange={setValue}
+      />
+      <code>{value === null ? 'null' : value}</code>
+    </div>
+  )
+}
+```
+
+The only dimension with an offset instead of a ratio, and the only one that goes below zero. It is
+single-unit by construction, accepts `-` to toggle the sign, and reports no `aria-valuemin`.
+
+## Decimals
+
+`precision` is the number of decimal places the **smallest** segment accepts, 0 to 6. Only the
+smallest, because a fractional foot beside an inches segment is the same number written twice.
+
+`.` and `,` are both accepted as the decimal mark, and the fraction never grows past `precision`. A
+further digit starts a new number, which is what makes retyping a correction work without a
+Backspace.
+
+## Locales
+
+```tsx live
+function Locales() {
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      {['en-GB', 'de-DE', 'fr-FR', 'ja-JP'].map((locale) => (
+        <MeasurementInput
+          key={locale}
+          label={locale}
+          locale={locale}
+          units={['foot', 'inch']}
+          defaultValue="71 inch"
+        />
+      ))}
+    </div>
+  )
+}
+```
+
+The suffixes come from `Intl.NumberFormat` with `style: 'unit'`, and the segments' accessible names
+from the same formatter's long form — `feet`, `pieds`, `Fuß`. The locale changes only what is
+written; the value and the unit order are the same everywhere.
+
+## Controlled and uncontrolled
+
+```tsx
+import { useState } from 'react'
+import { MeasurementInput } from '@rxova/react-measurement-input'
+
+function Controlled() {
+  const [value, setValue] = useState<string | null>('71 inch')
+  return (
+    <MeasurementInput label="Height" units={['foot', 'inch']} value={value} onChange={setValue} />
+  )
+}
+
+function Uncontrolled() {
+  return <MeasurementInput label="Height" defaultValue="180 centimeter" name="height" />
+}
+```
+
+`onChange` fires when the measurement becomes complete, and when it stops being. It never fires
+mid-number: typing `11` into the inches reports `11`, not `1` on the way there.
+
+`onPartsChange` fires on every keystroke if you need the incomplete state.
+
+## Ranges
+
+```tsx
+<MeasurementInput label="Height" units={['foot', 'inch']} min="1.4 meter" max="2.1 meter" />
+```
+
+Both bounds are inclusive, may be written in **any unit of the dimension**, and are compared through
+the measurement rather than the string. `min="1 meter" max="80 inch"` is a perfectly good range that
+a string comparison would reject.
+
+A completed measurement outside the range still reaches `onChange` and marks the field invalid,
+rather than being discarded. Pass `emitOutOfRange={false}` to get `null` instead.
+
+## Keyboard
+
+| Key                    | What it does                                                              |
+| ---------------------- | ------------------------------------------------------------------------- |
+| `0`–`9`                | Types into the focused segment; advances when the width is full           |
+| `.` / `,`              | Decimal mark, on the smallest segment when `precision` is above zero      |
+| `-`                    | Toggles the sign, on a temperature field                                  |
+| `↑` / `↓`              | Steps by `step`, clamped at each end                                      |
+| `←` / `→`              | Moves between segments                                                    |
+| `Home`                 | Sets the segment to zero; nothing on a temperature, which has no floor    |
+| `End`                  | Sets the segment to its maximum; nothing on the unbounded leading segment |
+| `Backspace` / `Delete` | Empties the segment                                                       |
+| `Tab`                  | Leaves the field, settling whatever is typed                              |
+
+Arrows **clamp, they do not wrap.** The time input wraps because a clock cycles; a measurement has
+no cycle, and arrowing down from `0 cm` to `99 cm` would silently add a metre.
+
+## Forms
+
+```tsx
+import { MeasurementInput } from '@rxova/react-measurement-input'
+
+function ProfileForm() {
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault()
+        const height = new FormData(event.currentTarget).get('height')
+        console.log(height) // '71 inch'
+      }}
+    >
+      <MeasurementInput
+        label="Height"
+        name="height"
+        units={['foot', 'inch']}
+        defaultValue="71 inch"
+        required
+      />
+      <button type="submit">Save</button>
+    </form>
+  )
+}
+```
+
+`name` emits a hidden input carrying `"<amount> <unit>"`. `required` becomes `aria-required` on the
+group — a hidden input is barred from constraint validation, so putting `required` on it would look
+like it was doing something.
+
+## Converting at the boundary
+
+If your backend stores a number in a fixed unit, convert where the value crosses the boundary rather
+than inside the field:
+
+```ts
+import { convert, formatMeasurement, toBaseUnit } from '@rxova/react-measurement-input'
+
+// Coming in: a number of centimetres from the database.
+formatMeasurement(180, 'centimeter') // '180 centimeter'
+
+// Going out: whatever the field reported, in the unit the column expects.
+toBaseUnit('71 inch') // 1.8034 (metres)
+convert(71, 'inch', 'centimeter') // 180.34
+```
+
+## Styling
+
+There is no stylesheet. Set CSS custom properties on any ancestor:
+
+```css
+.field {
+  --rx-measurement-gap: 0.125rem;
+  --rx-measurement-segment-padding: 0 0.125rem;
+  --rx-measurement-segment-radius: 0.25rem;
+  --rx-measurement-suffix-opacity: 0.6;
+  --rx-measurement-suffix-size: 0.8em;
+  --rx-measurement-focus-ring: 2px solid #1a56db;
+  --rx-measurement-focus-ring-offset: 2px;
+}
+```
+
+Or target the `data-*` attributes, which are public API covered by semver:
+`data-rx-measurement-root`, `data-rx-measurement-dimension`, `data-rx-measurement-segment` (the unit
+identifier), `data-rx-measurement-value`, `data-rx-measurement-leading` and
+`data-rx-measurement-trailing`, plus the shared state hooks `data-complete`, `data-out-of-range`,
+`data-placeholder`, `data-focused`, `data-disabled`, `data-readonly`, `data-invalid`.

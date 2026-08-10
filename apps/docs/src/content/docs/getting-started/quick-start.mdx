@@ -8,7 +8,7 @@ sidebar:
 Every rxova input is a **controlled component**: give it a `value` and an
 `onChange` and it behaves like any other form field. `onChange` always hands you
 the _value_ — never a DOM event — so these drop straight into a form library's
-controlled adapter. Here are three of the nine; the rest follow the same shape.
+controlled adapter. Here are three of the ten; the rest follow the same shape.
 
 ```tsx
 import { useState } from 'react'
@@ -29,7 +29,7 @@ function Example() {
 }
 ```
 
-That single install covers all nine. If you'd rather depend on just one, the
+That single install covers all ten. If you'd rather depend on just one, the
 individual packages (`@rxova/react-intl-currency-input`,
 `@rxova/react-rating-input`, `@rxova/react-otp-input`) are equivalent — install
 the one you want and import from its own name instead. See
@@ -45,6 +45,7 @@ Each component's own page has live, editable examples and its full prop referenc
 - [Phone input](/components/phone/introduction) — international numbers, E.164 in and out, no metadata blob.
 - [Date input](/components/date/introduction) — segmented and locale-ordered, `YYYY-MM-DD`, no calendar.
 - [Time input](/components/time/introduction) — segmented, 12/24-hour by locale, canonical 24-hour value.
+- [Measurement input](/components/measurement/introduction) — feet and inches, stones and pounds, exact conversion.
 - [Tags input](/components/tags/introduction) — delimiters, paste splitting, a real roving tab order.
 - [File input](/components/file/introduction) — picker and drop zone, managed preview URLs, no upload.
 

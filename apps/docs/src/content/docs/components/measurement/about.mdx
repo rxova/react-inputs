@@ -1,0 +1,300 @@
+---
+title: 'Measurement input — About'
+description: 'Why the measurement input emits the smallest unit on screen, how the whole-number ratio rule and the temperature offset work, and how accessibility is handled.'
+sidebar:
+  label: 'About'
+  order: 3
+---
+
+import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+
+The decisions behind the component, and the ones you should disagree with deliberately rather than
+by accident.
+
+## Why a string and not a number
+
+A number needs a units contract travelling beside it, and that contract is where the bugs live. One
+service stores centimetres, the next stores inches, and `71` is a valid value under both readings —
+so the mistake is silent, survives the type checker, and ships someone a wardrobe that does not fit
+through the door.
+
+`"71 inch"` says what it is. The unit half is an `Intl` unit identifier verbatim, so nothing new is
+invented: the same string names the unit in the value, in the `units` prop, and in
+`Intl.NumberFormat`.
+
+It is also consistent with the rest of this suite. The date input's value is `YYYY-MM-DD`, the time
+input's is `HH:mm`, the duration input's is `PT1H30M` — a canonical string that a form can post and
+a backend can store without knowing which locale produced it.
+
+## Why the smallest unit on screen, and not a base unit
+
+The duration input normalises: whatever you type, the value comes back as a canonical ISO 8601
+duration. It can, because its base unit is integral seconds and every duration is a whole number of
+them.
+
+Measurement cannot. One foot in metres is `0.30479999999999996` in binary floating point, so
+normalising `1 ft` to metres would write float noise into the canonical value and no amount of
+rounding would make it exact again. Emitting `"12 inch"` is exact and lossless, because summing
+integer segments through whole-number ratios is integer arithmetic.
+
+The consequence is real, and it is documented rather than hidden: **two equal measurements are not
+`===` equal.**
+
+```ts
+import { compareMeasurements, toBaseUnit } from '@rxova/react-measurement-input'
+
+'71 inch' === '1.8034 meter' // false — and they are the same height
+compareMeasurements('71 inch', '1.8034 meter') // 0
+toBaseUnit('71 inch') // 1.8034 (metres)
+```
+
+Comparing across dimensions is a **category error, not a number**. `compareMeasurements` returns
+`null` rather than `0` there, because a silent `0` would sort the two in input order and look like
+it worked:
+
+```ts
+compareMeasurements('1 meter', '1 kilogram') // null
+```
+
+`min` and `max` on the component already go through this, so a bound in any unit of the dimension
+behaves the way it reads.
+
+## Why the conversion table is in the bundle
+
+This suite's rule is that locale data comes from the platform, because a bundled table is wrong
+about the locales it forgot and stale the moment CLDR moves. So a table of ~30 numbers needs a
+reason.
+
+The reason is that these are not conventions. They are exact legal definitions, and they have not
+changed since the 1959 international yard and pound agreement:
+
+| Definition  | Exact value     |
+| ----------- | --------------- |
+| 1 inch      | 25.4 mm         |
+| 1 foot      | 0.3048 m        |
+| 1 pound     | 0.45359237 kg   |
+| 1 US gallon | 3.785411784 L   |
+| 1 acre      | 4046.8564224 m² |
+
+`Intl` has no conversion API at all, so the alternative is a runtime dependency: `convert` is 1 MB
+unpacked, `js-quantities` 574 kB, and `convert-units` was last published in 2018 and still depends
+on two `lodash` modules.
+
+Three `Intl` limitations are worth knowing rather than working around. `square-meter` and
+`square-foot` are **rejected outright** — `acre` and `hectare` are the whole of its area
+vocabulary. There are **no binary prefixes**: `kibibyte` is rejected, so the digital units here are
+decimal (1 kB = 1000 B) because that is what those identifiers mean. And compound `X-per-Y` units
+format but have no conversion partner, so they are absent.
+
+## The whole-number ratio rule
+
+A segmented field works because a segment carries into the one above it when it overflows. That
+needs an overflow point, and an overflow point has to land on a unit boundary:
+
+```
+foot  → inch        12      ✓        meter → centimeter  100     ✓
+pound → ounce       16      ✓        stone → pound        14     ✓
+mile  → yard      1760      ✓        yard  → foot          3     ✓
+meter → inch     39.37…     ✗        hectare → acre     2.47…    ✗
+```
+
+`units={['meter', 'inch']}` is therefore refused, with a `units-ratio-not-integer` warning naming
+the ratio, and rendered as a single metres segment. A segment whose ceiling is 39.37 is not a
+segment: there is no number at which it would carry, and no way to display the fraction it would
+leave behind.
+
+## Temperature is an offset scale
+
+Every other unit here is a ratio: `value_in_base = value × factor`. Temperature is not. °C → °F is
+`× 9/5 + 32`, so a factor-only table — which is what a "units" helper is underneath — converts
+100 °C to 100 °F and looks like it worked.
+
+So every unit carries an offset as well as a factor, and one formula covers both kinds:
+
+```
+value_in_base = (value − offset) × factor
+```
+
+Ratio units have `offset: 0`. Fahrenheit has `factor: 5/9, offset: 32`. That makes temperature
+single-unit by construction — a ratio between two scales with different zeroes is meaningless, so
+there is nothing to carry — and it is the one dimension that goes below zero, which is why it
+reports no `aria-valuemin` and accepts `-` from the keyboard.
+
+## Why time units are refused
+
+`Intl.supportedValuesOf('unit')` includes `day`, `hour`, `minute`, `second`, `week`, `month` and
+`year`. Accepting them would make this a second, worse duration input owning the same value — with a
+different canonical form, a different comparison function, and no answer at all for months and
+years, which are not a fixed number of seconds.
+
+So they are refused with a message naming
+[`@rxova/react-duration-input`](https://www.npmjs.com/package/@rxova/react-duration-input), which speaks ISO 8601. `percent`
+and `degree` are refused for a different reason: they have no conversion partner in `Intl`'s list, so
+a _converting_ field has nothing to do with them.
+
+## Why the arrows clamp instead of wrapping
+
+The time input wraps: 23:59 plus a minute is 00:00, because a clock is a cycle and stepping past the
+end of one is a real operation.
+
+A measurement is not a cycle. Arrowing down from `0 cm` to `99 cm` would silently add a metre, and
+arrowing up past the leading segment's ceiling is meaningless because there is no ceiling. So every
+segment stops at its own ends.
+
+## Accessibility
+
+The field is a `role="group"` containing one `role="spinbutton"` per unit — a bounded value with
+arrow-key stepping is exactly what a spinbutton is, and the browser supplies the role semantics.
+
+Each segment carries:
+
+- `aria-label` — the **locale's own word**, from `Intl.NumberFormat` with `style: 'unit'` and
+  `unitDisplay: 'long'`. `feet`, `pieds`, `Fuß` — never `ft`, which tells a screen-reader user
+  nothing about which box they are in.
+- `aria-valuenow`.
+- `aria-valuemin`, **except on a temperature**, which has no floor to promise.
+- `aria-valuemax`, **except on the leading segment**, which has no ceiling to promise.
+- `aria-valuetext` reading as a quantity — `5 feet`, not `5`. An empty segment announces its
+  placeholder rather than nothing at all.
+
+The unit suffixes (`ft`, `in`, `°C`) are `aria-hidden`: they duplicate the segment's accessible
+name, and reading "ft" after "5" when the spinbutton is already called "feet" is noise.
+
+They come from the same formatter with `unitDisplay: 'short'` rather than `'narrow'`, which is a
+deliberate departure from the duration field and was decided by looking at what ICU actually
+returns. Two narrow forms are unusable here: `pound` narrow in `en` is `#`, so eleven pounds renders
+as `11#`; and `fahrenheit` narrow in `en` is a bare `°` — exactly the character Celsius also uses,
+in a field whose purpose is converting between the two. Short gives `lb` and `°F`.
+
+The focused segment paints a ring by default (`2px solid Highlight`), because a
+`<span role="spinbutton">` gets nothing from the browser and removing the UA outline without
+replacing it is WCAG 2.4.7 with no mitigation. Restyle it through `--rx-measurement-focus-ring`
+rather than removing it.
+
+Every segment is its own tab stop, in reading order. `disabled` sets `tabindex="-1"` and
+`aria-disabled`; `readOnly` leaves the segments focusable and sets `aria-readonly`, so a value can
+still be read with the keyboard.
+
+## Diagnostics
+
+Every rejected or coerced prop reaches `onWarn` in development with a machine code you can `switch`
+on, and a message safe to log as-is. When `onWarn` is not given they go to `console.warn`. The whole
+path is stripped from production builds.
+
+| Code                       | When                                                                  |
+| -------------------------- | --------------------------------------------------------------------- |
+| `value-unparseable`        | Not `"<amount> <unit>"` — names the bare-number case                  |
+| `value-unknown-unit`       | A unit this field does not convert — `"cm"` instead of `"centimeter"` |
+| `value-time-unit`          | A time unit, naming the duration input                                |
+| `value-no-partner`         | `percent` or `degree`, which have nothing to convert to               |
+| `value-dimension-mismatch` | A mass in a length field; left empty rather than coerced              |
+| `value-truncated`          | Finer than the field can show, so reading it back changes it          |
+| `value-out-of-range`       | Complete but outside `min` / `max`                                    |
+| `min-unparseable`          | `min` is not a measurement                                            |
+| `max-unparseable`          | `max` is not a measurement                                            |
+| `min-after-max`            | No measurement can satisfy both; both bounds are dropped              |
+| `units-invalid`            | An unknown unit, a duplicate, an empty array, or a reordering         |
+| `units-not-convertible`    | A time unit, `percent` or `degree` in `units`                         |
+| `units-dimension-mixed`    | Two dimensions in one field                                           |
+| `units-ratio-not-integer`  | A pair with no whole-number ratio, naming the ratio                   |
+| `units-temperature-multi`  | More than one temperature scale                                       |
+| `precision-invalid`        | Outside 0–6, or not a whole number                                    |
+| `step-invalid`             | A step the smallest segment cannot land on                            |
+| `locale-invalid`           | A tag `Intl` refused                                                  |
+
+`value-truncated` is the quiet one worth wiring up: `"1.81 meter"` in a feet-and-inches field is
+71.26 inches and renders as 71, so a form that round-trips the value writes back a different
+measurement than it read.
+
+## Server rendering
+
+No browser API is touched during render, so the component renders on the server as-is. The one thing
+that could differ between server and client is the unit suffix: it comes from `Intl`, and Node and
+the browser ship different ICU builds. Pass an explicit `locale` if a hydration mismatch would
+matter.
+
+## Form libraries
+
+### React Hook Form
+
+```tsx
+<Controller
+  name="height"
+  control={control}
+  render={({ field }) => (
+    <MeasurementInput
+      label="Height"
+      units={['foot', 'inch']}
+      name={field.name}
+      value={field.value ?? null}
+      onChange={field.onChange}
+      onBlur={field.onBlur}
+    />
+  )}
+/>
+```
+
+### Formik
+
+```tsx
+function HeightField() {
+  const [field, , helpers] = useField<string | null>('height')
+  return (
+    <MeasurementInput
+      label="Height"
+      units={['foot', 'inch']}
+      name="height"
+      value={field.value}
+      onChange={(value) => helpers.setValue(value)}
+      onBlur={() => helpers.setTouched(true)}
+    />
+  )
+}
+```
+
+`onBlur` fires when focus leaves the **whole field**, not when it moves from the feet segment to the
+inches — so validation does not fire while the user is halfway through the measurement.
+
+### React Final Form
+
+```tsx
+<Field name="height">
+  {({ input }) => (
+    <MeasurementInput
+      label="Height"
+      units={['foot', 'inch']}
+      name={input.name}
+      value={input.value === '' ? null : String(input.value)}
+      onChange={input.onChange}
+      onBlur={input.onBlur}
+    />
+  )}
+</Field>
+```
+
+React Final Form starts a field as `''`, which is not a measurement. The guard above is the
+binding's job: the component takes `null` for empty.
+
+### TanStack Form
+
+```tsx
+<form.Field name="height">
+  {(field) => (
+    <MeasurementInput
+      label="Height"
+      units={['foot', 'inch']}
+      name="height"
+      value={field.state.value}
+      onChange={(value) => field.handleChange(value)}
+      onBlur={field.handleBlur}
+    />
+  )}
+</form.Field>
+```
+
+## UI-library recipes
+
+Keep the segmented spinbuttons and the locale's unit words intact; use the design system for the
+field's visible label, helper text, validation, and layout.
+
+<IntegrationRecipes slug="measurement" />

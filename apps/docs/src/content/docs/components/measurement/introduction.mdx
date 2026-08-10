@@ -1,0 +1,128 @@
+---
+title: 'Measurement input'
+description: 'A segmented React measurement field — feet and inches, stones and pounds, metres and centimetres as real spinbuttons, with exact conversion and no conversion library.'
+sidebar:
+  label: 'Introduction'
+  order: 1
+---
+
+**A segmented measurement field: `5 ft 11 in`, `12 st 2 lb`, `1 m 80 cm` as real spinbuttons.**
+Exact conversion built in. Headless, zero-dependency, no conversion library.
+
+A measurement is a number _and_ a unit, and people write it as a pair: five foot eleven, twelve
+stone two, one metre eighty. Yet the field they get is usually two unlabelled
+`<input type="number">`s glued together, with the conversion done by hand in an `onChange` and the
+unit recorded — if at all — in a comment.
+
+## What is on npm today
+
+This is the emptiest field the suite has entered. Every plausible package name is **unpublished**:
+`react-unit-input`, `react-measurement-input`, `unit-input`, `react-input-unit`,
+`react-imperial-metric-input`, `measurement-unit-input`.
+
+What exists is conversion _libraries_, not inputs — the same pattern as durations, where the
+popular packages are `parse-duration` and `humanize-duration`:
+
+| Package          | Latest       | Runtime deps                     | Unpacked                           |
+| ---------------- | ------------ | -------------------------------- | ---------------------------------- |
+| `convert`        | 7.0.2 (2026) | none                             | 1 MB                               |
+| `js-quantities`  | 1.8.0 (2023) | none                             | 574 kB                             |
+| `convert-units`  | 2.3.4 (2018) | `lodash.keys` + `lodash.foreach` | —                                  |
+| `units-css`      | 0.4.0 (2015) | 2                                | —                                  |
+| **This package** | —            | none                             | Segmented field, **6.6 kB** brotli |
+
+Sizes are measured: bundled with esbuild, minified, React external, brotli at quality 11.
+
+So people glue a converter to a hand-rolled pair of number inputs. That is the gap.
+
+## What the platform gives, and what it does not
+
+`Intl.supportedValuesOf('unit')` returns 45 sanctioned unit identifiers, and `Intl.NumberFormat`
+writes them out per locale. That is where every suffix and every segment name in this field comes
+from — no bundled table of abbreviations, no locale data to keep up to date.
+
+**`Intl` does not convert.** There is no platform API that turns feet into metres. So this package
+ships a conversion table — and that is defensible where a bundled locale table would not be,
+because these are exact legal definitions rather than conventions that drift with a CLDR release.
+1 inch ≡ 25.4 mm and 1 lb ≡ 0.45359237 kg have been exact since the 1959 international yard and
+pound agreement. Roughly thirty numbers, no dependency, nothing to go stale.
+
+## Three problems a naive version has
+
+**Temperature is not a ratio.** °C → °F is `× 9/5 + 32`. A plain factor table — which is what every
+"units" helper is underneath — turns 100 °C into 100 °F and is silently, catastrophically wrong.
+Every unit here carries an offset as well as a factor, so one formula covers both kinds:
+
+```ts
+import { convert } from '@rxova/react-measurement-input'
+
+convert(212, 'fahrenheit', 'celsius') // 100
+convert(-40, 'celsius', 'fahrenheit') // -40 — the one place the scales meet
+```
+
+**A carry needs a whole-number ratio.** `5 ft 11 in` works because a foot is exactly twelve inches,
+so the inches segment runs 0–11 and a twelfth carries upward. A metre is 39.37 inches, so an inches
+segment beside a metres one would have no ceiling to carry at. That pair is refused rather than
+rendering a segment whose overflow rule cannot exist:
+
+```ts
+import { ratioBetween, isCarryPair } from '@rxova/react-measurement-input'
+
+ratioBetween('foot', 'inch') // 12
+isCarryPair('foot', 'inch') // true
+ratioBetween('meter', 'inch') // 39.3700787402
+isCarryPair('meter', 'inch') // false — units={['meter', 'inch']} renders one segment
+```
+
+**Time units belong somewhere else.** `Intl`'s 45 include `day`, `hour`, `minute` and `second`. They
+are refused here and pointed at [`@rxova/react-duration-input`](https://www.npmjs.com/package/@rxova/react-duration-input),
+which speaks ISO 8601 — two components owning the same value is worse than one component doing
+less. `percent` and `degree` are refused too: they have no conversion partner in `Intl`'s list, so a
+_converting_ field has nothing to do with them.
+
+## The one thing to know
+
+The value is `"<amount> <unit>"`, emitted in the **smallest unit on screen** — never converted to a
+base unit. One foot in metres is `0.30479999999999996` in binary floating point, so normalising
+would write float noise into the canonical value.
+
+That has a consequence, and it is stated rather than hidden: **two equal measurements are not
+`===` equal.**
+
+```ts
+import { compareMeasurements, toBaseUnit } from '@rxova/react-measurement-input'
+
+'71 inch' === '1.8034 meter' // false — and they are the same height
+compareMeasurements('71 inch', '1.8034 meter') // 0
+toBaseUnit('71 inch') // 1.8034 (metres)
+compareMeasurements('1 meter', '1 kilogram') // null — a category error, not a tie
+```
+
+`min` and `max` on the component already go through this, so `min="1 meter"` bounds a
+feet-and-inches field correctly.
+
+## Install
+
+```bash
+npm install @rxova/react-measurement-input
+```
+
+```tsx
+import { useState } from 'react'
+import { MeasurementInput } from '@rxova/react-measurement-input'
+
+function Profile() {
+  const [height, setHeight] = useState<string | null>(null)
+  return (
+    <MeasurementInput
+      label="Height"
+      units={['foot', 'inch']}
+      value={height}
+      onChange={setHeight}
+      max="2.2 meter"
+    />
+  )
+}
+```
+
+6.6 kB brotli, zero runtime dependencies, no stylesheet to import.

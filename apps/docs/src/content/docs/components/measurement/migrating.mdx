@@ -1,0 +1,153 @@
+---
+title: 'Measurement input — Migrating'
+description: 'Move to @rxova/react-measurement-input from convert, js-quantities, convert-units, or two number inputs glued together.'
+sidebar:
+  label: 'Migrating'
+  order: 4
+---
+
+There is nothing to migrate _from_, in the usual sense: no measurement input is published on npm.
+What exists is conversion libraries, and what people build with them is a pair of number inputs and
+an `onChange` that multiplies. So these are migrations from a pattern rather than from a package.
+
+The one decision to make first is the value type. Most existing code keeps a bare number in a fixed
+unit and remembers the unit somewhere else. This hands you `"71 inch"` — the number and its unit in
+one string — and the conversion at the boundary is one function call:
+
+```ts
+import { convert, formatMeasurement, toBaseUnit } from '@rxova/react-measurement-input'
+
+// Old value in, new value out
+formatMeasurement(180, 'centimeter') // '180 centimeter'
+
+// New value in, old value out
+toBaseUnit('71 inch') // 1.8034 (metres)
+convert(71, 'inch', 'centimeter') // 180.34
+```
+
+## Migrating from two number inputs
+
+The most common thing this replaces, and the one with the most bugs to delete.
+
+### Before
+
+```tsx
+function HeightFields() {
+  const [feet, setFeet] = useState(5)
+  const [inches, setInches] = useState(11)
+
+  // The conversion, the carry and the units contract are all here, by hand.
+  const centimetres = (feet * 12 + inches) * 2.54
+
+  return (
+    <>
+      <label>
+        Feet
+        <input type="number" min={0} value={feet} onChange={(e) => setFeet(+e.target.value)} />
+      </label>
+      <label>
+        Inches
+        <input
+          type="number"
+          min={0}
+          max={11}
+          value={inches}
+          onChange={(e) => setInches(+e.target.value)}
+        />
+      </label>
+    </>
+  )
+}
+```
+
+Four things are wrong with it and all four are typical. `max={11}` refuses `14` at the keystroke, so
+there is no way to type a foot and two without editing both boxes. `2.54` is a magic number with no
+name. The two fields are two tab stops with no shared label, so a screen reader announces "Feet" and
+"Inches" as unrelated controls. And `centimetres` is a `number` that has to travel with a comment
+saying what it measures.
+
+### After
+
+```tsx
+import { useState } from 'react'
+import { MeasurementInput, toBaseUnit } from '@rxova/react-measurement-input'
+
+function HeightField() {
+  const [height, setHeight] = useState<string | null>('71 inch')
+  const metres = height === null ? null : toBaseUnit(height)
+  return (
+    <MeasurementInput label="Height" units={['foot', 'inch']} value={height} onChange={setHeight} />
+  )
+}
+```
+
+`14` in the inches is accepted and settles to `1 ft 2 in` on blur. The conversion is exact rather
+than approximate. The field is one labelled group of two spinbuttons. And the value says what it is.
+
+## Migrating from convert
+
+`convert` is a good library and does something this package does not: it converts between hundreds
+of units, including ones `Intl` has never heard of. If you need that breadth, keep it — it is 1 MB
+unpacked, but it is tree-shakeable and it is not a UI.
+
+What it does not give you is a field. If the only reason it is in your bundle is a height or a
+weight input, this replaces both halves:
+
+### Before
+
+```tsx
+import convert from 'convert'
+
+const centimetres = convert(feet * 12 + inches, 'inches').to('cm')
+```
+
+### After
+
+```ts
+import { convert } from '@rxova/react-measurement-input'
+
+convert(71, 'inch', 'centimeter') // 180.34
+```
+
+The identifiers are `Intl` unit identifiers rather than a bespoke vocabulary — `'centimeter'`, not
+`'cm'` — which is the same string the value carries and the same string `Intl.NumberFormat` takes.
+
+## Migrating from convert-units
+
+`convert-units` was last published in 2018 and still depends on `lodash.keys` and
+`lodash.foreach`. Its API is a fluent chain:
+
+### Before
+
+```ts
+import convert from 'convert-units'
+
+convert(71).from('in').to('cm')
+```
+
+### After
+
+```ts
+import { convert } from '@rxova/react-measurement-input'
+
+convert(71, 'inch', 'centimeter')
+```
+
+One caveat worth checking before you swap: `convert-units` and this package both mean **US** liquid
+measure by `gallon` and `fluid-ounce`, because that is what `Intl` sanctions. If your application
+means the imperial gallon, neither will give it to you — `Intl` has no identifier for it, so it is
+not offered rather than silently wrong.
+
+## What does not carry over
+
+Three things this package deliberately does not do, so you know before you start:
+
+- **Compound units.** `mile-per-gallon` and `meter-per-second` format in `Intl` but have no
+  conversion partner in its list, so they are absent.
+- **Area beyond acres and hectares.** `Intl` rejects `square-meter` and `square-foot` outright.
+- **Binary prefixes.** `Intl` rejects `kibibyte`, so the digital units here are decimal —
+  1 kB = 1000 B, which is what that identifier means.
+
+And one thing that is refused on purpose rather than missing: **time units**. `day`, `hour`,
+`minute` and the rest belong to [`@rxova/react-duration-input`](https://www.npmjs.com/package/@rxova/react-duration-input),
+which speaks ISO 8601 and has an answer for months and years that this field could not have.

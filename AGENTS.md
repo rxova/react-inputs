@@ -1,8 +1,8 @@
 # Working on this repo as an agent
 
 Rxova React Inputs: a suite of headless, accessible React input components — currency, rating,
-one-time-code, password, phone, date, time, tags and file — published as independent npm packages
-plus a meta-package.
+one-time-code, password, phone, date, time, measurement, tags and file — published as independent
+npm packages plus a meta-package.
 
 [`CONTRIBUTING.md`](CONTRIBUTING.md) is the reference and stays the source of truth: the
 [architecture table](CONTRIBUTING.md#architecture), [setup](CONTRIBUTING.md#setup),
