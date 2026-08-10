@@ -45,6 +45,7 @@
     "@rxova/react-date-input": "workspace:^",
     "@rxova/react-file-input": "workspace:^",
     "@rxova/react-intl-currency-input": "workspace:^",
+    "@rxova/react-measurement-input": "workspace:^",
     "@rxova/react-otp-input": "workspace:^",
     "@rxova/react-password-input": "workspace:^",
     "@rxova/react-phone-input": "workspace:^",

@@ -5,6 +5,7 @@ import {
   CurrencyInput,
   DateInput,
   FileInput,
+  MeasurementInput,
   OtpInput,
   PasswordInput,
   PhoneInput,
@@ -21,6 +22,7 @@ export function InputsShowcase() {
   const [phone, setPhone] = useState('')
   const [date, setDate] = useState<string | null>('2026-08-05')
   const [time, setTime] = useState<string | null>('14:30')
+  const [height, setHeight] = useState<string | null>('71 inch')
   const [tags, setTags] = useState(['react'])
   const [files, setFiles] = useState<File[]>([])
 
@@ -68,6 +70,16 @@ export function InputsShowcase() {
 
         <TimeInput label="Start time" name="time" value={time} onChange={setTime} locale="en-US" />
         <output data-testid="time-value">{time ?? 'empty'}</output>
+
+        <MeasurementInput
+          label="Height"
+          name="height"
+          units={['foot', 'inch']}
+          value={height}
+          onChange={setHeight}
+          locale="en-US"
+        />
+        <output data-testid="height-value">{height ?? 'empty'}</output>
 
         <TagsInput label="Tags" name="tags" value={tags} onChange={setTags} />
         <output data-testid="tags-value">{tags.join(',')}</output>

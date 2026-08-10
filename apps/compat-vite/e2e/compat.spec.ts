@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
-test('the nine-package meta import renders and hydrates', async ({ page }) => {
+test('the ten-package meta import renders and hydrates', async ({ page }) => {
   const consoleErrors: string[] = []
   page.on('console', (message) => {
     if (message.type() === 'error') consoleErrors.push(message.text())
@@ -33,6 +33,9 @@ test('the nine-package meta import renders and hydrates', async ({ page }) => {
 
   await page.getByRole('spinbutton', { name: 'Minute' }).press('ArrowUp')
   await expect(page.getByTestId('time-value')).not.toHaveText('14:30')
+
+  await page.getByRole('spinbutton', { name: 'Inches' }).press('ArrowUp')
+  await expect(page.getByTestId('height-value')).not.toHaveText('71 inch')
 
   await page.getByLabel('Tags').fill('accessibility')
   await page.getByLabel('Tags').press('Enter')

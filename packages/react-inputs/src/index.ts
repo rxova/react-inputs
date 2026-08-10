@@ -7,6 +7,15 @@ export * from '@rxova/react-rating-input'
 export * from '@rxova/react-otp-input'
 export * from '@rxova/react-phone-input'
 export * from '@rxova/react-password-input'
+/*
+ * The measurement input stars too, which is deliberate rather than lucky. Its
+ * pure helpers are named `compareMeasurements` / `toMeasurement` /
+ * `fromMeasurement` / `DEFAULT_MEASUREMENT_UNITS` precisely so they do not join
+ * the collision list below — a bare `compare` or `DEFAULT_UNITS` would have made
+ * a fixable problem permanent, and `unitSuffix` / `unitName` are left unexported
+ * for the same reason: every segmented field in the suite would want them.
+ */
+export * from '@rxova/react-measurement-input'
 
 /*
  * The remaining four export by name rather than with a star, because exactly six
