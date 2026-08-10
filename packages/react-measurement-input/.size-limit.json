@@ -1,0 +1,23 @@
+[
+  {
+    "name": "MeasurementInput (full import)",
+    "path": "dist/index.mjs",
+    "import": "{ MeasurementInput }",
+    "limit": "6.75 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  },
+  {
+    "name": "useMeasurementInput (headless only)",
+    "path": "dist/index.mjs",
+    "import": "{ useMeasurementInput }",
+    "limit": "5.75 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  },
+  {
+    "name": "convert (pure helper only)",
+    "path": "dist/index.mjs",
+    "import": "{ convert }",
+    "limit": "0.75 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  }
+]

@@ -1,0 +1,144 @@
+# @rxova/react-measurement-input
+
+> A headless, accessible measurement field for React: `5 ft 11 in`,
+> `12 st 2 lb`, `1 m 80 cm` as real spinbuttons, with unit words from `Intl` and
+> exact conversion built in. The value is always an `"<amount> <unit>"` string —
+> `71 inch` — where the unit half is an `Intl` unit identifier, never a bare
+> number. Zero runtime dependencies. No stylesheet to import.
+
+## Install
+
+    npm install @rxova/react-measurement-input
+
+`react >= 18` is the only peer dependency.
+
+## Minimal working example
+
+```tsx
+import { useState } from 'react'
+import { MeasurementInput } from '@rxova/react-measurement-input'
+
+export function Profile() {
+  const [height, setHeight] = useState<string | null>(null)
+
+  return (
+    <MeasurementInput
+      label="Height"
+      units={['foot', 'inch']}
+      value={height}
+      onChange={setHeight}
+      max="2.2 meter"
+    />
+  )
+}
+```
+
+Any units of one dimension whose adjacent pairs divide exactly, largest first:
+
+```tsx
+import { MeasurementInput } from '@rxova/react-measurement-input'
+
+export function Examples() {
+  return (
+    <>
+      <MeasurementInput label="Weight" units={['stone', 'pound']} />
+      <MeasurementInput label="Parcel" units={['kilogram', 'gram']} />
+      <MeasurementInput label="Fever" units={['celsius']} precision={1} />
+    </>
+  )
+}
+```
+
+## Props
+
+`<MeasurementInput>` — the full surface is `MeasurementInputProps` in the published types.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `value` | `string \| null` | — | Controlled `"<amount> <unit>"`, e.g. `71 inch`, or `null` for empty. |
+| `defaultValue` | `string \| null` | — | Uncontrolled initial value. Ignored when `value` is set. |
+| `onChange` | `(value: string \| null) => void` | — | Fires on complete, and when that stops. Never mid-entry. |
+| `onPartsChange` | `(parts: MeasurementParts) => void` | — | Every keystroke, including while incomplete. |
+| `min` | `string` | — | Smallest allowed measurement, inclusive. May be in any unit of the dimension. |
+| `max` | `string` | — | Largest allowed measurement, inclusive. May be in any unit of the dimension. |
+| `emitOutOfRange` | `boolean` | `true` | Reports an out-of-range measurement and marks the field invalid, rather than discarding it. |
+| `units` | `MeasurementUnit[]` | `['meter', 'centimeter']` | Which units to edit. Sorted largest-first, deduped, one dimension, adjacent pairs must divide exactly. |
+| `precision` | `number` | `0` | Decimal places on the smallest segment only, 0 to 6. |
+| `step` | `number` | one unit of `precision` | Arrow-key step for the smallest segment. Every other segment steps by one. |
+| `locale` | `string` | the runtime's locale | BCP 47 tag deciding the unit suffixes and segment names. Presentation only. |
+| `placeholders` | `MeasurementPlaceholders` | dashes, one per digit | Per-unit placeholder text. |
+| `unitLabels` | `MeasurementUnitLabels` | the locale's own words | Per-unit accessible name. |
+| `renderSegment` | `(state: MeasurementSegmentState) => ReactNode` | — | Custom rendering for one segment. |
+| `label` | `ReactNode` | — | Accessible name for the whole field. |
+| `className` | `string` | — | |
+| `style` | `CSSProperties` | — | |
+| `name` | `string` | — | Emits a hidden input carrying `"<amount> <unit>"`, readable by a native `<form>`. |
+| `required` | `boolean` | `false` | Surfaced as `aria-required` on the group. |
+| `disabled` | `boolean` | `false` | |
+| `readOnly` | `boolean` | `false` | |
+| `dir` | `'ltr' \| 'rtl'` | inherited | Lays the field out; unit order is always largest-first. |
+| `invalid` | `boolean` | `false` | Sets `aria-invalid` and `data-invalid`. |
+| `aria-describedby` | `string` | — | ids of external error/help text. |
+| `id` | `string` | — | Base id; segments derive `${id}-foot`, `${id}-inch`, … |
+| `onBlur` | `(event: FocusEvent<HTMLElement>) => void` | — | Fires when focus leaves the field, never between segments. |
+| `onFocus` | `(event: FocusEvent<HTMLElement>) => void` | — | |
+| `onWarn` | `(warning: MeasurementWarning) => void` | `console.warn` | Development-only notice that a prop was coerced. Stripped from production builds. |
+
+Also exported: the `useMeasurementInput` hook, the layout helper
+`measurementPieces`, and the pure functions `convert`, `toBaseUnit`,
+`dimensionOf`, `ratioBetween`, `isCarryPair`, `isMeasurementUnit`,
+`parseMeasurement`, `formatMeasurement`, `toMeasurement`, `fromMeasurement`,
+`compareMeasurements` and `withinMeasurementRange`, plus the
+`MEASUREMENT_UNITS` list and `DEFAULT_MEASUREMENT_UNITS`.
+
+## Styling
+
+There is no stylesheet. Set CSS custom properties on any ancestor:
+`--rx-measurement-gap`, `--rx-measurement-segment-padding`,
+`--rx-measurement-segment-radius`, `--rx-measurement-suffix-opacity`,
+`--rx-measurement-suffix-size`, `--rx-measurement-focus-ring`,
+`--rx-measurement-focus-ring-offset`.
+
+The focused segment paints a ring by default (`2px solid Highlight`), because a
+`<span role="spinbutton">` gets none from the browser. Restyle it through those
+two properties rather than removing it.
+
+Or target the `data-*` attributes, which are public API covered by semver:
+`data-rx-measurement-root`, `data-rx-measurement-dimension`
+(`length` / `mass` / `volume` / `area` / `digital` / `temperature`),
+`data-rx-measurement-segment` (the unit identifier),
+`data-rx-measurement-value`, `data-rx-measurement-leading` (the unbounded
+segment) and `data-rx-measurement-trailing` (the one that may carry decimals),
+plus the shared state hooks `data-complete`, `data-out-of-range`,
+`data-placeholder`, `data-focused`, `data-disabled`, `data-readonly`,
+`data-invalid`.
+
+## Four mistakes to avoid
+
+1. **Comparing two values with `===` or `<`.** The value is emitted in the
+   smallest unit on screen, so `'71 inch'` and `'1.8034 meter'` are the same
+   height and different strings. Use `compareMeasurements` or `toBaseUnit`;
+   `min` and `max` already do.
+2. **Passing a bare number as `value`.** The prop is `"<amount> <unit>"`. A
+   number needs a units contract travelling beside it, and removing that
+   contract is what this component is for.
+3. **Pairing units that do not divide.** `units={['meter', 'inch']}` is refused
+   with a `units-ratio-not-integer` warning: a metre is 39.37 inches, so the
+   inches segment would have no ceiling to carry at. `['foot', 'inch']` works
+   because a foot is exactly twelve.
+4. **Reaching for a time unit.** `day`, `hour`, `minute` and the rest are `Intl`
+   units and are refused here with a `units-not-convertible` warning. Durations
+   are a different value with a different canonical form — use
+   `@rxova/react-duration-input`.
+
+## Docs
+
+- Copyable labelled field: https://rxova.org/packages/react-inputs/r/measurement-field.json
+- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/measurement/about/#ui-library-recipes
+
+- Introduction: https://rxova.org/packages/react-inputs/components/measurement/introduction/
+- Usage: https://rxova.org/packages/react-inputs/components/measurement/usage/
+- Everything else (forms, ranges, theming, SSR): https://rxova.org/packages/react-inputs/components/measurement/about/
+- Migrating from a conversion library: https://rxova.org/packages/react-inputs/components/measurement/migrating/
+- Generated API reference: https://rxova.org/packages/react-inputs/components/measurement/api/
+- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt
