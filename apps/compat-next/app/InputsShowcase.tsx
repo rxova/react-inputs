@@ -4,6 +4,7 @@ import { useState } from 'react'
 import {
   CurrencyInput,
   DateInput,
+  DurationInput,
   FileInput,
   OtpInput,
   PasswordInput,
@@ -21,6 +22,7 @@ export function InputsShowcase() {
   const [phone, setPhone] = useState('')
   const [date, setDate] = useState<string | null>('2026-08-05')
   const [time, setTime] = useState<string | null>('14:30')
+  const [duration, setDuration] = useState<string | null>('PT1H30M')
   const [tags, setTags] = useState(['react'])
   const [files, setFiles] = useState<File[]>([])
 
@@ -68,6 +70,15 @@ export function InputsShowcase() {
 
         <TimeInput label="Start time" name="time" value={time} onChange={setTime} locale="en-US" />
         <output data-testid="time-value">{time ?? 'empty'}</output>
+
+        <DurationInput
+          label="Duration"
+          name="duration"
+          value={duration}
+          onChange={setDuration}
+          locale="en-US"
+        />
+        <output data-testid="duration-value">{duration ?? 'empty'}</output>
 
         <TagsInput label="Tags" name="tags" value={tags} onChange={setTags} />
         <output data-testid="tags-value">{tags.join(',')}</output>

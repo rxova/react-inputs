@@ -6,6 +6,7 @@ import * as phone from '@rxova/react-phone-input'
 import * as password from '@rxova/react-password-input'
 import * as date from '@rxova/react-date-input'
 import * as time from '@rxova/react-time-input'
+import * as duration from '@rxova/react-duration-input'
 import * as tags from '@rxova/react-tags-input'
 import * as file from '@rxova/react-file-input'
 
@@ -34,6 +35,7 @@ const liveScope = {
   ...password,
   ...date,
   ...time,
+  ...duration,
   ...tags,
   ...file,
 }

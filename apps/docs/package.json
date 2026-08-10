@@ -22,6 +22,7 @@
     "@radix-ui/themes": "^3.3.0",
     "@rxova/brand": "^0.12.0",
     "@rxova/react-date-input": "workspace:*",
+    "@rxova/react-duration-input": "workspace:*",
     "@rxova/react-file-input": "workspace:*",
     "@rxova/react-intl-currency-input": "workspace:*",
     "@rxova/react-otp-input": "workspace:*",

@@ -7,6 +7,13 @@ export * from '@rxova/react-rating-input'
 export * from '@rxova/react-otp-input'
 export * from '@rxova/react-phone-input'
 export * from '@rxova/react-password-input'
+/*
+ * The duration input stars too, which is deliberate rather than lucky. Its pure
+ * helpers are named `toISODuration` / `fromISODuration` / `compareDurations` /
+ * `withinDurationRange` precisely so they do not join the collision list below —
+ * a third `toISO` would have made a fixable problem permanent.
+ */
+export * from '@rxova/react-duration-input'
 
 /*
  * The remaining four export by name rather than with a star, because exactly six

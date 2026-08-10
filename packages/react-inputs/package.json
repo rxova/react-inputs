@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@rxova/react-date-input": "workspace:^",
+    "@rxova/react-duration-input": "workspace:^",
     "@rxova/react-file-input": "workspace:^",
     "@rxova/react-intl-currency-input": "workspace:^",
     "@rxova/react-otp-input": "workspace:^",
