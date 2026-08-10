@@ -1,0 +1,23 @@
+[
+  {
+    "name": "TimezoneInput (full import)",
+    "path": "dist/index.mjs",
+    "import": "{ TimezoneInput }",
+    "limit": "3.25 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  },
+  {
+    "name": "useTimezoneInput (headless only)",
+    "path": "dist/index.mjs",
+    "import": "{ useTimezoneInput }",
+    "limit": "2.75 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  },
+  {
+    "name": "zoneOffsetMinutes (pure helper only)",
+    "path": "dist/index.mjs",
+    "import": "{ zoneOffsetMinutes }",
+    "limit": "0.5 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  }
+]

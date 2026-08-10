@@ -21,6 +21,7 @@
     "@rxova/react-rating-input": "workspace:*",
     "@rxova/react-tags-input": "workspace:*",
     "@rxova/react-time-input": "workspace:*",
+    "@rxova/react-timezone-input": "workspace:*",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

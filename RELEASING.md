@@ -13,6 +13,7 @@ The published packages (all `@rxova/*`, public):
 | `@rxova/react-time-input`          | -                                                                      |
 | `@rxova/react-tags-input`          | -                                                                      |
 | `@rxova/react-file-input`          | -                                                                      |
+| `@rxova/react-timezone-input`      | -                                                                      |
 | `@rxova/react-inputs` (meta)       | —                                                                      |
 | `@rxova/codemod`                   | -                                                                      |
 

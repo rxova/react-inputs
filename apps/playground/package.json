@@ -21,6 +21,7 @@
     "@rxova/react-rating-input": "workspace:*",
     "@rxova/react-tags-input": "workspace:*",
     "@rxova/react-time-input": "workspace:*",
+    "@rxova/react-timezone-input": "workspace:*",
     "@tanstack/react-form": "^1.33.2",
     "final-form": "^5.0.1",
     "formik": "^2.4.9",

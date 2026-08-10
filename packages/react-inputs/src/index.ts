@@ -7,6 +7,7 @@ export * from '@rxova/react-rating-input'
 export * from '@rxova/react-otp-input'
 export * from '@rxova/react-phone-input'
 export * from '@rxova/react-password-input'
+export * from '@rxova/react-timezone-input'
 
 /*
  * The remaining four export by name rather than with a star, because exactly six

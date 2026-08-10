@@ -60,10 +60,12 @@ own `llms.txt` with a full prop table.
 | `TimeInput`, `useTimeInput` | `@rxova/react-time-input` | Segmented time entry, 12/24-hour by locale, canonical 24-hour value. |
 | `TagsInput`, `useTagsInput` | `@rxova/react-tags-input` | Tags and tokens with delimiters, paste splitting and a roving tab order. |
 | `FileInput`, `useFileInput` | `@rxova/react-file-input` | Picker and drop zone with accept/size rules, dedupe and managed previews. |
+| `TimezoneInput`, `useTimezoneInput`, `resolveZone`, `ZONES` | `@rxova/react-timezone-input` | IANA time zone picking with live DST offsets and no tz database shipped. |
 
 Every type is re-exported too — `CurrencyInputProps`, `RatingProps`,
 `OtpInputProps`, `PasswordInputProps`, `PhoneInputProps`, `DateInputProps`,
-`TimeInputProps`, `TagsInputProps`, `FileInputProps` and the rest.
+`TimeInputProps`, `TagsInputProps`, `FileInputProps`, `TimezoneInputProps` and
+the rest.
 
 Exactly six names are **not** re-exported here, because they collide: `toISO`,
 `fromISO`, `compareISO` and `withinRange` mean different things in the date and

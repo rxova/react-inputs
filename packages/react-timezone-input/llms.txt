@@ -1,0 +1,116 @@
+# @rxova/react-timezone-input
+
+> A headless, accessible time zone picker for React. 418 zones, localised names
+> and live DST offsets, all from `Intl` — no bundled tz database, no runtime
+> dependencies. The value is always an IANA zone id — `Europe/Madrid` — never an
+> offset. No stylesheet to import.
+
+## Install
+
+    npm install @rxova/react-timezone-input
+
+`react >= 18` is the only peer dependency.
+
+## Minimal working example
+
+```tsx
+import { useState } from 'react'
+import { TimezoneInput } from '@rxova/react-timezone-input'
+
+export function Profile() {
+  const [zone, setZone] = useState<string | null>(null)
+
+  return <TimezoneInput label="Time zone" value={zone} onChange={setZone} />
+}
+```
+
+Narrow the list, and show the offsets that apply on a given date:
+
+```tsx
+import { TimezoneInput } from '@rxova/react-timezone-input'
+
+export function EventZone({ at }: { at: Date }) {
+  return (
+    <TimezoneInput
+      label="Event time zone"
+      zones={['Europe/Madrid', 'America/New_York', 'Asia/Tokyo']}
+      referenceDate={at}
+      defaultValue="UTC"
+    />
+  )
+}
+```
+
+## Props
+
+`<TimezoneInput>` — the full surface is `TimezoneInputProps` in the published types.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `value` | `string \| null` | — | Controlled IANA zone id, e.g. `Europe/Madrid`, or `null` for empty. |
+| `defaultValue` | `string \| null` | — | Uncontrolled initial value. Ignored when `value` is set. |
+| `onChange` | `(zone: string \| null) => void` | — | Fires with the selected id, or `null` for the empty option. |
+| `zones` | `string[]` | every zone `Intl` knows | Restrict the list. Unusable ids are dropped with a warning; `UTC` stays available. |
+| `referenceDate` | `Date` | the mount time, captured once | The instant offsets are computed at. Not read per render, which would break hydration. |
+| `grouped` | `boolean` | `true` | Group options with `<optgroup>` by area. |
+| `allowEmpty` | `boolean` | `false` once a zone is chosen | Offer an empty option. Always forced while nothing is selected. |
+| `placeholder` | `string` | `'Select a time zone'` | Text for the empty option. |
+| `locale` | `string` | the runtime's locale | BCP 47 tag deciding the zone names. Presentation only. |
+| `renderZone` | `(state: TimezoneOptionState) => string` | — | Custom option text. Must return a string: an `<option>` holds text only. |
+| `label` | `ReactNode` | — | Accessible name for the field. |
+| `className` | `string` | — | |
+| `style` | `CSSProperties` | — | |
+| `name` | `string` | — | Names the `<select>`, so a native `<form>` posts the id. No hidden input. |
+| `required` | `boolean` | `false` | |
+| `disabled` | `boolean` | `false` | |
+| `invalid` | `boolean` | `false` | Sets `aria-invalid` and `data-invalid`. |
+| `aria-describedby` | `string` | — | ids of external error/help text. |
+| `id` | `string` | — | Base id; the select derives `${id}-select`. |
+| `onBlur` | `(event: FocusEvent<HTMLSelectElement>) => void` | — | |
+| `onFocus` | `(event: FocusEvent<HTMLSelectElement>) => void` | — | |
+| `onWarn` | `(warning: TimezoneWarning) => void` | `console.warn` | Development-only notice that a prop was coerced. Stripped from production builds. |
+
+Also exported: the `useTimezoneInput` hook, and the pure helpers `ZONES`, `UTC`,
+`resolveZone`, `isUsableZone`, `localZone`, `zoneOffsetMinutes`,
+`zoneOffsetLabel`, `zoneLabel`, `zonePhase`, `zoneOptionLabel`, `zoneArea`,
+`zoneCity`, `formatOffset`, `compareZones` and `groupByArea`.
+
+## Styling
+
+There is no stylesheet. Set CSS custom properties on any ancestor:
+`--rx-timezone-gap`, `--rx-timezone-select-width`,
+`--rx-timezone-select-padding`, `--rx-timezone-select-radius`.
+
+Or target the `data-*` attributes, which are public API covered by semver:
+`data-rx-timezone-root`, `data-rx-timezone-select`,
+`data-rx-timezone-unlisted` (an option the platform does not list), plus the
+shared state hooks `data-complete`, `data-disabled` and `data-invalid`.
+
+## Four mistakes to avoid
+
+1. **Storing an offset instead of an id.** `Intl` accepts `+02:00` as a time
+   zone and this field refuses it, because an offset cannot express a
+   daylight-saving change: `-05:00` is New York in winter and nothing in
+   particular in summer. Store `America/New_York`; derive the offset with
+   `zoneOffsetLabel`.
+2. **Checking a stored value against the zone list yourself.** Which spelling an
+   engine lists depends on its ICU build — `Europe/Kiev` on one, `Europe/Kyiv` on
+   another — so `list.includes(value)` is false for a perfectly good value on
+   some browsers. Use `resolveZone`, which the component already does.
+3. **Assuming `UTC` is in `Intl.supportedValuesOf('timeZone')`.** It is not, and
+   nothing in that array stands in for it. This package adds it.
+4. **Treating an offset as a property of a zone.** It is a property of a zone
+   *at an instant*. Pass `referenceDate` when the form is about a specific date,
+   or the offsets shown will be today's.
+
+## Docs
+
+- Copyable labelled field: https://rxova.org/packages/react-inputs/r/timezone-field.json
+- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/timezone/about/#ui-library-recipes
+
+- Introduction: https://rxova.org/packages/react-inputs/components/timezone/introduction/
+- Usage: https://rxova.org/packages/react-inputs/components/timezone/usage/
+- Everything else (forms, theming, SSR): https://rxova.org/packages/react-inputs/components/timezone/about/
+- Migrating from react-timezone-select: https://rxova.org/packages/react-inputs/components/timezone/migrating/
+- Generated API reference: https://rxova.org/packages/react-inputs/components/timezone/api/
+- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt

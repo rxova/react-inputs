@@ -1,0 +1,215 @@
+---
+title: 'Time zone input — Usage'
+description: 'Use the time zone input in React: IANA values, narrowing the list, reference dates and DST, grouping, localised names and form submission.'
+sidebar:
+  label: 'Usage'
+  order: 2
+---
+
+## Try it
+
+Focus the field and type `mad` — a native select's type-ahead matches from the start of the option
+text, which is why each option leads with its city. (`TimezoneInput` and `useState` are already in
+scope.)
+
+```tsx live
+function TryIt() {
+  const [zone, setZone] = useState(null)
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <TimezoneInput label="Time zone" value={zone} onChange={setZone} />
+      <code>{JSON.stringify(zone)}</code>
+    </div>
+  )
+}
+```
+
+## Controlled and uncontrolled
+
+```tsx
+import { useState } from 'react'
+import { TimezoneInput } from '@rxova/react-timezone-input'
+
+function Controlled() {
+  const [zone, setZone] = useState<string | null>(null)
+  return <TimezoneInput label="Time zone" value={zone} onChange={setZone} />
+}
+
+function Uncontrolled() {
+  return <TimezoneInput label="Time zone" defaultValue="UTC" />
+}
+```
+
+`onChange` receives the IANA id, or `null` when the empty option is chosen.
+
+## The value is an id, never an offset
+
+`Intl` accepts `'+02:00'` as a time zone. This field does not, deliberately: an offset cannot
+express a daylight-saving change, so `+02:00` is Madrid in summer and wrong in winter. Store the id
+and derive the offset when you need it.
+
+```ts
+import { zoneOffsetLabel, zoneOffsetMinutes, zonePhase } from '@rxova/react-timezone-input'
+
+zoneOffsetLabel('America/New_York', new Date('2026-01-15')) // '-05:00'
+zoneOffsetLabel('America/New_York', new Date('2026-07-15')) // '-04:00'
+zoneOffsetMinutes('Asia/Kathmandu') // 345
+zonePhase('America/New_York', 'en', new Date('2026-07-15')) // 'Eastern Daylight Time'
+```
+
+Passing an offset produces a `value-offset-not-zone` warning and an empty field, rather than a value
+that is right half the year.
+
+## A stored value in the other spelling still works
+
+```ts
+import { resolveZone } from '@rxova/react-timezone-input'
+
+resolveZone('Europe/Kyiv') // the id this engine lists, whichever spelling that is
+resolveZone('US/Eastern') // 'America/New_York'
+resolveZone('Mars/Olympus') // null
+```
+
+The component does this for you: a `value` of `'Europe/Kyiv'` selects the option a browser calls
+`'Europe/Kiev'`, and the other way round. A value the platform understands but does not list —
+`'US/Eastern'` — is kept and added to the list rather than dropped, and carries
+`data-rx-timezone-unlisted`.
+
+## Narrowing the list
+
+```tsx live
+function Offices() {
+  const [zone, setZone] = useState('Europe/Madrid')
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <TimezoneInput
+        label="Office"
+        zones={['Europe/Madrid', 'America/New_York', 'Asia/Tokyo']}
+        value={zone}
+        onChange={setZone}
+      />
+      <code>{JSON.stringify(zone)}</code>
+    </div>
+  )
+}
+```
+
+Entries the platform cannot use are dropped with a warning. `UTC` stays available regardless, and so
+does the current value — a shortlist can never hide the zone the field is holding.
+
+## Reference dates and DST
+
+```tsx
+import { TimezoneInput } from '@rxova/react-timezone-input'
+
+function EventZone({ at }: { at: Date }) {
+  return <TimezoneInput label="Event time zone" referenceDate={at} />
+}
+```
+
+Every offset on screen is computed at that instant. Move it across a DST boundary and
+`America/New_York` relabels from `-05:00` to `-04:00` while its _name_ stays "Eastern Time" — the
+names come from `timeZoneName: 'longGeneric'`, which is season-stable on purpose. `zonePhase` gives
+you the seasonal wording when you want it.
+
+The default is the moment the field mounts, captured once. An `Invalid Date` falls back to that
+default and warns.
+
+## Grouping and labels
+
+```tsx
+import { TimezoneInput } from '@rxova/react-timezone-input'
+
+function Flat() {
+  return <TimezoneInput label="Time zone" grouped={false} locale="fr-FR" />
+}
+```
+
+`grouped` (on by default) puts the options under `<optgroup>` by area — `UTC` first, then `Africa`,
+`America`, `Asia` and the rest. `locale` decides the zone names and nothing else: it changes no id
+and no offset.
+
+`renderZone` replaces the text of an option. It must return a string, because an `<option>` may
+contain text and nothing else:
+
+```tsx
+import { TimezoneInput } from '@rxova/react-timezone-input'
+
+function ShortLabels() {
+  return (
+    <TimezoneInput
+      label="Time zone"
+      renderZone={({ city, offset }) => `${city} ${offset ?? ''}`.trim()}
+    />
+  )
+}
+```
+
+## Forms
+
+```tsx
+import { TimezoneInput } from '@rxova/react-timezone-input'
+
+function Form() {
+  return (
+    <form action="/profile" method="post">
+      <TimezoneInput label="Time zone" name="zone" defaultValue="Europe/Madrid" />
+      <button type="submit">Save</button>
+    </form>
+  )
+}
+```
+
+`name` names the `<select>` itself, so `formData.get('zone')` is `'Europe/Madrid'` with no hidden
+input in the tree. A field with nothing chosen always offers an empty option, so the select can
+never paint — or post — a zone the component does not hold.
+
+## Styling
+
+No stylesheet to import.
+
+```css
+[data-rx-timezone-root] {
+  --rx-timezone-gap: 0.5rem;
+  --rx-timezone-select-width: 24rem;
+}
+
+[data-rx-timezone-root][data-invalid] [data-rx-timezone-select] {
+  border-color: crimson;
+}
+```
+
+The full list of properties and `data-*` hooks is in [About](./about/#styling).
+
+## Headless
+
+`useTimezoneInput` is the whole state machine with no markup — for the searchable combobox this
+package deliberately does not ship.
+
+```tsx
+import { useTimezoneInput } from '@rxova/react-timezone-input'
+
+function CustomPicker() {
+  const field = useTimezoneInput({})
+
+  return (
+    <ul>
+      {field.options.map((option) => (
+        <li key={option.zone} aria-current={option.selected}>
+          <button
+            type="button"
+            onClick={() => {
+              field.selectZone(option.zone)
+            }}
+          >
+            {option.city} — {option.label} {option.offset}
+          </button>
+        </li>
+      ))}
+    </ul>
+  )
+}
+```
+
+`field.local` is the runtime's own zone, for a "use my zone" affordance; `field.groups` is the same
+options under their areas; `field.resolved` is the id spelled the way this engine spells it.

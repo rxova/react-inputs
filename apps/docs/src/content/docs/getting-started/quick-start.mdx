@@ -8,7 +8,7 @@ sidebar:
 Every rxova input is a **controlled component**: give it a `value` and an
 `onChange` and it behaves like any other form field. `onChange` always hands you
 the _value_ — never a DOM event — so these drop straight into a form library's
-controlled adapter. Here are three of the nine; the rest follow the same shape.
+controlled adapter. Here are three of the ten; the rest follow the same shape.
 
 ```tsx
 import { useState } from 'react'
@@ -29,7 +29,7 @@ function Example() {
 }
 ```
 
-That single install covers all nine. If you'd rather depend on just one, the
+That single install covers all ten. If you'd rather depend on just one, the
 individual packages (`@rxova/react-intl-currency-input`,
 `@rxova/react-rating-input`, `@rxova/react-otp-input`) are equivalent — install
 the one you want and import from its own name instead. See

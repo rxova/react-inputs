@@ -1,0 +1,325 @@
+---
+title: 'Time zone input — About'
+description: 'Why the time zone input stores an IANA id, how it repairs renamed zones without a bundled alias table, and how offsets, accessibility and diagnostics are handled.'
+sidebar:
+  label: 'About'
+  order: 3
+---
+
+import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+
+The decisions behind the component, and the ones you should disagree with deliberately rather than
+by accident.
+
+## Why no bundled tz database
+
+The tz database is not static data — it is a running record of political decisions. Governments move
+DST boundaries, abolish them and reinstate them, usually with a few months' notice. Any copy of that
+table shipped inside an npm package is a snapshot with an expiry date nobody knows in advance, and
+the only fix is a dependency bump reaching every deployed app.
+
+`Intl` reads the same table from the engine's ICU, which updates when the browser updates. So the
+whole of this package's data layer is four `Intl` calls:
+
+```ts
+Intl.supportedValuesOf('timeZone') // the list — 418 entries in this engine
+Intl.DateTimeFormat().resolvedOptions().timeZone // the user's own zone
+new Intl.DateTimeFormat('en', { timeZone, timeZoneName: 'longOffset' }) // 'GMT+05:45'
+new Intl.DateTimeFormat(locale, { timeZone, timeZoneName: 'longGeneric' }) // 'Central European Time'
+```
+
+Every one of them is wrapped, because every one of them throws `RangeError` on a bad zone — as does
+`new Intl.DateTimeFormat('en_US')`, on an underscore.
+
+## Why the value is an IANA id
+
+```ts
+'-05:00' // New York in winter. In summer it is nothing in particular.
+'America/New_York' // New York, in every season, forever
+```
+
+An offset is a _rendering_ of a zone at an instant. It cannot round-trip: given `-05:00` you cannot
+recover which of the twelve-odd regions that share it was meant, nor what the offset becomes in
+July.
+
+ECMA-402 muddies this, because `Intl` genuinely accepts offset time zones — `'+02:00'`, `'+0200'`
+and `'+02'` are all valid `timeZone` values. So "does `Intl` accept it" is not a sufficient test of
+"is this a zone", and the component checks the shape separately. An offset is refused with
+`value-offset-not-zone` and the field stays empty, rather than holding a value that is right for
+half the year.
+
+There is deliberately **no `toDate()` helper** and no `Date`-valued API anywhere in the package: a
+zone is not an instant, and constructing one would mean inventing a date the caller never supplied.
+
+## Renamed zones, without an alias table
+
+The tz database renames zones and keeps the old names working as links: `Asia/Calcutta` →
+`Asia/Kolkata`, `Europe/Kiev` → `Europe/Kyiv`, `Atlantic/Faeroe` → `Atlantic/Faroe`. Which spelling
+`supportedValuesOf` _lists_ depends on the ICU build; which one your database holds depends on
+Postgres, `java.time.ZoneId` or `zoneinfo`, all of which prefer the modern name.
+
+So `list.includes(value)` is false for a perfectly good value on some engines and true on others,
+and the field looks empty while holding a correct zone.
+
+The fix is two lines and no data:
+
+```ts
+import { resolveZone } from '@rxova/react-timezone-input'
+
+resolveZone('Europe/Kyiv') // whichever spelling this engine lists
+resolveZone('US/Eastern') // 'America/New_York' — usable, though not listed
+resolveZone('+02:00') // null — Intl accepts it; it is still not a zone
+```
+
+`Intl.DateTimeFormat('en-US', { timeZone: value }).resolvedOptions().timeZone` canonicalises in
+whichever direction the engine needs, so both spellings land on the same option.
+
+An earlier version decided sameness _behaviourally_ — same offsets across probe instants spanning
+both DST phases — and it was wrong: five zones share Kyiv's offset signature, so `Europe/Kyiv`
+resolved to `Europe/Chisinau`. Offsets identify a rule, not a place. That test now guards the
+regression.
+
+**Usable is not the same question as listed.** A value the engine understands but does not enumerate
+is kept, added to the list, and marked `data-rx-timezone-unlisted` — never dropped. Losing a user's
+stored zone because an ICU build omits its spelling is the worse failure by a distance.
+
+## `Etc/GMT+5` is UTC−5
+
+POSIX inverted the sign, and the tz database kept the convention. `Etc/GMT+5` is five hours _behind_
+UTC. None of the 418 listed zones is an `Etc/*` one, so this is only reachable when a consumer
+passes one deliberately — and when they do, `value-etc-inverted` says so rather than letting a
+back-to-front label go by unremarked.
+
+## Offsets are read at an instant
+
+`referenceDate` is the instant every offset on the page is computed at, and its default is captured
+once at mount. `new Date()` in the render path is two bugs at once: the server and the client
+disagree, which is a hydration mismatch; and every option relabels silently the moment a DST
+boundary passes with the page open.
+
+Three consequences worth knowing:
+
+- **Names are season-stable, offsets are not.** Labels use `timeZoneName: 'longGeneric'` — "Eastern
+  Time", not "Eastern Standard Time" — so only the bracketed offset moves when the reference date
+  crosses a boundary. `zonePhase` gives you the seasonal wording when you actually want it.
+- **The awkward offsets come out right.** `+05:45` (Kathmandu) and `+12:45` (Chatham) are not
+  special-cased; they are what the engine reports. So are the pre-standard-time offsets carrying
+  seconds, like `GMT-00:14:44` for a 19th-century reference date, which the offset parser tolerates
+  rather than failing to null.
+- **Sorting happens at the same instant as the labels**, so the order on screen and the offsets on
+  screen can never disagree.
+
+Computing all 419 offsets is around 30 ms of `Intl` construction, so results are memoised per
+`(zone, instant)` and the option list is keyed on the _contents_ of `zones` rather than the array
+identity — an inline `zones={[...]}` is a new array every render, and without that key a re-rendering
+parent paid the full cost each time for an identical answer.
+
+## Why a `<select>`
+
+The same reasoning as the phone input's country list, one size up. On a phone, `<select>` _is_ the
+platform picker; on the desktop it brings type-ahead, arrow/Home/End, `<optgroup>` semantics and
+form submission, none of which a custom listbox of 419 options gets right for free.
+
+The one design constraint it imposes is that an option holds text and nothing else — which is why
+`renderZone` returns a string rather than a node. That is a fact about `<option>`, not a limitation
+this package invented.
+
+Option text is `City — Name (offset)` in that order **on purpose**: a native select's type-ahead
+matches from the start of the option text, and with the list sorted by offset rather than
+alphabetically, typing the city is the only fast way in. An E2E test asserts no option begins with a
+bracket, which is the regression that would break it.
+
+## Accessibility
+
+A `<select>` already _is_ a listbox: it has the role, the announced value, `<optgroup>` grouping
+semantics and the platform picker on touch. This component adds a name, `aria-invalid`,
+`aria-describedby` — and nothing else. There is no `role="listbox"` reimplementation to get subtly
+wrong, no roving tabindex, no focus trap.
+
+- A string `label` becomes `aria-label`; a node `label` is rendered into a hidden element and
+  referenced with `aria-labelledby`, because `aria-label` only takes a string.
+- Every option carries text. A `renderZone` returning `''` would produce an invisible, unselectable
+  row, so an empty return falls back to the built-in label.
+- **A field holding nothing always offers an empty option.** A `<select>` whose `value` matches no
+  option falls back to painting its first one, so without this a field holding `null` would show —
+  and a form would post — UTC, while `onChange` had never fired.
+
+axe (WCAG 2.1 A/AA) runs over the component in the browser suite and over the whole demo page in
+Chromium, Firefox and WebKit.
+
+## Why all three browsers
+
+More than anywhere else in this suite. The zone list, the localised names and — critically — _which
+spelling of a zone the engine reports_ all come from that engine's ICU build, and the three ship
+three different ones. Whether a run sees `Europe/Kiev` or `Europe/Kyiv` is the entire subject of
+`resolveZone`, so a Chromium-only run tests a third of it.
+
+The tests assert _relationships_ rather than exact strings: that both spellings resolve to the same
+id, that the count is above a floor rather than exactly 418, that a name is season-stable while its
+offset is not.
+
+## Diagnostics
+
+`onWarn` receives `{ code, prop, received, message }` whenever a prop is rejected or coerced.
+
+| Code                     | Meaning                                                      |
+| ------------------------ | ------------------------------------------------------------ |
+| `value-offset-not-zone`  | An offset such as `+02:00`; the field stays empty            |
+| `value-unknown-zone`     | `Intl` refuses the id; the field stays empty                 |
+| `value-etc-inverted`     | An `Etc/GMT±n` zone, whose sign runs backwards               |
+| `zones-invalid`          | Entries in `zones` the platform cannot use; they are dropped |
+| `zones-empty`            | Nothing in `zones` survived; the full list is used           |
+| `reference-date-invalid` | Not a usable `Date`; the mount time is used                  |
+| `locale-invalid`         | `Intl` refused the tag; the runtime's locale is used         |
+
+The offset check runs _before_ the usable check, because `Intl` accepts offset zones — checking
+usability first would have made `value-offset-not-zone` unreachable.
+
+With no handler these go to `console.warn`. **The entire path is stripped from production builds**,
+and the E2E suite asserts that against a real production bundle by requiring the demo's warning list
+to be empty.
+
+## Styling
+
+There is no stylesheet to import.
+
+### Custom properties
+
+Set them on `[data-rx-timezone-root]` or any ancestor:
+
+```css
+[data-rx-timezone-root] {
+  --rx-timezone-gap: 0.375rem;
+  --rx-timezone-select-width: 22rem;
+  --rx-timezone-select-padding: 0.25rem 0.375rem;
+  --rx-timezone-select-radius: 0.25rem;
+}
+```
+
+`--rx-timezone-select-width` is a `max-width` rather than a width: the longest option runs to around
+fifty characters, and without a ceiling the select stretches to it and pushes the rest of a form
+sideways.
+
+### Stable `data-*` hooks
+
+These are public API, covered by semver.
+
+| Attribute                        | On      | Meaning                                    |
+| -------------------------------- | ------- | ------------------------------------------ |
+| `data-rx-timezone-root`          | wrapper | Always present                             |
+| `data-complete`                  | wrapper | A zone is selected                         |
+| `data-invalid` / `data-disabled` | wrapper | Mirrors the props                          |
+| `data-rx-timezone-select`        | select  | The `<select>` itself                      |
+| `data-rx-timezone-unlisted`      | option  | Usable, but not in the platform's own list |
+
+## The value
+
+`string | null`, always an IANA id.
+
+```ts
+import { groupByArea, zoneArea, zoneCity } from '@rxova/react-timezone-input'
+
+zoneArea('America/Argentina/Buenos_Aires') // 'America'
+zoneCity('America/Argentina/Buenos_Aires') // 'Buenos Aires'
+groupByArea(['UTC', 'Europe/Madrid']) // [{ area: 'UTC', zones: […] }, …]
+```
+
+The area comes from the id's own prefix, so grouping costs nothing and needs no table.
+
+## Form libraries
+
+Every recipe below is transcribed from `src/__tests__/form.browser.test.tsx`, so it is code that
+runs on every commit. What a form stores is the IANA id, which is what every backend's date library
+already expects.
+
+### Native forms
+
+The `<select>` carries the `name`, so it posts itself:
+
+```tsx
+<form action="/profile" method="post">
+  <TimezoneInput name="zone" label="Time zone" defaultValue="Europe/Madrid" />
+  <button type="submit">Save</button>
+</form>
+```
+
+`formData.get('zone')` is `'Europe/Madrid'`, with no hidden input anywhere in the tree.
+
+### React Hook Form
+
+`onChange` emits the id (or `null`), so `field.onChange` binds directly:
+
+```tsx
+<Controller
+  name="zone"
+  control={control}
+  render={({ field }) => (
+    <TimezoneInput
+      label="Time zone"
+      value={field.value}
+      onChange={field.onChange}
+      onBlur={field.onBlur}
+      name={field.name}
+    />
+  )}
+/>
+```
+
+### Formik
+
+```tsx
+function Field() {
+  const [field, , helpers] = useField<string | null>('zone')
+  return (
+    <TimezoneInput
+      label="Time zone"
+      name="zone"
+      value={field.value}
+      onChange={(value) => helpers.setValue(value)}
+      onBlur={() => helpers.setTouched(true)}
+    />
+  )
+}
+```
+
+### React Final Form
+
+```tsx
+<Field name="zone">
+  {({ input }) => (
+    <TimezoneInput
+      label="Time zone"
+      name={input.name}
+      value={input.value === '' ? null : String(input.value)}
+      onChange={input.onChange}
+      onBlur={input.onBlur}
+    />
+  )}
+</Field>
+```
+
+React Final Form starts a field as `''`, which is not a zone. The guard above is the binding's job:
+the component takes `null` for empty.
+
+### TanStack Form
+
+```tsx
+<form.Field name="zone">
+  {(field) => (
+    <TimezoneInput
+      label="Time zone"
+      name="zone"
+      value={field.state.value}
+      onChange={(value) => field.handleChange(value)}
+      onBlur={field.handleBlur}
+    />
+  )}
+</form.Field>
+```
+
+## UI-library recipes
+
+Keep the native `<select>` and its option text intact; use the design system for the field's visible
+label, helper text, validation and layout.
+
+<IntegrationRecipes slug="timezone" />

@@ -1,0 +1,81 @@
+---
+title: 'Time zone input'
+description: 'A headless React time zone picker with no bundled tz database — 418 zones, localised names and live DST offsets straight from Intl, 3 kB, zero dependencies.'
+sidebar:
+  label: 'Introduction'
+  order: 1
+---
+
+**A time zone picker with no timezone data blob.** Headless, zero-dependency, 3 kB.
+
+## The argument is the data
+
+Every other input in this suite takes its vocabulary from `Intl` — currency symbols, month names,
+the AM/PM words — and ships no locale data. A time zone picker is the sharpest test of that idea,
+because the data in question is not just large, it **expires**.
+
+The most-used React option, `react-timezone-select`, has two runtime dependencies — `spacetime` and
+`timezone-soft` — and they exist to carry a copy of the tz database. That copy is wrong the day a
+government moves its DST rules, and a package update is the only fix. `Intl` ships the same data,
+maintained by the engine's own ICU, and updates when the browser does.
+
+Sizes quoted anywhere in these docs are measured the same way: bundled with esbuild, minified,
+React external, brotli at quality 11.
+
+## Three things a naive version gets wrong
+
+Each one is reproducible in a console, and each one has a test in this repo.
+
+**1. `UTC` is not in the platform's list.**
+
+```js
+Intl.supportedValuesOf('timeZone').includes('UTC') // false
+```
+
+Not only is it absent, nothing in those 418 entries stands in for it. A picker built straight off
+that array cannot select the single most commonly stored zone in the world. This one adds it, and
+puts it first.
+
+**2. The engine's spelling is not your database's spelling.** The tz database renamed
+`Asia/Calcutta` to `Asia/Kolkata` and `Europe/Kiev` to `Europe/Kyiv`, keeping the old names working
+as links. Which one an engine _lists_ depends on its ICU build — but Postgres, `java.time.ZoneId`
+and Python's `zoneinfo` hand you the modern name regardless. So `list.includes(storedValue)` shows
+**nothing selected** for a perfectly good value, and which way it breaks changes with the browser.
+Resolving through `Intl`'s own canonicalisation costs nothing and gets it right on all three.
+
+**3. An offset is a fact about an instant, not a property of a zone.** Sydney is `+11:00` in
+January and `+10:00` in July. A picker that labels an option `+11:00` without saying _when_ is
+wrong for half the year, so there is a `referenceDate` — and its default is captured **once per
+mount** rather than read per render, which would be a hydration mismatch and a label that silently
+changes while the page sits open.
+
+## Why a native `<select>`
+
+Not a new decision: the phone input made it for 240 countries, and 419 zones is the same problem one
+size up. On a phone the native control _is_ the platform's own picker; on the desktop it brings
+type-ahead, the full ARIA contract, `<optgroup>` semantics and form behaviour that no custom listbox
+of 419 options matches. Each option leads with its **city**, because a native select's type-ahead
+matches from the start of the text — so `mad` reaches Madrid.
+
+If you want a searchable combobox instead, `useTimezoneInput` is the whole state machine with no
+markup.
+
+## Install
+
+```bash
+npm install @rxova/react-timezone-input
+```
+
+```tsx
+import { useState } from 'react'
+import { TimezoneInput } from '@rxova/react-timezone-input'
+
+function Profile() {
+  const [zone, setZone] = useState<string | null>(null)
+  return <TimezoneInput label="Time zone" value={zone} onChange={setZone} />
+}
+```
+
+The value is an IANA id — `'Europe/Madrid'` — or `null`. Plus the ordinary things: a narrowed list,
+`<optgroup>` grouping by area, a localised name per zone, a `referenceDate`, a `renderZone` render
+prop, and a `<select>` that posts itself with no hidden input.

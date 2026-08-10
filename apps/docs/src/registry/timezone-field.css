@@ -1,0 +1,38 @@
+.rx-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  --rx-timezone-gap: 0.5rem;
+  --rx-timezone-select-width: 24rem;
+  --rx-timezone-select-padding: 0.5rem 0.625rem;
+  --rx-timezone-select-radius: var(--radius, 0.5rem);
+}
+
+.rx-field [data-rx-timezone-select] {
+  border: 1px solid hsl(var(--border, 214 32% 91%));
+  background: transparent;
+  color: inherit;
+}
+
+.rx-field[data-invalid] [data-rx-timezone-select] {
+  border-color: hsl(var(--destructive, 0 84% 60%));
+}
+
+.rx-field__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.rx-field__description,
+.rx-field__error {
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+.rx-field__description {
+  color: hsl(var(--muted-foreground, 215 16% 47%));
+}
+
+.rx-field__error {
+  color: hsl(var(--destructive, 0 84% 60%));
+}

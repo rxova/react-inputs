@@ -30,6 +30,7 @@
     "@rxova/react-rating-input": "workspace:*",
     "@rxova/react-tags-input": "workspace:*",
     "@rxova/react-time-input": "workspace:*",
+    "@rxova/react-timezone-input": "workspace:*",
     "astro": "^7.1.6",
     "antd": "^6.5.3",
     "prism-react-renderer": "^2.4.1",

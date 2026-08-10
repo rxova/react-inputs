@@ -11,6 +11,7 @@ import {
   Rating,
   TagsInput,
   TimeInput,
+  TimezoneInput,
 } from '@rxova/react-inputs'
 
 export function InputsShowcase() {
@@ -23,6 +24,7 @@ export function InputsShowcase() {
   const [time, setTime] = useState<string | null>('14:30')
   const [tags, setTags] = useState(['react'])
   const [files, setFiles] = useState<File[]>([])
+  const [zone, setZone] = useState<string | null>('Europe/Madrid')
 
   return (
     <main>
@@ -74,6 +76,9 @@ export function InputsShowcase() {
 
         <FileInput label="Attachments" name="files" value={files} onChange={setFiles} multiple />
         <output data-testid="files-value">{files.map((file) => file.name).join(',')}</output>
+
+        <TimezoneInput label="Time zone" name="zone" value={zone} onChange={setZone} />
+        <output data-testid="zone-value">{zone ?? 'empty'}</output>
       </form>
     </main>
   )

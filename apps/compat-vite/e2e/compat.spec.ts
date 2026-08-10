@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
-test('the nine-package meta import renders and hydrates', async ({ page }) => {
+test('the ten-package meta import renders and hydrates', async ({ page }) => {
   const consoleErrors: string[] = []
   page.on('console', (message) => {
     if (message.type() === 'error') consoleErrors.push(message.text())
@@ -44,6 +44,12 @@ test('the nine-package meta import renders and hydrates', async ({ page }) => {
     buffer: Buffer.from('proof'),
   })
   await expect(page.getByTestId('files-value')).toHaveText('proof.txt')
+
+  // A native <select>, so the id is posted by the element itself. Selecting by
+  // value rather than by label: the option text is built from the engine's ICU,
+  // and the three runtimes under test do not spell it the same way.
+  await page.getByLabel('Time zone').selectOption('Asia/Tokyo')
+  await expect(page.getByTestId('zone-value')).toHaveText('Asia/Tokyo')
 
   const violations = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])

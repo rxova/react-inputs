@@ -17,6 +17,7 @@ body:
         - '@rxova/react-time-input'
         - '@rxova/react-tags-input'
         - '@rxova/react-file-input'
+        - '@rxova/react-timezone-input'
         - '@rxova/react-inputs (whole suite)'
     validations:
       required: true

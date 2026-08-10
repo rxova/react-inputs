@@ -8,6 +8,7 @@ import * as date from '@rxova/react-date-input'
 import * as time from '@rxova/react-time-input'
 import * as tags from '@rxova/react-tags-input'
 import * as file from '@rxova/react-file-input'
+import * as timezone from '@rxova/react-timezone-input'
 
 /**
  * Everything available inside a ```tsx live code block. Spreading React exposes
@@ -36,6 +37,7 @@ const liveScope = {
   ...time,
   ...tags,
   ...file,
+  ...timezone,
 }
 
 export default liveScope

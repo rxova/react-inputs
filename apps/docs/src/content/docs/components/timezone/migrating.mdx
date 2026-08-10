@@ -1,0 +1,177 @@
+---
+title: 'Time zone input — Migrating'
+description: 'Move to @rxova/react-timezone-input from react-timezone-select, react-select with a zone list, moment-timezone or a hand-rolled <select>.'
+sidebar:
+  label: 'Migrating'
+  order: 4
+---
+
+Every migration here does the same two things: it drops a bundled copy of the tz database, and it
+changes the value from an object to a string.
+
+That second change is the one to plan around. Most existing pickers hand back
+`{ value, label, offset, abbrev }` — a shape only that library understands — and applications end
+up storing the whole object, or storing `offset` and discovering in six months that it was wrong all
+winter. This package's value is the IANA id and nothing else.
+
+## Migrating from react-timezone-select
+
+The most-used option, and the one this package was written against. It is actively maintained; the
+disagreement is about the two runtime dependencies (`spacetime`, `timezone-soft`) that exist to
+carry timezone data the engine already has.
+
+### Props
+
+| react-timezone-select        | @rxova/react-timezone-input | Notes                                                      |
+| ---------------------------- | --------------------------- | ---------------------------------------------------------- |
+| `value` (`string \| object`) | `value` (`string \| null`)  | The IANA id only; `null` for empty                         |
+| `onChange(timezoneObject)`   | `onChange(zone)`            | A string, not `{ value, label, offset }`                   |
+| `timezones`                  | `zones`                     | An array of ids rather than an id→label object             |
+| `labelStyle`                 | `renderZone`                | A function returning the option text                       |
+| `displayValue`               | —                           | The value is always the id; the display is `renderZone`    |
+| `currentDatetime`            | `referenceDate`             | A `Date`; defaults to the mount time, captured once        |
+| `styles`, `theme`            | CSS custom properties       | See [About](./about/#styling)                              |
+| `isDisabled`                 | `disabled`                  |                                                            |
+| `name`, `required`           | same                        | The `<select>` carries them, so a native form posts the id |
+| —                            | `grouped`                   | `<optgroup>` by area, on by default                        |
+| —                            | `locale`                    | Zone names in a language you choose                        |
+| —                            | `onWarn`                    | Development diagnostics for coerced props                  |
+
+### Before
+
+```tsx
+import { useState } from 'react'
+import TimezoneSelect, { type ITimezone } from 'react-timezone-select'
+
+function Form() {
+  const [zone, setZone] = useState<ITimezone>(Intl.DateTimeFormat().resolvedOptions().timeZone)
+  return <TimezoneSelect value={zone} onChange={setZone} />
+}
+```
+
+### After
+
+```tsx
+import { useState } from 'react'
+import { TimezoneInput, localZone } from '@rxova/react-timezone-input'
+
+function Form() {
+  const [zone, setZone] = useState<string | null>(localZone())
+  return <TimezoneInput label="Time zone" value={zone} onChange={setZone} />
+}
+```
+
+### If you stored the object
+
+Read the `value` off it once, on the way in. Everything else on that object is derivable:
+
+```ts
+import { zoneLabel, zoneOffsetLabel, zoneOffsetMinutes } from '@rxova/react-timezone-input'
+
+// stored: { value: 'Europe/Madrid', label: '(GMT+2:00) Madrid', offset: 2, abbrev: 'CEST' }
+const zone = stored.value
+
+zoneOffsetLabel(zone) // '+02:00' — now, not when the record was written
+zoneOffsetMinutes(zone) // 120
+zoneLabel(zone, 'en') // 'Central European Time'
+```
+
+**Do not migrate the stored `offset`.** It was correct at the instant that record was written and
+is wrong for roughly half of every year afterwards. The id is the only field worth keeping.
+
+## Migrating from react-select with a zone list
+
+A common hand-rolled shape: `react-select` fed from `Intl.supportedValuesOf('timeZone')` or a
+checked-in JSON array.
+
+```tsx
+// Before
+const options = Intl.supportedValuesOf('timeZone').map((zone) => ({ value: zone, label: zone }))
+```
+
+Three bugs come with that line, and they are the three this package exists to fix: `UTC` is not in
+the array; the spelling in it may not be the spelling in your database; and the label carries no
+offset, so a user picking between `America/Indiana/Vincennes` and `America/Kentucky/Monticello` has
+nothing to go on.
+
+```tsx
+// After
+import { TimezoneInput } from '@rxova/react-timezone-input'
+
+function Zone() {
+  return <TimezoneInput label="Time zone" />
+}
+```
+
+If you need the combobox behaviour `react-select` gave you — filtering, multi-select, async — keep
+your own renderer and take the state machine only:
+
+```tsx
+import { useTimezoneInput } from '@rxova/react-timezone-input'
+
+function Options() {
+  const field = useTimezoneInput({})
+  // field.options: { zone, label, city, offset, offsetMinutes, area, selected, unlisted }
+  return <pre>{JSON.stringify(field.options.slice(0, 3), null, 2)}</pre>
+}
+```
+
+## Migrating from moment-timezone
+
+`moment.tz.names()` is the tz database compiled into your bundle — several hundred kilobytes before
+compression, and stale the moment the tz data moves.
+
+| moment-timezone                | @rxova/react-timezone-input     |
+| ------------------------------ | ------------------------------- |
+| `moment.tz.names()`            | `ZONES`                         |
+| `moment.tz.guess()`            | `localZone()`                   |
+| `moment.tz(zone).utcOffset()`  | `zoneOffsetMinutes(zone, when)` |
+| `moment.tz(zone).format('Z')`  | `zoneOffsetLabel(zone, when)`   |
+| `moment.tz(zone).format('zz')` | `zonePhase(zone, locale, when)` |
+
+```ts
+import { ZONES, localZone, zoneOffsetMinutes } from '@rxova/react-timezone-input'
+
+ZONES.length // 419 here: the platform's list plus UTC
+localZone() // 'Europe/Madrid'
+zoneOffsetMinutes('Asia/Kathmandu') // 345
+```
+
+The offsets are read from the same tz data `moment-timezone` bundles — via the engine's ICU, which
+updates with the browser instead of with your `package.json`.
+
+Note the arguments are instants, not moments: pass the `Date` your form is about, and the answer is
+the offset that will apply then.
+
+## Migrating from a hand-rolled `<select>`
+
+You already have the right element. What is usually missing:
+
+```tsx
+// Before
+<select value={zone} onChange={(event) => setZone(event.target.value)}>
+  {Intl.supportedValuesOf('timeZone').map((tz) => (
+    <option key={tz} value={tz}>
+      {tz}
+    </option>
+  ))}
+</select>
+```
+
+- No `UTC`, which `supportedValuesOf` does not include.
+- A stored `Europe/Kyiv` selects nothing on an engine that lists `Europe/Kiev` — and because the
+  `<select>` falls back to painting its first option, the field shows `Africa/Abidjan` while the
+  state says Kyiv. A submit then posts a zone the user never chose.
+- Raw ids as labels, with no offset and no localised name.
+- No grouping, so 418 flat rows.
+
+```tsx
+// After
+import { TimezoneInput } from '@rxova/react-timezone-input'
+
+function Zone({ zone, setZone }: { zone: string | null; setZone: (zone: string | null) => void }) {
+  return <TimezoneInput label="Time zone" value={zone} onChange={setZone} />
+}
+```
+
+The keyboard contract is unchanged, because it is still the platform's.

@@ -15,6 +15,6 @@ Before `1.0`, a breaking public-API change increments the minor version and ship
 guidance. Security and correctness fixes target the latest minor of each package; older minors are
 not maintained in parallel.
 
-The suite is ready for `1.0` when all nine packages have shipped, the public props and styling hooks
+The suite is ready for `1.0` when all ten packages have shipped, the public props and styling hooks
 have no planned breaking changes, the framework and manual assistive-technology matrices are
 current, and there are no unresolved critical or accessibility defects.
