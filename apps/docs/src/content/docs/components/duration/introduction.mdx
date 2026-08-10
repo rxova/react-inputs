@@ -1,0 +1,93 @@
+---
+title: 'Duration input'
+description: 'A segmented React duration field — days, hours, minutes and seconds as real spinbuttons, with an ISO 8601 value, no scroll wheel and no date library.'
+sidebar:
+  label: 'Introduction'
+  order: 1
+---
+
+**A segmented duration field: days, hours, minutes and seconds as real spinbuttons.**
+ISO 8601 in and out. Headless, zero-dependency, no date library.
+
+A duration is not a time of day and not a date. It is a count, and people say it as one: "an hour
+and a half", "ninety minutes", "two days". Yet the field they get is usually a scroll wheel, a
+masked text box, or three unlabelled `<input type="number">`s glued together in every timesheet,
+video editor, cooking app and SLA form that has ever needed one.
+
+## What is on npm today
+
+| Package                     | Last published | What it costs                                          |
+| --------------------------- | -------------- | ------------------------------------------------------ |
+| `react-duration`            | 2025           | A runtime dependency for parsing                       |
+| `react-duration-control`    | 2025           | A stylesheet to import, and React undeclared as a peer |
+| `react-duration-input`      | 2022           | 104 kB unpacked                                        |
+| `react-duration-picker`     | 2019           | An Android-style scroll wheel                          |
+| `react-duration-input-mask` | 2019           | Three runtime dependencies and a polyfill              |
+| **This package**            | —              | Segmented field, **4.7 kB** brotli, no dependencies    |
+
+Sizes are measured: bundled with esbuild, minified, React external, brotli at quality 11.
+
+**Not one of those five mentions `aria`, `role=`, `tabindex` or `accessib` anywhere in its README.**
+No major design system fills the gap either — React Aria ships `DateField` and `TimeField` and no
+duration equivalent, and MUI and Ant Design have none. What is popular in this space are _helpers_ —
+`parse-duration`, `humanize-duration`, `iso8601-duration` — because people end up gluing a parser to
+a field they wrote themselves.
+
+## Three problems run through all of them
+
+**`P1M` is one month.** ISO 8601 puts a `T` between the calendar part and the clock part, so `P1M`
+is a month and `PT1M` is a minute. Read one as the other and you are out by a factor of 43,200. This
+parser refuses calendar units outright, with a message that says why, rather than guessing how many
+seconds are in "a month":
+
+```ts
+import { parseISODuration } from '@rxova/react-duration-input'
+
+parseISODuration('PT1M') // { ok: true, seconds: 60 }
+parseISODuration('P1M') // { ok: false, error: 'calendar-unit' }
+```
+
+**They refuse the number people actually type.** `90` in a minutes box is a real ninety-minute
+duration. A field that clamps it to `59` at the keystroke is fighting the most common thing anyone
+does. Here the largest unit on screen is unbounded, and anything below it may exceed its range while
+you type — the carry settles it when you leave:
+
+<div style="padding:0.75rem 1rem;border-left:3px solid var(--sl-color-accent);margin:1rem 0">
+  Type <code>90</code> into the minutes of an <code>h:m</code> field and Tab away. It becomes
+  <code>1h 30m</code>.
+</div>
+
+**The value is a bare number.** Seconds or milliseconds, with the units contract living in a comment
+somewhere — and `3600` is valid under both readings. `PT1H` says what it is, survives JSON and a
+database column, and is already read by `postgres interval`, `java.time.Duration` and
+`System.Text.Json`.
+
+## The one thing to know
+
+Unlike this suite's date and time fields, **an ISO duration does not sort as a string**:
+
+```ts
+'PT10M' < 'PT2H' // true — and wrong
+```
+
+`YYYY-MM-DD` and `HH:mm` are fixed-width and big-endian, so `<` is a correct chronological
+comparison. A duration is neither. `compareDurations` and `toSeconds` are exported for this, and
+`min`/`max` on the component already use them.
+
+## Install
+
+```bash
+npm install @rxova/react-duration-input
+```
+
+```tsx
+import { useState } from 'react'
+import { DurationInput } from '@rxova/react-duration-input'
+
+function Meeting() {
+  const [value, setValue] = useState<string | null>(null)
+  return <DurationInput label="Length" value={value} onChange={setValue} max="PT8H" />
+}
+```
+
+4.7 kB brotli, zero runtime dependencies, no stylesheet to import.

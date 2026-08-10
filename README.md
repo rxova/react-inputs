@@ -53,6 +53,7 @@ and gives you more time to focus on the experience you want to build.
 | [**`@rxova/react-time-input`**](packages/react-time-input)<br />[![npm](https://img.shields.io/npm/v/@rxova/react-time-input?color=cb3837&label=)](https://www.npmjs.com/package/@rxova/react-time-input)                                     | Segmented time entry, 12/24-hour by locale, canonical 24-hour value             | ≤ 4 kB    |
 | [**`@rxova/react-tags-input`**](packages/react-tags-input)<br />[![npm](https://img.shields.io/npm/v/@rxova/react-tags-input?color=cb3837&label=)](https://www.npmjs.com/package/@rxova/react-tags-input)                                     | Tags and tokens with a real roving tab order and announced add/remove           | ≤ 4 kB    |
 | [**`@rxova/react-file-input`**](packages/react-file-input)<br />[![npm](https://img.shields.io/npm/v/@rxova/react-file-input?color=cb3837&label=)](https://www.npmjs.com/package/@rxova/react-file-input)                                     | Picker and drop zone with accept/size rules, dedupe and managed previews        | ≤ 4 kB    |
+| [**`@rxova/react-duration-input`**](packages/react-duration-input)<br />[![npm](https://img.shields.io/npm/v/@rxova/react-duration-input?color=cb3837&label=)](https://www.npmjs.com/package/@rxova/react-duration-input)                     | Days, hours, minutes and seconds as spinbuttons, ISO 8601 in and out            | ≤ 4.75 kB |
 | [**`@rxova/react-inputs`**](packages/react-inputs)<br />[![npm](https://img.shields.io/npm/v/@rxova/react-inputs?color=cb3837&label=)](https://www.npmjs.com/package/@rxova/react-inputs)                                                     | Meta-package — the whole suite from one install, tree-shaken to what you import | ≤ 10 kB   |
 | [**`@rxova/codemod`**](packages/codemod)<br />[![npm](https://img.shields.io/npm/v/@rxova/codemod?color=cb3837&label=)](https://www.npmjs.com/package/@rxova/codemod)                                                                         | `jscodeshift` helpers for supported migration paths                             | —         |
 
@@ -185,6 +186,7 @@ packages/
   react-time-input            segmented time input
   react-tags-input            tags / token input
   react-file-input            file picker and drop zone
+  react-duration-input        segmented duration input
   react-inputs                meta-package, re-exports the suite
   codemod                     jscodeshift migration transforms
   demo-kit                    shared demo primitives (private, dev-only)

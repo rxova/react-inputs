@@ -1,0 +1,247 @@
+---
+title: 'Duration input — About'
+description: 'Why the duration input returns an ISO 8601 string that does not sort lexicographically, how the unbounded leading unit and the carry work, and how accessibility is handled.'
+sidebar:
+  label: 'About'
+  order: 3
+---
+
+import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+
+The decisions behind the component, and the ones you should disagree with deliberately rather than
+by accident.
+
+## Why a string and not a number of seconds
+
+A number needs a units contract travelling beside it, and that contract is where the bugs live. One
+service stores seconds, the next stores milliseconds, and `3600` is a valid value under both
+readings — so the mistake is silent, survives the type checker, and shows up as a meeting that is an
+hour long or one that is a second long.
+
+`PT1H` says what it is. It survives JSON, a database column, and a parser written in another
+language: `postgres interval`, `java.time.Duration` and `System.Text.Json` all read it already.
+
+It is also consistent with the rest of this suite. The date input's value is `YYYY-MM-DD`, the time
+input's is `HH:mm` — a canonical string that a form can post and a backend can store without knowing
+which locale produced it.
+
+## The value does not sort as a string
+
+This is the one place the duration input breaks a promise its siblings keep, and it is worth being
+loud about rather than quiet.
+
+```ts
+'2026-01-05' < '2026-02-01' // true, and correct
+'09:30' < '14:00' // true, and correct
+'PT10M' < 'PT2H' // true, and WRONG
+```
+
+`YYYY-MM-DD` and `HH:mm` are fixed-width and big-endian, so a lexical comparison is a chronological
+one. An ISO 8601 duration is neither: the components are variable-width, some are optional, and the
+same duration has several legal spellings (`PT90M` and `PT1H30M` are equal).
+
+So this package compares through seconds and exports the two functions you need:
+
+```ts
+import { compareDurations, toSeconds } from '@rxova/react-duration-input'
+
+compareDurations('PT10M', 'PT2H') // -1
+compareDurations('PT90M', 'PT1H30M') // 0 — the same duration, spelled differently
+toSeconds('P1D') // 86400
+;['PT2H', 'PT10M', 'P1D'].sort(compareDurations) // ['PT10M', 'PT2H', 'P1D']
+```
+
+`min` and `max` on the component already use them, so a range reads the way it behaves.
+
+The value the component emits is always **normalised** — the shortest legal spelling for that
+duration — so two equal durations that came out of this field are also `===` equal. Only durations
+from elsewhere need `compareDurations`.
+
+## Why `P1M` is refused
+
+ISO 8601 puts a `T` between the calendar part of a duration and the clock part. Before the `T`, `M`
+is months; after it, `M` is minutes:
+
+```ts
+import { parseISODuration } from '@rxova/react-duration-input'
+
+parseISODuration('PT1M') // { ok: true, seconds: 60 }
+parseISODuration('P1M') // { ok: false, error: 'calendar-unit' }
+```
+
+Reading one as the other is a factor of 43,200, and it is the standard bug in hand-rolled ISO
+duration parsers. This one refuses months and years rather than converting them, because there is no
+correct conversion: February is 28 or 29 days, a month is 28 to 31, and a year is 365 or 366. A
+field made of fixed-size units cannot hold a quantity that depends on when you start counting.
+
+Weeks _are_ fixed at seven days and are accepted: `P1W` reads as 604,800 seconds.
+
+If you need calendar arithmetic, you need a date library and two dates — not a duration field.
+
+## The unbounded leading unit
+
+Every duration field on npm treats its segments like clock segments: minutes are 0–59, full stop. So
+typing `90` into a minutes box gives you `9`, or `59`, or nothing.
+
+But `90` is what people say. "Ninety minutes" is more common in English than "an hour and a half",
+and a control that refuses it is fighting its users over a notation preference.
+
+So the rule here is:
+
+- The **largest unit on screen** has no maximum at all. `aria-valuemax` is omitted rather than set
+  to a large number, because the attribute is a promise about a ceiling and there is none.
+- Every unit **below** it is bounded by the unit above — hours 0–23 under days, minutes and seconds
+  0–59.
+- Those bounds are enforced **when focus leaves**, not at the keystroke. Typing `90` into the
+  minutes of an `h:m` field leaves `90` on screen and settles it to `1h 30m` on blur.
+
+The value is canonical the whole time. `PT1H30M` is reported as soon as the number is complete; only
+the segments lag, and only until you leave.
+
+## Why the arrows clamp instead of wrapping
+
+The time input wraps: 23:59 plus a minute is 00:00, because a clock is a cycle and stepping past the
+end of one is a real operation.
+
+A duration is not a cycle. Arrowing down from `0m` to `59m` would silently make the duration an hour
+longer, and arrowing up past the leading unit's ceiling is meaningless because there is no ceiling.
+So every segment stops at its own ends.
+
+## Accessibility
+
+The field is a `role="group"` containing one `role="spinbutton"` per unit — a bounded value with
+arrow-key stepping is exactly what a spinbutton is, and the browser supplies the role semantics.
+
+Each segment carries:
+
+- `aria-label` — the **locale's own word**, from `Intl.NumberFormat` with `style: 'unit'` and
+  `unitDisplay: 'long'`. `hours`, `Stunden`, `時間` — never `h`, which tells a screen-reader user
+  nothing about which box they are in.
+- `aria-valuenow` and `aria-valuemin`.
+- `aria-valuemax`, **except on the leading segment**, which has no ceiling to promise.
+- `aria-valuetext` reading as a quantity — `2 hours`, not `2`. An empty segment announces its
+  placeholder rather than nothing at all.
+
+The unit suffixes (`h`, `Min.`, `分`) are `aria-hidden`: they duplicate the segment's accessible
+name, and reading "h" after "2" when the spinbutton is already called "hours" is noise.
+
+The focused segment paints a ring by default (`2px solid Highlight`), because a
+`<span role="spinbutton">` gets nothing from the browser and removing the UA outline without
+replacing it is WCAG 2.4.7 with no mitigation. Restyle it through `--rx-duration-focus-ring` rather
+than removing it.
+
+Every segment is its own tab stop, in reading order. `disabled` sets `tabindex="-1"` and
+`aria-disabled`; `readOnly` leaves the segments focusable and sets `aria-readonly`, so a value can
+still be read with the keyboard.
+
+## Diagnostics
+
+Every rejected or coerced prop reaches `onWarn` in development with a machine code you can `switch`
+on, and a message safe to log as-is. When `onWarn` is not given they go to `console.warn`. The whole
+path is stripped from production builds.
+
+| Code                  | When                                                             |
+| --------------------- | ---------------------------------------------------------------- |
+| `value-unparseable`   | Not an ISO 8601 duration — names the bare-number and clock cases |
+| `value-calendar-unit` | Years or months, with the `P1M` / `PT1M` explanation             |
+| `value-truncated`     | Finer than the units on screen, so reading it back changes it    |
+| `value-out-of-range`  | Complete but outside `min` / `max`                               |
+| `min-unparseable`     | `min` is not a duration                                          |
+| `max-unparseable`     | `max` is not a duration                                          |
+| `min-after-max`       | No duration can satisfy both; both bounds are dropped            |
+| `units-invalid`       | An unknown unit, a duplicate, an empty array, or a reordering    |
+| `step-invalid`        | A step that does not divide 60                                   |
+| `locale-invalid`      | A tag `Intl` refused                                             |
+
+`value-truncated` is the quiet one worth wiring up: `PT90S` in an `h:m` field renders as one minute
+and loses thirty seconds, so a form that round-trips the value writes back a different duration than
+it read.
+
+## Server rendering
+
+No `Date` is ever constructed and no browser API is touched during render, so the component renders
+on the server as-is. The one thing that could differ between server and client is the unit suffix:
+it comes from `Intl`, and Node and the browser ship different ICU builds. Pass an explicit `locale`
+if a hydration mismatch would matter.
+
+## Form libraries
+
+### React Hook Form
+
+```tsx
+<Controller
+  name="estimate"
+  control={control}
+  render={({ field }) => (
+    <DurationInput
+      label="Estimate"
+      name={field.name}
+      value={field.value ?? null}
+      onChange={field.onChange}
+      onBlur={field.onBlur}
+    />
+  )}
+/>
+```
+
+### Formik
+
+```tsx
+function EstimateField() {
+  const [field, , helpers] = useField<string | null>('estimate')
+  return (
+    <DurationInput
+      label="Estimate"
+      name="estimate"
+      value={field.value}
+      onChange={(value) => helpers.setValue(value)}
+      onBlur={() => helpers.setTouched(true)}
+    />
+  )
+}
+```
+
+`onBlur` fires when focus leaves the **whole field**, not when it moves from the hour segment to the
+minute — so validation does not fire while the user is halfway through the duration.
+
+### React Final Form
+
+```tsx
+<Field name="estimate">
+  {({ input }) => (
+    <DurationInput
+      label="Estimate"
+      name={input.name}
+      value={input.value === '' ? null : String(input.value)}
+      onChange={input.onChange}
+      onBlur={input.onBlur}
+    />
+  )}
+</Field>
+```
+
+React Final Form starts a field as `''`, which is not a duration. The guard above is the binding's
+job: the component takes `null` for empty.
+
+### TanStack Form
+
+```tsx
+<form.Field name="estimate">
+  {(field) => (
+    <DurationInput
+      label="Estimate"
+      name="estimate"
+      value={field.state.value}
+      onChange={(value) => field.handleChange(value)}
+      onBlur={field.handleBlur}
+    />
+  )}
+</form.Field>
+```
+
+## UI-library recipes
+
+Keep the segmented spinbuttons and the locale's unit words intact; use the design system for the
+field's visible label, helper text, validation, and layout.
+
+<IntegrationRecipes slug="duration" />

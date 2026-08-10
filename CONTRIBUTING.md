@@ -18,6 +18,7 @@ docs site.
 | `packages/react-time-input/`          | `@rxova/react-time-input` — segmented time field, no popup.                          |
 | `packages/react-tags-input/`          | `@rxova/react-tags-input` — tag / token input.                                       |
 | `packages/react-file-input/`          | `@rxova/react-file-input` — file picker and drop zone (no uploading).                |
+| `packages/react-duration-input/`      | `@rxova/react-duration-input` — segmented duration field, ISO 8601 value.            |
 | `packages/react-inputs/`              | `@rxova/react-inputs` — meta-package that re-exports the whole suite.                |
 | `packages/codemod/`                   | `@rxova/codemod` — jscodeshift codemods (one transform per migration) for the suite. |
 | `packages/utils/`                     | `@rxova/utils` — private tooling (release gate, doc-snippet checks, capture, etc.).  |

@@ -1,0 +1,201 @@
+---
+title: 'Duration input — Migrating'
+description: 'Move to @rxova/react-duration-input from react-duration-picker, react-duration-control, react-duration, or three number inputs glued together.'
+sidebar:
+  label: 'Migrating'
+  order: 4
+---
+
+Every migration here trades either a scroll wheel or a mask for a segmented field, so the honest
+first question is whether your users are _browsing_ durations or _stating_ one. Almost always they
+are stating one: a meeting length, a timeout, a cooking time, an estimate.
+
+The second question is the value type. Most of the packages below hand you a number of seconds, a
+`{ hours, minutes, seconds }` object, or a formatted string. This hands you `"PT1H30M"` — and the
+conversion is one function call, so it is a smaller change than it looks.
+
+```ts
+import { secondsToDuration, toISODuration, toSeconds } from '@rxova/react-duration-input'
+
+const units = ['hour', 'minute'] as const
+
+// Old value in, new value out
+toISODuration(secondsToDuration(5400, units), units) // 'PT1H30M'
+
+// New value in, old value out
+toSeconds('PT1H30M') // 5400
+```
+
+## Migrating from react-duration-picker
+
+`react-duration-picker` is an Android-style column spinner: three scrolling wheels in a popup. The
+behavioural change is the largest of any migration here — there is no popup and no scrolling, and
+users type instead.
+
+### Props
+
+| react-duration-picker | @rxova/react-duration-input  | Notes                                                |
+| --------------------- | ---------------------------- | ---------------------------------------------------- |
+| `onChange({h,m,s})`   | `onChange(value)`            | `'PT1H30M15S'`, not an object                        |
+| `initialDuration`     | `defaultValue`               | ISO string                                           |
+| `maxHours`            | `max`                        | `max="PT99H"`; bounds the whole duration, not a unit |
+| `noSeconds`           | `units={['hour', 'minute']}` | Units are listed rather than subtracted              |
+| —                     | `min`                        | No equivalent                                        |
+| —                     | `locale`                     | No equivalent — the wheels are unlabelled            |
+
+### Before
+
+```tsx
+<DurationPicker
+  onChange={(d) => setSeconds(d.hours * 3600 + d.minutes * 60 + d.seconds)}
+  maxHours={8}
+  noSeconds
+/>
+```
+
+### After
+
+```tsx
+import { DurationInput, toSeconds } from '@rxova/react-duration-input'
+
+function Estimate({ setSeconds }: { setSeconds: (value: number) => void }) {
+  return (
+    <DurationInput
+      label="Estimate"
+      units={['hour', 'minute']}
+      max="PT8H"
+      onChange={(value) => {
+        setSeconds(value === null ? 0 : (toSeconds(value) ?? 0))
+      }}
+    />
+  )
+}
+```
+
+### What changes for your users
+
+- No popup opens. The field is the control.
+- Typing works. `90` in the minutes settles to `1h 30m`.
+- Every segment is a labelled spinbutton, so a screen reader announces "hours, 2" rather than
+  nothing at all.
+
+## Migrating from react-duration-control
+
+The two differences that matter are the stylesheet and the peer dependency.
+`react-duration-control` requires `import "react-duration-control/dist/react-duration-control.css"`
+and declares no `peerDependencies` at all — React is undeclared, so package managers cannot warn you
+about a mismatch. Neither applies here: there is no stylesheet to import, and `react >= 18` is a
+real peer.
+
+### Props
+
+| react-duration-control | @rxova/react-duration-input | Notes                                       |
+| ---------------------- | --------------------------- | ------------------------------------------- |
+| `value` (ms)           | `value` (ISO string)        | `toSeconds(value) * 1000` for the old shape |
+| `onChange(ms)`         | `onChange(value)`           | Fires only for a complete duration          |
+| `pattern`              | `units`                     | A unit list, not a format string            |
+| CSS import             | CSS custom properties       | `--rx-duration-*`, no stylesheet            |
+
+### Before
+
+```tsx
+import 'react-duration-control/dist/react-duration-control.css'
+;<DurationControl value={ms} onChange={setMs} pattern="{hh}:{mm}" />
+```
+
+### After
+
+```tsx
+import { DurationInput, toSeconds } from '@rxova/react-duration-input'
+
+function Timeout({ ms, setMs }: { ms: number; setMs: (value: number) => void }) {
+  return (
+    <DurationInput
+      label="Timeout"
+      units={['hour', 'minute']}
+      onChange={(value) => {
+        setMs(value === null ? 0 : (toSeconds(value) ?? 0) * 1000)
+      }}
+    />
+  )
+}
+```
+
+## Migrating from react-duration
+
+`react-duration` is a thin field over the `duration-str` package. The migration is mostly about
+dropping that dependency: parsing lives here, with no runtime dependency at all.
+
+The one behavioural difference to check is what your stored strings look like. `duration-str`
+accepts human forms like `1h30m`; this package accepts ISO 8601 only, because a human form's meaning
+depends on the locale that wrote it. Convert once at rest:
+
+```ts
+import { secondsToDuration, toISODuration } from '@rxova/react-duration-input'
+
+const units = ['hour', 'minute'] as const
+toISODuration(secondsToDuration(5400, units), units) // 'PT1H30M'
+```
+
+## Migrating from three number inputs
+
+The most common starting point, and the one with the most to gain.
+
+### Before
+
+```tsx
+<label htmlFor="h">Hours</label>
+<input id="h" type="number" min={0} value={hours} onChange={(e) => setHours(+e.target.value)} />
+<label htmlFor="m">Minutes</label>
+<input id="m" type="number" min={0} max={59} value={minutes} onChange={(e) => setMinutes(+e.target.value)} />
+```
+
+### After
+
+```tsx
+import { useState } from 'react'
+import { DurationInput } from '@rxova/react-duration-input'
+
+function Estimate() {
+  const [value, setValue] = useState<string | null>(null)
+  return <DurationInput label="Estimate" value={value} onChange={setValue} />
+}
+```
+
+### What you get for the swap
+
+- One value instead of two pieces of state that can disagree.
+- `90` in the minutes carries to `1h 30m` instead of being clamped to `59` or accepted as an invalid
+  component.
+- The number spinners disappear. `<input type="number">` on a duration segment gives you a scroll
+  wheel that changes the value on hover, and a field that accepts `1e3` and `-5`.
+- One accessible name per unit, from the locale, instead of two `<label>`s you maintain by hand.
+
+## Migrating from `<input type="text">` with a mask
+
+A mask gives you `01:30` and no idea whether that is an hour and a half or half past one. The
+segments here are unambiguous because each one is named, and the value is unambiguous because ISO
+8601 marks its units.
+
+If your stored values are `HH:MM` strings, convert at rest:
+
+```ts
+import { secondsToDuration, toISODuration } from '@rxova/react-duration-input'
+
+function fromClockString(text: string) {
+  const [hours = '0', minutes = '0'] = text.split(':')
+  const units = ['hour', 'minute'] as const
+  return toISODuration(secondsToDuration(Number(hours) * 3600 + Number(minutes) * 60, units), units)
+}
+
+fromClockString('01:30') // 'PT1H30M'
+```
+
+## Things that will not carry over
+
+- **Months and years.** If your durations use them, they are calendar arithmetic and need two dates
+  and a date library. This field refuses `P1M` rather than guessing how many seconds a month is.
+- **Sub-second precision.** The segments are integers. A fractional ISO value like `PT1.5S` is
+  accepted and floored, and the component warns that reading it back will not return what you passed.
+- **Negative durations.** `-PT1H` is well-formed ISO and meaningless in a field of unsigned counts;
+  it is refused. Model a signed offset as a number and a direction.

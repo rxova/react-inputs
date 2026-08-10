@@ -1,0 +1,189 @@
+---
+title: 'Duration input — Usage'
+description: 'Use the segmented duration input in React: units, the carry, controlled values, keyboard behaviour, forms and styling hooks.'
+sidebar:
+  label: 'Usage'
+  order: 2
+---
+
+## Try it
+
+Type digits — the field advances by itself. Arrows step, Backspace clears. Try typing `90` into the
+minutes and then clicking away. (`DurationInput` and `useState` are already in scope.)
+
+```tsx live
+function TryIt() {
+  const [value, setValue] = useState(null)
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <DurationInput label="Length" locale="en-GB" value={value} onChange={setValue} />
+      <code>{value === null ? 'null' : value}</code>
+    </div>
+  )
+}
+```
+
+The value is an ISO 8601 duration. `90` in the minutes reports `PT1H30M` — the segments keep showing
+what you typed until you leave, and the value is canonical immediately.
+
+## Units
+
+```tsx live
+function Units() {
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <DurationInput label="Cooking time" locale="en-GB" units={['hour', 'minute']} />
+      <DurationInput label="Video position" locale="en-GB" units={['minute', 'second']} />
+      <DurationInput label="Lead time" locale="en-GB" units={['day', 'hour']} />
+      <DurationInput label="Timeout" locale="en-GB" units={['second']} />
+    </div>
+  )
+}
+```
+
+`units` defaults to `['hour', 'minute']`. The array is sorted largest-first and deduped, so
+`['minute', 'hour']` renders as hours then minutes — rendering it as written would put a 0–59
+segment in front of an unbounded one.
+
+Months and years are deliberately absent. They are not a fixed number of seconds, so a field whose
+whole job is exactness cannot own them.
+
+## The leading unit is unbounded
+
+The largest unit on screen has no maximum. In a minutes-only field, `180` is three hours:
+
+```tsx live
+function Unbounded() {
+  const [value, setValue] = useState('PT180M')
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <DurationInput
+        label="Minutes only"
+        locale="en-GB"
+        units={['minute']}
+        value={value}
+        onChange={setValue}
+      />
+      <code>{value === null ? 'null' : value}</code>
+    </div>
+  )
+}
+```
+
+Every unit below it is bounded by the one above — hours 0–23 under days, minutes and seconds 0–59.
+Those bounds are enforced **on blur, not at the keystroke**, because `90` is a legitimate thing to
+type on the way to an hour and a half.
+
+## Controlled and uncontrolled
+
+```tsx
+import { useState } from 'react'
+import { DurationInput } from '@rxova/react-duration-input'
+
+function Controlled() {
+  const [value, setValue] = useState<string | null>('PT1H30M')
+  return <DurationInput label="Length" value={value} onChange={setValue} />
+}
+
+function Uncontrolled() {
+  return <DurationInput label="Length" defaultValue="PT45M" name="length" />
+}
+```
+
+`onChange` fires when the duration becomes complete and valid, and when it stops being. It never
+fires mid-number: typing `45` into the minutes reports `45`, not `4` on the way there.
+
+`onPartsChange` fires on every keystroke if you need the incomplete state.
+
+## Ranges
+
+```tsx
+<DurationInput label="Session" min="PT15M" max="PT2H" />
+```
+
+Both bounds are inclusive and compared **through seconds**, so `min="PT10M" max="PT2H"` behaves the
+way it reads. A string comparison would put `PT10M` above `PT2H` and call the range impossible.
+
+A completed duration outside the range still reaches `onChange` and marks the field invalid, rather
+than being discarded. Pass `emitOutOfRange={false}` to get `null` instead.
+
+## Keyboard
+
+| Key                    | What it does                                                    |
+| ---------------------- | --------------------------------------------------------------- |
+| `0`–`9`                | Types into the focused segment; advances when the width is full |
+| `↑` / `↓`              | Steps by `minuteStep` / `secondStep`, clamped at each end       |
+| `←` / `→`              | Moves between segments                                          |
+| `Home`                 | Sets the segment to zero                                        |
+| `End`                  | Sets the segment to its maximum; nothing on the leading segment |
+| `Backspace` / `Delete` | Empties the segment                                             |
+| `Tab`                  | Leaves the field, settling whatever is typed                    |
+
+Arrows **clamp, they do not wrap.** The time input wraps because a clock cycles; a duration has no
+cycle, and arrowing down from `0m` to `59m` would silently lengthen the value by an hour.
+
+## Forms
+
+```tsx
+import { DurationInput } from '@rxova/react-duration-input'
+
+function TaskForm() {
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault()
+        const estimate = new FormData(event.currentTarget).get('estimate')
+        console.log(estimate) // 'PT1H30M'
+      }}
+    >
+      <DurationInput label="Estimate" name="estimate" defaultValue="PT1H30M" required />
+      <button type="submit">Save</button>
+    </form>
+  )
+}
+```
+
+`name` emits a hidden input carrying the ISO string. `required` becomes `aria-required` on the
+group — a hidden input is barred from constraint validation, so putting `required` on it would look
+like it was doing something.
+
+## Converting to and from a number
+
+If your backend stores seconds, convert at the boundary rather than inside the field:
+
+```ts
+import { secondsToDuration, toISODuration, toSeconds } from '@rxova/react-duration-input'
+
+const units = ['hour', 'minute'] as const
+toISODuration(secondsToDuration(5400, units), units) // 'PT1H30M'
+toSeconds('PT1H30M') // 5400
+```
+
+## Styling
+
+There is no stylesheet. Set CSS custom properties on any ancestor:
+
+```css
+.field {
+  --rx-duration-gap: 0.125rem;
+  --rx-duration-segment-padding: 0 0.125rem;
+  --rx-duration-segment-radius: 0.25rem;
+  --rx-duration-suffix-opacity: 0.6;
+  --rx-duration-suffix-size: 0.8em;
+  --rx-duration-focus-ring: 2px solid #1a56db;
+  --rx-duration-focus-ring-offset: 2px;
+}
+```
+
+Or target the `data-*` attributes, which are public API covered by semver: `data-rx-duration-root`,
+`data-rx-duration-segment` (`day` / `hour` / `minute` / `second`), `data-rx-duration-value` and
+`data-rx-duration-leading`, plus the shared state hooks `data-complete`, `data-out-of-range`, `data-placeholder`,
+`data-focused`, `data-disabled`, `data-readonly`, `data-invalid`.
+
+`data-rx-duration-leading` marks the unbounded segment, which is the one that may need to be wider:
+
+```css
+[data-rx-duration-segment][data-rx-duration-leading] {
+  min-width: 2.5ch;
+}
+```
