@@ -25,7 +25,8 @@ test('takes a duration from the keyboard alone', async ({ page }) => {
   const form = page.getByTestId('native-form')
   await form.locator(seg('hour')).click()
   await page.keyboard.press('Backspace')
-  await page.keyboard.type('2')
+  // Two digits per segment: width is the only thing that ends a number here.
+  await page.keyboard.type('02')
   await page.keyboard.type('15')
   await form.getByRole('button', { name: 'Save' }).click()
   await expect(page.getByTestId('submitted')).toHaveText('PT2H15M')
@@ -71,7 +72,7 @@ test('splits a value across whatever units are on screen', async ({ page }) => {
 test('takes its suffixes from the locale, in every engine', async ({ page }) => {
   await expect(page.getByTestId('locale-en')).toContainText('h')
   await expect(page.getByTestId('locale-de')).toContainText('Min.')
-  await expect(page.getByTestId('locale-ja')).toContainText('分')
+  await expect(page.getByTestId('locale-fr')).toContainText('min')
 })
 
 test('reports the value as ISO and exposes the seconds helper', async ({ page }) => {
@@ -111,14 +112,19 @@ test('clamps rather than wrapping, because a duration has no cycle', async ({ pa
 test('marks an out-of-range duration without discarding it', async ({ page }) => {
   const range = page.getByTestId('range')
   await range.locator(seg('hour')).click()
-  await page.keyboard.type('5')
+  await page.keyboard.type('05')
   await page.keyboard.type('00')
   await expect(page.getByTestId('range-value')).toHaveText('PT5H')
   await expect(range.locator('[data-rx-duration-root]')).toHaveAttribute('data-invalid', '')
 })
 
-test('names the month/minute trap through onWarn', async ({ page }) => {
-  await expect(page.getByTestId('warning-codes')).toContainText('value-calendar-unit')
+/**
+ * The demo is a production build, and the whole diagnostics path is compiled
+ * out of one. An empty list here is the proof that the stripping works — the
+ * messages themselves are covered by `warn.test.ts` and `dev.browser.test.tsx`.
+ */
+test('ships no diagnostics in a production build', async ({ page }) => {
+  await expect(page.getByTestId('warning-codes')).toBeEmpty()
 })
 
 test('refuses every edit while disabled and while read-only', async ({ page }) => {

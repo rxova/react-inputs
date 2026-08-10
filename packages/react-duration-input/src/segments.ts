@@ -5,10 +5,16 @@ import type { DurationUnit } from './duration'
  * Unit suffixes taken from the platform.
  *
  * `Intl.NumberFormat` with `style: 'unit'` already knows that `en` writes
- * `30 min`, `de` writes `30 Min.` and `ja` writes `30分`. Asking it costs zero
- * bytes, because every engine ships ICU anyway. The alternative is a bundled
- * table of abbreviations that is wrong about the locales it forgot — which is
- * what every duration package on npm does.
+ * `30m`, `de` writes `30 Min.`, `fr` writes `30 min` and `zh` writes `30分钟`.
+ * Asking it costs zero bytes, because every engine ships ICU anyway. The
+ * alternative is a bundled table of abbreviations that is wrong about the
+ * locales it forgot — which is what every duration package on npm does.
+ *
+ * `unitDisplay: 'narrow'` rather than `'short'`, because this is a compact
+ * field: `short` gives English `hrs`/`mins`, which is wider than the number it
+ * follows. CLDR decides what narrow means per locale, and for some — Japanese
+ * among them — that is the Latin `h`/`m` rather than 時間/分. That is CLDR's
+ * call about compact forms, not ours to override.
  *
  * Unlike the time field, the *order* does not come from `Intl`: a duration is
  * written largest-unit-first in every locale, and `Intl` has no formatter that
@@ -41,7 +47,7 @@ const FALLBACK_SUFFIX: Readonly<Record<DurationUnit, string>> = {
  * Formatted against a plural number, because a locale that inflects would
  * otherwise hand back the singular and the field would read `2 minute`. The
  * digits are stripped out and what remains is the suffix, whitespace and all —
- * `ja` genuinely has no space before 分, and inserting one would be wrong.
+ * `zh` genuinely has no space before 分钟, and inserting one would be wrong.
  */
 export function unitSuffix(unit: DurationUnit, locale?: string): string {
   try {

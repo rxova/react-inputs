@@ -122,8 +122,13 @@ Each segment carries:
 - `aria-valuetext` reading as a quantity — `2 hours`, not `2`. An empty segment announces its
   placeholder rather than nothing at all.
 
-The unit suffixes (`h`, `Min.`, `分`) are `aria-hidden`: they duplicate the segment's accessible
+The unit suffixes (`h`, `Min.`, `分钟`) are `aria-hidden`: they duplicate the segment's accessible
 name, and reading "h" after "2" when the spinbutton is already called "hours" is noise.
+
+They come from the same formatter with `unitDisplay: 'narrow'`, because this is a compact field and
+`short` would give English `hrs`/`mins` — wider than the number they follow. What "narrow" means is
+CLDR's call per locale, and for some, Japanese among them, it is the Latin `h`/`m` rather than
+時間/分. The accessible name is unaffected: that is always the locale's own word.
 
 The focused segment paints a ring by default (`2px solid Highlight`), because a
 `<span role="spinbutton">` gets nothing from the browser and removing the UA outline without

@@ -53,8 +53,8 @@ export function DurationDemos() {
         <p data-testid="locale-de">
           <DurationInput label="German" locale="de-DE" defaultValue="PT2H5M" />
         </p>
-        <p data-testid="locale-ja">
-          <DurationInput label="Japanese" locale="ja-JP" defaultValue="PT2H5M" />
+        <p data-testid="locale-fr">
+          <DurationInput label="French" locale="fr-FR" defaultValue="PT2H5M" />
         </p>
       </Section>
 

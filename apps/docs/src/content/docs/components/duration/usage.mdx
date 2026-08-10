@@ -74,6 +74,24 @@ Every unit below it is bounded by the one above — hours 0–23 under days, min
 Those bounds are enforced **on blur, not at the keystroke**, because `90` is a legitimate thing to
 type on the way to an hour and a half.
 
+## Locales
+
+```tsx live
+function Locales() {
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem' }}>
+      {['en-GB', 'de-DE', 'fr-FR', 'zh-CN'].map((locale) => (
+        <DurationInput key={locale} label={locale} locale={locale} defaultValue="PT2H5M" />
+      ))}
+    </div>
+  )
+}
+```
+
+The suffixes come from `Intl.NumberFormat` with `style: 'unit'`, and the segments' accessible names
+from the same formatter's long form — `hours`, `Stunden`, `時間`. The locale changes only what is
+written; the value and the unit order are the same everywhere.
+
 ## Controlled and uncontrolled
 
 ```tsx

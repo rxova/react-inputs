@@ -74,7 +74,11 @@ test('every segment carries a real accessible name, never the abbreviation', asy
     .locator('[data-rx-duration-segment]')
     .evaluateAll((nodes) => nodes.map((node) => node.getAttribute('aria-label') ?? ''))
   for (const label of labels) {
-    expect(label.length).toBeGreaterThan(1)
+    // Non-empty, and never the one-letter suffix beside it. Length alone is the
+    // wrong test: `ja` names the minute 分, which is a whole word in one
+    // character.
+    expect(label).not.toBe('')
+    expect(label).not.toMatch(/^[a-zA-Z]$/)
   }
 })
 
