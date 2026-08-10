@@ -1,0 +1,23 @@
+[
+  {
+    "name": "DurationInput (full import)",
+    "path": "dist/index.mjs",
+    "import": "{ DurationInput }",
+    "limit": "4.75 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  },
+  {
+    "name": "useDurationInput (headless only)",
+    "path": "dist/index.mjs",
+    "import": "{ useDurationInput }",
+    "limit": "3.75 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  },
+  {
+    "name": "parseISODuration (pure helper only)",
+    "path": "dist/index.mjs",
+    "import": "{ parseISODuration }",
+    "limit": "0.5 kB",
+    "ignore": ["react", "react/jsx-runtime"]
+  }
+]

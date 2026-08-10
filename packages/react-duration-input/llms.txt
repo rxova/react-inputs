@@ -1,0 +1,129 @@
+# @rxova/react-duration-input
+
+> A headless, accessible duration field for React: days, hours, minutes and
+> seconds as real spinbuttons, with unit suffixes from `Intl` and no date
+> library. The value is always an ISO 8601 duration string — `PT1H30M` — never a
+> number of seconds and never a `Date`. Zero runtime dependencies. No stylesheet
+> to import.
+
+## Install
+
+    npm install @rxova/react-duration-input
+
+`react >= 18` is the only peer dependency.
+
+## Minimal working example
+
+```tsx
+import { useState } from 'react'
+import { DurationInput } from '@rxova/react-duration-input'
+
+export function Meeting() {
+  const [value, setValue] = useState<string | null>(null)
+
+  return <DurationInput label="Length" value={value} onChange={setValue} max="PT8H" />
+}
+```
+
+Any subset of the four units, largest first:
+
+```tsx
+import { DurationInput } from '@rxova/react-duration-input'
+
+export function Examples() {
+  return (
+    <>
+      <DurationInput label="Cooking time" units={['hour', 'minute']} />
+      <DurationInput label="Video position" units={['minute', 'second']} />
+      <DurationInput label="Lead time" units={['day', 'hour']} />
+    </>
+  )
+}
+```
+
+## Props
+
+`<DurationInput>` — the full surface is `DurationInputProps` in the published types.
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `value` | `string \| null` | — | Controlled ISO 8601 duration, e.g. `PT1H30M`, or `null` for empty. |
+| `defaultValue` | `string \| null` | — | Uncontrolled initial value. Ignored when `value` is set. |
+| `onChange` | `(value: string \| null) => void` | — | Fires on complete/valid, and when that stops. Never mid-entry. |
+| `onPartsChange` | `(parts: DurationParts) => void` | — | Every keystroke, including while incomplete. |
+| `min` | `string` | — | Shortest allowed duration, inclusive, as ISO 8601. Compared through seconds. |
+| `max` | `string` | — | Longest allowed duration, inclusive, as ISO 8601. Compared through seconds. |
+| `emitOutOfRange` | `boolean` | `true` | Reports an out-of-range duration and marks the field invalid, rather than discarding it. |
+| `units` | `DurationUnit[]` | `['hour', 'minute']` | Which units to edit. Sorted largest-first and deduped. `'day' \| 'hour' \| 'minute' \| 'second'`. |
+| `minuteStep` | `number` | `1` | Arrow-key step for minutes. Must divide 60. |
+| `secondStep` | `number` | `1` | Arrow-key step for seconds. Must divide 60. |
+| `locale` | `string` | the runtime's locale | BCP 47 tag deciding the unit suffixes and segment names. Presentation only. |
+| `placeholders` | `DurationPlaceholders` | `dd` / `hh` / `mm` / `ss` | Per-unit placeholder text. |
+| `unitLabels` | `DurationUnitLabels` | the locale's own words | Per-unit accessible name. |
+| `renderSegment` | `(state: DurationSegmentState) => ReactNode` | — | Custom rendering for one segment. |
+| `label` | `ReactNode` | — | Accessible name for the whole field. |
+| `className` | `string` | — | |
+| `style` | `CSSProperties` | — | |
+| `name` | `string` | — | Emits a hidden input carrying the ISO duration, readable by a native `<form>`. |
+| `required` | `boolean` | `false` | Surfaced as `aria-required` on the group. |
+| `disabled` | `boolean` | `false` | |
+| `readOnly` | `boolean` | `false` | |
+| `dir` | `'ltr' \| 'rtl'` | inherited | Lays the field out; unit order is always largest-first. |
+| `invalid` | `boolean` | `false` | Sets `aria-invalid` and `data-invalid`. |
+| `aria-describedby` | `string` | — | ids of external error/help text. |
+| `id` | `string` | — | Base id; segments derive `${id}-hour`, `${id}-minute`, … |
+| `onBlur` | `(event: FocusEvent<HTMLElement>) => void` | — | Fires when focus leaves the field, never between segments. |
+| `onFocus` | `(event: FocusEvent<HTMLElement>) => void` | — | |
+| `onWarn` | `(warning: DurationWarning) => void` | `console.warn` | Development-only notice that a prop was coerced. Stripped from production builds. |
+
+Also exported: the `useDurationInput` hook, the segment helpers `durationPieces`,
+`unitSuffix`, `unitName`, and the pure duration functions `toISODuration`,
+`fromISODuration`, `parseISODuration`, `toSeconds`, `durationToSeconds`,
+`secondsToDuration`, `compareDurations`, `withinDurationRange`, plus the
+`UNIT_ORDER` and `UNIT_SECONDS` tables.
+
+## Styling
+
+There is no stylesheet. Set CSS custom properties on any ancestor:
+`--rx-duration-gap`, `--rx-duration-segment-padding`,
+`--rx-duration-segment-radius`, `--rx-duration-suffix-opacity`,
+`--rx-duration-suffix-size`, `--rx-duration-focus-ring`,
+`--rx-duration-focus-ring-offset`.
+
+The focused segment paints a ring by default (`2px solid Highlight`), because a
+`<span role="spinbutton">` gets none from the browser. Restyle it through those
+two properties rather than removing it.
+
+Or target the `data-*` attributes, which are public API covered by semver:
+`data-rx-duration-root`, `data-rx-duration-segment`
+(`day` / `hour` / `minute` / `second`), `data-rx-duration-value` and
+`data-rx-duration-leading` (the unbounded segment), plus the shared state hooks
+`data-complete`, `data-out-of-range`, `data-placeholder`, `data-focused`,
+`data-disabled`, `data-readonly`, `data-invalid`.
+
+## Three mistakes to avoid
+
+1. **Sorting or comparing the value as a string.** Unlike this suite's date and
+   time fields, an ISO duration is neither fixed-width nor big-endian:
+   `'PT10M' < 'PT2H'` is `true` and wrong. Use `compareDurations` or `toSeconds`.
+   `min` and `max` already do.
+2. **Writing `P1M` for one minute.** In ISO 8601 that is one *month*; the minute
+   form is `PT1M`, with the `T`. The component refuses calendar units with a
+   `value-calendar-unit` warning rather than reading them as a 43,200× smaller
+   duration.
+3. **Passing a number of seconds or milliseconds as `value`.** The prop is an
+   ISO string. Convert at the boundary with
+   `toISODuration(secondsToDuration(n, units), units)`, and read it back with
+   `toSeconds`.
+
+## Docs
+
+- Copyable labelled field: https://rxova.org/packages/react-inputs/r/duration-field.json
+- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/duration/about/#ui-library-recipes
+
+- Introduction: https://rxova.org/packages/react-inputs/components/duration/introduction/
+- Usage: https://rxova.org/packages/react-inputs/components/duration/usage/
+- Everything else (forms, ranges, theming, SSR): https://rxova.org/packages/react-inputs/components/duration/about/
+- Migrating from another duration picker: https://rxova.org/packages/react-inputs/components/duration/migrating/
+- Generated API reference: https://rxova.org/packages/react-inputs/components/duration/api/
+- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt
