@@ -629,6 +629,68 @@ describe('hostile shape changes', () => {
     expect(seg(container, 'inch').textContent).toBe('11')
   })
 
+  it('empties rather than carrying nonsense when the units change dimension', async () => {
+    // A length cannot be carried into a mass field. The conversion is refused,
+    // so the field empties instead of inventing a number.
+    function Harness() {
+      const [mass, setMass] = useState(false)
+      return (
+        <>
+          <MeasurementInput
+            label="H"
+            locale="en-GB"
+            units={mass ? ['stone', 'pound'] : ['foot', 'inch']}
+            defaultValue="71 inch"
+            {...quiet}
+          />
+          <button
+            type="button"
+            onClick={() => {
+              setMass(true)
+            }}
+          >
+            weigh
+          </button>
+        </>
+      )
+    }
+    const { container } = await render(<Harness />)
+    await userEvent.click(page.getByRole('button', { name: 'weigh' }))
+    expect(seg(container, 'stone').textContent).toBe('--')
+    expect(seg(container, 'pound').textContent).toBe('--')
+  })
+
+  /**
+   * Two restarts that look the same and are not, because what ends a number
+   * differs: a whole-number segment is finished at its width, while one that
+   * accepts decimals stays open until its fraction fills. So the sign survives
+   * a restart in the second case and not in the first.
+   */
+  it('starts a fresh number when a full whole-number segment overflows', async () => {
+    const { container } = await render(
+      <MeasurementInput label="T" locale="en-GB" units={['celsius']} {...quiet} />,
+    )
+    await userEvent.click(seg(container, 'celsius'))
+    await userEvent.keyboard('-123')
+    expect(seg(container, 'celsius').textContent).toBe('-123')
+    // Finished at the width, so the buffer is gone and the next digit is a new
+    // number — sign included. The alternative traps the user: they could never
+    // type a positive value after a negative one without clearing first.
+    await userEvent.keyboard('4')
+    expect(seg(container, 'celsius').textContent).toBe('4')
+  })
+
+  it('keeps the sign when a decimal segment overflows mid-number', async () => {
+    const { container } = await render(
+      <MeasurementInput label="T" locale="en-GB" units={['celsius']} precision={1} {...quiet} />,
+    )
+    await userEvent.click(seg(container, 'celsius'))
+    // Still mid-number here — the fraction has not been started, let alone
+    // filled — so the buffer is live and the sign the user set survives.
+    await userEvent.keyboard('-1234')
+    expect(seg(container, 'celsius').textContent).toBe('-4')
+  })
+
   it('lets a controlled value win when it lands in the same render as new units', async () => {
     function Harness() {
       const [state, setState] = useState({ metric: false, value: '71 inch' })
