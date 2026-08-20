@@ -246,8 +246,14 @@ describe('caret preservation', () => {
       )
     }
     await render(<WithExternalSet />)
-    await userEvent.click(box())
+    // The starting value is asserted *before* the click, not after. Clicking is
+    // what schedules the external set, so polling for `$5` afterwards is a race
+    // against that 30ms timer: on a loaded runner the first poll tick can land
+    // after it has already fired, and the matcher then waits out its timeout on
+    // a field that reads `$777`. That is exactly how this failed in CI —
+    // `expected '$777' to be '$5'` — while passing every time locally.
     await expect.poll(() => inputEl().value).toBe('$5')
+    await userEvent.click(box())
     await expect.poll(() => inputEl().value).toBe('$777')
     expect(document.activeElement).toBe(inputEl())
   })
