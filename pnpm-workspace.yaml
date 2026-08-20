@@ -28,12 +28,19 @@ overrides:
   js-yaml@4: '>=4.3.1 <5'
   # GHSA-2v37-7h3g-55p8: a custom alphabet with size zero loops forever (DoS).
   # Only the 3.x line is affected — 5.1.16 and 6.0.0 also resolve here and both
-  # sit outside the advisory's `<3.3.17` range — so one scoped entry covers it
+  # sit outside the advisory's `<3.3.18` range — so one scoped entry covers it
   # and a future 4.x arrival is re-audited rather than silently allowed. Every
   # path runs through postcss (eslint-plugin-astro, next, vite), so it is build
   # tooling, never shipped, and nothing here calls nanoid with a custom
   # generator at all. Upper bound load-bearing as above.
-  nanoid@3: '>=3.3.17 <4'
+  #
+  # The floor was 3.3.17, which is where the advisory's patched range started
+  # when this entry was written. Upstream has since widened it to `<3.3.18`, so
+  # the pin that fixed this went stale without any file here changing and the
+  # gate went red on a commit that touched only .github/. That is exactly what
+  # `audit:check` is deliberately not a Turbo task for: a cached pass would have
+  # replayed over it and shipped.
+  nanoid@3: '>=3.3.18 <4'
 #
 # No `auditConfig.ignoreGhsas`. The single entry that lived here suppressed
 # GHSA-mh99-v99m-4gvg for one unfixable copy reached through
