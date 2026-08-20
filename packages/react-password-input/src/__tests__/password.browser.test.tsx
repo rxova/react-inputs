@@ -465,7 +465,14 @@ describe('breach check', () => {
         // the machine can take longer than that between the two calls — the
         // debounce then fires for 'hunt' correctly, and the test failed over a
         // component doing exactly what it should.
-        checkCompromisedDelay={250}
+        //
+        // 250ms was not enough either: the same failure came back on a runner
+        // holding ten packages' Vite servers at once, with `seen` reading
+        // ['hunt', 'hunter2']. Raised again rather than restructured, because
+        // the assertion is about the debounce doing its job and the only thing
+        // wrong with it is that the constant has to beat the machine. It costs
+        // the extra wait once, in one test.
+        checkCompromisedDelay={1500}
       />,
     )
     const input = container.querySelector('[data-rx-password-input]')!
