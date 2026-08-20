@@ -1,0 +1,55 @@
+name: Changeset
+
+# Split out of ci.yml, which is why `labeled`/`unlabeled` are here rather than
+# there. The gate's escape hatch is the `skip-changeset` label, so applying it
+# has to re-run the check — but in ci.yml that re-ran the *whole* graph and
+# cancelled the in-flight run to do it, billing a run's worth of rounded-up
+# minutes to re-answer one question. `edited` is here for the other escape
+# hatch, `[skip-changeset]` in the PR title.
+#
+# Its own concurrency group, so labelling can never cancel a CI run.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: changeset-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  changeset:
+    name: changeset present
+    # Skip the auto-generated version PR: it has already consumed every
+    # changeset, so the gate would find none and fail.
+    if: github.head_ref != 'changeset-release/main'
+    permissions:
+      contents: read
+      # check-changeset.ts reads the skip-changeset label through the API
+      # (`gh api repos/.../labels`). Without this the call 403s, the script
+      # warns and proceeds label-blind, and the documented escape hatch
+      # silently does nothing.
+      pull-requests: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-pnpm
+      - run: pnpm install --frozen-lockfile
+      # Escape hatches: the `skip-changeset` label, or `[skip-changeset]` in the
+      # PR title. Docs/CI/config-only diffs are auto-skipped by the script,
+      # which also validates one package per changeset file — neither of which
+      # `changeset status --since` could do.
+      - name: Require a changeset for published-package changes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: node --import tsx ./packages/utils/check-changeset.ts

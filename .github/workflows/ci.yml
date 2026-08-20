@@ -4,14 +4,17 @@ on:
   push:
     branches: [main]
   pull_request:
-    # `labeled`/`unlabeled` are added on top of the defaults (opened,
-    # synchronize, reopened) so that adding the `skip-changeset` label to an
-    # already-opened PR re-runs the `changeset` gate instead of leaving its
-    # earlier failure stuck red until the next push.
+    # Deliberately neither `edited` nor `labeled`/`unlabeled`. Both fire for
+    # reasons that have nothing to do with the diff — `edited` on body edits as
+    # well as title edits, with nothing at the trigger able to tell them apart —
+    # and with `cancel-in-progress` below, each one killed an in-flight run and
+    # started a fresh one. A cancelled job still bills its minute rounded up, so
+    # on #67 adding two cross-references to a description cost 21 of them.
     #
-    # `edited`: retitling a PR must re-check it, because the title becomes the
-    # squash-merge commit message and nothing else validates it.
-    types: [opened, synchronize, reopened, edited, labeled, unlabeled]
+    # The two checks that genuinely need those events now have their own
+    # workflows, where the same edit costs one job instead of all of them:
+    # pr-title.yml for the title, changeset.yml for the `skip-changeset` label.
+    types: [opened, synchronize, reopened]
 
 # Default to read-only; jobs opt into more where they need it.
 permissions:
@@ -35,10 +38,33 @@ jobs:
   commitlint:
     name: commit messages
     runs-on: ubuntu-latest
+    # Every job here carries a ceiling. Nothing in this workflow has ever
+    # legitimately come close to one, and a job that hangs bills until somebody
+    # notices — six hours, in the worst run across these repos.
+    timeout-minutes: 5
+    # The component list, read from the packages that declare themselves rather
+    # than repeated in every matrix below. A new input used to need an edit in
+    # two places here, and forgetting either was silent: the job simply never
+    # ran for that package and CI stayed green.
+    #
+    # Computed here rather than in a job of its own. `discover` did five seconds
+    # of work and was billed a whole minute for it, and this job has already
+    # checked the repository out.
+    outputs:
+      # JSON array for `matrix`, space-separated for shell loops. Same source.
+      dirs: ${{ steps.list.outputs.dirs }}
+      dirs_list: ${{ steps.list.outputs.dirs_list }}
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+
+      # Before the install, and deliberately: component-packages.mjs is
+      # dependency-free by design, so nothing downstream has to wait on pnpm for
+      # a list that is a directory read.
+      - id: list
+        run: node packages/utils/print-component-packages.mjs | tee -a "$GITHUB_OUTPUT"
+
       - uses: ./.github/actions/setup-pnpm
       - run: pnpm install --frozen-lockfile
 
@@ -50,9 +76,10 @@ jobs:
           --to ${{ github.event.pull_request.head.sha }}
 
       # The squash-merge subject is the PR *title*, which no commit in the
-      # branch contains and which `edited` lets someone change after CI already
-      # went green. The old wagoid action linted commits only, so the one
+      # branch contains. The old wagoid action linted commits only, so the one
       # message that actually lands on main was the one nothing checked.
+      # Checked here for every push to the branch, and in pr-title.yml for the
+      # edit that changes it after CI has already gone green.
       # Passed through the environment, never interpolated into the shell — a
       # title is attacker-controlled text.
       - name: Lint the PR title
@@ -68,31 +95,11 @@ jobs:
         if: github.event_name == 'push'
         run: pnpm exec commitlint --last --verbose
 
-  # The component list, read from the packages that declare themselves rather
-  # than repeated in every matrix below. A new input used to need an edit in two
-  # places here, and forgetting either was silent: the job simply never ran for
-  # that package and CI stayed green.
-  #
-  # No pnpm install — component-packages.mjs is dependency-free by design, so
-  # this is a checkout and a node call.
-  discover:
-    name: discover packages
-    needs: [commitlint]
-    runs-on: ubuntu-latest
-    outputs:
-      # JSON array for `matrix`, space-separated for shell loops. Same source.
-      dirs: ${{ steps.list.outputs.dirs }}
-      dirs_list: ${{ steps.list.outputs.dirs_list }}
-    steps:
-      - uses: actions/checkout@v7
-      - id: list
-        run: |
-          node packages/utils/print-component-packages.mjs | tee -a "$GITHUB_OUTPUT"
-
   checks:
     name: lint · format · types · docs
     needs: [commitlint]
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-pnpm
@@ -117,6 +124,7 @@ jobs:
     needs: [commitlint]
     if: github.head_ref != 'changeset-release/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-pnpm
@@ -137,6 +145,7 @@ jobs:
     needs: [commitlint]
     if: github.head_ref != 'changeset-release/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-pnpm
@@ -152,11 +161,12 @@ jobs:
 
   test:
     name: unit (node ${{ matrix.node }})
-    needs: [commitlint, discover]
+    needs: [commitlint]
     # The changesets version PR only edits version numbers and changelogs, so
     # the source-level suites add no signal on it.
     if: github.head_ref != 'changeset-release/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
@@ -190,7 +200,7 @@ jobs:
       - name: Unit suites (pure logic, no DOM)
         run: |
           set -e
-          for dir in ${{ needs.discover.outputs.dirs_list }}; do
+          for dir in ${{ needs.commitlint.outputs.dirs_list }}; do
             echo "::group::$dir (unit)"
             (cd "packages/$dir" && ./node_modules/.bin/vitest run --project unit)
             echo "::endgroup::"
@@ -204,6 +214,7 @@ jobs:
     needs: [commitlint]
     if: github.head_ref != 'changeset-release/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-pnpm
@@ -228,19 +239,31 @@ jobs:
           if-no-files-found: ignore
 
   react-minimum:
-    name: react 18 (${{ matrix.pkg }})
-    needs: [commitlint, discover]
+    name: react 18 (all nine)
+    needs: [commitlint]
     # The peer range allows React 18, but the lockfile only ever installs 19, so
     # without this the minimum supported version is an untested claim. Separate
-    # from the matrix because it rewrites the React version, which
-    # --frozen-lockfile forbids. One job per package so the pinned React does
-    # not race across the workspace.
+    # from the `test` matrix because it rewrites the React version, which
+    # --frozen-lockfile forbids.
+    #
+    # One job for all nine, not one job each. As nine it was the single largest
+    # line item in this repo's bill: each leg spent roughly 40 of its ~77 seconds
+    # on checkout, setup, install and Playwright before it touched a test, and
+    # each was billed two whole minutes — 18 minutes to do eleven minutes of
+    # work. The loop pays that setup once.
+    #
+    # The nine are safe to run in one checkout because they are genuinely
+    # independent: none of them depends on another, none has a runtime
+    # dependency at all, and `react:min:install` is a `pnpm add -D` scoped to a
+    # single package's manifest. So each package is measured against React 18
+    # with @rxova/demo-kit — the one thing they share — still on 19, which is
+    # exactly what the per-package jobs measured.
+    #
+    # Sequential rather than concurrent, for the reason the matrix gave: the
+    # pinned React must not race across the workspace.
     if: github.head_ref != 'changeset-release/main'
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        pkg: ${{ fromJSON(needs.discover.outputs.dirs) }}
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-pnpm
@@ -248,14 +271,24 @@ jobs:
       - uses: ./.github/actions/setup-playwright
         with:
           browsers: chromium
+
+      # `::group::` per package so a failure names the one that failed, which is
+      # what the per-package job titles used to do.
       - name: Install the minimum supported React and re-run
-        run: pnpm --filter @rxova/${{ matrix.pkg }} test:react-min
+        run: |
+          set -e
+          for dir in ${{ needs.commitlint.outputs.dirs_list }}; do
+            echo "::group::$dir (react 18)"
+            pnpm --filter "@rxova/$dir" test:react-min
+            echo "::endgroup::"
+          done
 
   e2e:
     name: e2e
     needs: [commitlint]
     if: github.head_ref != 'changeset-release/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-pnpm
@@ -283,6 +316,7 @@ jobs:
     needs: [commitlint]
     if: github.head_ref != 'changeset-release/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-pnpm
@@ -301,36 +335,3 @@ jobs:
             apps/compat-*/playwright-report
             apps/compat-*/test-results
           if-no-files-found: ignore
-
-  changeset:
-    name: changeset present
-    needs: [commitlint]
-    # Skip the auto-generated version PR: it has already consumed every
-    # changeset, so the gate would find none and fail.
-    if: github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main'
-    permissions:
-      contents: read
-      # check-changeset.ts reads the skip-changeset label through the API
-      # (`gh api repos/.../labels`). Without this the call 403s, the script
-      # warns and proceeds label-blind, and the documented escape hatch
-      # silently does nothing.
-      pull-requests: read
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/setup-pnpm
-      - run: pnpm install --frozen-lockfile
-      # Escape hatches: the `skip-changeset` label, or `[skip-changeset]` in the
-      # PR title. Docs/CI/config-only diffs are auto-skipped by the script,
-      # which also validates one package per changeset file — neither of which
-      # `changeset status --since` could do.
-      - name: Require a changeset for published-package changes
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
-        run: node --import tsx ./packages/utils/check-changeset.ts
