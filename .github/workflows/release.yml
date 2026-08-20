@@ -24,6 +24,7 @@ jobs:
     # passed. Manual dispatch has no upstream run to gate on.
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       # Disable Husky for the whole job. The changesets action makes a
       # `chore: version packages` commit, which would otherwise fire the local

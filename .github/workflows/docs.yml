@@ -29,6 +29,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-pnpm
@@ -66,29 +67,33 @@ jobs:
           path: apps/docs/dist
           if-no-files-found: error
 
-  # Gate 1 of the docs pipeline: tell rxova.org that this run holds a dist built
-  # for /packages/react-inputs/. The aggregator validates the payload, downloads
-  # the artifact above, and persists + publishes it — it never builds these docs
-  # itself. Contract: rxova/rxova-website docs/INPUTS-CONTRACT.md.
-  notify-website:
-    needs: build
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
+      # Gate 1 of the docs pipeline: tell rxova.org that this run holds a dist
+      # built for /packages/react-inputs/. The aggregator validates the payload,
+      # downloads the artifact above, and persists + publishes it — it never
+      # builds these docs itself. Contract: rxova/rxova-website
+      # docs/INPUTS-CONTRACT.md.
+      #
+      # A step rather than the `notify-website` job it replaces. That job made
+      # one API call and was billed a whole minute for it, and it needed a
+      # runner of its own only to depend on this one. `GITHUB_RUN_ID` is the
+      # same either way, which is the only thing the contract reads.
+      #
+      # No continue-on-error, unlike the pre-contract dispatch this replaces.
+      # Back then the aggregator rebuilt the docs from source on its own
+      # schedule, so a dropped notification only delayed a publish. Now the
+      # dispatch *is* the publish: swallowing a failure would leave the site
+      # serving stale docs with a green tick here and nothing to look at.
+      #
+      # `-F` only for schema, which the receiver compares as the number 2;
+      # everything else goes through `-f` so it stays a string, and an
+      # all-digit ref or sha cannot arrive as a number.
+      #
+      # `project` is react-inputs — the id in the aggregator's sources.json,
+      # which is the repo name, not the shorter package scope.
       - name: Dispatch docs ingest to rxova.org
-        # No continue-on-error, unlike the pre-contract dispatch this replaces.
-        # Back then the aggregator rebuilt the docs from source on its own
-        # schedule, so a dropped notification only delayed a publish. Now the
-        # dispatch *is* the publish: swallowing a failure would leave the site
-        # serving stale docs with a green tick here and nothing to look at.
+        if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.AGGREGATOR_DISPATCH_TOKEN }}
-        # `-F` only for schema, which the receiver compares as the number 2;
-        # everything else goes through `-f` so it stays a string, and an
-        # all-digit ref or sha cannot arrive as a number.
-        #
-        # `project` is react-inputs — the id in the aggregator's sources.json,
-        # which is the repo name, not the shorter package scope.
         run: |
           gh api repos/rxova/rxova-website/dispatches \
             -f event_type=docs \
