@@ -56,7 +56,7 @@ jobs:
 
       - name: Create version PR or publish
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
           # `pnpm run release` = turbo run build && changeset publish, so every
           # changed package is built in dependency order before publishing.
