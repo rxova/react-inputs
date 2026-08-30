@@ -5,6 +5,7 @@ import starlight from '@astrojs/starlight'
 import react from '@astrojs/react'
 import { createStarlightTypeDocPlugin } from 'starlight-typedoc'
 import starlightLinksValidator from 'starlight-links-validator'
+import sitemap from '@astrojs/sitemap'
 import { sharedStarlightConfig } from '@rxova/brand'
 import remarkLiveCode from './src/plugins/remark-live-code.mjs'
 import remarkBaseLinks from './src/plugins/remark-base-links.mjs'
@@ -161,6 +162,52 @@ const withLlmsLink = (config) => ({
   ],
 })
 
+/**
+ * Every redirect this build emits, as one object — named rather than inlined
+ * because the sitemap filter below has to know which routes are stubs.
+ */
+const redirects = {
+  ...Object.fromEntries(
+    COMPONENTS.flatMap(({ slug }) => [
+      [`/components/${slug}`, introduction(slug)],
+      // The pre-restructure landing route, e.g. /otp.
+      [`/${slug}`, introduction(slug)],
+    ]),
+  ),
+  ...legacyRedirects,
+}
+
+/**
+ * The URL paths a sitemap must not offer, as a set the filter can test in O(1).
+ *
+ * Astro hands `@astrojs/sitemap` every route it emitted, redirects included, and
+ * a redirect is not a destination — its target is already in the sitemap under
+ * its own entry, so listing the stub asks a crawler to index a meta-refresh page
+ * that immediately sends it somewhere it has already been. `withBase` is applied
+ * because the filter sees the built URL, which carries the mount prefix.
+ */
+const REDIRECT_PATHS = new Set(Object.keys(redirects).map((path) => withBase(`${path}/`, base)))
+
+/**
+ * Whether a built route belongs in the sitemap.
+ *
+ * The three exclusions beyond the redirects are all the same mistake in
+ * different clothes: offering a crawler more than one URL for one page. Every
+ * docs page also exists as a `.md` twin (src/pages/[...slug].md.ts), the two
+ * llms.txt endpoints are built from the same enumeration, and `/r/*.json` is the
+ * shadcn registry — machine formats, all of them, which agents reach by
+ * construction or by a well-known path and never needed advertised.
+ */
+const indexable = (url) => {
+  const { pathname } = new URL(url)
+  return (
+    !REDIRECT_PATHS.has(pathname) &&
+    !pathname.endsWith('.md') &&
+    !/\/llms(?:-full)?\.txt$/.test(pathname) &&
+    !/(^|\/)r\/[^/]*\.json$/.test(pathname)
+  )
+}
+
 export default defineConfig({
   site,
   base,
@@ -182,16 +229,7 @@ export default defineConfig({
   // Static redirects: Astro emits one meta-refresh index.html per entry, which
   // the aggregator publishes verbatim like any other file — the ingest contract
   // in .github/workflows/docs.yml is untouched.
-  redirects: {
-    ...Object.fromEntries(
-      COMPONENTS.flatMap(({ slug }) => [
-        [`/components/${slug}`, introduction(slug)],
-        // The pre-restructure landing route, e.g. /otp.
-        [`/${slug}`, introduction(slug)],
-      ]),
-    ),
-    ...legacyRedirects,
-  },
+  redirects,
 
   markdown: {
     // Turns ```tsx live fences into the react-live island. Docusaurus had
@@ -204,6 +242,18 @@ export default defineConfig({
 
   integrations: [
     react(),
+    // Nothing enumerated these pages for a crawler. Nine components' worth of
+    // prose — the accessibility and styling guidance on every About page, the
+    // migration guides that answer the question somebody actually types — is
+    // reachable only by following links from a site with no inbound ones.
+    //
+    // Emitted at the mount, not the domain root: under the aggregator this build
+    // lives at /packages/react-inputs/, so the file lands at
+    // <base>sitemap-index.xml and claims only URLs beneath that prefix, which is
+    // the scope a sitemap at a subpath is allowed to claim. rxova.org's root
+    // robots.txt is what points at it — this build cannot serve a robots.txt any
+    // crawler would honour, because robots.txt is read only from the origin root.
+    sitemap({ filter: indexable }),
     starlight({
       ...withLlmsLink(
         sharedStarlightConfig({

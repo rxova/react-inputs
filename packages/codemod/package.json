@@ -9,7 +9,13 @@
     "migration",
     "rxova",
     "input-otp",
-    "react-otp-input"
+    "react-otp-input",
+    "jscodeshift-transform",
+    "refactor",
+    "automated-migration",
+    "react",
+    "ast",
+    "upgrade"
   ],
   "license": "MIT",
   "bin": {

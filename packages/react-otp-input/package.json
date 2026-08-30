@@ -20,7 +20,15 @@
     "headless",
     "accessible",
     "a11y",
-    "webotp"
+    "webotp",
+    "otp-input",
+    "one-time-password",
+    "sms-code",
+    "code-input",
+    "pin-input",
+    "autocomplete-one-time-code",
+    "passcode",
+    "zero-dependency"
   ],
   "license": "MIT",
   "sideEffects": false,

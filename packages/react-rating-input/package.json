@@ -18,7 +18,14 @@
     "headless",
     "accessible",
     "a11y",
-    "emoji"
+    "emoji",
+    "rating-input",
+    "star-input",
+    "five-star",
+    "half-star",
+    "radiogroup",
+    "survey",
+    "zero-dependency"
   ],
   "license": "MIT",
   "sideEffects": false,

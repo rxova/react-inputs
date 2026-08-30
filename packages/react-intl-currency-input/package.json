@@ -2,7 +2,7 @@
   "name": "@rxova/react-intl-currency-input",
   "version": "1.0.0",
   "type": "module",
-  "description": "Localized currency input for React. Zero dependencies, no cursor bugs, correct in every Intl locale — including the ones other libraries get wrong.",
+  "description": "Localized currency input for React. Zero dependencies, no cursor bugs, correct in every Intl locale \u2014 including the ones other libraries get wrong.",
   "rxova": {
     "slug": "currency",
     "label": "Currency",
@@ -18,7 +18,17 @@
     "l10n",
     "localization",
     "formatter",
-    "number-format"
+    "number-format",
+    "currency-input",
+    "money-input",
+    "price-input",
+    "decimal",
+    "amount",
+    "intl-numberformat",
+    "headless",
+    "accessible",
+    "a11y",
+    "zero-dependency"
   ],
   "license": "MIT",
   "sideEffects": false,

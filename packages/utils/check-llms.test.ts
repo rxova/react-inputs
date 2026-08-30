@@ -10,7 +10,13 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, beforeEach, describe, expect, it } from 'vitest'
 
-import { checkLlms, documentedProps, declaredProps, publishedPackages } from './check-llms'
+import {
+  checkLlms,
+  checkRootIndex,
+  documentedProps,
+  declaredProps,
+  publishedPackages,
+} from './check-llms'
 
 const roots: string[] = []
 let root: string
@@ -209,5 +215,53 @@ describe('checkLlms', () => {
     expect(reasons()).toEqual([
       'llms.txt documents props but src/types.ts declares none to check against',
     ])
+  })
+})
+
+describe('checkRootIndex', () => {
+  const rootIndex = (...links: string[]) =>
+    ['# Rxova React Inputs', '', '> A suite.', '', '## Packages', '', ...links, ''].join('\n')
+
+  it('passes when the index links every published package', () => {
+    validPackage()
+
+    write('llms.txt', rootIndex('- [@rxova/thing](packages/thing/llms.txt): does a thing.'))
+
+    expect(checkRootIndex(root)).toEqual([])
+  })
+
+  // The failure this exists for: a package is added, the map is not, and the
+  // document an agent trusts most is the one that has quietly stopped being true.
+  it('names the package a stale index has dropped', () => {
+    validPackage()
+    write(
+      'packages/other/package.json',
+      JSON.stringify({ name: '@rxova/other', files: ['llms.txt'] }),
+    )
+    write('packages/other/llms.txt', '# @rxova/other\n')
+
+    write('llms.txt', rootIndex('- [@rxova/thing](packages/thing/llms.txt)'))
+
+    expect(checkRootIndex(root).map((f) => f.reason)).toEqual([
+      'llms.txt does not link packages/other/llms.txt, so @rxova/other is missing from the index',
+    ])
+  })
+
+  // A repo-level convenience, not part of any tarball. Demanding it would fail a
+  // checkout that never claimed to have one.
+  it('says nothing when there is no root index at all', () => {
+    validPackage()
+
+    expect(checkRootIndex(root)).toEqual([])
+  })
+
+  // Private packages ship no tarball, so they have no llms.txt to link.
+  it('does not demand an entry for a private package', () => {
+    validPackage()
+    write('packages/utils/package.json', JSON.stringify({ name: '@rxova/utils', private: true }))
+
+    write('llms.txt', rootIndex('- [@rxova/thing](packages/thing/llms.txt)'))
+
+    expect(checkRootIndex(root)).toEqual([])
   })
 })

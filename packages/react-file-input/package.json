@@ -2,7 +2,7 @@
   "name": "@rxova/react-file-input",
   "version": "1.0.1",
   "type": "module",
-  "description": "A file picker and drop zone that validates, deduplicates and revokes its own preview URLs — and never uploads anything. Headless, zero-dependency.",
+  "description": "A file picker and drop zone that validates, deduplicates and revokes its own preview URLs \u2014 and never uploads anything. Headless, zero-dependency.",
   "rxova": {
     "slug": "file",
     "label": "File",
@@ -17,7 +17,14 @@
     "drag-and-drop",
     "headless",
     "accessible",
-    "a11y"
+    "a11y",
+    "file-picker",
+    "file-field",
+    "upload",
+    "drop-zone",
+    "multipart",
+    "image-preview",
+    "zero-dependency"
   ],
   "license": "MIT",
   "sideEffects": false,

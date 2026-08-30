@@ -13,7 +13,17 @@
     "headless",
     "accessible",
     "a11y",
-    "rxova"
+    "rxova",
+    "input-components",
+    "form-inputs",
+    "ui-components",
+    "component-library",
+    "headless-ui",
+    "design-system",
+    "typescript",
+    "zero-dependency",
+    "react-19",
+    "tree-shakeable"
   ],
   "license": "MIT",
   "sideEffects": false,

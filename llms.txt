@@ -1,0 +1,69 @@
+# Rxova React Inputs
+
+> Nine headless, accessible React input components — locale-aware currency,
+> fractional ratings, one-time codes, passwords, international phone numbers,
+> segmented date and time fields, tags and files — each published as its own npm
+> package, plus a meta-package that installs the suite. Platform semantics and
+> native form submission throughout: a real `<input>` does the work, so paste,
+> autofill, IME, undo and screen-reader behaviour come from the browser rather
+> than from JavaScript. Zero runtime dependencies each. No stylesheet to import.
+> React >= 18. MIT.
+
+This file is the map, not the manual. It exists because an agent that reaches
+this project through the repository tree — rather than through an install or the
+docs site — lands on `AGENTS.md`, which is written for someone editing the suite
+and answers almost nothing about using it.
+
+Deliberately pointer-only. Every fact about a component's API belongs to exactly
+one file, and that file is checked against `src/types.ts`; restating any of it
+here would create a second copy that nothing verifies and that goes stale on the
+first renamed prop.
+
+## Packages
+
+Each ships its `llms.txt` inside its npm tarball, so after an install it is
+readable straight out of `node_modules` with no network — the props table, a
+working example, and what the component deliberately does not do. That is the
+file to read when you are writing calling code.
+
+- [@rxova/react-inputs](packages/react-inputs/llms.txt): the whole suite from one
+  install, tree-shaken to what you import. Equivalent to the individual packages.
+- [@rxova/react-intl-currency-input](packages/react-intl-currency-input/llms.txt):
+  money entry with correct grouping and symbols, and no cursor bugs.
+- [@rxova/react-rating-input](packages/react-rating-input/llms.txt): any icon, any
+  precision, with `radiogroup` semantics and a read-only image mode.
+- [@rxova/react-otp-input](packages/react-otp-input/llms.txt): one-time codes with
+  spatial slots, paste handling and WebOTP autofill.
+- [@rxova/react-password-input](packages/react-password-input/llms.txt): reveal
+  toggle, Caps Lock warning, and a strength meter that costs 1 kB.
+- [@rxova/react-phone-input](packages/react-phone-input/llms.txt): international
+  numbers with no metadata blob — E.164 in and out.
+- [@rxova/react-date-input](packages/react-date-input/llms.txt): segmented,
+  locale-ordered date entry with no calendar and no date library.
+- [@rxova/react-time-input](packages/react-time-input/llms.txt): segmented time
+  entry, 12/24-hour by locale, canonical 24-hour value.
+- [@rxova/react-tags-input](packages/react-tags-input/llms.txt): tags and tokens
+  with a real roving tab order and announced add/remove.
+- [@rxova/react-file-input](packages/react-file-input/llms.txt): picker and drop
+  zone with accept/size rules, dedupe and managed previews.
+- [@rxova/codemod](packages/codemod/llms.txt): jscodeshift transforms for the
+  supported migration paths. The executable path off another library — prefer it
+  over rewriting call sites by hand.
+
+## Docs
+
+- [Documentation](https://rxova.org/packages/react-inputs/): every page also
+  exists as raw markdown — add `.md` to any URL.
+- [llms.txt](https://rxova.org/packages/react-inputs/llms.txt): the docs index.
+- [llms-full.txt](https://rxova.org/packages/react-inputs/llms-full.txt): every
+  page inlined, when one fetch should be the whole thing.
+- [Overview](https://rxova.org/packages/react-inputs/overview.md): what this suite
+  is for, and where it is the wrong answer.
+- [shadcn registry](https://rxova.org/packages/react-inputs/r/registry.json): the
+  components as `npx shadcn@latest add` items.
+
+## Contributing
+
+- [AGENTS.md](AGENTS.md): what an agent editing this repo gets wrong.
+- [CONTRIBUTING.md](CONTRIBUTING.md): architecture, setup, quality gates,
+  releases.

@@ -19,7 +19,13 @@
     "headless",
     "accessible",
     "a11y",
-    "intl"
+    "intl",
+    "date-entry",
+    "calendar-free",
+    "iso-date",
+    "locale-order",
+    "no-date-library",
+    "zero-dependency"
   ],
   "license": "MIT",
   "sideEffects": false,

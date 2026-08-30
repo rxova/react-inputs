@@ -18,7 +18,14 @@
     "caps-lock",
     "headless",
     "accessible",
-    "a11y"
+    "a11y",
+    "password-field",
+    "reveal-password",
+    "password-meter",
+    "zxcvbn-free",
+    "new-password",
+    "autocomplete",
+    "zero-dependency"
   ],
   "license": "MIT",
   "sideEffects": false,
