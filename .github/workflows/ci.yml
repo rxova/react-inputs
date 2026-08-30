@@ -170,28 +170,34 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # The floor here must match `engines.node` in the packages. Claiming a
-        # version we never run is worse than not claiming it.
-        node: [20, 22, 24]
+        # NOTE: this list and `engines.node` in the packages have diverged.
+        # The packages still declare `>=20.19.0`, but Node 20 is no longer
+        # exercised here, so that claim is now asserted rather than tested —
+        # the thing the previous comment on this block warned against. Close
+        # the gap in one of two directions: put 20 back, or raise `engines`
+        # to `>=22.13` across the published packages (a breaking change, so
+        # a major bump for all eleven).
+        node: [22, 24, 26]
     steps:
       - uses: actions/checkout@v7
 
-      # Install always runs on a pnpm-compatible Node: pnpm 11 declares
-      # `engines.node >= 22.13` and imports `node:sqlite`, so installing under
-      # Node 20 crashes before a single test executes. That is a constraint of
-      # our package manager, not of the libraries, and it must not silently
-      # shrink the support matrix.
+      # Install runs on the `setup-pnpm` default rather than the matrix Node.
+      # With the floor at 22 every leg now clears pnpm 11's own
+      # `engines.node >= 22.13`, so this is no longer load-bearing the way it
+      # was when Node 20 was in the matrix and crashed on `node:sqlite`. It is
+      # kept because it still pins one install for all three legs, so a leg
+      # tests the Node it names rather than whatever resolved the lockfile.
       #
       # Deliberately no turbo-cache: Turbo hashes files and env, not the Node
       # binary, and the cache action keys on `github.job` — the same string for
-      # every leg. Both legs would share one cache, so node 24 could replay a
-      # result computed under node 20.
+      # every leg. All three legs would share one cache, so node 26 could
+      # replay a result computed under node 22.
       - uses: ./.github/actions/setup-pnpm
       - run: pnpm install --frozen-lockfile
 
       # Then switch to the Node under test and invoke each package's Vitest
-      # binary directly, bypassing pnpm (which would crash on Node 20). Vitest
-      # itself supports ^20 || ^22 || >=24.
+      # binary directly. Vitest supports ^20 || ^22 || >=24, so all three legs
+      # are within its range.
       - uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node }}
