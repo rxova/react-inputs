@@ -17,7 +17,13 @@
     "multi-value",
     "headless",
     "accessible",
-    "a11y"
+    "a11y",
+    "tags-input",
+    "chips-input",
+    "token-input",
+    "multi-select",
+    "roving-tabindex",
+    "zero-dependency"
   ],
   "license": "MIT",
   "sideEffects": false,

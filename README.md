@@ -149,6 +149,20 @@ Full guides, live editable examples and the generated API reference for Rxova Re
 Accessibility, styling and form-library guidance lives on each component's About page — for example
 [Currency › About](https://rxova.org/packages/react-inputs/components/currency/about/).
 
+## Reading this with a coding agent
+
+Every published package ships an `llms.txt` **inside its npm tarball**, so after an install it is
+readable straight out of `node_modules` with no network — the props table, a working example, and
+what the component deliberately does not do. A build gate checks each table against the package's
+own `src/types.ts`, so a renamed prop cannot leave the file describing an API that no longer exists.
+
+- [`llms.txt`](llms.txt) — the repository index: which package is which, and what to read next.
+- [`AGENTS.md`](AGENTS.md) — for an agent _editing_ this repo, not using it.
+- [Every docs page as raw markdown](https://rxova.org/packages/react-inputs/) — add `.md` to any URL.
+- [`llms.txt`](https://rxova.org/packages/react-inputs/llms.txt) ·
+  [`llms-full.txt`](https://rxova.org/packages/react-inputs/llms-full.txt) — the docs index, and
+  every page inlined.
+
 ## Migrating
 
 Each component package includes migration guidance. Choose your component in the

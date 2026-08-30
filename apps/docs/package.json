@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^6.0.2",
+    "@astrojs/sitemap": "^3.7.3",
     "@astrojs/starlight": "^0.41.5",
     "@chakra-ui/react": "^3.36.1",
     "@emotion/react": "^11.14.0",

@@ -17,6 +17,16 @@
  * rxova.org links are resolved against the built site by the docs build's
  * `check-readme-links.mjs`. One rule, one place.
  *
+ * ## The root index
+ *
+ * `llms.txt` at the repository root is a different document with a different
+ * reader: an agent that arrived through the repository tree rather than through
+ * an install, for whom `AGENTS.md` is the wrong file — it is written for someone
+ * editing the suite. That index is pointer-only by design, so the one thing in
+ * it that can rot is a link, and the one link that rots unattended is a
+ * package's: add a tenth component and nothing would otherwise notice the map
+ * still shows nine. `checkRootIndex` is only that.
+ *
  * Offline: reads files only.
  *
  * Usage: `node --import tsx ./packages/utils/check-llms.ts [repoRoot]`.
@@ -200,6 +210,35 @@ export function checkLlms(repoRoot: string = process.cwd()): Failure[] {
   return failures
 }
 
+/**
+ * The root index must link every published package's `llms.txt`.
+ *
+ * Deliberately the only thing checked about it. The file restates no API — that
+ * is what makes it safe to hand-write — so there is nothing else in it the
+ * source could contradict. Checking prose here would mean inventing a rule the
+ * document was written to avoid needing.
+ *
+ * A missing root file is not a failure: this is a repo-level convenience, not
+ * part of any tarball, and a checkout that legitimately has no root index should
+ * not be told it is broken. Present-but-stale is the failure, because that is
+ * the one an agent would believe.
+ */
+export function checkRootIndex(repoRoot: string): Failure[] {
+  const path = join(repoRoot, LLMS_FILE)
+  if (!existsSync(path)) return []
+
+  const body = readFileSync(path, 'utf8')
+
+  return publishedPackages(repoRoot)
+    .filter((pkg) => !body.includes(`packages/${pkg.dir}/${LLMS_FILE}`))
+    .map((pkg) => ({
+      package: '(root)',
+      reason:
+        `${LLMS_FILE} does not link packages/${pkg.dir}/${LLMS_FILE}, ` +
+        `so ${pkg.name} is missing from the index`,
+    }))
+}
+
 export function formatFailures(failures: Failure[]): string {
   const details = failures.map(({ package: name, reason }) => `  ✗ ${name} ${reason}`)
   return `${String(failures.length)} llms.txt problem(s):\n${details.join('\n')}`
@@ -210,12 +249,15 @@ const isEntrypoint =
 
 if (isEntrypoint) {
   const [repoRoot = process.cwd()] = process.argv.slice(2)
-  const failures = checkLlms(resolve(repoRoot))
+  const root = resolve(repoRoot)
+  const failures = [...checkLlms(root), ...checkRootIndex(root)]
 
   if (failures.length > 0) {
     console.error(formatFailures(failures))
     process.exit(1)
   }
 
-  console.log('✔ Every published package ships a well-formed llms.txt')
+  console.log(
+    '✔ Every published package ships a well-formed llms.txt, and the root index lists them all',
+  )
 }

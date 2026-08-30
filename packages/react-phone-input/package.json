@@ -19,7 +19,14 @@
     "headless",
     "accessible",
     "a11y",
-    "intl"
+    "intl",
+    "phone-number",
+    "telephone",
+    "international-phone",
+    "country-selector",
+    "msisdn",
+    "no-metadata",
+    "zero-dependency"
   ],
   "license": "MIT",
   "sideEffects": false,

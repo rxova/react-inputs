@@ -17,7 +17,14 @@
     "headless",
     "accessible",
     "a11y",
-    "intl"
+    "intl",
+    "time-field",
+    "time-entry",
+    "clock",
+    "24-hour",
+    "12-hour",
+    "iso-time",
+    "zero-dependency"
   ],
   "license": "MIT",
   "sideEffects": false,
