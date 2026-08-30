@@ -1,6 +1,6 @@
 {
   "name": "@rxova/react-phone-input",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "description": "International phone input with no metadata blob: country names from Intl, flags from Unicode, 4 kB of dial codes. Headless, zero-dependency.",
   "rxova": {

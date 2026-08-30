@@ -1,8 +1,8 @@
 {
   "name": "@rxova/react-file-input",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
-  "description": "A file picker and drop zone that validates, deduplicates and revokes its own preview URLs \u2014 and never uploads anything. Headless, zero-dependency.",
+  "description": "A file picker and drop zone that validates, deduplicates and revokes its own preview URLs — and never uploads anything. Headless, zero-dependency.",
   "rxova": {
     "slug": "file",
     "label": "File",

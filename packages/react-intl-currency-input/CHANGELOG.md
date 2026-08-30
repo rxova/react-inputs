@@ -1,5 +1,16 @@
 # @rxova/react-intl-currency-input
 
+## 1.0.1
+
+### Patch Changes
+
+- [#70](https://github.com/rxova/react-inputs/pull/70) [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0) - Broaden the npm keywords
+
+  Adds `currency-input`, `money-input`, `price-input`, `amount` and `decimal` — the
+  names the field goes by in a product spec — plus `intl-numberformat`, which is
+  what it is actually built on, and `headless`/`accessible`/`a11y`, which the
+  sibling packages already carried and this one did not. No code changes.
+
 ## 1.0.0
 
 ### Major Changes

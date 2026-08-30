@@ -1,5 +1,15 @@
 # @rxova/react-time-input
 
+## 1.0.2
+
+### Patch Changes
+
+- [#70](https://github.com/rxova/react-inputs/pull/70) [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0) - Broaden the npm keywords
+
+  Adds `time-field`, `time-entry`, `clock`, `iso-time`, and both `12-hour` and
+  `24-hour` — the distinction is the first thing anybody checks about a time input,
+  and this one picks by locale while keeping the value canonical. No code changes.
+
 ## 1.0.1
 
 ### Patch Changes

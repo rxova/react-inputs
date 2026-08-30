@@ -1,8 +1,8 @@
 {
   "name": "@rxova/react-intl-currency-input",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
-  "description": "Localized currency input for React. Zero dependencies, no cursor bugs, correct in every Intl locale \u2014 including the ones other libraries get wrong.",
+  "description": "Localized currency input for React. Zero dependencies, no cursor bugs, correct in every Intl locale — including the ones other libraries get wrong.",
   "rxova": {
     "slug": "currency",
     "label": "Currency",

@@ -1,5 +1,16 @@
 # @rxova/react-file-input
 
+## 1.0.2
+
+### Patch Changes
+
+- [#70](https://github.com/rxova/react-inputs/pull/70) [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0) - Broaden the npm keywords
+
+  Adds `file-picker`, `file-field`, `upload`, `drop-zone`, `multipart` and
+  `image-preview`. `upload` is deliberate despite this component not uploading
+  anything: it is what the person searching is trying to build, and the README is
+  where the division of labour belongs. No code changes.
+
 ## 1.0.1
 
 ### Patch Changes

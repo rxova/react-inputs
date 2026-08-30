@@ -1,6 +1,6 @@
 {
   "name": "@rxova/react-tags-input",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "description": "A tag / token input with real roving-tabindex keyboard navigation and announced add and remove. Headless, zero-dependency.",
   "rxova": {

@@ -1,5 +1,16 @@
 # @rxova/codemod
 
+## 1.0.1
+
+### Patch Changes
+
+- [#70](https://github.com/rxova/react-inputs/pull/70) [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0) - Broaden the npm keywords
+
+  Adds `jscodeshift-transform`, `automated-migration`, `refactor`, `upgrade`, `ast`
+  and `react`. A codemod is found by somebody who has decided to migrate and does
+  not yet know a transform exists, so the registry is the only place that discovery
+  can happen. No code changes.
+
 ## 1.0.0
 
 ### Major Changes

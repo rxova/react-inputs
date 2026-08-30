@@ -1,5 +1,16 @@
 # @rxova/react-password-input
 
+## 1.0.2
+
+### Patch Changes
+
+- [#70](https://github.com/rxova/react-inputs/pull/70) [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0) - Broaden the npm keywords
+
+  Adds `password-field`, `reveal-password`, `password-meter`, `new-password` and
+  `autocomplete`, plus `zxcvbn-free` — the strength meter here costs about 1 kB
+  rather than 400, and the package people are trying to avoid is the one they will
+  have searched for first. No code changes.
+
 ## 1.0.1
 
 ### Patch Changes

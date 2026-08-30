@@ -1,5 +1,16 @@
 # @rxova/react-otp-input
 
+## 1.0.1
+
+### Patch Changes
+
+- [#70](https://github.com/rxova/react-inputs/pull/70) [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0) - Broaden the npm keywords
+
+  Adds `otp-input`, `one-time-password`, `sms-code`, `code-input`, `pin-input` and
+  `passcode` — one problem with six names, and the package answered to two of them
+  — plus `autocomplete-one-time-code`, the attribute somebody lands here searching
+  for when autofill is not working. No code changes.
+
 ## 1.0.0
 
 ### Major Changes
