@@ -1,5 +1,16 @@
 # react-feedback-stars
 
+## 1.0.1
+
+### Patch Changes
+
+- [#70](https://github.com/rxova/react-inputs/pull/70) [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0) - Broaden the npm keywords
+
+  Adds `rating-input`, `star-input`, `five-star` and `half-star` — including the
+  fractional case, which is the reason to reach for this over a row of radios —
+  plus `radiogroup` for the semantics it is built on and `survey` for where it
+  tends to land. No code changes.
+
 ## 1.0.0
 
 ### Major Changes

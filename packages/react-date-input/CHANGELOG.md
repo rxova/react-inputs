@@ -1,5 +1,16 @@
 # @rxova/react-date-input
 
+## 1.0.2
+
+### Patch Changes
+
+- [#70](https://github.com/rxova/react-inputs/pull/70) [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0) - Broaden the npm keywords
+
+  Adds `date-field`, `date-entry`, `iso-date` and `locale-order`, plus
+  `calendar-free` and `no-date-library` — someone reaching for a date input usually
+  does not want a date picker or a 70 kB date library, and had no way to say so to
+  the registry. No code changes.
+
 ## 1.0.1
 
 ### Patch Changes

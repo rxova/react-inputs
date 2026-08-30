@@ -1,5 +1,16 @@
 # @rxova/react-tags-input
 
+## 1.0.2
+
+### Patch Changes
+
+- [#70](https://github.com/rxova/react-inputs/pull/70) [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0) - Broaden the npm keywords
+
+  Adds `tags-input`, `chips-input`, `token-input` and `multi-select` — four names
+  for the same control, and the package was listed under the noun rather than any
+  of them — plus `roving-tabindex`, which is the part that is hard and the reason
+  to take this rather than write it. No code changes.
+
 ## 1.0.1
 
 ### Patch Changes

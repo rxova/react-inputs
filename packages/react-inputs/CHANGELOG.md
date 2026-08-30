@@ -1,5 +1,30 @@
 # @rxova/react-inputs
 
+## 1.0.2
+
+### Patch Changes
+
+- [#70](https://github.com/rxova/react-inputs/pull/70) [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0) - Broaden the npm keywords
+
+  Registry metadata is read far more often than it is written, and the meta-package
+  was findable only by somebody who already knew the suite existed. Adds
+  `input-components`, `form-inputs`, `ui-components`, `component-library`,
+  `headless-ui` and `design-system` — what this is called by someone shopping for
+  one — plus `tree-shakeable` and `zero-dependency`, the two properties that decide
+  whether the meta-package or the individual ones are the right install. No code
+  changes; a patch release is only how the new metadata reaches npm.
+
+- Updated dependencies [[`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0), [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0), [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0), [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0), [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0), [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0), [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0), [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0), [`111bf02`](https://github.com/rxova/react-inputs/commit/111bf0202f3a8787eedea28b128fe33ed1e05ee0)]:
+  - @rxova/react-intl-currency-input@1.0.1
+  - @rxova/react-otp-input@1.0.1
+  - @rxova/react-rating-input@1.0.1
+  - @rxova/react-password-input@1.0.2
+  - @rxova/react-phone-input@1.0.2
+  - @rxova/react-date-input@1.0.2
+  - @rxova/react-file-input@1.0.2
+  - @rxova/react-tags-input@1.0.2
+  - @rxova/react-time-input@1.0.2
+
 ## 1.0.1
 
 ### Patch Changes
