@@ -56,20 +56,34 @@ jobs:
 
       - name: Create version PR or publish
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
+          # v2 renamed every input this step passes (`version` ->
+          # `version-script`, `publish` -> `publish-script`, `commit` ->
+          # `commit-message`, `title` -> `pr-title`) and stopped reading the
+          # token from the `GITHUB_TOKEN` env var. An unknown input is not an
+          # error to Actions, so keeping the v1 names would not fail the job —
+          # the action would just fall back to its defaults and open a
+          # `Version Packages` PR that runs `changeset version` without the
+          # build step below. Nothing in PR CI exercises this file, so that
+          # would have surfaced as a bad release, not a red check.
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           # `pnpm run release` = turbo run build && changeset publish, so every
           # changed package is built in dependency order before publishing.
-          version: pnpm exec changeset version
-          publish: pnpm run release
-          commit: 'chore: version packages'
-          title: 'chore: version packages'
+          version-script: pnpm exec changeset version
+          publish-script: pnpm run release
+          commit-message: 'chore: version packages'
+          pr-title: 'chore: version packages'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: 'true'
 
+      # v2 renamed the outputs to kebab-case: `publishedPackages` is now
+      # `published-packages` (`published` itself is unchanged). An unset output
+      # is the empty string rather than an error, so the old name would have
+      # left PUBLISHED_PACKAGES empty and this step would have "passed" against
+      # nothing — a green release that verified no package at all.
       - name: Verify freshly published packages from npm
         if: steps.changesets.outputs.published == 'true'
         run: pnpm run postpublish:smoke
         env:
-          PUBLISHED_PACKAGES: ${{ steps.changesets.outputs.publishedPackages }}
+          PUBLISHED_PACKAGES: ${{ steps.changesets.outputs.published-packages }}
