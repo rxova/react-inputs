@@ -13,7 +13,7 @@
     "@react-router/node": "^8.3.0",
     "@react-router/serve": "^8.3.0",
     "@rxova/react-inputs": "workspace:*",
-    "isbot": "^4",
+    "isbot": "^5",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router": "^8.3.0"
