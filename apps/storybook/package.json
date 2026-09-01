@@ -29,12 +29,12 @@
     "@storybook/addon-docs": "^10.5.5",
     "@storybook/react-vite": "^10.5.5",
     "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4",
+    "@types/react-dom": "^19.2.5",
     "@vitejs/plugin-react": "^6.0.5",
     "remark-gfm": "^4.0.1",
     "storybook": "^10.5.5",
     "typescript": "6.0.3",
     "vite": "^8.2.0",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.11"
   }
 }
