@@ -85,9 +85,9 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^6.0.4",
-    "@vitest/browser": "^4.1.10",
-    "@vitest/browser-playwright": "^4.1.10",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@vitest/browser": "^4.1.11",
+    "@vitest/browser-playwright": "^4.1.11",
+    "@vitest/coverage-v8": "^4.1.11",
     "final-form": "^5.0.1",
     "formik": "^2.4.9",
     "playwright": "^1.61.1",
@@ -100,7 +100,7 @@
     "tsdown": "^0.22.14",
     "typescript": "6.0.3",
     "vite": "^8.1.5",
-    "vitest": "^4.1.10",
+    "vitest": "^4.1.11",
     "vitest-browser-react": "^2.2.0"
   },
   "publishConfig": {
