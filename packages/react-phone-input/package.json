@@ -84,7 +84,7 @@
     "@tanstack/react-form": "^1.33.2",
     "@types/node": "^26.1.1",
     "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0",
+    "@types/react-dom": "^19.2.5",
     "@vitejs/plugin-react": "^6.0.4",
     "@vitest/browser": "^4.1.10",
     "@vitest/browser-playwright": "^4.1.10",
