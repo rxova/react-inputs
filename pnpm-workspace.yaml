@@ -14,7 +14,7 @@ overrides:
   # The upper bound is load-bearing: the replacement side is a range, not just
   # a floor, so a bare '>=3.1.5' resolves to the newest 4.x and silently pushes
   # ajv across a major.
-  fast-uri@3: '>=3.1.5 <4'
+  fast-uri@3: '>=3.1.6 <4'
   # GHSA-5p4m-2wfm-xmqj: quadratic CPU consumption resolving !!omap (DoS on
   # untrusted YAML). Both major lines resolve here and both are vulnerable, so
   # each needs its own entry — the 3.x fix was not backported below 3.15.1.
