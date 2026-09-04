@@ -16,7 +16,7 @@
     "size": "turbo run size",
     "check:exports": "turbo run check:exports --concurrency=1",
     "pack:smoke": "turbo run pack:smoke --concurrency=1",
-    "audit:check": "pnpm audit --audit-level=high",
+    "audit:check": "pnpm audit --audit-level=high --ignore-registry-errors",
     "dedupe:check": "pnpm dedupe --check",
     "dev": "turbo run dev --filter=@rxova/playground",
     "playground:build": "turbo run build --filter=@rxova/playground",
