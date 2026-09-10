@@ -94,8 +94,8 @@ describe('hostile props', () => {
   })
 
   it('survives a malformed locale tag rather than crashing on RangeError', async () => {
-    // `Intl` throws on "en_US". A date field that crashes over an underscore is
-    // worse than one that quietly falls back to ISO order.
+    // `Intl` throws on "en_US". The field falls back to ISO order instead of
+    // propagating the RangeError.
     const onWarn = vi.fn()
     const { container } = await render(<DateInput label="Date" locale="en_US" onWarn={onWarn} />)
     expect(

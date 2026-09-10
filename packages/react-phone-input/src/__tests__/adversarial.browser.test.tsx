@@ -80,8 +80,8 @@ describe('hostile props', () => {
   })
 
   it('survives a malformed locale tag rather than crashing on RangeError', async () => {
-    // `Intl.DisplayNames` throws on "en_US". A country list that crashes over
-    // an underscore is worse than one showing ISO codes.
+    // `Intl.DisplayNames` throws on "en_US". The country list falls back to ISO
+    // codes instead of propagating the RangeError.
     const onWarn = vi.fn()
     const { container } = await render(
       <PhoneInput

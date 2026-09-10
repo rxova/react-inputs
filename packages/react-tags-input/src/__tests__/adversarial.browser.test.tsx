@@ -38,7 +38,8 @@ describe('hostile props', () => {
   })
 
   it('drops non-string entries rather than stringifying them', async () => {
-    // A tag reading "undefined" or "[object Object]" is worse than a missing one.
+    // Non-string entries are dropped rather than rendered as "undefined" or
+    // "[object Object]".
     const onWarn = vi.fn()
     const { container } = await render(
       <TagsInput

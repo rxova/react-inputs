@@ -8,8 +8,8 @@ export type OtpSlotInteraction = 'spatial' | 'crush'
 
 /**
  * Per-slot state handed to `<OtpSlot>` (via context), to the `render` prop, and
- * returned by the hook as `slots`. The analogue of `RatingIconState` in the
- * sibling repo — a plain, serializable description of one slot, no handlers.
+ * returned by the hook as `slots`. A plain, serializable description of one
+ * slot; it carries no handlers.
  */
 export interface OtpSlotState {
   /** 0-based position in the row. */

@@ -11,9 +11,8 @@ export interface OtpContextValue {
 export const OtpContext = createContext<OtpContextValue | null>(null)
 
 /**
- * Read the context an `<OtpInput>` provides. A compound child rendered outside
- * one is a wiring mistake, not a data value — so unlike a bad `value`, this
- * throws with a pointed message rather than degrading.
+ * Read the context an `<OtpInput>` provides. Throws when a compound child is
+ * rendered outside an `<OtpInput>`.
  */
 export function useOtpContext(component: string): OtpContextValue {
   const ctx = useContext(OtpContext)

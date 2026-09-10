@@ -18,10 +18,10 @@ export function normalizeLength(length: number | undefined): number {
  * Build the per-character predicate. An explicit `pattern` beats `mode`.
  *
  * A caller's `RegExp` may carry the `g` flag, whose `lastIndex` makes repeated
- * `.test()` calls alternate true/false on the same input — a genuinely nasty
- * class of bug. We rebuild the expression without `g`/`y` so the predicate is
- * pure, and test one code point at a time so a multi-char class can't match a
- * two-character paste fragment as a unit.
+ * `.test()` calls alternate true/false on the same input. The expression is
+ * rebuilt without `g`/`y` so the predicate is pure, and tested one code point
+ * at a time so a multi-character class cannot match a two-character paste
+ * fragment as a unit.
  */
 export function resolveIsAllowed(
   mode: OtpMode,
