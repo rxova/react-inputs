@@ -25,7 +25,7 @@ overrides:
   # js-yaml 5.x exists, so a bare '>=4.3.1' would drag both lines across a major
   # that these dependents do not declare support for.
   js-yaml@3: '>=3.15.1 <4'
-  js-yaml@4: '>=4.3.1 <5'
+  js-yaml@4: '>=4.3.2 <5'
   # GHSA-2v37-7h3g-55p8: a custom alphabet with size zero loops forever (DoS).
   # Only the 3.x line is affected — 5.1.16 and 6.0.0 also resolve here and both
   # sit outside the advisory's `<3.3.18` range — so one scoped entry covers it
@@ -41,6 +41,21 @@ overrides:
   # `audit:check` is deliberately not a Turbo task for: a cached pass would have
   # replayed over it and shipped.
   nanoid@3: '>=3.3.18 <4'
+  # The same staleness the nanoid note above describes, now on five more
+  # packages. `js-yaml@4`'s floor moved from 4.3.1 to 4.3.2 upstream and is
+  # bumped in place. The other four had no entry at all: `astro` and `sharp`
+  # arrive through the docs site (Starlight, and its image pipeline), `next`
+  # through the compat harnesses, and `svgo` under Astro's SVG handling — the
+  # tree resolves the 4.x line, which has its own advisory. All of it is build
+  # or dev tooling, none ships in a package tarball, and `audit:check` gates
+  # on high.
+  #
+  # Upper bounds load-bearing for the reason given above: a bare floor resolves
+  # to the next major and pushes a dependent across it silently.
+  astro@7: '>=7.2.8 <8'
+  next@16: '>=16.3.3 <17'
+  sharp@0.35: '>=0.35.4 <0.36'
+  svgo@4: '>=4.1.0 <5'
 #
 # No `auditConfig.ignoreGhsas`. The single entry that lived here suppressed
 # GHSA-mh99-v99m-4gvg for one unfixable copy reached through
