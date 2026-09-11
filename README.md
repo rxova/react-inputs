@@ -32,13 +32,12 @@
 
 ---
 
-Complex inputs deserve careful handling of formatting, interaction, accessibility and forms. Rxova
-React Inputs brings those details together in focused components, helping you create a polished
-experience while keeping control of markup and styling.
+Rxova React Inputs is a set of focused React components covering formatting, interaction,
+accessibility and form integration, while leaving markup and styling under your control.
 
 Every component follows the same principles: platform semantics, native form submission, a small
-typed API and **no stylesheet to import**. The result is a suite that works with your design system
-and gives you more time to focus on the experience you want to build.
+typed API and **no stylesheet to import**. Each component works alongside an existing design
+system.
 
 ## The suite
 
@@ -47,7 +46,7 @@ and gives you more time to focus on the experience you want to build.
 | [**`@rxova/react-intl-currency-input`**](packages/react-intl-currency-input)<br />[![npm](https://img.shields.io/npm/v/@rxova/react-intl-currency-input?color=cb3837&label=)](https://www.npmjs.com/package/@rxova/react-intl-currency-input) | Locale-aware money entry with correct grouping, symbols and no cursor bugs      | ≤ 3.25 kB |
 | [**`@rxova/react-rating-input`**](packages/react-rating-input)<br />[![npm](https://img.shields.io/npm/v/@rxova/react-rating-input?color=cb3837&label=)](https://www.npmjs.com/package/@rxova/react-rating-input)                             | Any icon, any precision, with `radiogroup` semantics and a read-only image mode | ≤ 3 kB    |
 | [**`@rxova/react-otp-input`**](packages/react-otp-input)<br />[![npm](https://img.shields.io/npm/v/@rxova/react-otp-input?color=cb3837&label=)](https://www.npmjs.com/package/@rxova/react-otp-input)                                         | One-time-code entry with spatial slots, paste handling and WebOTP autofill      | ≤ 4.5 kB  |
-| [**`@rxova/react-password-input`**](packages/react-password-input)<br />[![npm](https://img.shields.io/npm/v/@rxova/react-password-input?color=cb3837&label=)](https://www.npmjs.com/package/@rxova/react-password-input)                     | Reveal toggle, Caps Lock warning and a strength meter that costs 1 kB, not 400  | ≤ 5 kB    |
+| [**`@rxova/react-password-input`**](packages/react-password-input)<br />[![npm](https://img.shields.io/npm/v/@rxova/react-password-input?color=cb3837&label=)](https://www.npmjs.com/package/@rxova/react-password-input)                     | Reveal toggle, Caps Lock warning and a strength meter of roughly 1 kB           | ≤ 5 kB    |
 | [**`@rxova/react-phone-input`**](packages/react-phone-input)<br />[![npm](https://img.shields.io/npm/v/@rxova/react-phone-input?color=cb3837&label=)](https://www.npmjs.com/package/@rxova/react-phone-input)                                 | International numbers with no metadata blob — E.164 in and out                  | ≤ 4.25 kB |
 | [**`@rxova/react-date-input`**](packages/react-date-input)<br />[![npm](https://img.shields.io/npm/v/@rxova/react-date-input?color=cb3837&label=)](https://www.npmjs.com/package/@rxova/react-date-input)                                     | Segmented, locale-ordered date entry with no calendar and no date library       | ≤ 4 kB    |
 | [**`@rxova/react-time-input`**](packages/react-time-input)<br />[![npm](https://img.shields.io/npm/v/@rxova/react-time-input?color=cb3837&label=)](https://www.npmjs.com/package/@rxova/react-time-input)                                     | Segmented time entry, 12/24-hour by locale, canonical 24-hour value             | ≤ 4 kB    |

@@ -210,8 +210,7 @@ export function usePasswordInput(options: UsePasswordInputOptions): UsePasswordI
       ? Math.floor(minLengthProp)
       : DEFAULT_MIN_LENGTH
   // There is always a cap; the prop only moves it. An unsatisfiable or
-  // unusable value falls back to the default rather than removing the bound —
-  // a field nobody can fill is worse than a loose cap, but so is no cap at all.
+  // unusable value falls back to the default rather than removing the bound.
   // The floor keeps the fallback satisfiable when `minLength` is itself above
   // the default.
   const maxLength =

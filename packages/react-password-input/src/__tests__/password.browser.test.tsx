@@ -193,8 +193,8 @@ describe('value', () => {
     const { container } = await render(
       <PasswordInput label="Password" minLength={8} maxLength={4} onWarn={() => undefined} />,
     )
-    // A field nobody can fill is worse than a loose cap — but dropping the cap
-    // entirely would restore the unbounded field the default exists to prevent.
+    // The cap falls back to the default rather than being dropped, which would
+    // leave the field unbounded.
     expect(container.querySelector('[data-rx-password-input]')).toHaveAttribute('maxlength', '128')
   })
 
