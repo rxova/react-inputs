@@ -1,6 +1,6 @@
 {
   "name": "@rxova/react-otp-input",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "description": "A headless, accessible one-time-code input for React.",
   "rxova": {
