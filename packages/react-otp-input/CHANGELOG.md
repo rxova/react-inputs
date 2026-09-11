@@ -1,5 +1,12 @@
 # @rxova/react-otp-input
 
+## 1.0.2
+
+### Patch Changes
+
+- [#86](https://github.com/rxova/react-inputs/pull/86) [`d66da9e`](https://github.com/rxova/react-inputs/commit/d66da9e79657605b4fd79e1b550f85152807c8ff) - Reword the TSDoc on `OtpSlotState`, `resolveIsAllowed` and `useOtpContext` to describe the
+  behaviour directly. No runtime change.
+
 ## 1.0.1
 
 ### Patch Changes
