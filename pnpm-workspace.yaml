@@ -56,6 +56,28 @@ overrides:
   next@16: '>=16.3.3 <17'
   sharp@0.35: '>=0.35.4 <0.36'
   svgo@4: '>=4.1.0 <5'
+  # GHSA-jxfw-x594-9x9m: unescaped Unicode line separators in logged request
+  # fields let a client forge extra log lines. Reached only through
+  # apps/compat-remix > @react-router/serve (directly, and again under
+  # @react-router/dev), the server the Remix compat harness runs its Playwright
+  # suite against. The app is private, so this is never shipped. No release of
+  # @react-router/serve raises its `^1.10.1` floor, so a bump could not fix it.
+  # Scoped to 1.x, the only line that resolves here.
+  #
+  # Upper bound load-bearing as above.
+  morgan@1: '>=1.12.0 <2'
+  # GHSA-4mjr-xmp4-gh2g: an attacker-controlled `isBuffer` property sends the
+  # parser into a denial of service. GHSA-x5fp-wj9c-mxmx: bracket-key comma
+  # parsing slips past `arrayLimit`. One entry covers both, since 6.16.0 fixes
+  # each. Reached through the same compat-remix server, via
+  # @react-router/serve > express (directly, and again under @react-router/express)
+  # and express > body-parser. Private, so never shipped. express 5.2.1 and
+  # body-parser 2.3.0 are the latest releases, and they declare `^6.14.0` and
+  # `^6.15.2`, so neither has a release to bump to. Scoped to 6.x, the only line
+  # that resolves here.
+  #
+  # Upper bound load-bearing as above.
+  qs@6: '>=6.16.0 <7'
 #
 # No `auditConfig.ignoreGhsas`. The single entry that lived here suppressed
 # GHSA-mh99-v99m-4gvg for one unfixable copy reached through
