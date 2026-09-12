@@ -4,22 +4,33 @@ on:
   push:
     branches: [main]
   pull_request:
-    # Deliberately neither `edited` nor `labeled`/`unlabeled`. Both fire for
-    # reasons that have nothing to do with the diff — `edited` on body edits as
-    # well as title edits, with nothing at the trigger able to tell them apart —
-    # and with `cancel-in-progress` below, each one killed an in-flight run and
-    # started a fresh one. A cancelled job still bills its minute rounded up, so
-    # on #67 adding two cross-references to a description cost 21 of them.
+    # No `edited`: it fires on body edits as well as title edits, with nothing
+    # at the trigger able to tell them apart, and with `cancel-in-progress`
+    # below each one killed an in-flight run and started a fresh one. A
+    # cancelled job still bills its minute rounded up, so on #67 adding two
+    # cross-references to a description cost 21 of them. The title check that
+    # genuinely needs `edited` lives in pr-title.yml, where the same edit costs
+    # one job under a name the default branch does not require.
     #
-    # The two checks that genuinely need those events now have their own
-    # workflows, where the same edit costs one job instead of all of them:
-    # pr-title.yml for the title, changeset.yml for the `skip-changeset` label.
-    types: [opened, synchronize, reopened]
+    # `labeled`/`unlabeled` stay: the changeset gate's escape hatch is the
+    # `skip-changeset` label, and without them the label lands on a pull request
+    # whose checks never re-run. The gate used to sit in its own workflow to
+    # avoid exactly that cost, which kept it out of `all checks` — so nothing
+    # required it, and a pull request without a changeset could merge.
+    #
+    # A label event runs the full graph like any other. No job here decides
+    # whether to run from the event type, so a label run re-checks the same
+    # commit and reaches the same `all checks` verdict — a run that skipped the
+    # code jobs could turn a failing pull request green.
+    types: [opened, synchronize, reopened, labeled, unlabeled]
 
 # Default to read-only; jobs opt into more where they need it.
 permissions:
   contents: read
 
+# One lane per ref. A newer run supersedes the one in flight — a label event on
+# the same commit included, since it re-runs the whole graph and nothing is lost
+# by cancelling the older run.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -350,21 +361,72 @@ jobs:
             apps/compat-*/test-results
           if-no-files-found: ignore
 
+  changeset:
+    name: changeset present
+    needs: [commitlint]
+    # Pull requests only: the check diffs a pull request's base against its
+    # head, and a push to main has neither. Skip the auto-generated version PR
+    # too: it has already consumed every changeset, so the gate would find none
+    # and fail.
+    if: github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main'
+    permissions:
+      contents: read
+      # check-changeset.ts reads the skip-changeset label through the API
+      # (`gh api repos/.../labels`). Without this the call 403s, the script
+      # warns and proceeds label-blind, and the documented escape hatch
+      # silently does nothing.
+      pull-requests: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-pnpm
+      - run: pnpm install --frozen-lockfile
+      # Escape hatches: the `skip-changeset` label, or `[skip-changeset]` in the
+      # PR title. The label re-runs this job on its own; the title does not,
+      # because this workflow no longer listens to `edited`, so a retitle takes
+      # effect on the next push or label event. Docs/CI/config-only diffs are
+      # auto-skipped by the script, which also validates one package per
+      # changeset file — neither of which `changeset status --since` could do.
+      - name: Require a changeset for published-package changes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: node --import tsx ./packages/utils/check-changeset.ts
+
   # The one check the org ruleset requires on main. A ruleset names checks one
   # by one, so this job stands in for the whole graph: it waits for every other
   # job and fails if any of them failed or was cancelled. A new job added above
   # has to be added to `needs` here too, or nothing requires it. The changeset
-  # and PR-title checks live in their own workflows and are not covered here.
+  # check is in here; the PR-title re-check on `edited` runs in pr-title.yml,
+  # which this workflow does not listen to, and is not covered here.
   #
   # Skipped counts as passing: the changesets version PR skips most of the
-  # suite on purpose. `if: always()` is what makes it run after an upstream
+  # suite on purpose, and a push to main skips the changeset check, which has no
+  # pull request to diff. `if: always()` is what makes it run after an upstream
   # failure — without it the gate itself would be skipped, and a skipped
   # required check satisfies the ruleset.
   all-checks:
     name: all checks
     if: always()
     needs:
-      [commitlint, checks, supply-chain, pack-smoke, test, browser, react-minimum, e2e, frameworks]
+      [
+        commitlint,
+        checks,
+        supply-chain,
+        pack-smoke,
+        test,
+        browser,
+        react-minimum,
+        e2e,
+        frameworks,
+        changeset,
+      ]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
