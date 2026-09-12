@@ -1,4 +1,3 @@
-// Temporary: exercises the changeset gate on this branch, and is removed before merge.
 import type { OtpMode, OtpSlotState } from './types'
 
 /** One-character allowed-set testers per mode. Anchored, single-char. */
