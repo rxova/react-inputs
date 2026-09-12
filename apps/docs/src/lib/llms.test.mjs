@@ -155,7 +155,7 @@ describe('llmsIndex', () => {
 describe('llmsFull', () => {
   it('inlines every page body in the order the index lists them', () => {
     const doc = llmsFull(PAGES, COMPONENTS)
-    for (const p of PAGES) assert.match(doc, new RegExp(`Body of ${p.id.replace(/\//g, '\\/')}\\.`))
+    for (const p of PAGES) assert.ok(doc.includes(`Body of ${p.id}.`), `missing body of ${p.id}`)
 
     // Prose before generated reference, same as the index.
     assert.ok(doc.indexOf('Body of overview.') < doc.indexOf('Body of components/otp/api'))
