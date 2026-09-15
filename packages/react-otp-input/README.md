@@ -155,7 +155,7 @@ No stylesheet to import. Layout-critical CSS is inlined; everything visual is a 
 | --------------------------------------- | ------------------------- | ------------------------------ |
 | `--rx-otp-slot-size`                    | `2.5rem`                  | Slot width and height          |
 | `--rx-otp-gap`                          | `0.5rem`                  | Space between slots            |
-| `--rx-otp-font` / `-font-size`          | inherited / `1.125rem`    | Slot typography                |
+| `--rx-otp-font` / `-font-size`          | inherited / `1.125rem`    | Slot and separator typography  |
 | `--rx-otp-color` / `-bg`                | inherited / `transparent` | Slot foreground and background |
 | `--rx-otp-border`                       | `1px solid #d4d4d8`       | Slot border                    |
 | `--rx-otp-radius`                       | `0.5rem`                  | Slot corners                   |

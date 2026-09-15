@@ -13,6 +13,12 @@ const slotStyle: CSSProperties = {
   boxSizing: 'border-box',
   inlineSize: 'var(--rx-otp-slot-size, 2.5rem)',
   blockSize: 'var(--rx-otp-slot-size, 2.5rem)',
+  // No fallback, unlike the input's: with `--rx-otp-font` unset the declaration
+  // is invalid, so the slot inherits the page's font as documented. The input
+  // falls back to monospace because the spatial layout measures one glyph and
+  // assumes every other is as wide; nobody sees the input's text, so its face
+  // does not have to match the slots'.
+  fontFamily: 'var(--rx-otp-font)',
   fontSize: 'var(--rx-otp-font-size, 1.125rem)',
   lineHeight: 1,
   borderRadius: 'var(--rx-otp-radius, 0.5rem)',

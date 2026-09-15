@@ -656,3 +656,61 @@ describe('spatial vs crush layout', () => {
     })
   })
 })
+
+describe('typography', () => {
+  /** Two groups of three with a separator: every painted part of the row. */
+  function Grouped(props: Partial<React.ComponentProps<typeof OtpInput>>) {
+    return (
+      <OtpInput label="Code" length={6} value="482" onChange={() => undefined} {...props}>
+        <OtpGroup>
+          <OtpSlot index={0} />
+          <OtpSlot index={1} />
+          <OtpSlot index={2} />
+        </OtpGroup>
+        <OtpSeparator />
+        <OtpGroup>
+          <OtpSlot index={3} />
+          <OtpSlot index={4} />
+          <OtpSlot index={5} />
+        </OtpGroup>
+      </OtpInput>
+    )
+  }
+
+  /** The face of each part a person can see. */
+  function paintedFonts(container: HTMLElement): string[] {
+    return [...container.querySelectorAll('[data-rx-otp-slot], [data-rx-otp-separator]')].map(
+      (el) => getComputedStyle(el).fontFamily,
+    )
+  }
+
+  it('paints the slots and the separator in --rx-otp-font', async () => {
+    // The documented way to set the typeface. It used to reach only the
+    // transparent input, so the digits stayed in the page's font.
+    const { container } = await render(
+      <Grouped style={{ '--rx-otp-font': '"Courier New", monospace' } as React.CSSProperties} />,
+    )
+    await expect.element(page.getByRole('textbox')).toBeInTheDocument()
+    expect(paintedFonts(container)).toEqual(Array(7).fill('"Courier New", monospace'))
+  })
+
+  it.each([
+    ['unset', {}],
+    // What the docs registry's theme file ships: a custom property set to
+    // `inherit` takes its parent's, and there is none, so it is unset too.
+    ['set to inherit', { '--rx-otp-font': 'inherit' }],
+  ])('keeps the page font on the slots while --rx-otp-font is %s', async (_case, tokens) => {
+    const { container } = await render(
+      <div style={{ fontFamily: 'Georgia, serif', ...tokens } as React.CSSProperties}>
+        <Grouped />
+      </div>,
+    )
+    await expect.element(page.getByRole('textbox')).toBeInTheDocument()
+    expect(paintedFonts(container)).toEqual(Array(7).fill('Georgia, serif'))
+    // The input keeps its monospace fallback: the spatial layout measures one
+    // glyph and assumes every other is as wide.
+    expect(getComputedStyle(input()).fontFamily).toBe(
+      'ui-monospace, SFMono-Regular, Menlo, monospace',
+    )
+  })
+})
