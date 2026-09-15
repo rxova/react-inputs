@@ -49,7 +49,114 @@ const pause = (milliseconds: number): void => {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, milliseconds)
 }
 
+const describePackages = (packages: readonly PublishedPackage[]) =>
+  packages.map(({ name, version }) => `${name}@${version}`).join(', ')
+
+/** What npm printed on stderr when a child process failed, else the error's own message. */
+export function npmFailureReason(error: unknown): string {
+  if (typeof error === 'object' && error !== null && 'stderr' in error) {
+    const stderr = String(error.stderr).trim()
+    if (stderr.length > 0) return stderr
+  }
+  return error instanceof Error ? error.message : String(error)
+}
+
+export interface RegistryWaitOptions {
+  /** Whether the registry already serves this exact version. */
+  readonly isPublished: (item: PublishedPackage) => boolean
+  readonly sleep?: (milliseconds: number) => void
+  readonly now?: () => number
+  readonly deadlineMs?: number
+  readonly log?: (message: string) => void
+}
+
+/**
+ * Blocks until npm serves every published version. The registry can take
+ * minutes to list a version after `npm publish` returns (the 2026-09-15 release
+ * took almost three), so polling with backoff finishes as soon as npm catches
+ * up and only fails once the deadline says it never did.
+ */
+export function waitForRegistry(
+  packages: readonly PublishedPackage[],
+  {
+    isPublished,
+    sleep = pause,
+    now = Date.now,
+    deadlineMs = 10 * 60_000,
+    log = console.log,
+  }: RegistryWaitOptions,
+): void {
+  const start = now()
+  let pending = [...packages]
+  let delay = 5_000
+  for (;;) {
+    pending = pending.filter((item) => !isPublished(item))
+    if (pending.length === 0) return
+    const elapsed = now() - start
+    if (elapsed >= deadlineMs) {
+      throw new Error(
+        `npm still does not serve ${describePackages(pending)} after ${String(deadlineMs / 1000)}s`,
+      )
+    }
+    const wait = Math.min(delay, deadlineMs - elapsed)
+    log(`Waiting ${String(wait / 1000)}s for npm to serve ${describePackages(pending)}…`)
+    sleep(wait)
+    delay = Math.min(delay * 2, 30_000)
+  }
+}
+
+/** Asks the registry, bypassing the local cache, whether it lists this exact version yet. */
+const npmServes = ({ name, version }: PublishedPackage): boolean => {
+  try {
+    const output = execFileSync(
+      'npm',
+      ['view', `${name}@${version}`, 'version', '--prefer-online'],
+      {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'pipe'],
+      },
+    )
+    return output.trim() === version
+  } catch {
+    // A first-ever publish is a 404 until the registry catches up.
+    return false
+  }
+}
+
+export interface InstallRetryOptions {
+  readonly attempts?: number
+  readonly sleep?: (milliseconds: number) => void
+  readonly log?: (message: string) => void
+}
+
+/**
+ * Runs the install, retrying briefly: the registry can list a version a moment
+ * before a fresh install resolves it. Every failure prints npm's own error, so
+ * a real defect (a bad dependency range, a missing file) is not mistaken for lag.
+ */
+export function installWithRetries(
+  install: () => void,
+  { attempts = 3, sleep = pause, log = console.log }: InstallRetryOptions = {},
+): void {
+  for (let attempt = 1; ; attempt += 1) {
+    try {
+      install()
+      return
+    } catch (error) {
+      const reason = npmFailureReason(error)
+      if (attempt >= attempts) {
+        throw new Error(`published packages did not install from npm:\n${reason}`, {
+          cause: error,
+        })
+      }
+      log(`Registry install attempt ${String(attempt)} failed; retrying…\n${reason}`)
+      sleep(10_000)
+    }
+  }
+}
+
 export function runPostPublishSmoke(packages: readonly PublishedPackage[]): void {
+  waitForRegistry(packages, { isPublished: npmServes })
   const workdir = mkdtempSync(join(tmpdir(), 'rxova-registry-smoke-'))
   try {
     writeFileSync(
@@ -71,22 +178,13 @@ export function runPostPublishSmoke(packages: readonly PublishedPackage[]): void
       )}\n`,
     )
 
-    let installed = false
-    for (let attempt = 1; attempt <= 5; attempt += 1) {
-      try {
-        execFileSync('npm', ['install', '--silent', '--no-audit', '--no-fund', '--prefer-online'], {
-          cwd: workdir,
-          stdio: 'inherit',
-        })
-        installed = true
-        break
-      } catch {
-        if (attempt === 5) throw new Error('published packages did not become installable from npm')
-        console.log(`Registry install attempt ${String(attempt)} failed; retrying…`)
-        pause(6_000)
-      }
-    }
-    if (!installed) throw new Error('published packages did not install')
+    installWithRetries(() => {
+      // stderr is captured, not inherited, so a failure can report npm's error.
+      execFileSync('npm', ['install', '--no-audit', '--no-fund', '--prefer-online'], {
+        cwd: workdir,
+        stdio: ['ignore', 'inherit', 'pipe'],
+      })
+    })
 
     const verifier = `
 import { createRequire } from 'node:module'
