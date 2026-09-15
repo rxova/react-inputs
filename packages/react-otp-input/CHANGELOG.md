@@ -1,5 +1,16 @@
 # @rxova/react-otp-input
 
+## 1.0.3
+
+### Patch Changes
+
+- [#100](https://github.com/rxova/react-inputs/pull/100) [`5a80a98`](https://github.com/rxova/react-inputs/commit/5a80a9826f453108928eff404bc9a633eb7c4922) - `--rx-otp-font` now reaches the visible slots and separators
+  
+  It was read only by the transparent input laid over the row, so the digits a person sees stayed in
+  the page's font ([#97](https://github.com/rxova/react-inputs/issues/97)). Slots and `<OtpSeparator>` now take their face from `--rx-otp-font`. Unset,
+  they still inherit the page's font, as documented, so a field that never set the property looks the
+  same. The input keeps its monospace fallback, which the spatial caret layout depends on.
+
 ## 1.0.2
 
 ### Patch Changes

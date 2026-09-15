@@ -1,5 +1,21 @@
 # @rxova/react-inputs
 
+## 1.1.0
+
+### Minor Changes
+
+- [#98](https://github.com/rxova/react-inputs/pull/98) [`ea86114`](https://github.com/rxova/react-inputs/commit/ea8611425385a4f2ad74d1e68d9dded34cdf930b) - Re-export `FileAccepted` and `FileRejected` from `@rxova/react-file-input`
+  
+  `onReject` on `FileInput` now receives a `FileRejected`, whose `reason` is always set, and
+  `attempt()`/`attemptAll()` return `FileAccepted | FileRejected`. Both types come through the
+  meta-package, so a consumer of this package can name them.
+
+### Patch Changes
+
+- Updated dependencies [[`10593f1`](https://github.com/rxova/react-inputs/commit/10593f12945dc992207c8172ddcea73768e022ee), [`5a80a98`](https://github.com/rxova/react-inputs/commit/5a80a9826f453108928eff404bc9a633eb7c4922)]:
+  - @rxova/react-file-input@1.1.0
+  - @rxova/react-otp-input@1.0.3
+
 ## 1.0.2
 
 ### Patch Changes
