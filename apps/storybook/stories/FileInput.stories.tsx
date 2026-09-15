@@ -85,7 +85,7 @@ export const SizeBounds: Story = {
           maxSize={512 * 1024}
           label="Nothing over 512 kB"
           onReject={(attempt) => {
-            setRejected(attempt.message ?? `${attempt.file.name}: ${attempt.reason ?? 'refused'}`)
+            setRejected(attempt.message ?? `${attempt.file.name}: ${attempt.reason}`)
           }}
           aria-describedby="file-reject-help"
         />

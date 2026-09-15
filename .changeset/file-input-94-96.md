@@ -1,6 +1,5 @@
 ---
 '@rxova/react-file-input': minor
-'@rxova/react-inputs': minor
 ---
 
 One tab stop, a named drop zone, re-picking a file, and a `reason` that is always set
@@ -15,6 +14,5 @@ One tab stop, a named drop zone, re-picking a file, and a `reason` that is alway
   (#95). A native form submit still posts what the field shows; a partly refused pick keeps the
   accepted files.
 - `onReject` receives a `FileRejected`, whose `reason` is always set, and `attempt()`/`attemptAll()`
-  return `FileAccepted | FileRejected`, which narrows on `accepted` (#96). Both types are exported,
-  and re-exported from `@rxova/react-inputs`. `FileAttempt` is unchanged, so existing annotations
-  still compile.
+  return `FileAccepted | FileRejected`, which narrows on `accepted` (#96). Both types are exported.
+  `FileAttempt` is unchanged, so existing annotations still compile.

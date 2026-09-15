@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Section } from '@rxova/demo-kit'
 import { FileInput } from '@rxova/react-file-input'
-import type { FileAttempt, FileWarning } from '@rxova/react-file-input'
+import type { FileRejected, FileWarning } from '@rxova/react-file-input'
 
 /**
  * The E2E target. Every section is something the Playwright suite drives, so
@@ -18,7 +18,7 @@ const FIXED = new File([new Uint8Array(2048)], 'contract.pdf', {
 
 export function FileDemos() {
   const [files, setFiles] = useState<File[]>([])
-  const [rejection, setRejection] = useState<FileAttempt | null>(null)
+  const [rejection, setRejection] = useState<FileRejected | null>(null)
   const [warnings, setWarnings] = useState<FileWarning[]>([])
   const [submitted, setSubmitted] = useState<string | null>(null)
 
@@ -60,7 +60,7 @@ export function FileDemos() {
           onReject={setRejection}
         />
         <p data-testid="rejection">
-          {rejection ? `${rejection.reason ?? 'none'}:${rejection.file.name}` : ''}
+          {rejection ? `${rejection.reason}:${rejection.file.name}` : ''}
         </p>
         <p data-testid="rejection-message">{rejection?.message ?? ''}</p>
       </Section>
