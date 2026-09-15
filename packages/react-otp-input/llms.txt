@@ -86,6 +86,8 @@ There is no stylesheet. Set CSS custom properties on any ancestor:
 `--rx-otp-caret-color`, `--rx-otp-caret-width`, `--rx-otp-placeholder-color`,
 `--rx-otp-separator-color`, `--rx-otp-transition`.
 
+`--rx-otp-font` sets the face of the slots and separators; unset, they use the page's font.
+
 Or target the `data-*` attributes, which are public API covered by semver:
 `data-rx-otp-root`, `data-rx-otp-input`, `data-rx-otp-group`, `data-rx-otp-slot`,
 `data-rx-otp-separator`, `data-rx-otp-caret`, plus the state hooks `data-state`,

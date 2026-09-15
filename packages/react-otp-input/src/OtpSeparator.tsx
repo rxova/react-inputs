@@ -3,6 +3,8 @@ import type { CSSProperties, HTMLAttributes } from 'react'
 const separatorStyle: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
+  // Same face as the slots it sits between; inherited while `--rx-otp-font` is unset.
+  fontFamily: 'var(--rx-otp-font)',
   color: 'var(--rx-otp-separator-color, #a1a1aa)',
   userSelect: 'none',
 }
