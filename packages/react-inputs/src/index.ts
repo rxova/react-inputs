@@ -110,10 +110,12 @@ export {
   matchesAccept,
 } from '@rxova/react-file-input'
 export type {
+  FileAccepted,
   FileAttempt,
   FileEntry,
   FileEntryState,
   FileInputProps,
+  FileRejected,
   FileRejection,
   FileRules,
   FileWarning,

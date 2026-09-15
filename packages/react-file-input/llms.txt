@@ -50,7 +50,7 @@ export function Attachments() {
 | `onChange` | `(files: File[]) => void` | — | The whole list, after every accepted add or remove. |
 | `onAdd` | `(file: File, files: File[]) => void` | — | Once per file actually added, after it passed every rule. |
 | `onRemove` | `(file: File, index: number, files: File[]) => void` | — | With the index it occupied. |
-| `onReject` | `(attempt: FileAttempt) => void` | — | A file that was refused, with a machine-readable reason. |
+| `onReject` | `(attempt: FileRejected) => void` | — | A file that was refused. `reason` is always set: `type`, `too-large`, `too-small`, `duplicate`, `max-files` or `invalid`. |
 | `accept` | `string` | — | Exactly as `<input accept>` takes it, and enforced on drop too. |
 | `maxSize` | `number` | — | Largest allowed file, in bytes. |
 | `minSize` | `number` | — | Smallest allowed file, in bytes. |
@@ -59,11 +59,11 @@ export function Attachments() {
 | `dedupe` | `boolean` | `true` | Same name + size + timestamp counts as the same file. |
 | `validate` | `(file: File, existing: File[]) => boolean \| string` | — | Final say; a string is the refusal message. |
 | `previews` | `boolean` | `false` | Object URLs for image files, revoked on removal and unmount. |
-| `label` | `ReactNode` | — | Accessible name for the field. **Not rendered** — supply your own `<label htmlFor={`${id}-input`}>` for a visible one. |
+| `label` | `ReactNode` | — | Accessible name for the field. **Not rendered** — supply your own `<label htmlFor={`${id}-input`}>` for a visible one, and pass `label` too: it also names the drop zone, the field's one tab stop. |
 | `hint` | `ReactNode` | a stock sentence | Text inside the drop zone. |
 | `removeLabel` | `(file: File) => string` | ``Remove ${name}`` | Accessible name for a file's remove button. |
 | `renderFile` | `(state: FileEntryState) => ReactNode` | the default row | Replaces a row's contents; the remove button stays. |
-| `announce` | `(event: { type: 'add' \| 'remove' \| 'reject'; files: File[]; added?: number; rejected?: FileAttempt[] }) => string` | a stock sentence | Live-region text. Return `''` to say nothing. |
+| `announce` | `(event: { type: 'add' \| 'remove' \| 'reject'; files: File[]; added?: number; rejected?: FileRejected[] }) => string` | a stock sentence | Live-region text. Return `''` to say nothing. |
 | `className` | `string` | — | |
 | `style` | `CSSProperties` | — | |
 | `name` | `string` | — | Name for the underlying `<input type="file">`. |

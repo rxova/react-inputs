@@ -12,13 +12,33 @@
 export type FileRejection =
   'type' | 'too-large' | 'too-small' | 'duplicate' | 'max-files' | 'invalid'
 
-/** The outcome of trying to accept one file. */
+/**
+ * The outcome of trying to accept one file. What `attempt` actually returns is
+ * one of the two narrower shapes below, so checking `accepted` is enough to
+ * know whether `reason` is set.
+ */
 export interface FileAttempt {
   file: File
   accepted: boolean
   reason?: FileRejection
   /** A human-readable reason, when `validate` supplied one. */
   message?: string
+}
+
+/** A file that passed every rule. */
+export interface FileAccepted extends FileAttempt {
+  accepted: true
+  reason?: undefined
+  message?: undefined
+}
+
+/**
+ * A file that was refused. `reason` is always set, so code mapping it to its
+ * own copy needs no fallback for a missing one.
+ */
+export interface FileRejected extends FileAttempt {
+  accepted: false
+  reason: FileRejection
 }
 
 export interface FileRules {
@@ -116,7 +136,11 @@ export function formatBytes(bytes: number): string {
  * report each rejection with its own reason rather than silently dropping half
  * a selection.
  */
-export function attempt(existing: File[], file: File, rules: FileRules = {}): FileAttempt {
+export function attempt(
+  existing: File[],
+  file: File,
+  rules: FileRules = {},
+): FileAccepted | FileRejected {
   return attemptWith(existing, file, rules)
 }
 
@@ -139,7 +163,7 @@ function attemptWith(
   file: File,
   rules: FileRules = {},
   isDuplicate?: (file: File) => boolean,
-): FileAttempt {
+): FileAccepted | FileRejected {
   const { accept, maxSize, minSize, maxFiles, dedupe = true, validate } = rules
 
   if (maxFiles !== undefined && existing.length >= maxFiles) {
@@ -233,9 +257,9 @@ export function attemptAll(
   existing: File[],
   candidates: File[],
   rules: FileRules = {},
-): { files: File[]; results: FileAttempt[] } {
+): { files: File[]; results: (FileAccepted | FileRejected)[] } {
   const accepted = accumulate(existing)
-  const results: FileAttempt[] = []
+  const results: (FileAccepted | FileRejected)[] = []
 
   for (const candidate of candidates) {
     const result = attemptWith(accepted.list, candidate, rules, accepted.has)

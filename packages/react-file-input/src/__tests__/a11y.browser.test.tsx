@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { page, userEvent } from 'vitest/browser'
+import { cdp, page, userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-react'
 // Static import so Vite pre-bundles axe-core with the other deps; a dynamic
 // import triggers a mid-run optimize + reload that flakes the axe specs.
@@ -23,6 +23,48 @@ function zone(container: HTMLElement) {
   return container.querySelector<HTMLButtonElement>('[data-rx-file-zone]')!
 }
 
+interface Frame {
+  frame: { id: string }
+  childFrames?: Frame[]
+}
+
+interface AXNode {
+  ignored: boolean
+  role?: { value: string }
+  name?: { value: string }
+}
+
+/**
+ * Button names as Chromium itself computes them, read over CDP.
+ *
+ * `toHaveAccessibleName` runs a spec implementation in JavaScript, which is
+ * not what a screen reader hears. Pointing the zone's `aria-labelledby` at the
+ * file input passed there and read "Import file: No file chosen Drop a file
+ * here" here: Chromium adds a file input's value text to a name that
+ * references it. The page under test is in an iframe, so every frame is read.
+ */
+async function chromiumButtonNames(): Promise<string[]> {
+  const session = cdp()
+  const { frameTree } = (await session.send('Page.getFrameTree')) as { frameTree: Frame }
+  const frames: string[] = []
+  const walk = (tree: Frame): void => {
+    frames.push(tree.frame.id)
+    tree.childFrames?.forEach(walk)
+  }
+  walk(frameTree)
+
+  const names: string[] = []
+  for (const frameId of frames) {
+    const { nodes } = (await session.send('Accessibility.getFullAXTree', { frameId })) as {
+      nodes: AXNode[]
+    }
+    for (const node of nodes) {
+      if (!node.ignored && node.role?.value === 'button') names.push(node.name?.value ?? '')
+    }
+  }
+  return names
+}
+
 describe('semantics', () => {
   it('keeps a real, labelled file input in the tree', async () => {
     // Hidden visually, never `display: none` — that removes it from the
@@ -31,7 +73,7 @@ describe('semantics', () => {
     const element = input(container)
     expect(element.type).toBe('file')
     expect(getComputedStyle(element).display).not.toBe('none')
-    await expect.element(page.getByLabelText('Attachments')).toBeInTheDocument()
+    expect(element).toHaveAccessibleName('Attachments')
   })
 
   it('names the field without rendering a <label> element', async () => {
@@ -212,6 +254,70 @@ describe('semantics', () => {
     expect(container.querySelector<HTMLElement>('[data-rx-file-remove]')?.tabIndex).toBe(0)
   })
 
+  it('gives the field one tab stop, the drop zone', async () => {
+    // The real <input type="file"> is visually hidden, so as a tab stop it put
+    // focus where nobody could see it, and the zone sat one Tab further on.
+    const { container } = await render(
+      <>
+        <button type="button">before</button>
+        <FileInput label="Import file" hint="Drop a file here" />
+        <button type="button">after</button>
+      </>,
+    )
+    container.querySelector<HTMLButtonElement>('button')!.focus()
+
+    await userEvent.tab()
+    expect(document.activeElement).toBe(zone(container))
+    await userEvent.tab()
+    expect(document.activeElement).toHaveTextContent('after')
+    expect(input(container).tabIndex).toBe(-1)
+  })
+
+  it.each([
+    [
+      'a string label',
+      <FileInput key="s" label="Import file" hint="Drop a file here" />,
+      'Import file Drop a file here',
+    ],
+    [
+      'a node label',
+      <FileInput
+        key="n"
+        label={
+          <>
+            <b>Import</b> file
+          </>
+        }
+        hint="Drop a file here"
+      />,
+      'Import file Drop a file here',
+    ],
+    [
+      'an aria-label over a label',
+      <FileInput key="a" label="Files" aria-label="Import file" hint="Drop a file here" />,
+      'Import file Drop a file here',
+    ],
+    ['no name at all', <FileInput key="u" hint="Drop a file here" />, 'Drop a file here'],
+  ])('names the drop zone after the field, given %s', async (_case, field, name) => {
+    // The zone is the one tab stop, so it is what a screen reader announces on
+    // Tab. Named by its hint alone, three file fields in a form all read as
+    // "Choose a file or drop it here, button".
+    const { container } = await render(field)
+    expect(await chromiumButtonNames()).toContain(name)
+    expect(zone(container)).toHaveAccessibleName(name)
+  })
+
+  it('hands the drop zone the field description', async () => {
+    const { container } = await render(
+      <>
+        <FileInput label="Import file" aria-describedby="import-error" invalid />
+        <p id="import-error">Choose a CSV file.</p>
+      </>,
+    )
+    expect(zone(container)).toHaveAccessibleDescription('Choose a CSV file.')
+    expect(input(container)).toHaveAccessibleDescription('Choose a CSV file.')
+  })
+
   it('disables both controls together', async () => {
     const { container } = await render(<FileInput label="Files" disabled />)
     expect(input(container)).toBeDisabled()
@@ -224,7 +330,6 @@ describe('semantics', () => {
     // satisfy. A keyboard user is who this is for, so a keyboard is what the
     // test uses.
     const { container } = await render(<FileInput label="Files" />)
-    await userEvent.tab()
     await userEvent.tab()
 
     expect(document.activeElement).toBe(zone(container))

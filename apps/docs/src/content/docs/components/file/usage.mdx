@@ -74,8 +74,9 @@ function Demo() {
 }
 ```
 
-`describeRejection` turns any rejection into a sentence; `reason` is one of `type`, `too-large`,
-`too-small`, `duplicate`, `max-files` or `invalid` if you would rather write your own.
+`describeRejection` turns any rejection into a sentence. `onReject` receives a `FileRejected`, whose
+`reason` is always one of `type`, `too-large`, `too-small`, `duplicate`, `max-files` or `invalid` if
+you would rather write your own.
 
 ## Previews
 

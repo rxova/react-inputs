@@ -13,7 +13,7 @@ export {
   isPreviewable,
   matchesAccept,
 } from './files'
-export type { FileAttempt, FileRejection, FileRules } from './files'
+export type { FileAccepted, FileAttempt, FileRejected, FileRejection, FileRules } from './files'
 export type {
   FileEntry,
   FileEntryState,

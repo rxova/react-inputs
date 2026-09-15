@@ -5,6 +5,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { Form, Formik, useField } from 'formik'
 import { Field as FinalField, Form as FinalForm } from 'react-final-form'
 import { useForm as useTanstackForm } from '@tanstack/react-form'
+import { useState } from 'react'
 import { FileInput } from '../FileInput'
 
 /**
@@ -53,6 +54,117 @@ describe('native form, no library', () => {
     const posted = onSubmit.mock.calls[0]?.[0] ?? []
     expect(posted.map((file) => file.name)).toEqual(['a.txt', 'b.txt'])
     expect(posted[0]).toBeInstanceOf(File)
+  })
+})
+
+/**
+ * A browser fires `change` only when the new selection differs from what the
+ * input already holds. So a file left in the native control after the field let
+ * go of it — refused, handed off, removed by the parent — cannot be picked
+ * again, and a native submit posts a file the field is not showing.
+ *
+ * `pick` sets `files` and dispatches `change` itself, so it cannot reproduce the
+ * missing event. What these assert is the state that decides it.
+ */
+describe('the native control holds only what the field shows', () => {
+  it('lets go of a refused file, so picking it again reaches onReject', async () => {
+    const onReject = vi.fn()
+    await render(<FileInput label="Import" maxSize={4} onReject={onReject} />)
+    pick(makeFile('big.txt'))
+    await vi.waitFor(() => {
+      expect(onReject).toHaveBeenCalledTimes(1)
+    })
+    await vi.waitFor(() => {
+      expect(input().files).toHaveLength(0)
+    })
+  })
+
+  it('lets go of a file a controlled parent does not keep, on every pick', async () => {
+    const onAdd = vi.fn()
+    await render(<FileInput label="Import" value={[]} onAdd={onAdd} />)
+    // Twice: the second pick repeats the first announcement, so the field has
+    // no state of its own that changes, and nothing would re-render.
+    for (const time of [1, 2]) {
+      pick(makeFile('a.csv'))
+      await vi.waitFor(() => {
+        expect(onAdd).toHaveBeenCalledTimes(time)
+      })
+      await vi.waitFor(() => {
+        expect(input().files).toHaveLength(0)
+      })
+    }
+  })
+
+  it('lets go of a file the parent removes from value itself', async () => {
+    function Harness() {
+      const [files, setFiles] = useState<File[]>([])
+      return (
+        <>
+          <FileInput label="Import" value={files} onChange={setFiles} />
+          <button
+            type="button"
+            onClick={() => {
+              setFiles([])
+            }}
+          >
+            Reset
+          </button>
+        </>
+      )
+    }
+    await render(<Harness />)
+    pick(makeFile('a.csv'))
+    await vi.waitFor(() => {
+      expect(document.querySelector('[data-rx-file-name]')).toHaveTextContent('a.csv')
+    })
+    expect(input().files).toHaveLength(1)
+
+    await page.getByRole('button', { name: 'Reset' }).click()
+    await vi.waitFor(() => {
+      expect(input().files).toHaveLength(0)
+    })
+  })
+
+  it('posts the files a pick added and not the ones it refused', async () => {
+    const onSubmit = vi.fn<(files: File[]) => void>()
+    await render(
+      <form
+        onSubmit={(event) => {
+          event.preventDefault()
+          onSubmit(new FormData(event.currentTarget).getAll('docs') as File[])
+        }}
+      >
+        <FileInput name="docs" label="Documents" multiple maxSize={8} />
+        <button type="submit">Upload</button>
+      </form>,
+    )
+    pick(makeFile('a.txt'), new File([new Uint8Array(20)], 'big.txt', { type: 'text/plain' }))
+    await vi.waitFor(() => {
+      expect(input().files).toHaveLength(1)
+    })
+    await page.getByRole('button', { name: 'Upload' }).click()
+
+    expect(onSubmit.mock.calls[0]?.[0].map((file) => file.name)).toEqual(['a.txt'])
+  })
+
+  it('keeps the last pick when a different file is removed', async () => {
+    // In `multiple` mode the control only ever holds the latest pick. Removing
+    // an earlier file used to blank it, so a native submit posted nothing.
+    await render(<FileInput name="docs" label="Documents" multiple />)
+    pick(makeFile('a.txt'))
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('[data-rx-file-name]')).toHaveLength(1)
+    })
+    pick(makeFile('b.txt'))
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('[data-rx-file-name]')).toHaveLength(2)
+    })
+
+    await page.getByRole('button', { name: 'Remove a.txt' }).click()
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('[data-rx-file-name]')).toHaveLength(1)
+    })
+    expect(Array.from(input().files ?? []).map((file) => file.name)).toEqual(['b.txt'])
   })
 })
 

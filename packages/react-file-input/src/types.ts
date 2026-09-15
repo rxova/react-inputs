@@ -1,5 +1,5 @@
 import type { CSSProperties, FocusEvent, ReactNode } from 'react'
-import type { FileAttempt, FileRejection } from './files'
+import type { FileAccepted, FileAttempt, FileRejected, FileRejection } from './files'
 
 /** Stable machine code for a coerced or misconfigured input. Safe to `switch` on. */
 export type FileWarningCode =
@@ -57,8 +57,11 @@ export interface FileInputProps {
   onAdd?: (file: File, files: File[]) => void
   /** Fires for each file removed, with the index it occupied. */
   onRemove?: (file: File, index: number, files: File[]) => void
-  /** Fires for each file refused, with a machine-readable reason. */
-  onReject?: (attempt: FileAttempt) => void
+  /**
+   * Fires for each file refused. `reason` is always set: `type`, `too-large`,
+   * `too-small`, `duplicate`, `max-files`, or `invalid` from `validate`.
+   */
+  onReject?: (attempt: FileRejected) => void
 
   // ---- Rules ----------------------------------------------------------------
   /** `accept` string, exactly as `<input accept>` takes it. */
@@ -91,6 +94,10 @@ export interface FileInputProps {
    * `<label htmlFor={`${id}-input`}>` when the design calls for one, exactly as
    * every other input in the suite expects. A node is exposed through a hidden
    * element, since `aria-label` only takes a string.
+   *
+   * Pass it even beside a visible `<label>`: it also names the drop zone, the
+   * field's one tab stop, which a `<label htmlFor>` cannot reach. Without it the
+   * zone is announced by its hint alone.
    */
   label?: ReactNode
   /** Text inside the drop zone. @default a stock sentence */
@@ -104,7 +111,7 @@ export interface FileInputProps {
     type: 'add' | 'remove' | 'reject'
     files: File[]
     added?: number
-    rejected?: FileAttempt[]
+    rejected?: FileRejected[]
   }) => string
   className?: string
   style?: CSSProperties
@@ -141,4 +148,4 @@ export interface FileInputProps {
   onWarn?: (warning: FileWarning) => void
 }
 
-export type { FileAttempt, FileRejection }
+export type { FileAccepted, FileAttempt, FileRejected, FileRejection }

@@ -40,6 +40,12 @@ click path is the _only_ accessible path — and a button supplies Enter, Space,
 free. It also carries an explicit `tabIndex={0}`, because WebKit omits buttons from sequential
 navigation unless Full Keyboard Access is enabled.
 
+**The field has one tab stop.** The hidden input is `tabIndex={-1}`, so Tab goes straight to the
+drop zone instead of first stopping somewhere nobody can see. The zone is named after the field,
+then its hint — "Attachments Choose a file or drop it here" — and shares `aria-describedby`, so it
+is not one of three buttons all called "Choose a file or drop it here". Pass `label` even beside a
+visible `<label htmlFor>`: that label names only the input.
+
 **The real `<input type="file">` stays in the accessibility tree.** It is hidden by clipping, never
 `display: none` or the `hidden` attribute, both of which remove it from the tree entirely and, in
 some browsers, stop programmatic `.click()` from opening the picker.
@@ -75,7 +81,9 @@ different file, which is almost always what you want.
 
 ## Rejections
 
-Every refusal produces one `onReject` call with the file and a reason:
+Every refusal produces one `onReject` call with a `FileRejected`: the file and a reason, which is
+always set. `attempt()` and `attemptAll()` return `FileAccepted | FileRejected`, so checking
+`accepted` narrows `reason` to a `FileRejection`.
 
 | Reason      | Cause                                              |
 | ----------- | -------------------------------------------------- |
@@ -117,16 +125,18 @@ consumed.
 ## Native forms
 
 The underlying input keeps its value, so a plain `<form>` submit posts the file with no JavaScript
-involved. The value is cleared on **removal** and on `clear()` — not after every pick, which is the
-usual trick for "let the user re-pick the same file" but also empties the control a submit would
-post, leaving the field rendering a file the server never receives.
+involved. It holds only files the field is showing: a refused file, a removed one, or one a
+controlled parent never accepted is dropped from it, so picking that same file again fires `change`
+as it should. It is not blanked after every pick, which is the usual trick for "let the user re-pick
+the same file" but also empties the control a submit would post, leaving the field rendering a file
+the server never receives.
 
 In `multiple` mode the native control can only carry the last selection. Read `value`/`onChange` if
 you accumulate across several picks.
 
 ## Testing
 
-- 138 unit and browser tests, coverage enforced **per file** at 95% (99.7% statements, 99.3%
+- 182 unit and browser tests, coverage enforced **per file** at 95% (99.4% statements, 99%
   branches, 100% functions and lines).
 - An adversarial suite that drives the failure modes on purpose: throwing callbacks, unmounting
   mid-drag, duplicate picks, the URL leak, two fields on one page, a `dragleave` from a child.
