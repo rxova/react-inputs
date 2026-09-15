@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import type { ChangeEvent, DragEvent, FocusEvent } from 'react'
 import { attemptAll, fileKey, formatBytes, isPreviewable } from './files'
-import type { FileAttempt, FileRules } from './files'
+import type { FileRejected, FileRules } from './files'
 import {
   inspectAccept,
   inspectMaxFiles,
@@ -17,14 +17,14 @@ export interface UseFileInputOptions extends FileRules {
   onChange?: (files: File[]) => void
   onAdd?: (file: File, files: File[]) => void
   onRemove?: (file: File, index: number, files: File[]) => void
-  onReject?: (attempt: FileAttempt) => void
+  onReject?: (attempt: FileRejected) => void
   multiple?: boolean
   previews?: boolean
   announce?: (event: {
     type: 'add' | 'remove' | 'reject'
     files: File[]
     added?: number
-    rejected?: FileAttempt[]
+    rejected?: FileRejected[]
   }) => string
   disabled?: boolean
   readOnly?: boolean
@@ -388,10 +388,6 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
           ? announce({ type: 'remove', files: next })
           : `Removed ${file.name}. ${String(next.length)} selected.`,
       )
-      // The native input keeps its own value, and a browser will not fire
-      // `change` for the same file twice. Clearing it means re-picking a file
-      // the user just removed actually works.
-      if (inputRef.current) inputRef.current.value = ''
       /*
        * The button that was just clicked is about to leave the DOM, and focus
        * goes with it — straight to <body>, which is the single most common
@@ -429,7 +425,6 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
     if (disabled || readOnly || files.length === 0) return
     commitFiles([])
     setAnnouncement(announce ? announce({ type: 'remove', files: [] }) : 'Removed all files.')
-    if (inputRef.current) inputRef.current.value = ''
   }, [disabled, readOnly, files.length, commitFiles, announce])
 
   const open = useCallback(() => {
@@ -437,18 +432,52 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
     inputRef.current?.click()
   }, [disabled, readOnly])
 
+  /**
+   * Bumped by every pick, so the effect below runs even when nothing else
+   * re-renders: a pick refused outright with no `announce`, or a second pick
+   * into a controlled `value={[]}` that repeats the first announcement word for
+   * word.
+   */
+  const [picks, setPicks] = useState(0)
+
+  /**
+   * The native control holds only files the field is showing.
+   *
+   * A browser fires `change` only when a new selection differs from what the
+   * input already holds. A file left in the control after the field let go of
+   * it — refused, removed, handed off by a controlled parent that keeps
+   * `value={[]}`, dropped from `value` by the parent — can then never be picked
+   * again, and a native submit posts it although the field does not show it.
+   *
+   * Blanking the value after every pick, the usual trick, breaks the other
+   * direction: the field would show a file a native submit never posts. So a
+   * held file stays while it is in the list and only the rest go. The control
+   * cannot drop one file of several, so a pick that was partly refused gets its
+   * `FileList` rebuilt from the files that survived.
+   *
+   * After render rather than in the handlers: a controlled parent decides what
+   * the list is, and its answer arrives as `files`.
+   */
+  useEffect(() => {
+    const input = inputRef.current
+    if (!input?.files) return
+    const shown = new Set(files.map(fileKey))
+    const held = Array.from(input.files)
+    const kept = held.filter((file) => shown.has(fileKey(file)))
+    if (kept.length === held.length) return
+    if (kept.length === 0) {
+      input.value = ''
+      return
+    }
+    const data = new DataTransfer()
+    for (const file of kept) data.items.add(file)
+    input.files = data.files
+  }, [files, picks])
+
   const handleInputChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      const picked = Array.from(event.target.files ?? [])
-      addFiles(picked)
-      /*
-       * Deliberately *not* cleared here, only in `removeAt` and `clear`.
-       * Blanking the native value after every pick is the usual trick for
-       * "let the user re-pick the same file", but it also empties the control
-       * a native form submit posts — so the field would render a file the
-       * server never receives. Clearing on removal covers the same case
-       * without lying about what would be submitted.
-       */
+      addFiles(Array.from(event.target.files ?? []))
+      setPicks((count) => count + 1)
     },
     [addFiles],
   )

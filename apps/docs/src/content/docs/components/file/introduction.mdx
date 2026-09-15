@@ -61,8 +61,8 @@ sending them.
 5. **Focus is lost on removal**, landing on `<body>`.
 6. **Every remove button is called "Remove"**, so a screen reader's element list is five identical
    entries.
-7. **Re-picking a file you just removed does nothing**, because the native input still holds the
-   value and fires no `change`.
+7. **Re-picking a file you just removed or that was refused does nothing**, because the native
+   input still holds the value and fires no `change`.
 
 Each of those has a test in this package asserting the opposite.
 

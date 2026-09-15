@@ -20,8 +20,17 @@ Decisions I made without asking, and why. Each is reversible; flag any you disag
 - **The real `<input type="file">` stays in the DOM**, hidden by the visually-hidden clip
   technique. `display: none` or the `hidden` attribute would take it out of the accessibility tree
   and, in some browsers, stop `.click()` opening the picker.
+- **The hidden input is `tabIndex={-1}`.** It is visually hidden, so a Tab that stopped on it put
+  focus where nobody could see it. It stays focusable from script, for the forwarded ref and a
+  native `required` check.
 - **Explicit `tabIndex={0}`** on the drop zone and every remove button: WebKit omits buttons from
   sequential navigation unless Full Keyboard Access is on.
+- **The drop zone is named after the field.** It is the one tab stop, and three file fields named
+  by their hint alone all read "Choose a file or drop it here". Its `aria-labelledby` points at a
+  hidden span holding `aria-label ?? label`, then at itself. Not at the input: Chromium then adds
+  the input's value text, "Import file: No file chosen Drop a file here". A browser test reads
+  Chromium's own accessibility tree over CDP to hold this, since the JavaScript name algorithm
+  passes either way.
 - **Focus after a removal** goes to the next file's button, else the previous, else the drop zone.
 - **The list is a `<ul>`**, so a screen reader announces "list, 3 items".
 - **Remove buttons are named after their file** — `Remove invoice.pdf`, overridable via
@@ -66,10 +75,14 @@ Decisions I made without asking, and why. Each is reversible; flag any you disag
 - **The value is `File[]`**, never a wrapper object. `File` is the thing `FormData` and `fetch`
   take, and inventing `{ id, file, status }` would make every consumer unwrap it.
 - **Controlled and uncontrolled both supported**, `value` winning when present.
-- **The native input value is cleared on removal and on `clear()`, but not after a pick.** Blanking
-  it after every pick is the usual trick for "let the user re-pick the same file", but it also
-  empties the control a native form submit posts — the field would then render a file the server
-  never receives.
+- **The native input holds only files the field is showing.** A browser fires `change` only when a
+  pick differs from what the input holds, so a refused file, a removed one, or one a controlled
+  parent dropped could not be picked again while it stayed there. Blanking the value after every
+  pick is the usual trick, but it also empties the control a native form submit posts — the field
+  would then render a file the server never receives. Instead, after each render the input's
+  files are rebuilt through `DataTransfer` to drop whatever the field does not show: a partly
+  refused pick keeps the accepted files. It runs after render because a controlled parent decides
+  `files`.
 - **No stylesheet.** Structural inline styles only, with `data-*` hooks covered by semver, matching
   the rest of the repo.
 - **`renderFile` replaces a row but keeps the remove button**, so a custom renderer cannot

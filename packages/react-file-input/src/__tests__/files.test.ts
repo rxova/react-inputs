@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, expectTypeOf, it } from 'vitest'
 import {
   attempt,
   attemptAll,
@@ -9,6 +9,9 @@ import {
   isPreviewable,
   matchesAccept,
 } from '../files'
+import type { FileRejection } from '../files'
+import type { FileInputProps } from '../types'
+import type { UseFileInputOptions } from '../useFileInput'
 
 /**
  * Pure rules over a file's *metadata*, so these run in the node project — `File`
@@ -21,6 +24,36 @@ function makeFile(name: string, options: { type?: string; size?: number; at?: nu
   const file = new File([new Uint8Array(size)], name, { type, lastModified: at })
   return file
 }
+
+/**
+ * Every refusal carries a reason, and the types have to say so. A consumer
+ * mapping `reason` to its own copy otherwise writes a `?? fallback` that can
+ * never run, and cannot cover under a per-file branch gate. These fail
+ * `tsc`, not the runner.
+ */
+describe('rejection types', () => {
+  it('narrows a refused attempt to one that has a reason', () => {
+    const { results } = attemptAll([], [makeFile('a.png'), makeFile('b.exe')], { accept: '.png' })
+    const reasons: FileRejection[] = []
+    for (const result of results) if (!result.accepted) reasons.push(result.reason)
+    expect(reasons).toEqual(['type'])
+
+    const single = attempt([], makeFile('c.exe'), { accept: '.png' })
+    expect(single.accepted ? undefined : single.reason).toBe('type')
+  })
+
+  it('hands onReject and announce only attempts with a reason', () => {
+    type Refused = Parameters<NonNullable<FileInputProps['onReject']>>[0]
+    expectTypeOf<Refused['reason']>().toEqualTypeOf<FileRejection>()
+    expectTypeOf<Refused['accepted']>().toEqualTypeOf<false>()
+
+    type HookRefused = Parameters<NonNullable<UseFileInputOptions['onReject']>>[0]
+    expectTypeOf<HookRefused['reason']>().toEqualTypeOf<FileRejection>()
+
+    type Announced = NonNullable<Parameters<NonNullable<FileInputProps['announce']>>[0]['rejected']>
+    expectTypeOf<Announced[number]['reason']>().toEqualTypeOf<FileRejection>()
+  })
+})
 
 describe('extensionOf', () => {
   it('returns the lowercase extension with its dot', () => {

@@ -71,7 +71,7 @@ Uncontrolled works too — omit `value`/`onChange` and pass `defaultValue`.
 | `dedupe`              | On by default. Identity is name + size + last-modified, like the native control.                                         |
 | `validate`            | Final say. Return `true`, `false`, or a string that becomes the rejection message.                                       |
 
-Every refusal reaches `onReject` with the file and a machine-readable `reason`, one call per file, so a selection of five where two fail still adds the other three.
+Every refusal reaches `onReject` with the file and a machine-readable `reason`, one call per file, so a selection of five where two fail still adds the other three. The argument is a `FileRejected`, so `reason` is always set; `attempt()` and `attemptAll()` return `FileAccepted | FileRejected`, which narrows on `accepted`.
 
 ## Previews
 
@@ -85,7 +85,7 @@ URLs are minted only for images, only on the client, and revoked as soon as the 
 
 ## Forms
 
-The underlying input keeps its value, so a plain `<form>` submit posts the file with no JavaScript involved. In `multiple` mode the native control can only carry the last selection — read `value`/`onChange` if you accumulate across several picks.
+The underlying input keeps its value, so a plain `<form>` submit posts the file with no JavaScript involved. It holds only files the field is showing: a refused file, a removed one, or one a controlled parent never accepted is dropped from it, so picking that same file again works. In `multiple` mode the native control can only carry the last selection — read `value`/`onChange` if you accumulate across several picks.
 
 ## Styling
 
@@ -184,7 +184,9 @@ Fires when a prop is coerced rather than honoured — `max-files-invalid`, `size
 ## Accessibility
 
 - The real `<input type="file">` stays in the accessibility tree — visually hidden by clipping, never `display: none`, which would remove it from the tree and break `.click()` in some browsers.
+- The hidden input is `tabIndex={-1}`, so the field has one tab stop: the drop zone. A Tab never lands somewhere nobody can see.
 - The drop zone is a `<button type="button">` with an explicit `tabIndex={0}`, because WebKit leaves buttons out of the tab order without Full Keyboard Access.
+- The drop zone is named after the field, then its hint — "Attachments Choose a file or drop it here" — and shares `aria-describedby`. Pass `label` even beside a visible `<label htmlFor>`, which names only the input.
 - Each remove button is named after its own file, not just "Remove" — a screen reader's element list shows them stripped of their row.
 - After a removal, focus moves to the next file's button, or the previous one, or back to the drop zone. It never falls to `<body>`.
 - Additions, removals and refusals are announced once per batch in a **polite** live region.

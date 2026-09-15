@@ -153,6 +153,12 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
       ? 'Choose files or drop them here'
       : 'Choose a file or drop it here'
 
+    const fieldName = ariaLabel ?? label
+    // `aria-label` only takes a string, so the input points at the hidden name
+    // span instead when `label` is a node.
+    const labelledByNode =
+      ariaLabel === undefined && label !== undefined && typeof label !== 'string'
+
     return (
       <div
         className={className}
@@ -171,20 +177,21 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
           `label` names the field; it does not render one. Every component in
           the suite reads it that way, and a component that quietly emitted a
           visible `<label>` while its neighbour did not is a layout the caller
-          cannot compose against. A node goes into a hidden span the control
-          points at, because `aria-label` only takes a string.
+          cannot compose against. The name goes into a hidden span instead: the
+          drop zone always points at it, and the input does when `label` is a
+          node, because `aria-label` only takes a string.
         */}
-        {label !== undefined && typeof label !== 'string' ? (
-          <span id={ids.label} style={{ display: 'none' }}>
-            {label}
+        {fieldName === undefined ? null : (
+          <span id={ids.label} hidden>
+            {fieldName}
           </span>
-        ) : null}
+        )}
 
         {/*
-          The real control. Hidden visually but present, focusable and named, so
-          it carries `name`, `accept` and `required` into a native submit and so
-          the field has something for `aria-label` to name. The drop zone below
-          is the visible affordance; this is what the platform submits.
+          The real control. Hidden visually but present and named, so it carries
+          `name`, `accept` and `required` into a native submit and so the field
+          has something for `aria-label` to name. The drop zone below is the
+          visible affordance; this is what the platform submits.
         */}
         <input
           ref={(node) => {
@@ -200,12 +207,13 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
           multiple={multiple}
           required={required && files.length === 0}
           disabled={disabled || readOnly}
+          // Out of the tab order: it is visually hidden, so a Tab that stopped
+          // here put focus where nobody could see it, one Tab before the zone.
+          // Still focusable from script, so the forwarded ref and a native
+          // `required` check reach it.
+          tabIndex={-1}
           aria-label={ariaLabel ?? (typeof label === 'string' ? label : undefined)}
-          aria-labelledby={
-            ariaLabel === undefined && label !== undefined && typeof label !== 'string'
-              ? ids.label
-              : undefined
-          }
+          aria-labelledby={labelledByNode ? ids.label : undefined}
           aria-invalid={invalid ? true : undefined}
           aria-describedby={describedBy}
           style={hiddenInputStyle}
@@ -232,6 +240,13 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
           // visually hidden, so focusing it would put the ring nowhere a
           // sighted keyboard user can see.
           autoFocus={autoFocus}
+          // The field's one tab stop, so it is what a screen reader announces
+          // on Tab, and a hint alone does not say which field this is: the
+          // field's name comes first, then the zone's own text. Not pointed at
+          // the input itself, because Chromium then reads the input's value
+          // text too: "Import file: No file chosen Drop a file here".
+          aria-labelledby={fieldName === undefined ? undefined : `${ids.label} ${ids.zone}`}
+          aria-describedby={describedBy}
           data-rx-file-zone=""
           data-dragging={dragging ? '' : undefined}
           disabled={disabled || readOnly}
