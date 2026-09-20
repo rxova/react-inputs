@@ -82,8 +82,7 @@
     "react": "^19.2.8",
     "size-limit": "^13.0.3",
     "tsdown": "^0.22.14",
-    "typescript": "6.0.3",
-    "vitest": "^4.1.11"
+    "typescript": "6.0.3"
   },
   "publishConfig": {
     "access": "public",
