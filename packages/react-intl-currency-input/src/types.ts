@@ -13,7 +13,7 @@ import type {
  * visible, the caret stays put. `'blur'` shows a plain number while focused and
  * only formats once the field loses focus (no caret management at all).
  */
-export type FormatMode = 'live' | 'blur'
+type FormatMode = 'live' | 'blur'
 
 /**
  * How the currency is shown. Passed straight to `Intl.NumberFormat`'s

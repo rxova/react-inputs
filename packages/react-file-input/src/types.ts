@@ -1,5 +1,5 @@
 import type { CSSProperties, FocusEvent, ReactNode } from 'react'
-import type { FileAccepted, FileAttempt, FileRejected, FileRejection } from './files'
+import type { FileRejected } from './files'
 
 /** Stable machine code for a coerced or misconfigured input. Safe to `switch` on. */
 export type FileWarningCode =
@@ -147,5 +147,3 @@ export interface FileInputProps {
    */
   onWarn?: (warning: FileWarning) => void
 }
-
-export type { FileAccepted, FileAttempt, FileRejected, FileRejection }
