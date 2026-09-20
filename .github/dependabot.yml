@@ -1,34 +1,79 @@
 version: 2
+
+# Weekly, one grouped pull request per ecosystem, at most one open at a time.
+# `dependabot-auto-merge.yml` arms auto-merge on every Dependabot pull request
+# that carries no major bump, so these merge themselves once `all checks` goes
+# green — but only if they *can* go green, and the grouping below is what makes
+# that possible:
+#
+#   - Ungrouped, Dependabot bumps one package per pull request and leaves the
+#     rest of the lockfile on the old transitive versions. `dedupe:check` in the
+#     `audit · dedupe` job fails on exactly that, so each single-package bump
+#     went red and sat there with auto-merge armed and nothing to merge. That is
+#     what the previous `open-pull-requests-limit: 10` plus two partial groups
+#     produced every month: a handful of red pull requests nobody could merge.
+#   - `labels` is the part Dependabot cannot infer: `skip-changeset` is the
+#     escape hatch check-changeset.ts reads, and a bump changes what this
+#     repository builds with, never what it publishes, so there is no changelog
+#     entry to write. A gate that demanded one anyway would be answered with an
+#     empty changeset every week, which is how a gate stops meaning anything.
+#   - `commit-message.prefix` keeps the pull request title a valid commit
+#     subject — the title is the squash subject, and commitlint gates it in
+#     `pr-title.yml`.
+#
+# Dependabot silently drops a label that does not exist in the repository, so
+# both have to exist: `gh label create dependencies && gh label create skip-changeset`.
 updates:
+  # Workspace dependencies: every package.json plus pnpm-lock.yaml.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 1
+    labels: ['dependencies', 'skip-changeset']
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      # Everything in one pull request — the published packages' runtime
+      # dependencies, the dev toolchain, and the docs, storybook, playground and
+      # compat apps alike. Splitting them re-creates the lockfile problem above,
+      # because a group only deduplicates within itself.
+      npm-all:
+        applies-to: version-updates
+        patterns: ['*']
+      # Security fixes are grouped too, so an advisory batch is also one PR.
+      npm-security:
+        applies-to: security-updates
+        patterns: ['*']
+    ignore:
+      # TypeScript 7 is the native compiler rewrite, and it is held rather than
+      # skipped: typescript-eslint@8 declares its peer as `>=4.8.4 <6.1.0` and
+      # errors on sight of TS 7, which is the entire `lint` job.
+      #
+      # Without this entry Dependabot offers the same unmergeable bump every
+      # week and takes the whole group red with it, which is how a weekly red
+      # pull request stops being read at all.
+      #
+      # Lift it — delete this entry — once typescript-eslint accepts TS 7, and
+      # check by bumping typescript by hand and running `pnpm run verify`.
+      - dependency-name: typescript
+        versions: ['>=7']
+
+  # The Actions pinned in .github/workflows and .github/actions.
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
-  - package-ecosystem: npm
-    directory: /
-    schedule:
-      interval: monthly
-      time: '03:00'
-    open-pull-requests-limit: 10
-    ignore:
-      # TypeScript 7 is the native compiler rewrite. typescript-eslint@8 peers
-      # `typescript >=4.8.4 <6.1.0`, so adopting it silently drops every
-      # type-aware lint rule. Revisit when typescript-eslint ships TS 7
-      # support, then remove this entry rather than merging the bump blind.
-      - dependency-name: typescript
-        update-types: ['version-update:semver-major']
+    open-pull-requests-limit: 1
+    labels: ['dependencies', 'skip-changeset']
+    commit-message:
+      prefix: chore
+      include: scope
     groups:
-      # One PR per ecosystem cluster keeps review load sane on a small repo.
-      dev-tooling:
-        patterns: ['eslint*', '@eslint/*', 'typescript-eslint', 'prettier', 'husky', 'lint-staged']
-      testing:
-        patterns:
-          [
-            'vitest',
-            '@vitest/*',
-            'playwright',
-            '@playwright/*',
-            'vitest-browser-react',
-            'axe-core',
-            '@axe-core/*',
-          ]
+      actions-all:
+        applies-to: version-updates
+        patterns: ['*']
+      actions-security:
+        applies-to: security-updates
+        patterns: ['*']
