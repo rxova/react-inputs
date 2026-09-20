@@ -1,5 +1,5 @@
 import type { CSSProperties, FocusEvent, ReactNode } from 'react'
-import type { TagAttempt, TagRejection } from './tags'
+import type { TagAttempt } from './tags'
 
 /** Stable machine code for a coerced or misconfigured input. Safe to `switch` on. */
 export type TagsWarningCode =
@@ -139,5 +139,3 @@ export interface TagsInputProps {
    */
   onWarn?: (warning: TagsWarning) => void
 }
-
-export type { TagAttempt, TagRejection }

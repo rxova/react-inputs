@@ -11,7 +11,7 @@ const imported = import.meta.glob('../registry/*-field.{tsx,css}', {
   import: 'default',
 })
 
-export const registrySources = new Map(
+const registrySources = new Map(
   Object.entries(imported).map(([path, source]) => {
     const name = path.split('/').at(-1)
     if (!name || typeof source !== 'string') throw new Error(`invalid registry source ${path}`)
