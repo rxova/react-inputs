@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/@rxova/react-otp-input"><img src="https://img.shields.io/npm/v/@rxova/react-otp-input?color=cb3837&logo=npm&logoColor=white" alt="npm version" /></a>
   <a href="https://github.com/rxova/react-inputs/actions/workflows/ci.yml"><img src="https://github.com/rxova/react-inputs/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI status" /></a>
-  <img src="https://img.shields.io/badge/brotli-%E2%89%A4%204.5%20kB-6c5ce7" alt="Brotli size at most 4.5 kB" />
+  <img src="https://img.shields.io/badge/brotli-%E2%89%A4%204.7%20kB-6c5ce7" alt="Brotli size at most 4.7 kB" />
   <img src="https://img.shields.io/badge/coverage-95%25%2B-brightgreen" alt="Coverage 95% or more" />
   <img src="https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white" alt="TypeScript strict mode" />
   <img src="https://img.shields.io/badge/dependencies-0-44cc11" alt="Zero runtime dependencies" />
