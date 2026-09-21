@@ -115,7 +115,7 @@ describe('the native control holds only what the field shows', () => {
     await render(<Harness />)
     pick(makeFile('a.csv'))
     await vi.waitFor(() => {
-      expect(document.querySelector('[data-rx-file-name]')).toHaveTextContent('a.csv')
+      expect(document.querySelector('[data-rx-file-name]')).toMatchTextContent('a.csv')
     })
     expect(input().files).toHaveLength(1)
 
@@ -264,11 +264,11 @@ describe('formik via useField', () => {
     document.querySelector<HTMLButtonElement>('[data-rx-file-zone]')!.focus()
     document.querySelector<HTMLButtonElement>('[data-rx-file-remove]')!.focus()
 
-    await expect.element(page.getByTestId('touched')).toHaveTextContent('false')
+    await expect.element(page.getByTestId('touched')).toMatchTextContent('false')
 
     await page.getByRole('button', { name: 'Upload' }).click()
 
-    await expect.element(page.getByTestId('touched')).toHaveTextContent('true')
+    await expect.element(page.getByTestId('touched')).toMatchTextContent('true')
   })
 })
 

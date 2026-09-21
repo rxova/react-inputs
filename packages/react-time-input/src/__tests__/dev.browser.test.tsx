@@ -119,8 +119,8 @@ describe('labels', () => {
     const { container } = await render(
       <TimeInput label="T" locale="en-US" placeholders={{ hour: 'HH', dayPeriod: 'AM/PM' }} />,
     )
-    expect(seg(container, 'hour')).toHaveTextContent('HH')
-    expect(seg(container, 'dayPeriod')).toHaveTextContent('AM/PM')
+    expect(seg(container, 'hour')).toMatchTextContent('HH')
+    expect(seg(container, 'dayPeriod')).toMatchTextContent('AM/PM')
   })
 })
 
@@ -135,7 +135,7 @@ describe('renderSegment', () => {
       />,
     )
     const hour = seg(container, 'hour')
-    expect(hour.querySelector('b')).toHaveTextContent('09')
+    expect(hour.querySelector('b')).toMatchTextContent('09')
     expect(hour).toHaveAttribute('role', 'spinbutton')
     expect(hour).toHaveAttribute('aria-valuenow', '9')
   })
@@ -168,16 +168,16 @@ describe('arrow-down and clearing', () => {
     )
     seg(container, 'hour').focus()
     await userEvent.keyboard('{ArrowDown}')
-    expect(seg(container, 'hour')).toHaveTextContent('08')
+    expect(seg(container, 'hour')).toMatchTextContent('08')
     seg(container, 'minute').focus()
     await userEvent.keyboard('{ArrowDown}')
-    expect(seg(container, 'minute')).toHaveTextContent('29')
+    expect(seg(container, 'minute')).toMatchTextContent('29')
     seg(container, 'second').focus()
     await userEvent.keyboard('{ArrowDown}')
-    expect(seg(container, 'second')).toHaveTextContent('14')
+    expect(seg(container, 'second')).toMatchTextContent('14')
     seg(container, 'dayPeriod').focus()
     await userEvent.keyboard('{ArrowDown}')
-    expect(seg(container, 'dayPeriod')).toHaveTextContent('PM')
+    expect(seg(container, 'dayPeriod')).toMatchTextContent('PM')
   })
 
   it('lands on the segment minimum when stepping an empty segment', async () => {
@@ -185,31 +185,31 @@ describe('arrow-down and clearing', () => {
     seg(container, 'minute').focus()
     await userEvent.keyboard('{ArrowDown}')
     // First press selects the first value rather than stepping past it.
-    expect(seg(container, 'minute')).toHaveTextContent('00')
+    expect(seg(container, 'minute')).toMatchTextContent('00')
   })
 
   it('clears the hour, which clears the day period with it', async () => {
     const { container } = await render(<TimeInput label="T" locale="en-US" defaultValue="14:30" />)
     seg(container, 'hour').focus()
     await userEvent.keyboard('{Backspace}')
-    expect(seg(container, 'hour')).toHaveTextContent('hh')
+    expect(seg(container, 'hour')).toMatchTextContent('hh')
     // The period is derived from the hour, so it empties too rather than
     // claiming a half the field no longer has.
-    expect(seg(container, 'dayPeriod')).toHaveTextContent('--')
+    expect(seg(container, 'dayPeriod')).toMatchTextContent('--')
   })
 
   it('remembers a day period chosen before any hour is typed', async () => {
     const { container } = await render(<TimeInput label="T" locale="en-US" />)
     seg(container, 'dayPeriod').focus()
     await userEvent.keyboard('p')
-    expect(seg(container, 'dayPeriod')).toHaveTextContent('PM')
+    expect(seg(container, 'dayPeriod')).toMatchTextContent('PM')
     seg(container, 'hour').focus()
     await userEvent.keyboard('03')
     seg(container, 'minute').focus()
     await userEvent.keyboard('15')
     // 3 PM, not 3 AM: the earlier choice survived.
     expect(container.querySelector('[data-rx-time-root]')).toHaveAttribute('data-complete')
-    expect(seg(container, 'dayPeriod')).toHaveTextContent('PM')
+    expect(seg(container, 'dayPeriod')).toMatchTextContent('PM')
   })
 
   it('settles a half-typed number when focus moves to another segment', async () => {
@@ -229,7 +229,7 @@ describe('the headless hook', () => {
     const { container } = await render(<TimeInput label="T" locale="en-US" defaultValue="09:30" />)
     seg(container, 'dayPeriod').focus()
     await userEvent.keyboard('z')
-    expect(seg(container, 'dayPeriod')).toHaveTextContent('AM')
+    expect(seg(container, 'dayPeriod')).toMatchTextContent('AM')
   })
 
   it('exposes a clear() that empties every segment at once', async () => {
@@ -247,9 +247,9 @@ describe('the headless hook', () => {
       )
     }
     await render(<Harness />)
-    await expect.element(page.getByTestId('value')).toHaveTextContent('14:30')
+    await expect.element(page.getByTestId('value')).toMatchTextContent('14:30')
     await page.getByRole('button', { name: 'Clear all' }).click()
-    await expect.element(page.getByTestId('value')).toHaveTextContent('empty')
+    await expect.element(page.getByTestId('value')).toMatchTextContent('empty')
   })
 })
 
@@ -270,8 +270,8 @@ describe('read-only and controlled edges', () => {
     await userEvent.keyboard('11')
     seg(container, 'dayPeriod').focus()
     await userEvent.keyboard('p')
-    expect(seg(container, 'hour')).toHaveTextContent('09')
-    expect(seg(container, 'dayPeriod')).toHaveTextContent('AM')
+    expect(seg(container, 'hour')).toMatchTextContent('09')
+    expect(seg(container, 'dayPeriod')).toMatchTextContent('AM')
     expect(onChange).not.toHaveBeenCalled()
   })
 
@@ -281,14 +281,14 @@ describe('read-only and controlled edges', () => {
     )
     seg(container, 'minute').focus()
     await userEvent.keyboard('{Backspace}')
-    expect(seg(container, 'minute')).toHaveTextContent('30')
+    expect(seg(container, 'minute')).toMatchTextContent('30')
   })
 
   it('starts empty for an explicit null value', async () => {
     const { container } = await render(
       <TimeInput label="T" locale="en-GB" value={null} onChange={() => undefined} />,
     )
-    expect(seg(container, 'hour')).toHaveTextContent('hh')
+    expect(seg(container, 'hour')).toMatchTextContent('hh')
   })
 
   it('empties when a controlled value becomes null', async () => {
@@ -310,7 +310,7 @@ describe('read-only and controlled edges', () => {
     }
     const { container } = await render(<Harness />)
     await page.getByRole('button', { name: 'Clear' }).click()
-    expect(seg(container, 'hour')).toHaveTextContent('hh')
+    expect(seg(container, 'hour')).toMatchTextContent('hh')
   })
 
   it('settles a half-typed number when focus leaves', async () => {

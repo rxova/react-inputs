@@ -47,7 +47,7 @@ describe('selectCountry guards', () => {
     )
     await page.getByRole('button', { name: 'Pick' }).click()
     expect(onCountryChange).not.toHaveBeenCalled()
-    await expect.element(page.getByTestId('country')).toHaveTextContent('GB')
+    await expect.element(page.getByTestId('country')).toMatchTextContent('GB')
   })
 
   it('refuses a country change while read-only', async () => {
@@ -71,7 +71,7 @@ describe('selectCountry guards', () => {
     await render(<Harness defaultCountry="GB" probe="ZZ" onCountryChange={onCountryChange} />)
     await page.getByRole('button', { name: 'Pick' }).click()
     expect(onCountryChange).not.toHaveBeenCalled()
-    await expect.element(page.getByTestId('country')).toHaveTextContent('GB')
+    await expect.element(page.getByTestId('country')).toMatchTextContent('GB')
   })
 
   it('changes country and rebuilds the value when the code is known', async () => {
@@ -85,7 +85,7 @@ describe('selectCountry guards', () => {
     )
     await page.getByRole('button', { name: 'Pick' }).click()
     expect(onCountryChange).toHaveBeenCalledWith('FR')
-    await expect.element(page.getByTestId('value')).toHaveTextContent('+332071234567')
+    await expect.element(page.getByTestId('value')).toMatchTextContent('+332071234567')
   })
 })
 
@@ -204,8 +204,8 @@ describe('clear', () => {
 
     await userEvent.click(page.getByRole('button', { name: 'Clear' }))
 
-    await expect.element(page.getByTestId('value')).toHaveTextContent('empty')
-    await expect.element(page.getByTestId('country')).toHaveTextContent('GB')
+    await expect.element(page.getByTestId('value')).toMatchTextContent('empty')
+    await expect.element(page.getByTestId('country')).toMatchTextContent('GB')
     expect(onChange).toHaveBeenLastCalledWith('', expect.objectContaining({ e164: '' }))
   })
 
