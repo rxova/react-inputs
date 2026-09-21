@@ -138,11 +138,11 @@ describe('formik via useField', () => {
     await typeTags('react')
     document.querySelector<HTMLButtonElement>('[data-rx-tags-remove]')!.focus()
 
-    await expect.element(page.getByTestId('touched')).toHaveTextContent('false')
+    await expect.element(page.getByTestId('touched')).toMatchTextContent('false')
 
     await page.getByRole('button', { name: 'Save' }).click()
 
-    await expect.element(page.getByTestId('touched')).toHaveTextContent('true')
+    await expect.element(page.getByTestId('touched')).toMatchTextContent('true')
   })
 })
 

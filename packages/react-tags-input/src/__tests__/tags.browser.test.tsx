@@ -454,8 +454,8 @@ describe('clear', () => {
 
     await userEvent.click(page.getByRole('button', { name: 'Clear' }))
 
-    await expect.element(page.getByTestId('tags')).toHaveTextContent('empty')
-    await expect.element(page.getByTestId('text')).toHaveTextContent('empty')
+    await expect.element(page.getByTestId('tags')).toMatchTextContent('empty')
+    await expect.element(page.getByTestId('text')).toMatchTextContent('empty')
     expect(onChange).toHaveBeenCalledWith([])
   })
 
