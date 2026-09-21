@@ -1,5 +1,15 @@
 # @rxova/react-intl-currency-input
 
+## 1.0.2
+
+### Patch Changes
+
+- [#103](https://github.com/rxova/react-inputs/pull/103) [`50e4f4a`](https://github.com/rxova/react-inputs/commit/50e4f4a37cfcd2313a4505e924caa5a9dbb92ae8) - Size budgets restated for size-limit 14
+  
+  size-limit 14 bundles with rolldown instead of esbuild, and reads the same `dist/` about 230 B
+  heavier for `OtpInput` and 80 B heavier for `CurrencyInput`. The shipped code did not grow. The
+  budgets move to 4.7 kB and 3.35 kB, and the README badges follow.
+
 ## 1.0.1
 
 ### Patch Changes
