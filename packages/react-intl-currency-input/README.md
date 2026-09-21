@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/@rxova/react-intl-currency-input"><img src="https://img.shields.io/npm/v/@rxova/react-intl-currency-input?color=cb3837&logo=npm&logoColor=white" alt="npm version" /></a>
   <a href="https://github.com/rxova/react-inputs/actions/workflows/ci.yml"><img src="https://github.com/rxova/react-inputs/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI status" /></a>
-  <img src="https://img.shields.io/badge/brotli-%E2%89%A4%203.25%20kB-blue" alt="Brotli size at most 3.25 kB" />
+  <img src="https://img.shields.io/badge/brotli-%E2%89%A4%203.35%20kB-blue" alt="Brotli size at most 3.35 kB" />
   <img src="https://img.shields.io/badge/coverage%20threshold-95%25-brightgreen" alt="Coverage threshold: 95% per file" />
   <img src="https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white" alt="TypeScript strict mode" />
   <img src="https://img.shields.io/badge/dependencies-0-44cc11" alt="Zero runtime dependencies" />

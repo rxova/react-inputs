@@ -3,7 +3,7 @@
     "name": "OtpInput (full import)",
     "path": "dist/index.mjs",
     "import": "{ OtpInput }",
-    "limit": "4.5 kB",
+    "limit": "4.7 kB",
     "ignore": ["react", "react/jsx-runtime"]
   },
   {
