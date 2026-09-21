@@ -99,6 +99,44 @@ overrides:
 # `serialize-javascript` and `uuid` overrides went with it: both existed for
 # Docusaurus's webpack plugins and its sockjs dev server, and neither package
 # resolves in the tree at all any more.
+# The form libraries every package tests against import `react` in their type
+# declarations without declaring `@types/react`, so TypeScript finds whichever
+# copy pnpm hoisted into node_modules/.pnpm/node_modules. That is 19 for the
+# whole workspace, including a package whose `test:react-min` has just swapped
+# its own `@types/react` to 18. With two copies of `ReactNode` meeting, every
+# form component "cannot be used as a JSX component". pnpm 11 happened to
+# re-hoist 18 after that `pnpm add`; pnpm 12 does not, and it is not something
+# to rely on either way.
+#
+# An optional peer is the declaration these packages are missing — it is what
+# @radix-ui/react-form already ships. Each importer then links its own
+# `@types/react` into them, so the React 18 run checks against 18 types
+# throughout.
+packageExtensions:
+  '@tanstack/react-form':
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+  formik:
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+  react-final-form:
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+  react-hook-form:
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
 allowBuilds:
   core-js: false
   esbuild: true

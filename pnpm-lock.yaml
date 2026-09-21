@@ -176,6 +176,8 @@ overrides:
   qs@6: '>=6.16.0 <7'
   devalue@5: '>=5.9.2 <6'
 
+packageExtensionsChecksum: sha256-Rdgja8XO+NVsaMTGYNKUv117YdMKCAQhTcaAMRb/AJA=
+
 importers:
 
   .:
@@ -516,7 +518,7 @@ importers:
         version: link:../../packages/react-time-input
       '@tanstack/react-form':
         specifier: ^1.33.5
-        version: 1.33.5(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 1.33.5(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       final-form:
         specifier: ^5.0.1
         version: 5.0.1
@@ -531,10 +533,10 @@ importers:
         version: 19.3.0(react@19.3.0)
       react-final-form:
         specifier: ^7.0.1
-        version: 7.0.1(final-form@5.0.1)(react@19.3.0)
+        version: 7.0.1(@types/react@19.3.0)(final-form@5.0.1)(react@19.3.0)
       react-hook-form:
         specifier: ^7.88.0
-        version: 7.88.0(react@19.3.0)
+        version: 7.88.0(@types/react@19.3.0)(react@19.3.0)
     devDependencies:
       '@types/react':
         specifier: ^19.3.0
@@ -672,7 +674,7 @@ importers:
         version: 14.0.0(size-limit@14.0.0)
       '@tanstack/react-form':
         specifier: ^1.33.5
-        version: 1.33.5(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 1.33.5(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@types/node':
         specifier: ^26.6.1
         version: 26.6.1
@@ -714,10 +716,10 @@ importers:
         version: 19.3.0(react@19.3.0)
       react-final-form:
         specifier: ^7.0.1
-        version: 7.0.1(final-form@5.0.1)(react@19.3.0)
+        version: 7.0.1(@types/react@19.3.0)(final-form@5.0.1)(react@19.3.0)
       react-hook-form:
         specifier: ^7.88.0
-        version: 7.88.0(react@19.3.0)
+        version: 7.88.0(@types/react@19.3.0)(react@19.3.0)
       size-limit:
         specifier: ^14.0.0
         version: 14.0.0
@@ -750,7 +752,7 @@ importers:
         version: 14.0.0(size-limit@14.0.0)
       '@tanstack/react-form':
         specifier: ^1.33.5
-        version: 1.33.5(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 1.33.5(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@types/node':
         specifier: ^26.6.1
         version: 26.6.1
@@ -792,10 +794,10 @@ importers:
         version: 19.3.0(react@19.3.0)
       react-final-form:
         specifier: ^7.0.1
-        version: 7.0.1(final-form@5.0.1)(react@19.3.0)
+        version: 7.0.1(@types/react@19.3.0)(final-form@5.0.1)(react@19.3.0)
       react-hook-form:
         specifier: ^7.88.0
-        version: 7.88.0(react@19.3.0)
+        version: 7.88.0(@types/react@19.3.0)(react@19.3.0)
       size-limit:
         specifier: ^14.0.0
         version: 14.0.0
@@ -889,7 +891,7 @@ importers:
         version: 14.0.0(size-limit@14.0.0)
       '@tanstack/react-form':
         specifier: ^1.33.5
-        version: 1.33.5(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 1.33.5(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@types/node':
         specifier: ^26.6.1
         version: 26.6.1
@@ -931,10 +933,10 @@ importers:
         version: 19.3.0(react@19.3.0)
       react-final-form:
         specifier: ^7.0.1
-        version: 7.0.1(final-form@5.0.1)(react@19.3.0)
+        version: 7.0.1(@types/react@19.3.0)(final-form@5.0.1)(react@19.3.0)
       react-hook-form:
         specifier: ^7.88.0
-        version: 7.88.0(react@19.3.0)
+        version: 7.88.0(@types/react@19.3.0)(react@19.3.0)
       size-limit:
         specifier: ^14.0.0
         version: 14.0.0
@@ -967,7 +969,7 @@ importers:
         version: 14.0.0(size-limit@14.0.0)
       '@tanstack/react-form':
         specifier: ^1.33.5
-        version: 1.33.5(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 1.33.5(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@types/node':
         specifier: ^26.6.1
         version: 26.6.1
@@ -1009,10 +1011,10 @@ importers:
         version: 19.3.0(react@19.3.0)
       react-final-form:
         specifier: ^7.0.1
-        version: 7.0.1(final-form@5.0.1)(react@19.3.0)
+        version: 7.0.1(@types/react@19.3.0)(final-form@5.0.1)(react@19.3.0)
       react-hook-form:
         specifier: ^7.88.0
-        version: 7.88.0(react@19.3.0)
+        version: 7.88.0(@types/react@19.3.0)(react@19.3.0)
       size-limit:
         specifier: ^14.0.0
         version: 14.0.0
@@ -1045,7 +1047,7 @@ importers:
         version: 14.0.0(size-limit@14.0.0)
       '@tanstack/react-form':
         specifier: ^1.33.5
-        version: 1.33.5(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 1.33.5(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@types/node':
         specifier: ^26.6.1
         version: 26.6.1
@@ -1087,10 +1089,10 @@ importers:
         version: 19.3.0(react@19.3.0)
       react-final-form:
         specifier: ^7.0.1
-        version: 7.0.1(final-form@5.0.1)(react@19.3.0)
+        version: 7.0.1(@types/react@19.3.0)(final-form@5.0.1)(react@19.3.0)
       react-hook-form:
         specifier: ^7.88.0
-        version: 7.88.0(react@19.3.0)
+        version: 7.88.0(@types/react@19.3.0)(react@19.3.0)
       size-limit:
         specifier: ^14.0.0
         version: 14.0.0
@@ -1123,7 +1125,7 @@ importers:
         version: 14.0.0(size-limit@14.0.0)
       '@tanstack/react-form':
         specifier: ^1.33.5
-        version: 1.33.5(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 1.33.5(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@types/node':
         specifier: ^26.6.1
         version: 26.6.1
@@ -1165,10 +1167,10 @@ importers:
         version: 19.3.0(react@19.3.0)
       react-final-form:
         specifier: ^7.0.1
-        version: 7.0.1(final-form@5.0.1)(react@19.3.0)
+        version: 7.0.1(@types/react@19.3.0)(final-form@5.0.1)(react@19.3.0)
       react-hook-form:
         specifier: ^7.88.0
-        version: 7.88.0(react@19.3.0)
+        version: 7.88.0(@types/react@19.3.0)(react@19.3.0)
       size-limit:
         specifier: ^14.0.0
         version: 14.0.0
@@ -1201,7 +1203,7 @@ importers:
         version: 14.0.0(size-limit@14.0.0)
       '@tanstack/react-form':
         specifier: ^1.33.5
-        version: 1.33.5(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 1.33.5(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@types/node':
         specifier: ^26.6.1
         version: 26.6.1
@@ -1243,10 +1245,10 @@ importers:
         version: 19.3.0(react@19.3.0)
       react-final-form:
         specifier: ^7.0.1
-        version: 7.0.1(final-form@5.0.1)(react@19.3.0)
+        version: 7.0.1(@types/react@19.3.0)(final-form@5.0.1)(react@19.3.0)
       react-hook-form:
         specifier: ^7.88.0
-        version: 7.88.0(react@19.3.0)
+        version: 7.88.0(@types/react@19.3.0)(react@19.3.0)
       size-limit:
         specifier: ^14.0.0
         version: 14.0.0
@@ -1279,7 +1281,7 @@ importers:
         version: 14.0.0(size-limit@14.0.0)
       '@tanstack/react-form':
         specifier: ^1.33.5
-        version: 1.33.5(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 1.33.5(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@types/node':
         specifier: ^26.6.1
         version: 26.6.1
@@ -1321,10 +1323,10 @@ importers:
         version: 19.3.0(react@19.3.0)
       react-final-form:
         specifier: ^7.0.1
-        version: 7.0.1(final-form@5.0.1)(react@19.3.0)
+        version: 7.0.1(@types/react@19.3.0)(final-form@5.0.1)(react@19.3.0)
       react-hook-form:
         specifier: ^7.88.0
-        version: 7.88.0(react@19.3.0)
+        version: 7.88.0(@types/react@19.3.0)(react@19.3.0)
       size-limit:
         specifier: ^14.0.0
         version: 14.0.0
@@ -1357,7 +1359,7 @@ importers:
         version: 14.0.0(size-limit@14.0.0)
       '@tanstack/react-form':
         specifier: ^1.33.5
-        version: 1.33.5(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 1.33.5(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@types/node':
         specifier: ^26.6.1
         version: 26.6.1
@@ -1399,10 +1401,10 @@ importers:
         version: 19.3.0(react@19.3.0)
       react-final-form:
         specifier: ^7.0.1
-        version: 7.0.1(final-form@5.0.1)(react@19.3.0)
+        version: 7.0.1(@types/react@19.3.0)(final-form@5.0.1)(react@19.3.0)
       react-hook-form:
         specifier: ^7.88.0
-        version: 7.88.0(react@19.3.0)
+        version: 7.88.0(@types/react@19.3.0)(react@19.3.0)
       size-limit:
         specifier: ^14.0.0
         version: 14.0.0
@@ -5205,9 +5207,12 @@ packages:
     resolution: {integrity: sha512-LlRB28qJwO/QCGaHvWnbdh4haBgTFiZVmzA2uzxSBS3YA7/IqrQ6HOBK70CkFQ+DbflZ7NawsmSln13h5iIdTA==}
     peerDependencies:
       '@tanstack/react-start': '*'
+      '@types/react': '*'
       react: ^17.0.0 || ^18.0.0 || ^19.0.0
     peerDependenciesMeta:
       '@tanstack/react-start':
+        optional: true
+      '@types/react':
         optional: true
 
   '@tanstack/react-store@0.11.1':
@@ -6873,7 +6878,11 @@ packages:
   formik@2.4.9:
     resolution: {integrity: sha512-5nI94BMnlFDdQRBY4Sz39WkhxajZJ57Fzs8wVbtsQlm5ScKIR1QLYqv/ultBnobObtlUyxpxoLodpixrsf36Og==}
     peerDependencies:
+      '@types/react': '*'
       react: '>=16.8.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
 
   forwarded@0.2.0:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
@@ -8125,14 +8134,22 @@ packages:
   react-final-form@7.0.1:
     resolution: {integrity: sha512-8K1ITLecBI7F+jCxiMA/JI1amHT/+klQB+nhl5YFZu3R1sQftbiQk/UfwRDvE7ZxIqIvCf8nYLDQRrfwaDT3kQ==}
     peerDependencies:
+      '@types/react': '*'
       final-form: ^5.0.0
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
 
   react-hook-form@7.88.0:
     resolution: {integrity: sha512-QRaLOWhX93YCnMiRfnOFRSwWXZNt8qhm2JTZwypoDvKpSffTJHmpzMXt8U6PV5UThvL3IiiLDUWe2nHMtz6Mmw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
+      '@types/react': '*'
       react: ^16.8.0 || ^17 || ^18 || ^19
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -13523,11 +13540,13 @@ snapshots:
 
   '@tanstack/pacer-lite@0.1.1': {}
 
-  '@tanstack/react-form@1.33.5(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
+  '@tanstack/react-form@1.33.5(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
     dependencies:
       '@tanstack/form-core': 1.33.5
       '@tanstack/react-store': 0.11.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       react: 19.3.0
+    optionalDependencies:
+      '@types/react': 19.3.0
     transitivePeerDependencies:
       - react-dom
 
@@ -15731,8 +15750,8 @@ snapshots:
       react-fast-compare: 2.0.4
       tiny-warning: 1.0.3
       tslib: 2.8.1
-    transitivePeerDependencies:
-      - '@types/react'
+    optionalDependencies:
+      '@types/react': 19.3.0
 
   forwarded@0.2.0: {}
 
@@ -17444,15 +17463,19 @@ snapshots:
 
   react-fast-compare@2.0.4: {}
 
-  react-final-form@7.0.1(final-form@5.0.1)(react@19.3.0):
+  react-final-form@7.0.1(@types/react@19.3.0)(final-form@5.0.1)(react@19.3.0):
     dependencies:
       '@babel/runtime': 7.29.7
       final-form: 5.0.1
       react: 19.3.0
+    optionalDependencies:
+      '@types/react': 19.3.0
 
-  react-hook-form@7.88.0(react@19.3.0):
+  react-hook-form@7.88.0(@types/react@19.3.0)(react@19.3.0):
     dependencies:
       react: 19.3.0
+    optionalDependencies:
+      '@types/react': 19.3.0
 
   react-is@16.13.1: {}
 
