@@ -27,32 +27,30 @@ const { title, lede, actions } = Astro.props
   <h2 class="rx-cta__title">{title}</h2>
   <p class="rx-cta__lede">{lede}</p>
   <div class="rx-cta__actions">
-    {
-      actions.map((action) => (
-        <a
-          class:list={['rx-btn', `rx-btn--${action.variant ?? 'minimal'}`]}
-          href={action.href}
-          rel={action.external ? 'noopener' : undefined}
-        >
-          {action.text}
-          {action.external && (
-            <svg
-              viewBox="0 0 24 24"
-              width="14"
-              height="14"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
-            </svg>
-          )}
-        </a>
-      ))
-    }
+    {actions.map((action) => (
+      <a
+        class:list={['rx-btn', `rx-btn--${action.variant ?? 'minimal'}`]}
+        href={action.href}
+        rel={action.external ? 'noopener' : undefined}
+      >
+        {action.text}
+        {action.external && (
+          <svg
+            viewBox="0 0 24 24"
+            width="14"
+            height="14"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+          </svg>
+        )}
+      </a>
+    ))}
   </div>
 </aside>
 

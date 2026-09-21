@@ -48,29 +48,27 @@ const { items } = Astro.props
 ---
 
 <ul class="rx-vg">
-  {
-    items.map((item) => (
-      <li class="rx-vg__item">
-        <span class="rx-vg__badge">
-          <svg
-            class="rx-vg__icon"
-            viewBox="0 0 24 24"
-            width="22"
-            height="22"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-            set:html={glyph(item.icon)}
-          />
-        </span>
-        <h3 class="rx-vg__title">{item.title}</h3>
-        <p class="rx-vg__body" set:html={item.body} />
-      </li>
-    ))
-  }
+  {items.map((item) => (
+    <li class="rx-vg__item">
+      <span class="rx-vg__badge">
+        <svg
+          class="rx-vg__icon"
+          viewBox="0 0 24 24"
+          width="22"
+          height="22"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          set:html={glyph(item.icon)}
+        />
+      </span>
+      <h3 class="rx-vg__title">{item.title}</h3>
+      <p class="rx-vg__body" set:html={item.body} />
+    </li>
+  ))}
 </ul>
 
 <style>

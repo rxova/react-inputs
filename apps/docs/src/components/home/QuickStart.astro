@@ -23,19 +23,26 @@ const { command } = Astro.props
   <div class="rx-qs__pane">
     <p class="rx-qs__label">Install</p>
     <div class="rx-qs__term">
-      <code class="rx-qs__cmd"
-        ><span class="rx-qs__prompt" aria-hidden="true">$</span>{command}</code
-      >
+      <code class="rx-qs__cmd">
+        <span class="rx-qs__prompt" aria-hidden="true">
+          $
+        </span>
+        {command}
+      </code>
       <button class="rx-qs__copy" type="button" data-copy={command}>
         <span class="rx-qs__copy-idle">Copy</span>
-        <span class="rx-qs__copy-done" aria-hidden="true">Copied</span>
+        <span class="rx-qs__copy-done" aria-hidden="true">
+          Copied
+        </span>
       </button>
     </div>
   </div>
 
   <div class="rx-qs__pane">
     <p class="rx-qs__label">Use</p>
-    <div class="rx-qs__code"><slot /></div>
+    <div class="rx-qs__code">
+      <slot />
+    </div>
   </div>
 </div>
 
