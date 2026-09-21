@@ -73,6 +73,6 @@ a plausible future option.
   via OIDC trusted publishing, so there is no long-lived npm token to leak.
 - `pnpm audit --audit-level=high` runs in CI and gates both pull requests and the release path.
 - CodeQL analysis runs via GitHub's default code-scanning setup.
-- Dependency updates arrive through Dependabot and go through the same CI gate.
+- Dependency updates arrive through Renovate and go through the same CI gate.
 - A `minimumReleaseAge` quarantine in `pnpm-workspace.yaml` holds back freshly published
   dependency versions until they have aged, reducing exposure to compromised releases.
