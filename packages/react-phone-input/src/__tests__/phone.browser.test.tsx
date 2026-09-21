@@ -388,7 +388,7 @@ describe('validity feedback', () => {
     )
     await userEvent.fill(input(container), '415555')
     await page.getByRole('button', { name: 'elsewhere' }).click()
-    expect(feedback(container)).toHaveTextContent('not a length used by United States numbers')
+    expect(feedback(container)).toMatchTextContent('not a length used by United States numbers')
     expect(input(container)).toHaveAttribute('aria-invalid', 'true')
   })
 
@@ -401,7 +401,7 @@ describe('validity feedback', () => {
     )
     await userEvent.fill(input(container), '4155552671')
     await page.getByRole('button', { name: 'elsewhere' }).click()
-    expect(feedback(container)).toHaveTextContent('United States')
+    expect(feedback(container)).toMatchTextContent('United States')
     expect(feedback(container)).toHaveAttribute('data-possible')
     expect(input(container)).not.toHaveAttribute('aria-invalid')
   })
@@ -447,7 +447,7 @@ describe('validity feedback', () => {
     )
     await userEvent.fill(input(container), '415')
     await page.getByRole('button', { name: 'elsewhere' }).click()
-    expect(feedback(container)).toHaveTextContent('')
+    expect(feedback(container)).toMatchTextContent('')
   })
 
   it('stays quiet when showValidity is off', async () => {

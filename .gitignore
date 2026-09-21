@@ -6,6 +6,7 @@ coverage/
 .DS_Store
 .turbo/
 .vitest-attachments/
+.vitest/
 # Vitest browser failure screenshots. No visual-regression baselines are
 # committed yet; when toMatchScreenshot lands, un-ignore the baseline dir.
 **/__screenshots__/

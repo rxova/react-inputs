@@ -249,7 +249,7 @@ describe('hostile input', () => {
     await vi.waitFor(() => {
       expect(names(container)).toEqual(['empty.txt'])
     })
-    expect(container.querySelector('[data-rx-file-size]')).toHaveTextContent('0 B')
+    expect(container.querySelector('[data-rx-file-size]')).toMatchTextContent('0 B')
   })
 
   it('handles a file with no extension and no type', async () => {

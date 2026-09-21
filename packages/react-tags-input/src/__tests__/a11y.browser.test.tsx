@@ -87,10 +87,10 @@ describe('semantics', () => {
 
     box(container).focus()
     await userEvent.keyboard('react{Enter}')
-    expect(live).toHaveTextContent('Added react. 1 tag.')
+    expect(live).toMatchTextContent('Added react. 1 tag.')
 
     await page.getByRole('button', { name: 'Remove react' }).click()
-    expect(live).toHaveTextContent('Removed react. 0 tags.')
+    expect(live).toMatchTextContent('Removed react. 0 tags.')
   })
 
   it('accepts a custom announcer', async () => {
@@ -99,7 +99,7 @@ describe('semantics', () => {
     )
     box(container).focus()
     await userEvent.keyboard('react{Enter}')
-    expect(container.querySelector('[data-rx-tags-announcement]')).toHaveTextContent('add:react')
+    expect(container.querySelector('[data-rx-tags-announcement]')).toMatchTextContent('add:react')
   })
 
   it('wires invalid state to aria-invalid and data-invalid', async () => {

@@ -136,7 +136,7 @@ describe('renderSegment', () => {
       />,
     )
     const day = segment(container, 'day')
-    expect(day.querySelector('b')).toHaveTextContent('15')
+    expect(day.querySelector('b')).toMatchTextContent('15')
     // The spinbutton role and value still come from the component.
     expect(day).toHaveAttribute('role', 'spinbutton')
     expect(day).toHaveAttribute('aria-valuenow', '15')
@@ -179,7 +179,7 @@ describe('read-only', () => {
     )
     segment(container, 'day').focus()
     await userEvent.keyboard('27')
-    expect(segment(container, 'day')).toHaveTextContent('15')
+    expect(segment(container, 'day')).toMatchTextContent('15')
     expect(onChange).not.toHaveBeenCalled()
   })
 
@@ -195,7 +195,7 @@ describe('read-only', () => {
     )
     segment(container, 'month').focus()
     await userEvent.keyboard('{Backspace}')
-    expect(segment(container, 'month')).toHaveTextContent('03')
+    expect(segment(container, 'month')).toMatchTextContent('03')
   })
 })
 
@@ -204,6 +204,6 @@ describe('controlled edges', () => {
     const { container } = await render(
       <DateInput label="Date" locale="en-GB" value={null} onChange={() => undefined} />,
     )
-    expect(segment(container, 'day')).toHaveTextContent('dd')
+    expect(segment(container, 'day')).toMatchTextContent('dd')
   })
 })

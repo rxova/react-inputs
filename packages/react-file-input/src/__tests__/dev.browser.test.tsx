@@ -103,7 +103,7 @@ describe('render props', () => {
         )}
       />,
     )
-    expect(container.querySelector('[data-custom]')).toHaveTextContent('a.txt (10 B)')
+    expect(container.querySelector('[data-custom]')).toMatchTextContent('a.txt (10 B)')
     await expect.element(page.getByRole('button', { name: 'Remove a.txt' })).toBeInTheDocument()
   })
 
@@ -175,9 +175,9 @@ describe('render props', () => {
     }
     await render(<Harness />)
     await page.getByRole('button', { name: 'Remove first' }).click()
-    await expect.element(page.getByTestId('say')).toHaveTextContent('remove 1')
+    await expect.element(page.getByTestId('say')).toMatchTextContent('remove 1')
     await page.getByRole('button', { name: 'Clear' }).click()
-    await expect.element(page.getByTestId('say')).toHaveTextContent('remove 0')
+    await expect.element(page.getByTestId('say')).toMatchTextContent('remove 0')
     expect(seen).toEqual(['remove/1', 'remove/0'])
   })
 
@@ -249,7 +249,7 @@ describe('refs and the headless hook', () => {
     }
     await render(<Harness />)
     await page.getByRole('button', { name: 'Read ref' }).click()
-    await expect.element(page.getByTestId('tag')).toHaveTextContent('file')
+    await expect.element(page.getByTestId('tag')).toMatchTextContent('file')
   })
 
   it('exposes clear(), which empties the selection at once', async () => {
@@ -265,9 +265,9 @@ describe('refs and the headless hook', () => {
       )
     }
     await render(<Harness />)
-    await expect.element(page.getByTestId('count')).toHaveTextContent('2')
+    await expect.element(page.getByTestId('count')).toMatchTextContent('2')
     await page.getByRole('button', { name: 'Clear' }).click()
-    await expect.element(page.getByTestId('count')).toHaveTextContent('0')
+    await expect.element(page.getByTestId('count')).toMatchTextContent('0')
   })
 
   it('does nothing when clear() is called on an empty field', async () => {
@@ -305,7 +305,7 @@ describe('refs and the headless hook', () => {
     }
     await render(<Harness />)
     await page.getByRole('button', { name: 'Remove ghost' }).click()
-    await expect.element(page.getByTestId('count')).toHaveTextContent('1')
+    await expect.element(page.getByTestId('count')).toMatchTextContent('1')
     expect(onRemove).not.toHaveBeenCalled()
   })
 
@@ -341,7 +341,7 @@ describe('refs and the headless hook', () => {
     for (const name of ['Add', 'Remove', 'Clear']) {
       await page.getByRole('button', { name }).click()
     }
-    await expect.element(page.getByTestId('count')).toHaveTextContent('1')
+    await expect.element(page.getByTestId('count')).toMatchTextContent('1')
   })
 
   it('ignores an empty addFiles call', async () => {

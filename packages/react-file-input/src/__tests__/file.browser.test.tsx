@@ -62,7 +62,7 @@ describe('choosing files', () => {
     const { container } = await render(<FileInput label="Files" />)
     await pick(container, [makeFile('big.bin', { size: 1500 })])
     await vi.waitFor(() => {
-      expect(container.querySelector('[data-rx-file-size]')).toHaveTextContent('1.5 kB')
+      expect(container.querySelector('[data-rx-file-size]')).toMatchTextContent('1.5 kB')
     })
   })
 

@@ -125,7 +125,7 @@ describe('semantics', () => {
   it('takes a custom hint', async () => {
     await render(<FileInput label="Files" hint="Drop your CV here" />)
     await expect
-      .element(page.getByRole('button', { name: 'Drop your CV here' }))
+      .element(page.getByRole('button', { name: /Drop your CV here/ }))
       .toBeInTheDocument()
   })
 
@@ -210,7 +210,7 @@ describe('semantics', () => {
     const live = container.querySelector('[data-rx-file-announcement]')!
     expect(live).toHaveAttribute('aria-live', 'polite')
     await page.getByRole('button', { name: 'Remove a.txt' }).click()
-    expect(live).toHaveTextContent('Removed a.txt')
+    expect(live).toMatchTextContent('Removed a.txt')
   })
 
   it('moves focus to the next file after a removal, never to the body', async () => {
@@ -269,7 +269,7 @@ describe('semantics', () => {
     await userEvent.tab()
     expect(document.activeElement).toBe(zone(container))
     await userEvent.tab()
-    expect(document.activeElement).toHaveTextContent('after')
+    expect(document.activeElement).toMatchTextContent('after')
     expect(input(container).tabIndex).toBe(-1)
   })
 

@@ -127,7 +127,7 @@ describe('refs and labels', () => {
     }
     await render(<Harness />)
     await page.getByRole('button', { name: 'Read ref' }).click()
-    await expect.element(page.getByTestId('tag')).toHaveTextContent('INPUT')
+    await expect.element(page.getByTestId('tag')).toMatchTextContent('INPUT')
   })
 
   it('renders without a label element when none is given', async () => {

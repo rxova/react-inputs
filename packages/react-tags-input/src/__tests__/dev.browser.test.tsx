@@ -81,7 +81,7 @@ describe('render props and labels', () => {
         renderTag={(state) => <b data-index={state.index}>{state.tag.toUpperCase()}</b>}
       />,
     )
-    expect(container.querySelector('[data-rx-tags-label] b')).toHaveTextContent('REACT')
+    expect(container.querySelector('[data-rx-tags-label] b')).toMatchTextContent('REACT')
     // The remove button is still named after the real tag, not the rendering.
     await expect.element(page.getByRole('button', { name: 'Remove react' })).toBeInTheDocument()
   })
@@ -137,7 +137,7 @@ describe('refs', () => {
     }
     await render(<Harness />)
     await page.getByRole('button', { name: 'Read ref' }).click()
-    await expect.element(page.getByTestId('tag')).toHaveTextContent('entry')
+    await expect.element(page.getByTestId('tag')).toMatchTextContent('entry')
   })
 })
 
@@ -226,7 +226,7 @@ describe('guards', () => {
     }
     await render(<Harness />)
     await page.getByRole('button', { name: 'Move' }).click()
-    await expect.element(page.getByTestId('active')).toHaveTextContent('-1')
+    await expect.element(page.getByTestId('active')).toMatchTextContent('-1')
   })
 
   it('ignores removeAt for an index that does not exist', async () => {
@@ -249,7 +249,7 @@ describe('guards', () => {
     }
     await render(<Harness />)
     await page.getByRole('button', { name: 'Remove ghost' }).click()
-    await expect.element(page.getByTestId('count')).toHaveTextContent('1')
+    await expect.element(page.getByTestId('count')).toMatchTextContent('1')
     expect(onRemove).not.toHaveBeenCalled()
   })
 
@@ -311,7 +311,7 @@ describe('guards', () => {
     await render(<Harness />)
     // No tag has DOM focus, so the move starts from the roving index.
     await page.getByRole('button', { name: 'Move' }).click()
-    await expect.element(page.getByTestId('active')).toHaveTextContent('1')
+    await expect.element(page.getByTestId('active')).toMatchTextContent('1')
   })
 
   it('refuses addTag and removeAt while read-only', async () => {
@@ -342,7 +342,7 @@ describe('guards', () => {
     await render(<Harness />)
     await page.getByRole('button', { name: 'Add' }).click()
     await page.getByRole('button', { name: 'Remove' }).click()
-    await expect.element(page.getByTestId('tags')).toHaveTextContent('a')
+    await expect.element(page.getByTestId('tags')).toMatchTextContent('a')
   })
 
   it('reports the same problem once even when the effect re-runs', async () => {
@@ -394,6 +394,6 @@ describe('guards', () => {
     }
     await render(<Harness />)
     await page.getByRole('button', { name: 'Add' }).click()
-    await expect.element(page.getByTestId('tags')).toHaveTextContent('added')
+    await expect.element(page.getByTestId('tags')).toMatchTextContent('added')
   })
 })

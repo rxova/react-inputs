@@ -129,7 +129,7 @@ describe('refs', () => {
     }
     await render(<Harness />)
     await page.getByRole('button', { name: 'Read ref' }).click()
-    await expect.element(page.getByTestId('tag')).toHaveTextContent('INPUT')
+    await expect.element(page.getByTestId('tag')).toMatchTextContent('INPUT')
   })
 })
 
@@ -154,7 +154,7 @@ describe('edges', () => {
     )
     const meter = container.querySelector('[data-rx-password-meter]')!
     expect(meter).not.toHaveAttribute('aria-valuetext')
-    expect(container.querySelector('[data-rx-password-strength-label]')).toHaveTextContent(
+    expect(container.querySelector('[data-rx-password-strength-label]')).toMatchTextContent(
       'Weak-ish',
     )
   })
@@ -223,7 +223,7 @@ describe('edges', () => {
     )
     await userEvent.fill(container.querySelector('[data-rx-password-input]')!, 'hunter2')
     await vi.waitFor(() => {
-      expect(container.querySelector('[data-rx-password-announcement]')).toHaveTextContent(
+      expect(container.querySelector('[data-rx-password-announcement]')).toMatchTextContent(
         'Checking password',
       )
     })

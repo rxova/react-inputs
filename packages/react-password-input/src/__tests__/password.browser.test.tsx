@@ -132,9 +132,9 @@ describe('masking and the reveal toggle', () => {
       />,
     )
     const button = page.getByRole('button', { name: 'Peek' })
-    await expect.element(button).toHaveTextContent('on')
+    await expect.element(button).toMatchTextContent('on')
     await button.click()
-    await expect.element(page.getByRole('button', { name: 'Conceal' })).toHaveTextContent('off')
+    await expect.element(page.getByRole('button', { name: 'Conceal' })).toMatchTextContent('off')
   })
 
   it('accepts a static string label and node icon', async () => {
@@ -176,7 +176,7 @@ describe('value', () => {
   it('follows the parent when controlled', async () => {
     const { container } = await render(<Controlled />)
     await userEvent.fill(container.querySelector('[data-rx-password-input]')!, 'secret')
-    await expect.element(page.getByTestId('mirror')).toHaveTextContent('secret')
+    await expect.element(page.getByTestId('mirror')).toMatchTextContent('secret')
   })
 
   it('refuses input while disabled or read-only', async () => {
@@ -247,7 +247,7 @@ describe('Caps Lock', () => {
     input.focus()
 
     typeWithCapsLock(input, true)
-    await expect.element(page.getByRole('status')).toHaveTextContent('Caps Lock is on')
+    await expect.element(page.getByRole('status')).toMatchTextContent('Caps Lock is on')
 
     typeWithCapsLock(input, false)
     await vi.waitFor(() => {
@@ -281,7 +281,7 @@ describe('Caps Lock', () => {
     const input = container.querySelector<HTMLInputElement>('[data-rx-password-input]')!
     input.focus()
     typeWithCapsLock(input, true)
-    await expect.element(page.getByRole('status')).toHaveTextContent('MAJUSCULES')
+    await expect.element(page.getByRole('status')).toMatchTextContent('MAJUSCULES')
   })
 
   it('clears the warning when focus leaves the field', async () => {
@@ -363,7 +363,7 @@ describe('strength meter', () => {
         strengthLabel={(strength) => `${String(strength.score)}/4`}
       />,
     )
-    expect(container.querySelector('[data-rx-password-strength-label]')).toHaveTextContent('4/4')
+    expect(container.querySelector('[data-rx-password-strength-label]')).toMatchTextContent('4/4')
   })
 })
 
@@ -391,8 +391,8 @@ describe('requirement checklist', () => {
         rules={[commonRules.lowercase, commonRules.digit]}
       />,
     )
-    expect(container.querySelector('[data-rule="lowercase"]')).toHaveTextContent('met')
-    expect(container.querySelector('[data-rule="digit"]')).toHaveTextContent('not met')
+    expect(container.querySelector('[data-rule="lowercase"]')).toMatchTextContent('met')
+    expect(container.querySelector('[data-rule="digit"]')).toMatchTextContent('not met')
   })
 
   it('can be hidden while still gating validity', async () => {
@@ -480,7 +480,7 @@ describe('breach check', () => {
     await userEvent.fill(input, 'hunt')
     await userEvent.fill(input, 'hunter2')
 
-    await expect.element(page.getByRole('alert')).toHaveTextContent('data breach')
+    await expect.element(page.getByRole('alert')).toMatchTextContent('data breach')
     // The intermediate value never made it past the debounce.
     expect(seen).toEqual(['hunter2'])
   })
@@ -612,7 +612,7 @@ describe('clear', () => {
 
     await userEvent.click(page.getByRole('button', { name: 'Clear' }))
 
-    await expect.element(page.getByTestId('value')).toHaveTextContent('empty')
+    await expect.element(page.getByTestId('value')).toMatchTextContent('empty')
     expect(onChange).toHaveBeenCalledWith('')
   })
 
