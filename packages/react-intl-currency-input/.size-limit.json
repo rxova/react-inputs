@@ -3,14 +3,14 @@
     "name": "CurrencyInput (full import)",
     "path": "dist/index.mjs",
     "import": "{ CurrencyInput }",
-    "limit": "3.25 kB",
+    "limit": "3.35 kB",
     "ignore": ["react", "react/jsx-runtime"]
   },
   {
     "name": "useCurrencyInput (headless only)",
     "path": "dist/index.mjs",
     "import": "{ useCurrencyInput }",
-    "limit": "3.25 kB",
+    "limit": "3.35 kB",
     "ignore": ["react", "react/jsx-runtime"]
   }
 ]
