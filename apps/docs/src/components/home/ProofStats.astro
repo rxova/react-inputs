@@ -32,15 +32,13 @@ const { stats } = Astro.props
 
   <div class="rx-stats__frame">
     <ul class="rx-stats__grid">
-      {
-        stats.map((stat) => (
-          <li class="rx-stats__item">
-            <p class="rx-stats__value">{stat.value}</p>
-            <p class="rx-stats__label">{stat.label}</p>
-            <p class="rx-stats__note">{stat.note}</p>
-          </li>
-        ))
-      }
+      {stats.map((stat) => (
+        <li class="rx-stats__item">
+          <p class="rx-stats__value">{stat.value}</p>
+          <p class="rx-stats__label">{stat.label}</p>
+          <p class="rx-stats__note">{stat.note}</p>
+        </li>
+      ))}
     </ul>
   </div>
 </div>
