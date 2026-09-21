@@ -62,8 +62,7 @@ const { id, eyebrow, title, lede, accent = false } = Astro.props
     font-weight: 640;
     line-height: 1.15;
     letter-spacing: -0.02em;
-    /* Titles that do wrap split evenly instead of dropping one word alone onto
-       the second line. */
+    /* A wrapping title splits evenly instead of orphaning its last word. */
     text-wrap: balance;
   }
 

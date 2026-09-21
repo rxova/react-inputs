@@ -32,23 +32,23 @@ const { rows, compression, caption } = Astro.props
       <tr>
         <th scope="col">Package</th>
         <th scope="col">You import</th>
-        <th scope="col" class="rx-sizes__num">{compression}</th>
+        <th scope="col" class="rx-sizes__num">
+          {compression}
+        </th>
       </tr>
     </thead>
     <tbody>
-      {
-        rows.map((row) => (
-          <tr>
-            <th scope="row" class="rx-sizes__pkg">
-              {row.pkg}
-            </th>
-            <td>
-              <code>{row.entry}</code>
-            </td>
-            <td class="rx-sizes__num">≤ {row.limitKb} kB</td>
-          </tr>
-        ))
-      }
+      {rows.map((row) => (
+        <tr>
+          <th scope="row" class="rx-sizes__pkg">
+            {row.pkg}
+          </th>
+          <td>
+            <code>{row.entry}</code>
+          </td>
+          <td class="rx-sizes__num">≤ {row.limitKb} kB</td>
+        </tr>
+      ))}
     </tbody>
   </table>
 </div>
