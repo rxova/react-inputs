@@ -22,7 +22,7 @@
     "@mantine/hooks": "^9.6.1",
     "@mui/material": "^9.4.0",
     "@radix-ui/themes": "^3.3.0",
-    "@rxova/brand": "^0.14.1",
+    "@rxova/brand": "^0.14.2",
     "@rxova/react-date-input": "workspace:*",
     "@rxova/react-file-input": "workspace:*",
     "@rxova/react-intl-currency-input": "workspace:*",
