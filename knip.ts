@@ -33,6 +33,10 @@ export default {
         // knip reads as config rather than as an import.
         'src/route-middleware.mjs',
       ],
+      // Reached only as a string: the Starlight preset from @rxova/astro-ui lists
+      // `@rxova/brand/fonts.css` in `customCss`, which Vite resolves from this
+      // site's root. Knip reads imports, so the path is invisible to it.
+      ignoreDependencies: ['@rxova/brand'],
       ignore: [
         // Two one-shot Docusaurus-to-Starlight migrations, deliberately kept:
         // their own headers say they stay so "the transforms it applied are

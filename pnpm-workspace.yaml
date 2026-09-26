@@ -149,6 +149,7 @@ minimumReleaseAgeExclude:
   - tsdown@0.22.14
   - verkit@0.3.0
   - '@rxova/brand'
+  - '@rxova/astro-ui'
   - '@mui/core-downloads-tracker@9.3.0'
   - '@mui/material@9.3.0'
   - '@mui/private-theming@9.3.0'
