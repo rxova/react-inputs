@@ -139,20 +139,26 @@ export function expandLiveExamples(text) {
   )
 }
 
-/** `<IntegrationRecipes slug="otp" />` into the exact compiled recipe sources. */
-export function expandIntegrationRecipes(text, loadRecipes = () => []) {
-  return text.replace(/^[ \t]*<IntegrationRecipes\s+slug="([^"]+)"\s*\/>[ \t]*$/gm, (_, slug) =>
-    loadRecipes(slug)
-      .map(
-        ({ label, href, source }) =>
-          `### [${label}](${href})\n\n\`\`\`tsx\n${source.trim()}\n\`\`\``,
-      )
-      .join('\n\n'),
+/** `<CodeRecipes … recipes={recipesFor('otp')} />` into the exact compiled recipe sources. */
+export function expandCodeRecipes(text, loadRecipes = () => []) {
+  return text.replace(
+    /^[ \t]*<CodeRecipes\b[^>\n]*\brecipes=\{recipesFor\('([^']+)'\)\}[^>\n]*\/>[ \t]*$/gm,
+    (_, slug) =>
+      loadRecipes(slug)
+        .map(
+          ({ label, href, source }) =>
+            `### [${label}](${href})\n\n\`\`\`tsx\n${source.trim()}\n\`\`\``,
+        )
+        .join('\n\n'),
   )
 }
 
-export function expandFrameworkCompatibilityMatrix(text, matrix = '') {
-  return text.replace(/^[ \t]*<FrameworkCompatibilityMatrix\s*\/>[ \t]*$/gm, matrix)
+/** The compatibility page's `<DataTable label="Framework compatibility" … />`, over several lines, into the derived proof table. */
+export function expandFrameworkCompatibilityTable(text, matrix = '') {
+  return text.replace(
+    /^[ \t]*<DataTable\s+label="Framework compatibility"[\s\S]*?\/>[ \t]*$/gm,
+    matrix,
+  )
 }
 
 /**
@@ -191,9 +197,9 @@ export function mdxToMarkdown(
   source,
   { origin, base = '/', recipesFor = () => [], frameworkCompatibilityMatrix = '' },
 ) {
-  const withRecipes = mapUnfenced(source, (chunk) => expandIntegrationRecipes(chunk, recipesFor))
+  const withRecipes = mapUnfenced(source, (chunk) => expandCodeRecipes(chunk, recipesFor))
   const withFrameworks = mapUnfenced(withRecipes, (chunk) =>
-    expandFrameworkCompatibilityMatrix(chunk, frameworkCompatibilityMatrix),
+    expandFrameworkCompatibilityTable(chunk, frameworkCompatibilityMatrix),
   )
   const expanded = mapUnfenced(withFrameworks, expandLiveExamples)
 

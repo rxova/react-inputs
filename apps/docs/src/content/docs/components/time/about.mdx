@@ -6,7 +6,8 @@ sidebar:
   order: 3
 ---
 
-import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+import CodeRecipes from '@rxova/astro-ui/components/CodeRecipes.astro'
+import { recipesFor } from '../../../../lib/recipe-sources.mjs'
 
 The decisions behind the component, and the ones you should disagree with deliberately rather than
 by accident.
@@ -299,4 +300,4 @@ the component takes `null` for empty.
 Keep the segmented spinbuttons and localized day period intact; use the design system for the
 field's visible label, helper text, validation, and layout.
 
-<IntegrationRecipes slug="time" />
+<CodeRecipes idPrefix="integration" recipes={recipesFor('time')} />

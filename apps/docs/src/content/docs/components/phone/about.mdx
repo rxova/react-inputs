@@ -6,7 +6,8 @@ sidebar:
   order: 3
 ---
 
-import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+import CodeRecipes from '@rxova/astro-ui/components/CodeRecipes.astro'
+import { recipesFor } from '../../../../lib/recipe-sources.mjs'
 
 The decisions behind the component, and the ones you should disagree with deliberately rather than
 by accident.
@@ -311,4 +312,4 @@ and the number box — so picking a country does not mark the field touched befo
 The country selector and number input are one field. These recipes preserve that focus and blur
 boundary while using the design system for labels, help text, and errors.
 
-<IntegrationRecipes slug="phone" />
+<CodeRecipes idPrefix="integration" recipes={recipesFor('phone')} />

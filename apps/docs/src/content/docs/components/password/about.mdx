@@ -6,7 +6,8 @@ sidebar:
   order: 3
 ---
 
-import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+import CodeRecipes from '@rxova/astro-ui/components/CodeRecipes.astro'
+import { recipesFor } from '../../../../lib/recipe-sources.mjs'
 
 The decisions behind the component, and the ones you should disagree with deliberately rather than
 by accident.
@@ -336,4 +337,4 @@ reveal toggle — so a field is not marked touched the moment someone clicks the
 Keep the password input, reveal button, meter, and announcements together. Use the design system
 around that composite control rather than rebuilding only its visible input.
 
-<IntegrationRecipes slug="password" />
+<CodeRecipes idPrefix="integration" recipes={recipesFor('password')} />

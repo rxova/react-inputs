@@ -24,12 +24,12 @@ hero:
 ---
 
 import LiveExample from '@components/LiveExample.astro'
-import Section from '@components/home/Section.astro'
-import QuickStart from '@components/home/QuickStart.astro'
-import ValueGrid from '@components/home/ValueGrid.astro'
-import ProofStats from '@components/home/ProofStats.astro'
-import SizeTable from '@components/home/SizeTable.astro'
-import CtaBand from '@components/home/CtaBand.astro'
+import Section from '@rxova/astro-ui/components/Section.astro'
+import QuickStart from '@rxova/astro-ui/components/QuickStart.astro'
+import ValueGrid from '@rxova/astro-ui/components/ValueGrid.astro'
+import ProofStats from '@rxova/astro-ui/components/ProofStats.astro'
+import SizeTable from '@rxova/astro-ui/components/SizeTable.astro'
+import CtaBand from '@rxova/astro-ui/components/CtaBand.astro'
 import {
   suiteBudget,
   packageBudgets,
@@ -100,32 +100,32 @@ export function Price({ value, onChange }) {
   <ValueGrid
     items={[
       {
-        icon: 'org',
+        icon: 'shield-check',
         title: 'Maintained, in the open',
         body: 'Shipped under the Rxova organisation alongside Journey and use-everywhere. Changesets-driven releases, provenance-signed npm publishes, an API reference generated from source.',
       },
       {
-        icon: 'weight',
+        icon: 'feather',
         title: 'Lightweight, and held to it',
         body: 'Every package carries a size budget that CI enforces on each build. Exceed it and the build fails — the number on this page is that budget, not an estimate.',
       },
       {
-        icon: 'zero',
+        icon: 'unplug',
         title: 'No dependencies to inherit',
         body: '<code>react</code> is the only peer. Nothing else reaches your bundle, nothing else can break you, and everything tree-shakes down to what you actually imported.',
       },
       {
-        icon: 'a11y',
+        icon: 'accessibility',
         title: 'Accessible by construction',
         body: 'Native platform semantics do the work — an interactive rating is a real radiogroup, and an OTP field is one real input. Keyboard, focus and form behaviour come from the browser, and every build is checked with axe.',
       },
       {
-        icon: 'ux',
+        icon: 'text-cursor-input',
         title: 'UX-first, down to the caret',
         body: 'The caret stays where you put it while the value reformats underneath. Paste works. Autofill works. So do IME composition, RTL and server rendering.',
       },
       {
-        icon: 'seams',
+        icon: 'languages',
         title: 'Correct on the seams',
         body: "Bulgarian's space-only-above-9999 grouping, Hindi lakh grouping, Arabic-Indic digits, formatted paste, Chrome's auto-translate rewriting your DOM. The cases that only show up in production.",
       },

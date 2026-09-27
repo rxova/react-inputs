@@ -5,14 +5,22 @@ sidebar:
   order: 5
 ---
 
-import FrameworkCompatibilityMatrix from '@components/FrameworkCompatibilityMatrix.astro'
+import DataTable from '@rxova/astro-ui/components/DataTable.astro'
+import { frameworkCompatibility } from '../../../lib/framework-proof.mjs'
 
 The meta-package is continuously exercised through three real application fixtures. Each fixture
 imports all nine inputs from `@rxova/react-inputs`, builds in production mode, starts the production
 output, hydrates it in Chromium, performs a meaningful interaction with every component, runs axe,
 and fails on browser console errors.
 
-<FrameworkCompatibilityMatrix />
+<DataTable
+  label="Framework compatibility"
+  columns={['Framework', 'Tested dependency range', 'Rendering path', 'Browser proof']}
+  rows={frameworkCompatibility.map((row) => ({
+    label: row.label,
+    cells: [{ code: row.version }, row.rendering, row.coverage],
+  }))}
+/>
 
 The dependency ranges in this table are read directly from the fixture manifests during the docs
 build, so this page cannot silently drift from CI. These are proven configurations, not a claim that
