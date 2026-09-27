@@ -1,107 +1,24 @@
-/* The landing page's own layout, and nothing else.
- *
- * Everything visual belongs in the scoped <style> of the component that draws
- * it (src/components/home/*.astro). What cannot live there is here: the two
- * Starlight selectors the page has to reach into, and one token.
- *
- * This file is loaded through `customCss`, which Starlight emits UNLAYERED.
- * Starlight's own rules sit in @layer starlight.*, and an unlayered rule beats
- * a layered one at any specificity — so none of this needs !important, and the
- * selectors below are deliberately as narrow as they can be. */
+/* What this landing does differently from `@rxova/astro-ui/styles/landing.css`, which loads before
+ * it: a hero that keeps its image column, and a shorter measure for the headline and tagline.
+ * Loaded through `customCss`, unlayered, so it wins over Starlight's layered rules without !important. */
 
-/* Text on a --rx-primary fill.
- *
- * The brand lightens --rx-primary in dark mode (#6b3df0 -> #9375f5) so it stays
- * legible as *text* on a dark surface. That makes it a pale fill, and white on
- * it lands near 2.9:1 — under AA. Flipping to the page background colour gets
- * back over 7:1 in both modes. Mirrors tokens.css's own three-way structure:
- * explicit choice wins, OS preference only decides when none was stored. */
-:root,
-:root[data-theme='light'] {
-  --rx-on-primary: #ffffff;
-}
-
-:root[data-theme='dark'] {
-  --rx-on-primary: #100f0d;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --rx-on-primary: #100f0d;
-  }
-}
-
-/* Starlight constrains content to --sl-content-width (45rem) in ContentPanel's
- * .sl-container. That measure is right for prose and wrong for a marketing
- * page: a four-up stat band and a six-card grid both need the brand's wider
- * bound.
- *
- * Gated on [data-has-hero], which Starlight puts on <html> only when the entry
- * has a `hero` block — and index.mdx is the only page in this site that does.
- * So this widens the landing and cannot reach a docs page. If a second hero
- * page ever appears, this needs a page-specific attribute instead. */
-html[data-has-hero] .sl-container {
-  max-width: var(--rx-max-wide);
-}
-
-/* Starlight puts 1.5rem between every top-level child of .sl-container. The
- * landing's sections carry their own much larger rhythm (Section.astro), and
- * the two compound into an uneven gap. Zero it out for this page only and let
- * the sections own their spacing. */
-html[data-has-hero] .sl-container > * + * {
-  margin-top: 0;
-}
-
-/* Starlight's own two-column hero, kept — the 4fr column now holds the mark.
- * Only the vertical padding is trimmed: Starlight's clamp tops out at 10rem,
- * which pushed the install command a full screen below the fold. */
-html[data-has-hero] .hero {
-  padding-block: clamp(2.5rem, 1rem + 6vmin, 5rem);
-}
-
-/* The mark is a 64-viewBox line drawing; at Starlight's default (min(100%,
- * 25rem)) it dominates the fold. This keeps it as a companion to the wordmark
- * rather than the subject of the page.
- *
- * Its colour is not settable from here: Starlight's hero renders the file
- * through Astro's <Image>, i.e. an <img> pointing at the SVG, so the
- * `currentColor` strokes inside resolve against the SVG's own `color`
- * attribute and not the page's. It draws in the logo's blue by design. */
+/* The mark is a 64-viewBox line drawing; at Starlight's default (min(100%, 25rem)) it dominates the
+ * fold. Its colour is the SVG's own: Starlight renders it through <Image>, an <img>. */
 html[data-has-hero] .hero > img {
   width: min(100%, 15rem);
   margin-inline: auto;
 }
 
-/* Starlight caps every hero child at 50ch, which is a good measure for the
- * tagline and far too wide for a display headline. Split them: the headline
- * wants to break into two or three short lines, the tagline wants to read as a
- * paragraph. */
+/* Narrower than the shared measure, since the image column takes part of the row. */
 html[data-has-hero] .hero h1 {
   max-width: 20ch;
-  /* Splits the headline evenly instead of dropping its last word alone onto a
-   * second line. */
-  text-wrap: balance;
 }
 
 html[data-has-hero] .hero .tagline {
   max-width: 54ch;
 }
 
-/* Sections carry a 7rem top margin so they separate from each other. The first
- * one is separating from the hero, which already ends in its own padding, and
- * the two together push the install command most of a screen below the fold.
- *
- * The child selector is .sl-markdown-content, not .sl-container: Starlight
- * renders the splash body inside that wrapper, so a `.sl-container > section`
- * rule matches nothing. */
-html[data-has-hero] .sl-markdown-content > :first-child {
-  margin-top: 2rem;
-}
-
-/* The landing's demo shows all three inputs side by side, and at its default
- * --rx-rating-size (1.25rem) the rating reads as a footnote next to the OTP's 2.5rem
- * slots. Scoped to the landing rather than set in live.css, so the ratings in
- * every other live example keep the size their prose was written around. */
+/* Beside the OTP's 2.5rem slots the rating reads as a footnote at its default size; the landing only. */
 html[data-has-hero] .rx-live__preview {
   --rx-rating-size: 2rem;
 }

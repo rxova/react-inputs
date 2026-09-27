@@ -7,7 +7,8 @@ sidebar:
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
-import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+import CodeRecipes from '@rxova/astro-ui/components/CodeRecipes.astro'
+import { recipesFor } from '../../../../lib/recipe-sources.mjs'
 
 ## WebOTP
 
@@ -649,4 +650,4 @@ function VerifyForm() {
 Keep the one real input and its slot geometry intact; the design system owns the surrounding label,
 description, error, spacing, and theme.
 
-<IntegrationRecipes slug="otp" />
+<CodeRecipes idPrefix="integration" recipes={recipesFor('otp')} />

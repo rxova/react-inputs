@@ -8,8 +8,8 @@ import { describe, it } from 'vitest'
 import assert from 'node:assert/strict'
 
 import {
-  expandIntegrationRecipes,
-  expandFrameworkCompatibilityMatrix,
+  expandCodeRecipes,
+  expandFrameworkCompatibilityTable,
   mdxToMarkdown,
   mapUnfenced,
   stripImports,
@@ -100,10 +100,10 @@ describe('expandLiveExamples', () => {
   })
 })
 
-describe('expandIntegrationRecipes', () => {
+describe('expandCodeRecipes', () => {
   it('turns the authored component into labelled copy-paste code', () => {
-    const source = '<IntegrationRecipes slug="otp" />'
-    const output = expandIntegrationRecipes(source, (slug) => [
+    const source = `<CodeRecipes idPrefix="integration" recipes={recipesFor('otp')} />`
+    const output = expandCodeRecipes(source, (slug) => [
       { label: 'Material UI', href: 'https://mui.com', source: `// ${slug}` },
     ])
 
@@ -112,26 +112,39 @@ describe('expandIntegrationRecipes', () => {
   })
 
   it('does not expand a component-looking line inside a fence', () => {
-    const source = ['```mdx', '<IntegrationRecipes slug="otp" />', '```'].join('\n')
+    const source = ['```mdx', `<CodeRecipes recipes={recipesFor('otp')} />`, '```'].join('\n')
     assert.equal(
-      mapUnfenced(source, (chunk) => expandIntegrationRecipes(chunk, () => [])),
+      mapUnfenced(source, (chunk) => expandCodeRecipes(chunk, () => [])),
       source,
     )
   })
 })
 
-describe('expandFrameworkCompatibilityMatrix', () => {
-  it('turns the authored component into the derived proof table', () => {
+describe('expandFrameworkCompatibilityTable', () => {
+  const authored = [
+    '<DataTable',
+    '  label="Framework compatibility"',
+    "  columns={['Framework']}",
+    '  rows={frameworkCompatibility.map((row) => ({ label: row.label, cells: [] }))}',
+    '/>',
+  ].join('\n')
+
+  it('turns the authored table, over several lines, into the derived proof table', () => {
     assert.equal(
-      expandFrameworkCompatibilityMatrix('<FrameworkCompatibilityMatrix />', '| Vite | pass |'),
-      '| Vite | pass |',
+      expandFrameworkCompatibilityTable(`before\n\n${authored}\n\nafter`, '| Vite | pass |'),
+      'before\n\n| Vite | pass |\n\nafter',
     )
   })
 
-  it('does not expand a component-looking line inside a fence', () => {
-    const source = ['```mdx', '<FrameworkCompatibilityMatrix />', '```'].join('\n')
+  it('leaves any other DataTable alone', () => {
+    const other = '<DataTable label="Browsers" columns={[]} rows={[]} />'
+    assert.equal(expandFrameworkCompatibilityTable(other, 'proof'), other)
+  })
+
+  it('does not expand a component-looking block inside a fence', () => {
+    const source = ['```mdx', authored, '```'].join('\n')
     assert.equal(
-      mapUnfenced(source, (chunk) => expandFrameworkCompatibilityMatrix(chunk, 'proof')),
+      mapUnfenced(source, (chunk) => expandFrameworkCompatibilityTable(chunk, 'proof')),
       source,
     )
   })

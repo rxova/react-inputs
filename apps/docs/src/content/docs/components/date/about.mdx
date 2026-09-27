@@ -6,7 +6,8 @@ sidebar:
   order: 3
 ---
 
-import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+import CodeRecipes from '@rxova/astro-ui/components/CodeRecipes.astro'
+import { recipesFor } from '../../../../lib/recipe-sources.mjs'
 
 The decisions behind the component, and the ones you should disagree with deliberately rather than
 by accident.
@@ -287,4 +288,4 @@ job: the component takes `null` for empty.
 Keep the locale-ordered spinbutton segments as one widget. The surrounding design-system field
 provides visual hierarchy without flattening the date into a fictional native text input.
 
-<IntegrationRecipes slug="date" />
+<CodeRecipes idPrefix="integration" recipes={recipesFor('date')} />

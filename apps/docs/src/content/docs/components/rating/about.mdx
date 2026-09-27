@@ -7,7 +7,8 @@ sidebar:
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components'
-import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+import CodeRecipes from '@rxova/astro-ui/components/CodeRecipes.astro'
+import { recipesFor } from '../../../../lib/recipe-sources.mjs'
 
 ## Custom icons
 
@@ -963,4 +964,4 @@ function ReviewForm() {
 The Rxova component remains the radiogroup; the design system supplies field layout and validation
 presentation without replacing native radio semantics.
 
-<IntegrationRecipes slug="rating" />
+<CodeRecipes idPrefix="integration" recipes={recipesFor('rating')} />

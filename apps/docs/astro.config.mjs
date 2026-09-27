@@ -271,8 +271,8 @@ export default defineConfig({
             './src/styles/sidebar.css',
             './src/styles/logos.css',
             './src/styles/content.css',
-            // Last, so the landing's container widening wins over anything above
-            // it that also reaches for .sl-container.
+            // The shared landing rules, then this site's own on top of them.
+            '@rxova/astro-ui/styles/landing.css',
             './src/styles/home.css',
           ],
           // Components sit LAST and are the destination, not a preamble:

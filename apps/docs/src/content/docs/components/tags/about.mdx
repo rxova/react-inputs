@@ -6,7 +6,8 @@ sidebar:
   order: 3
 ---
 
-import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+import CodeRecipes from '@rxova/astro-ui/components/CodeRecipes.astro'
+import { recipesFor } from '../../../../lib/recipe-sources.mjs'
 
 The decisions behind the component, and the ones you should disagree with deliberately rather than
 by accident.
@@ -291,4 +292,4 @@ job, not the component's.
 The tag list, roving focus, entry box, and live region stay together. These recipes add design-system
 field chrome without claiming combobox semantics or replacing keyboard behavior.
 
-<IntegrationRecipes slug="tags" />
+<CodeRecipes idPrefix="integration" recipes={recipesFor('tags')} />

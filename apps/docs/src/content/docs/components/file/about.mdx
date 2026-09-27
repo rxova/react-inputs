@@ -6,7 +6,8 @@ sidebar:
   order: 3
 ---
 
-import IntegrationRecipes from '@components/IntegrationRecipes.astro'
+import CodeRecipes from '@rxova/astro-ui/components/CodeRecipes.astro'
+import { recipesFor } from '../../../../lib/recipe-sources.mjs'
 
 ## The object-URL lifecycle
 
@@ -315,4 +316,4 @@ job, not the component's.
 Keep the real file input, drop-zone button, selection list, and live announcements together. The
 design system supplies field chrome; upload transport remains outside this package.
 
-<IntegrationRecipes slug="file" />
+<CodeRecipes idPrefix="integration" recipes={recipesFor('file')} />
