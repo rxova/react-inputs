@@ -38,6 +38,7 @@
     "check:llms": "node --import tsx ./packages/utils/check-llms.ts",
     "check:tokens": "node --import tsx ./packages/utils/check-tokens.ts",
     "check:browsers": "node --import tsx ./packages/utils/check-browsers.ts",
+    "check:changeset": "node --import tsx ./packages/utils/check-changeset.ts",
     "verify": "rxova-repo-config verify"
   },
   "devDependencies": {
@@ -132,9 +133,6 @@
           "command": "pnpm run pack:smoke"
         }
       ]
-    },
-    "changeset": {
-      "singlePackage": true
     }
   },
   "engines": {
