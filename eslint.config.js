@@ -79,10 +79,9 @@ export default defineConfig(
     rules: reactHooks.configs.recommended.rules,
   },
   {
-    // Build/verify tooling in the private @rxova/utils package (and any
-    // top-level scripts/). Mostly plain ESM JavaScript outside the TS program;
-    // check-changeset.ts is TypeScript, kept diffable with the sibling repos,
-    // and covered by packages/utils/tsconfig.json.
+    // Repo check scripts in the private @rxova/utils package (and any
+    // top-level scripts/). The .ts files are covered by
+    // packages/utils/tsconfig.json.
     //
     // These are CLIs: reporting to stdout/stderr is their entire output
     // contract, so the library-wide `no-console: error` does not apply.

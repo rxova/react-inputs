@@ -19,5 +19,5 @@ pnpm exec lint-staged
 # coverage variant, and CI runs it again.
 #
 # Everything heavier — build, size budgets, audit, dedupe, packaging, e2e —
-# stays in pre-push (see scripts/verify.mjs) and CI.
+# stays in pre-push (`repoConfig.verify` in the root package.json) and CI.
 pnpm exec turbo run typecheck test

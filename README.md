@@ -201,7 +201,7 @@ packages/
   react-inputs                meta-package, re-exports the suite
   codemod                     jscodeshift migration transforms
   demo-kit                    shared demo primitives (private, dev-only)
-  utils                       release gate + repo checks (private)
+  utils                       repo checks (private)
 apps/
   playground                  shared Vite playground
   docs                        Astro Starlight site, published as part of rxova.org

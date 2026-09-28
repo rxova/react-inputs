@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitest/config'
 
 /**
- * Covers the repo's own tooling: the release gate and the changeset check.
+ * Covers the repo's own check scripts.
  * Separate from the component packages' configs, which run a `unit` and a
  * `browser` project against a 95% per-file coverage threshold — neither applies
  * to scripts that shell out to git and pnpm.
@@ -15,7 +15,7 @@ export default defineConfig({
   test: {
     include: ['*.test.ts'],
     environment: 'node',
-    // The changeset tests spawn a real process against a temp git repo, which
+    // The pack-smoke tests spawn a real pack and install into a temp dir, which
     // is comfortably slower than the 5s default on a cold runner.
     testTimeout: 30_000,
   },
