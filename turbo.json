@@ -58,10 +58,11 @@
     "pack:smoke": {
       "dependsOn": ["build"],
       "outputs": [],
-      // The component packages run `rxova-repo-config pack-smoke`, a declared
-      // devDependency, so a new @rxova/repo-config version already changes their
-      // hash through the lockfile. The codemod's smoke test is a script outside
-      // the package, so it is listed here to invalidate the cache when it changes.
+      // The component packages run `rxova-repo-config pack-smoke`, a root
+      // devDependency, so a new @rxova/repo-config version already changes every
+      // hash through the root's external dependencies. The codemod's smoke test is
+      // a script outside the package, so it is listed here to invalidate the cache
+      // when it changes.
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/utils/codemod-pack-smoke.ts"],
       "outputLogs": "new-only"
     },

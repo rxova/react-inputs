@@ -77,8 +77,6 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "@rxova/demo-kit": "workspace:*",
-    "@rxova/repo-config": "^0.2.0",
-    "@rxova/ts-utils": "^0.1.0",
     "@size-limit/preset-small-lib": "^14.0.0",
     "@tanstack/react-form": "^1.33.5",
     "@types/node": "^26.6.1",
