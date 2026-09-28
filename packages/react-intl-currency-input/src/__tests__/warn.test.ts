@@ -13,7 +13,7 @@ describe('devWarnOnce', () => {
     devWarnOnce('k', 'first')
     devWarnOnce('k', 'first again')
     expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy.mock.calls[0]?.[0]).toContain('react-intl-currency-input')
+    expect(spy).toHaveBeenCalledWith('[react-intl-currency-input] first')
   })
 
   it('warns again for a different key', () => {
