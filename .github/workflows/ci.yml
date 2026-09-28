@@ -186,8 +186,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm run check:browsers
       - run: pnpm run build
-      # publint and attw read the manifest; pack:smoke installs the real
-      # tarballs and imports them through both module systems.
+      # publint and attw read the manifest; pack:smoke (rxova-repo-config
+      # pack-smoke, plus the codemod's own script) installs the real tarballs
+      # and imports them through both module systems.
       - run: pnpm run check:exports
       - run: pnpm run pack:smoke
       - run: pnpm run size

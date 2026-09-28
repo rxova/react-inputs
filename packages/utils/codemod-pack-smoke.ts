@@ -5,6 +5,14 @@ import { join } from 'node:path'
 import process from 'node:process'
 import { readManifest } from './manifest'
 
+/**
+ * The component packages use `rxova-repo-config pack-smoke`. The codemod cannot:
+ * it exports only `./transforms/*` and has no root entry for that command's
+ * import/require probe, and its bin has no `--version`. This checks what the
+ * codemod actually ships instead: the bin runs, lists its transforms, and
+ * rewrites a TSX fixture from the installed tarball.
+ */
+
 const pkg = readManifest(join(process.cwd(), 'package.json'))
 const REQUIRED = [
   'package/dist/bin.cjs',
@@ -13,8 +21,8 @@ const REQUIRED = [
   'package/package.json',
   'package/README.md',
   'package/LICENSE',
-  // See the note on the same entry in pack-smoke.ts: npm does not include this
-  // automatically, so it ships only because the manifest lists it in `files`.
+  // The agent-facing summary. npm does not include this automatically, so it
+  // ships only because the manifest lists it in `files`.
   'package/llms.txt',
 ]
 const FORBIDDEN = [/^package\/src\//, /\.test\./, /^package\/e2e\//]

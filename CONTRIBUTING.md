@@ -83,7 +83,8 @@ CI runs, in order:
 2. `format:check` · `lint` · `typecheck`
 3. `test:coverage` — **95% per file**, so a new file with thin tests fails even if the repo
    average is fine
-4. `build` · `check:exports` (publint + attw) · `pack:smoke`
+4. `build` · `check:exports` (publint + attw) · `pack:smoke` (`rxova-repo-config pack-smoke`; the
+   codemod has its own)
 5. `size` · `e2e`
 
 Also:
