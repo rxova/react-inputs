@@ -68,7 +68,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "check:exports": "publint --strict && attw --pack .",
-    "pack:smoke": "node --import tsx ../utils/pack-smoke.ts",
+    "pack:smoke": "rxova-repo-config pack-smoke",
     "prepack": "pnpm build",
     "size": "size-limit",
     "react:min:install": "pnpm add -D react@18.3.1 react-dom@18.3.1 @types/react@18.3.27 @types/react-dom@18.3.7",
@@ -82,6 +82,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "@rxova/demo-kit": "workspace:*",
+    "@rxova/repo-config": "^0.2.0",
     "@rxova/ts-utils": "^0.1.0",
     "@size-limit/preset-small-lib": "^14.0.0",
     "@tanstack/react-form": "^1.33.5",

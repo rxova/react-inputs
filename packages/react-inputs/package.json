@@ -69,12 +69,13 @@
     "build": "tsdown",
     "typecheck": "tsc --noEmit",
     "check:exports": "publint --strict && attw --pack .",
-    "pack:smoke": "node --import tsx ../utils/pack-smoke.ts",
+    "pack:smoke": "rxova-repo-config pack-smoke",
     "size": "size-limit",
     "prepack": "pnpm build"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
+    "@rxova/repo-config": "^0.2.0",
     "@size-limit/preset-small-lib": "^14.0.0",
     "@types/node": "^26.6.1",
     "@types/react": "^19.3.0",

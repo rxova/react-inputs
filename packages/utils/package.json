@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Private monorepo tooling: the changeset gate, the doc-snippet, llms.txt, token and Playwright browser-list checks, and the tarball smoke tests. The release gate comes from @rxova/repo-config. Scripts run from the repo root (see root package.json).",
+  "description": "Private monorepo tooling: the changeset gate, the doc-snippet, llms.txt, token and Playwright browser-list checks, the codemod tarball smoke test and the post-publish smoke test. The release gate and the component packages' tarball smoke test come from @rxova/repo-config. Scripts run from the repo root (see root package.json).",
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
