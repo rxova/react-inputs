@@ -75,7 +75,6 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
-    "@rxova/repo-config": "^0.2.0",
     "@size-limit/preset-small-lib": "^14.0.0",
     "@types/node": "^26.6.1",
     "@types/react": "^19.3.0",

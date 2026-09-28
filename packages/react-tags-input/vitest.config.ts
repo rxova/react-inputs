@@ -4,6 +4,13 @@ import { playwright } from '@vitest/browser-playwright'
 
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    // @rxova/ts-utils/react is a root devDependency, so pnpm links its `react`
+    // peer to the root's copy. `test:react-min` swaps only this package's React
+    // to 18, which would leave the hook calling into a second React. Dedupe makes
+    // every import resolve from this package, so the whole test sees one React.
+    dedupe: ['react', 'react-dom'],
+  },
   test: {
     projects: [
       {
