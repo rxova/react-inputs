@@ -889,6 +889,9 @@ importers:
       '@rxova/demo-kit':
         specifier: workspace:*
         version: link:../demo-kit
+      '@rxova/ts-utils':
+        specifier: ^0.1.0
+        version: 0.1.0(react@19.3.0)
       '@size-limit/preset-small-lib':
         specifier: ^14.0.0
         version: 14.0.0(size-limit@14.0.0)
