@@ -7,7 +7,7 @@ import {
   useRef,
   useSyncExternalStore,
 } from 'react'
-import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect'
+import { useIsomorphicLayoutEffect } from '@rxova/ts-utils/react'
 import type { CSSProperties, ReactNode, Ref } from 'react'
 import { spatialLayout } from './core'
 import type { OtpInputProps } from './types'

@@ -9,7 +9,7 @@ import {
   inspectMinLength,
   inspectRuleIds,
 } from './warn'
-import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect'
+import { useIsomorphicLayoutEffect } from '@rxova/ts-utils/react'
 import type {
   PasswordRule,
   PasswordRuleState,
