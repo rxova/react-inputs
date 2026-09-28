@@ -967,6 +967,9 @@ importers:
       '@rxova/demo-kit':
         specifier: workspace:*
         version: link:../demo-kit
+      '@rxova/ts-utils':
+        specifier: ^0.1.0
+        version: 0.1.0(react@19.3.0)
       '@size-limit/preset-small-lib':
         specifier: ^14.0.0
         version: 14.0.0(size-limit@14.0.0)
@@ -1045,6 +1048,9 @@ importers:
       '@rxova/demo-kit':
         specifier: workspace:*
         version: link:../demo-kit
+      '@rxova/ts-utils':
+        specifier: ^0.1.0
+        version: 0.1.0(react@19.3.0)
       '@size-limit/preset-small-lib':
         specifier: ^14.0.0
         version: 14.0.0(size-limit@14.0.0)
@@ -1123,6 +1129,9 @@ importers:
       '@rxova/demo-kit':
         specifier: workspace:*
         version: link:../demo-kit
+      '@rxova/ts-utils':
+        specifier: ^0.1.0
+        version: 0.1.0(react@19.3.0)
       '@size-limit/preset-small-lib':
         specifier: ^14.0.0
         version: 14.0.0(size-limit@14.0.0)
@@ -1279,6 +1288,9 @@ importers:
       '@rxova/demo-kit':
         specifier: workspace:*
         version: link:../demo-kit
+      '@rxova/ts-utils':
+        specifier: ^0.1.0
+        version: 0.1.0(react@19.3.0)
       '@size-limit/preset-small-lib':
         specifier: ^14.0.0
         version: 14.0.0(size-limit@14.0.0)
@@ -5081,6 +5093,15 @@ packages:
       typescript-eslint:
         optional: true
       vitest:
+        optional: true
+
+  '@rxova/ts-utils@0.1.0':
+    resolution: {integrity: sha512-LQEz0XF5xXkFWnNMu2R487/fahNyHAUPBJ552d9wagLBESfGR42zki4T3Rco92DDhaPc6L/rtyd9iN2Wbzn8CQ==}
+    engines: {node: '>=22.13'}
+    peerDependencies:
+      react: '>=18'
+    peerDependenciesMeta:
+      react:
         optional: true
 
   '@shikijs/core@4.4.3':
@@ -13417,6 +13438,10 @@ snapshots:
       typescript: 6.0.3
       typescript-eslint: 8.70.0(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
       vitest: 5.0.1(@types/node@26.6.1)(@vitest/browser-playwright@5.0.1)(@vitest/coverage-v8@5.0.1)(@vitest/ui@5.0.1)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.13)(yaml@2.9.1))
+
+  '@rxova/ts-utils@0.1.0(react@19.3.0)':
+    optionalDependencies:
+      react: 19.3.0
 
   '@shikijs/core@4.4.3':
     dependencies:

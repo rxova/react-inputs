@@ -12,7 +12,7 @@ import {
   parsePhone,
 } from './phone'
 import type { ParsedPhone } from './phone'
-import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect'
+import { useIsomorphicLayoutEffect } from '@rxova/ts-utils/react'
 import {
   inspectCountry,
   inspectCountryList,

@@ -10,7 +10,7 @@ import {
   inspectValueShape,
 } from './warn'
 import type { TagsWarning } from './types'
-import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect'
+import { useIsomorphicLayoutEffect } from '@rxova/ts-utils/react'
 
 const DEFAULT_DELIMITERS = ['Enter', ',']
 
