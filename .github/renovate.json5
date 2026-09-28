@@ -43,7 +43,7 @@
     ':maintainLockFilesMonthly',
   ],
 
-  // `skip-changeset` is what `rxova-repo-config check-changeset` reads. A bump changes what the
+  // `skip-changeset` is what `pnpm check:changeset` reads. A bump changes what the
   // repository builds with, never what it publishes, so there is no changelog
   // entry to write. Both labels already exist in the repository.
   labels: ['dependencies', 'skip-changeset'],

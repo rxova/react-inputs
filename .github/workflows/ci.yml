@@ -397,22 +397,25 @@ jobs:
       # Escape hatches: the `skip-changeset` label, or `[skip-changeset]` in the
       # PR title. The label re-runs this job on its own; the title does not,
       # because this workflow no longer listens to `edited`, so a retitle takes
-      # effect on the next push or label event. Only a change a published
-      # package ships needs one — Markdown, tests and anything outside a
-      # published package are skipped — and `repoConfig.changeset.singlePackage`
-      # in the root package.json holds each changeset file to one package.
+      # effect on the next push or label event. Any change to a file a published
+      # package ships needs one — its source, package.json, and everything in
+      # the tarball, README.md and llms.txt included — while tests, e2e specs
+      # and anything outside a published package are skipped. Each changeset
+      # file must name exactly one package. The check is repo-local
+      # (packages/utils/check-changeset.ts) because the shared one in
+      # @rxova/repo-config only asks when a package's code changes.
       #
       # The labels are handed over from the event payload rather than fetched:
       # a `labeled`/`unlabeled` event re-runs the job, so the payload is always
       # the current set. Passed through the environment, never interpolated
       # into the shell — the title is attacker-controlled text.
-      - name: Require a changeset for published-package changes
+      - name: Require a changeset for changes a published package ships
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
           PR_TITLE: ${{ github.event.pull_request.title }}
-        run: pnpm exec rxova-repo-config check-changeset
+        run: pnpm run check:changeset
 
   # The one check the org ruleset requires on main. A ruleset names checks one
   # by one, so this job stands in for the whole graph: it waits for every other

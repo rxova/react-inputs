@@ -88,8 +88,14 @@ CI runs, in order:
 
 Also:
 
-- **Add a changeset** for anything user-facing: `pnpm exec changeset`. It will ask which packages
-  changed. Docs/CI-only PRs can carry the `skip-changeset` label instead.
+- **Add a changeset** whenever you change a file a published package ships: `pnpm exec changeset`.
+  It will ask which packages changed; name exactly one per changeset file. "Ships" means what ends
+  up in the npm tarball: the source compiled into `dist`, `package.json`, the package `README.md`
+  and `LICENSE`, and everything else in its `files` (`llms.txt`, `assets/logo.svg`). A README or
+  `llms.txt` fix is a release too. Tests, e2e specs, demos and anything outside a published package
+  need none. A PR that ships nothing new despite touching those files (a dependency bump, say) can
+  carry the `skip-changeset` label instead. The CI gate is `pnpm check:changeset`
+  (`packages/utils/check-changeset.ts`).
 - **If you changed behaviour, change the prose in the same PR.** Grep the package README and the
   docs for the prop you touched. A fix that ships with docs still teaching the old behaviour ships
   invisible.
