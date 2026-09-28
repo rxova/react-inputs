@@ -141,7 +141,8 @@ jobs:
       - uses: ./.github/actions/setup-pnpm
       - uses: ./.github/actions/turbo-cache
       - run: pnpm install --frozen-lockfile
-      # Every check here is in the local pre-push gate too (packages/utils/verify.ts).
+      # Every check here is in the local pre-push gate too (`pnpm verify`, the
+      # steps listed under `repoConfig.verify` in the root package.json).
       # Running them here as well is what keeps a stale local checkout from
       # being the only thing between a new advisory and a release.
       #
@@ -382,13 +383,9 @@ jobs:
     # too: it has already consumed every changeset, so the gate would find none
     # and fail.
     if: github.event_name == 'pull_request' && github.head_ref != 'changeset-release/main'
-    permissions:
-      contents: read
-      # check-changeset.ts reads the skip-changeset label through the API
-      # (`gh api repos/.../labels`). Without this the call 403s, the script
-      # warns and proceeds label-blind, and the documented escape hatch
-      # silently does nothing.
-      pull-requests: read
+    # No `pull-requests: read`: the labels come from the event payload below
+    # rather than from the API, so the job needs nothing beyond the workflow's
+    # read-only default.
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -400,17 +397,22 @@ jobs:
       # Escape hatches: the `skip-changeset` label, or `[skip-changeset]` in the
       # PR title. The label re-runs this job on its own; the title does not,
       # because this workflow no longer listens to `edited`, so a retitle takes
-      # effect on the next push or label event. Docs/CI/config-only diffs are
-      # auto-skipped by the script, which also validates one package per
-      # changeset file — neither of which `changeset status --since` could do.
+      # effect on the next push or label event. Only a change a published
+      # package ships needs one — Markdown, tests and anything outside a
+      # published package are skipped — and `repoConfig.changeset.singlePackage`
+      # in the root package.json holds each changeset file to one package.
+      #
+      # The labels are handed over from the event payload rather than fetched:
+      # a `labeled`/`unlabeled` event re-runs the job, so the payload is always
+      # the current set. Passed through the environment, never interpolated
+      # into the shell — the title is attacker-controlled text.
       - name: Require a changeset for published-package changes
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
           PR_TITLE: ${{ github.event.pull_request.title }}
-        run: node --import tsx ./packages/utils/check-changeset.ts
+        run: pnpm exec rxova-repo-config check-changeset
 
   # The one check the org ruleset requires on main. A ruleset names checks one
   # by one, so this job stands in for the whole graph: it waits for every other

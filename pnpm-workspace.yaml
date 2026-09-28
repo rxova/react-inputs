@@ -150,6 +150,9 @@ minimumReleaseAgeExclude:
   - verkit@0.3.0
   - '@rxova/brand'
   - '@rxova/astro-ui'
+  # First-party shared tooling and helpers, published from rxova/shared.
+  - '@rxova/repo-config'
+  - '@rxova/ts-utils'
   - '@mui/core-downloads-tracker@9.3.0'
   - '@mui/material@9.3.0'
   - '@mui/private-theming@9.3.0'

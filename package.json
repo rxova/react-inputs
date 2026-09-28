@@ -38,7 +38,7 @@
     "check:llms": "node --import tsx ./packages/utils/check-llms.ts",
     "check:tokens": "node --import tsx ./packages/utils/check-tokens.ts",
     "check:browsers": "node --import tsx ./packages/utils/check-browsers.ts",
-    "verify": "node --import tsx ./packages/utils/verify.ts"
+    "verify": "rxova-repo-config verify"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
@@ -48,6 +48,7 @@
     "@commitlint/config-conventional": "^21.2.2",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "1.63.0",
+    "@rxova/repo-config": "^0.1.0",
     "@types/node": "^26.6.1",
     "axe-core": "^4.13.0",
     "eslint": "^10.10.0",
@@ -74,6 +75,67 @@
     "*.{json,jsonc,css,md,mdx,yaml,yml}": [
       "prettier --write"
     ]
+  },
+  "repoConfig": {
+    "verify": {
+      "steps": [
+        {
+          "name": "Audit dependencies",
+          "command": "pnpm run audit:check"
+        },
+        {
+          "name": "Check dependency dedupe",
+          "command": "pnpm exec turbo run //#dedupe:check"
+        },
+        {
+          "name": "Check dependency versions across the workspace",
+          "command": "pnpm run sherif:check"
+        },
+        {
+          "name": "Check for unused files, exports and dependencies",
+          "command": "pnpm run knip:check"
+        },
+        {
+          "name": "Check formatting",
+          "command": "pnpm run format:check"
+        },
+        {
+          "name": "Check doc snippets",
+          "command": "pnpm run check:docs"
+        },
+        {
+          "name": "Check agent llms.txt files",
+          "command": "pnpm run check:llms"
+        },
+        {
+          "name": "Check styling token namespaces",
+          "command": "pnpm run check:tokens"
+        },
+        {
+          "name": "Check e2e browser list",
+          "command": "pnpm run check:browsers"
+        },
+        {
+          "name": "Lint",
+          "command": "pnpm run lint"
+        },
+        {
+          "name": "Typecheck, test, build and size budgets",
+          "command": "pnpm exec turbo run typecheck test:coverage build size"
+        },
+        {
+          "name": "Check package publishing metadata",
+          "command": "pnpm run check:exports"
+        },
+        {
+          "name": "Smoke-test the package tarball",
+          "command": "pnpm run pack:smoke"
+        }
+      ]
+    },
+    "changeset": {
+      "singlePackage": true
+    }
   },
   "engines": {
     "node": ">=20.19.0"

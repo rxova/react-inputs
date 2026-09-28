@@ -3,10 +3,9 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  // The rest of this package is plain .mjs, deliberately outside the TS
-  // program. check-changeset.ts is TypeScript so it can stay diffable with the
-  // copies in the sibling repos, and the root eslint config lints `**/*.ts`
-  // with projectService — a .ts file in no program is a parse error, not a
-  // silent skip. Mirrors use-everywhere/packages/tooling/tsconfig.json.
+  // The .mjs modules stay outside the TS program (component-packages.mjs is
+  // imported by plain Node and the Astro config). The root eslint config lints
+  // `**/*.ts` with projectService — a .ts file in no program is a parse error,
+  // not a silent skip — so every .ts script here is included.
   "include": ["*.ts"]
 }

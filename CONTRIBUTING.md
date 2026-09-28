@@ -7,24 +7,24 @@ Thanks for taking the time to contribute.
 A pnpm + Turborepo monorepo: several published packages, one shared playground, and one shared
 docs site.
 
-| Path                                  | What lives there                                                                     |
-| ------------------------------------- | ------------------------------------------------------------------------------------ |
-| `packages/react-intl-currency-input/` | `@rxova/react-intl-currency-input` — locale-aware currency input.                    |
-| `packages/react-rating-input/`        | `@rxova/react-rating-input` — rating input (stars / any icon).                       |
-| `packages/react-otp-input/`           | `@rxova/react-otp-input` — OTP / one-time-code input.                                |
-| `packages/react-phone-input/`         | `@rxova/react-phone-input` — international phone input.                              |
-| `packages/react-password-input/`      | `@rxova/react-password-input` — password input, strength meter, reveal toggle.       |
-| `packages/react-date-input/`          | `@rxova/react-date-input` — segmented date field, no calendar.                       |
-| `packages/react-time-input/`          | `@rxova/react-time-input` — segmented time field, no popup.                          |
-| `packages/react-tags-input/`          | `@rxova/react-tags-input` — tag / token input.                                       |
-| `packages/react-file-input/`          | `@rxova/react-file-input` — file picker and drop zone (no uploading).                |
-| `packages/react-inputs/`              | `@rxova/react-inputs` — meta-package that re-exports the whole suite.                |
-| `packages/codemod/`                   | `@rxova/codemod` — jscodeshift codemods (one transform per migration) for the suite. |
-| `packages/utils/`                     | `@rxova/utils` — private tooling (release gate, doc-snippet checks, capture, etc.).  |
-| `packages/*/src/__tests__/`           | `*.test.ts(x)` run in node, `*.browser.test.tsx` run in Chromium.                    |
-| `packages/*/e2e/`                     | Playwright specs, per package, against the built shared playground.                  |
-| `apps/playground/`                    | `@rxova/playground` — Vite app for manual QA and the E2E target.                     |
-| `apps/docs/`                          | `@rxova/docs` — Astro Starlight site for the whole suite.                            |
+| Path                                  | What lives there                                                                      |
+| ------------------------------------- | ------------------------------------------------------------------------------------- |
+| `packages/react-intl-currency-input/` | `@rxova/react-intl-currency-input` — locale-aware currency input.                     |
+| `packages/react-rating-input/`        | `@rxova/react-rating-input` — rating input (stars / any icon).                        |
+| `packages/react-otp-input/`           | `@rxova/react-otp-input` — OTP / one-time-code input.                                 |
+| `packages/react-phone-input/`         | `@rxova/react-phone-input` — international phone input.                               |
+| `packages/react-password-input/`      | `@rxova/react-password-input` — password input, strength meter, reveal toggle.        |
+| `packages/react-date-input/`          | `@rxova/react-date-input` — segmented date field, no calendar.                        |
+| `packages/react-time-input/`          | `@rxova/react-time-input` — segmented time field, no popup.                           |
+| `packages/react-tags-input/`          | `@rxova/react-tags-input` — tag / token input.                                        |
+| `packages/react-file-input/`          | `@rxova/react-file-input` — file picker and drop zone (no uploading).                 |
+| `packages/react-inputs/`              | `@rxova/react-inputs` — meta-package that re-exports the whole suite.                 |
+| `packages/codemod/`                   | `@rxova/codemod` — jscodeshift codemods (one transform per migration) for the suite.  |
+| `packages/utils/`                     | `@rxova/utils` — private tooling (doc-snippet, token, browser and pack checks, etc.). |
+| `packages/*/src/__tests__/`           | `*.test.ts(x)` run in node, `*.browser.test.tsx` run in Chromium.                     |
+| `packages/*/e2e/`                     | Playwright specs, per package, against the built shared playground.                   |
+| `apps/playground/`                    | `@rxova/playground` — Vite app for manual QA and the E2E target.                      |
+| `apps/docs/`                          | `@rxova/docs` — Astro Starlight site for the whole suite.                             |
 
 Each component package follows the same shape: pure logic modules with no React, a headless
 `use*` hook holding state, a thin rendering component, a `types.ts` public prop surface, and

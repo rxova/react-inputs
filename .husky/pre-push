@@ -2,7 +2,8 @@
 set -e
 
 # One ordered gate, the same list CI runs, so a green push means a green
-# pipeline. `verify` is defined once in packages/utils/verify.mjs; Turbo caches
-# unchanged tasks so re-runs are cheap. (E2E is not in verify — it runs as its
+# pipeline. The steps are listed once, under `repoConfig.verify` in the root
+# package.json, and run by @rxova/repo-config; Turbo caches unchanged tasks so
+# re-runs are cheap. (E2E is not in verify — it runs as its
 # own CI job, matching the source repos.)
 pnpm run verify
