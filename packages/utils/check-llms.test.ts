@@ -52,7 +52,7 @@ const LLMS = [
   '',
   '## Docs',
   '',
-  '- Introduction: https://rxova.org/packages/react-inputs/',
+  '- Introduction: https://rxova.dev/packages/react-inputs/',
   '',
 ].join('\n')
 

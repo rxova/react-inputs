@@ -5,7 +5,7 @@ addons.setConfig({
   theme: create({
     base: 'light',
     brandTitle: 'rxova inputs',
-    brandUrl: 'https://rxova.org',
+    brandUrl: 'https://rxova.dev',
     brandImage: 'logo.svg',
     brandTarget: '_self',
     fontBase: 'system-ui, sans-serif',

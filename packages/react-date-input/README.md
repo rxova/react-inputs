@@ -22,7 +22,7 @@ Headless, zero-dependency, locale-aware through `Intl`.
 npm install @rxova/react-date-input
 ```
 
-📖 **[Documentation & live examples →](https://rxova.org/packages/react-inputs/components/date/introduction/)** — guides, form recipes, theming, locale handling, and migration from another date picker.
+📖 **[Documentation & live examples →](https://rxova.dev/packages/react-inputs/components/date/introduction/)** — guides, form recipes, theming, locale handling, and migration from another date picker.
 
 - **No calendar.** For a birthday or an invoice date, typing `15/03/1999` is faster than eleven
   clicks through a month grid. This is the field for dates you already know.
@@ -287,21 +287,21 @@ The docs contain maintained examples for shadcn/ui, Radix Themes, Material UI, C
 and Ant Design. Copy a ready-labelled wrapper with:
 
 ```bash
-npx shadcn@latest add https://rxova.org/packages/react-inputs/r/date-field.json
+npx shadcn@latest add https://rxova.dev/packages/react-inputs/r/date-field.json
 ```
 
-[Open the recipes](https://rxova.org/packages/react-inputs/components/date/about/#ui-library-recipes).
+[Open the recipes](https://rxova.dev/packages/react-inputs/components/date/about/#ui-library-recipes).
 
 ## Part of rxova
 
-Part of the [rxova headless React inputs](https://rxova.org/packages/react-inputs/overview) suite —
+Part of the [rxova headless React inputs](https://rxova.dev/packages/react-inputs/overview) suite —
 install the whole set from
 [`@rxova/react-inputs`](https://www.npmjs.com/package/@rxova/react-inputs), or read the full
-generated [API reference](https://rxova.org/packages/react-inputs/components/date/api) for this package.
+generated [API reference](https://rxova.dev/packages/react-inputs/components/date/api) for this package.
 
 Cross-cutting guidance lives on this component's About page:
-[styling](https://rxova.org/packages/react-inputs/components/date/about/#styling) and [form libraries](https://rxova.org/packages/react-inputs/components/date/about/#form-libraries). Coming from
-another library? The [migration guide](https://rxova.org/packages/react-inputs/components/date/migrating/) maps the props across.
+[styling](https://rxova.dev/packages/react-inputs/components/date/about/#styling) and [form libraries](https://rxova.dev/packages/react-inputs/components/date/about/#form-libraries). Coming from
+another library? The [migration guide](https://rxova.dev/packages/react-inputs/components/date/migrating/) maps the props across.
 
 ## License
 

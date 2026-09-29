@@ -22,7 +22,7 @@ A headless, zero-dependency React password input.
 npm install @rxova/react-password-input
 ```
 
-📖 **[Documentation & live examples →](https://rxova.org/packages/react-inputs/components/password/introduction/)** — guides, form recipes, theming, breach checks, and migration from another password field.
+📖 **[Documentation & live examples →](https://rxova.dev/packages/react-inputs/components/password/introduction/)** — guides, form recipes, theming, breach checks, and migration from another password field.
 
 - **A strength meter you can actually ship** — 1.2 kB brotli, no wordlists. Swap in zxcvbn with
   one prop if you want them.
@@ -288,7 +288,7 @@ These are **public API**, covered by semver.
 
 ## Props
 
-Full reference in the [API docs](https://rxova.org/packages/react-inputs/password). The prop
+Full reference in the [API docs](https://rxova.dev/packages/react-inputs/password). The prop
 surface is `PasswordInputProps` in `types.ts`, which is public API covered by semver.
 
 ## Diagnostics
@@ -395,21 +395,21 @@ The docs contain maintained examples for shadcn/ui, Radix Themes, Material UI, C
 and Ant Design. Copy a ready-labelled wrapper with:
 
 ```bash
-npx shadcn@latest add https://rxova.org/packages/react-inputs/r/password-field.json
+npx shadcn@latest add https://rxova.dev/packages/react-inputs/r/password-field.json
 ```
 
-[Open the recipes](https://rxova.org/packages/react-inputs/components/password/about/#ui-library-recipes).
+[Open the recipes](https://rxova.dev/packages/react-inputs/components/password/about/#ui-library-recipes).
 
 ## Part of rxova
 
-Part of the [rxova headless React inputs](https://rxova.org/packages/react-inputs/overview) suite —
+Part of the [rxova headless React inputs](https://rxova.dev/packages/react-inputs/overview) suite —
 install the whole set from
 [`@rxova/react-inputs`](https://www.npmjs.com/package/@rxova/react-inputs), or read the full
-generated [API reference](https://rxova.org/packages/react-inputs/components/password/api) for this package.
+generated [API reference](https://rxova.dev/packages/react-inputs/components/password/api) for this package.
 
 Cross-cutting guidance lives on this component's About page:
-[styling](https://rxova.org/packages/react-inputs/components/password/about/#styling) and [form libraries](https://rxova.org/packages/react-inputs/components/password/about/#form-libraries). Coming from
-another library? The [migration guide](https://rxova.org/packages/react-inputs/components/password/migrating/) maps the props across.
+[styling](https://rxova.dev/packages/react-inputs/components/password/about/#styling) and [form libraries](https://rxova.dev/packages/react-inputs/components/password/about/#form-libraries). Coming from
+another library? The [migration guide](https://rxova.dev/packages/react-inputs/components/password/migrating/) maps the props across.
 
 ## License
 

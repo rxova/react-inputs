@@ -52,14 +52,14 @@ file to read when you are writing calling code.
 
 ## Docs
 
-- [Documentation](https://rxova.org/packages/react-inputs/): every page also
+- [Documentation](https://rxova.dev/packages/react-inputs/): every page also
   exists as raw markdown — add `.md` to any URL.
-- [llms.txt](https://rxova.org/packages/react-inputs/llms.txt): the docs index.
-- [llms-full.txt](https://rxova.org/packages/react-inputs/llms-full.txt): every
+- [llms.txt](https://rxova.dev/packages/react-inputs/llms.txt): the docs index.
+- [llms-full.txt](https://rxova.dev/packages/react-inputs/llms-full.txt): every
   page inlined, when one fetch should be the whole thing.
-- [Overview](https://rxova.org/packages/react-inputs/overview.md): what this suite
+- [Overview](https://rxova.dev/packages/react-inputs/overview.md): what this suite
   is for, and where it is the wrong answer.
-- [shadcn registry](https://rxova.org/packages/react-inputs/r/registry.json): the
+- [shadcn registry](https://rxova.dev/packages/react-inputs/r/registry.json): the
   components as `npx shadcn@latest add` items.
 
 ## Contributing

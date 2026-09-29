@@ -13,8 +13,8 @@
 </p>
 
 <p align="center">
-  <a href="https://rxova.org/packages/react-inputs/"><strong>Documentation</strong></a> ·
-  <a href="https://rxova.org/packages/react-inputs/components/otp/migrating/">Migration guides</a>
+  <a href="https://rxova.dev/packages/react-inputs/"><strong>Documentation</strong></a> ·
+  <a href="https://rxova.dev/packages/react-inputs/components/otp/migrating/">Migration guides</a>
 </p>
 
 [jscodeshift](https://github.com/facebook/jscodeshift) codemods for migrating onto the
@@ -60,7 +60,7 @@ Migrates [`input-otp`](https://github.com/guilhermerodz/input-otp) usage to
   render-prop tier and the per-slot shape is compatible, so your render function keeps working.
   Converting it into the compound `<OtpGroup>` / `<OtpSlot>` API can't be done reliably by an AST
   transform, so it stays a manual step — the codemod adds a one-line banner pointing at the
-  [migration guide](https://rxova.org/packages/react-inputs/components/otp/migrating/).
+  [migration guide](https://rxova.dev/packages/react-inputs/components/otp/migrating/).
 
 Always review the diff (`--dry` first) and re-run your formatter afterwards.
 

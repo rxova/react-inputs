@@ -126,12 +126,12 @@ plus the state hooks `data-count`, `data-full`, `data-focused`, `data-disabled`,
 
 ## Docs
 
-- Copyable labelled field: https://rxova.org/packages/react-inputs/r/tags-field.json
-- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/tags/about/#ui-library-recipes
+- Copyable labelled field: https://rxova.dev/packages/react-inputs/r/tags-field.json
+- Six maintained UI-library recipes: https://rxova.dev/packages/react-inputs/components/tags/about/#ui-library-recipes
 
-- Introduction: https://rxova.org/packages/react-inputs/components/tags/introduction/
-- Usage: https://rxova.org/packages/react-inputs/components/tags/usage/
-- Everything else (forms, keyboard, theming, SSR): https://rxova.org/packages/react-inputs/components/tags/about/
-- Migrating from another tags library: https://rxova.org/packages/react-inputs/components/tags/migrating/
-- Generated API reference: https://rxova.org/packages/react-inputs/components/tags/api/
-- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt
+- Introduction: https://rxova.dev/packages/react-inputs/components/tags/introduction/
+- Usage: https://rxova.dev/packages/react-inputs/components/tags/usage/
+- Everything else (forms, keyboard, theming, SSR): https://rxova.dev/packages/react-inputs/components/tags/about/
+- Migrating from another tags library: https://rxova.dev/packages/react-inputs/components/tags/migrating/
+- Generated API reference: https://rxova.dev/packages/react-inputs/components/tags/api/
+- Index of the whole suite for agents: https://rxova.dev/packages/react-inputs/llms.txt

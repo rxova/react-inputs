@@ -1,5 +1,5 @@
 /**
- * Fails the docs build if any rxova.org link written outside the docs site
+ * Fails the docs build if any rxova.dev link written outside the docs site
  * points at a route the site does not emit.
  *
  * starlight-links-validator only inspects links between pages of this site. The
@@ -33,7 +33,7 @@ export const DEFAULT_DIST = join(docsRoot, 'dist')
 
 /** Where the aggregator mounts this site; dist paths are relative to it. */
 export const MOUNT = '/packages/react-inputs'
-export const SITE = `https://rxova.org${MOUNT}`
+export const SITE = `https://rxova.dev${MOUNT}`
 
 const SKIP_DIRS = new Set([
   'node_modules',
@@ -65,13 +65,13 @@ function* walk(dir) {
   }
 }
 
-/** Every rxova.org docs URL under `repoRoot`, with the file it came from. */
+/** Every rxova.dev docs URL under `repoRoot`, with the file it came from. */
 export function collectLinks(repoRoot) {
   const found = []
   for (const file of walk(repoRoot)) {
     const text = readFileSync(file, 'utf8')
     for (const [url] of text.matchAll(
-      /https:\/\/rxova\.org\/packages\/react-inputs[^\s)"'`<>\]]*/g,
+      /https:\/\/rxova\.dev\/packages\/react-inputs[^\s)"'`<>\]]*/g,
     )) {
       // Prose runs a link into the sentence's punctuation: `…/introduction/.`
       found.push({ url: url.replace(/[.,]$/, ''), file: relative(repoRoot, file) })

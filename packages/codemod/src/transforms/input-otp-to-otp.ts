@@ -38,7 +38,7 @@ const PROP_REMOVE = new Set(['pushPasswordManagerStrategy', 'textAlign', 'noScri
 
 const BANNER =
   ' @rxova/react-otp-input: `render` was preserved (the slot shape is compatible). To adopt the compound ' +
-  '<OtpGroup>/<OtpSlot> API instead, see https://rxova.org/packages/react-inputs/components/otp/migrating/'
+  '<OtpGroup>/<OtpSlot> API instead, see https://rxova.dev/packages/react-inputs/components/otp/migrating/'
 
 /** Rename value/type Identifiers named `from` to `to`, skipping property keys and members. */
 function renameIdentifiers(

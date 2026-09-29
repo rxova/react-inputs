@@ -25,8 +25,8 @@ const page = (id, section, over = {}) => ({
   section,
   title: id,
   description: `About ${id}.`,
-  mdUrl: `https://rxova.org/packages/react-inputs/${id}.md`,
-  htmlUrl: `https://rxova.org/packages/react-inputs/${id}/`,
+  mdUrl: `https://rxova.dev/packages/react-inputs/${id}.md`,
+  htmlUrl: `https://rxova.dev/packages/react-inputs/${id}/`,
   body: `Body of ${id}.`,
   ...over,
 })
@@ -39,7 +39,7 @@ const PAGES = [
   page('components/otp/api/interfaces/otpinputprops', 'api:otp', { title: 'OtpInputProps' }),
 ]
 
-const MOUNT = 'https://rxova.org/packages/react-inputs'
+const MOUNT = 'https://rxova.dev/packages/react-inputs'
 const headings = (doc) => [...doc.matchAll(/^## (.+)$/gm)].map((m) => m[1])
 const links = (doc) => [...doc.matchAll(/^- \[([^\]]*)\]\(([^)]*)\)(?:: (.*))?$/gm)]
 
@@ -109,7 +109,7 @@ describe('llmsIndex', () => {
   it('links every entry to the markdown twin, not the human page', () => {
     for (const [, , url] of links(llmsIndex(PAGES, COMPONENTS, MOUNT))) {
       assert.match(url, /\.md$/)
-      assert.match(url, /^https:\/\/rxova\.org\//)
+      assert.match(url, /^https:\/\/rxova\.dev\//)
     }
   })
 
@@ -144,9 +144,9 @@ describe('llmsIndex', () => {
     assert.match(doc, /npm install @rxova\/react-inputs/)
     assert.match(
       doc,
-      /npx shadcn@latest add https:\/\/rxova\.org\/packages\/react-inputs\/r\/otp-field\.json/,
+      /npx shadcn@latest add https:\/\/rxova\.dev\/packages\/react-inputs\/r\/otp-field\.json/,
     )
-    assert.match(doc, /https:\/\/rxova\.org\/packages\/react-inputs\/r\/registry\.json/)
+    assert.match(doc, /https:\/\/rxova\.dev\/packages\/react-inputs\/r\/registry\.json/)
     assert.match(doc, /currency-field/)
     assert.match(doc, /otp-field/)
   })
@@ -162,7 +162,7 @@ describe('llmsFull', () => {
   })
 
   it('cites the human page each section came from', () => {
-    assert.match(llmsFull(PAGES, COMPONENTS), /^Source: https:\/\/rxova\.org\/\S+\/$/m)
+    assert.match(llmsFull(PAGES, COMPONENTS), /^Source: https:\/\/rxova\.dev\/\S+\/$/m)
   })
 
   it('separates pages so one body cannot read as a continuation of the last', () => {

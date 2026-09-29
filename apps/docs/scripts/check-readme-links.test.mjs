@@ -60,7 +60,7 @@ const redirectStub = (to) =>
   `<!doctype html><title>Redirecting to: ${to}</title>` +
   `<meta http-equiv="refresh" content="0;url=${to}">`
 
-const link = (path) => `See [the docs](https://rxova.org/packages/react-inputs${path}).`
+const link = (path) => `See [the docs](https://rxova.dev/packages/react-inputs${path}).`
 
 const run = (repoRoot, dist) => {
   try {
@@ -81,7 +81,7 @@ describe('collectLinks', () => {
       repo: {
         'README.md': link('/overview/'),
         'packages/otp/package.json': JSON.stringify({
-          homepage: 'https://rxova.org/packages/react-inputs/components/otp/introduction/',
+          homepage: 'https://rxova.dev/packages/react-inputs/components/otp/introduction/',
         }),
       },
     })
@@ -91,8 +91,8 @@ describe('collectLinks', () => {
         .map((found) => found.url)
         .sort(),
     ).toEqual([
-      'https://rxova.org/packages/react-inputs/components/otp/introduction/',
-      'https://rxova.org/packages/react-inputs/overview/',
+      'https://rxova.dev/packages/react-inputs/components/otp/introduction/',
+      'https://rxova.dev/packages/react-inputs/overview/',
     ])
   })
 
@@ -102,7 +102,7 @@ describe('collectLinks', () => {
     expect(collectLinks(repoRoot)).toEqual([
       {
         file: join('packages', 'otp', 'README.md'),
-        url: 'https://rxova.org/packages/react-inputs/overview/',
+        url: 'https://rxova.dev/packages/react-inputs/overview/',
       },
     ])
   })
@@ -111,8 +111,8 @@ describe('collectLinks', () => {
     const { repoRoot } = await fixture({
       repo: {
         'README.md': [
-          'A sentence ending in https://rxova.org/packages/react-inputs/overview/.',
-          'A list item, https://rxova.org/packages/react-inputs/usage/, mid-clause.',
+          'A sentence ending in https://rxova.dev/packages/react-inputs/overview/.',
+          'A list item, https://rxova.dev/packages/react-inputs/usage/, mid-clause.',
         ].join('\n'),
       },
     })
@@ -122,8 +122,8 @@ describe('collectLinks', () => {
         .map((found) => found.url)
         .sort(),
     ).toEqual([
-      'https://rxova.org/packages/react-inputs/overview/',
-      'https://rxova.org/packages/react-inputs/usage/',
+      'https://rxova.dev/packages/react-inputs/overview/',
+      'https://rxova.dev/packages/react-inputs/usage/',
     ])
   })
 
@@ -133,7 +133,7 @@ describe('collectLinks', () => {
     })
 
     expect(collectLinks(repoRoot).map((found) => found.url)).toEqual([
-      'https://rxova.org/packages/react-inputs/overview/',
+      'https://rxova.dev/packages/react-inputs/overview/',
     ])
   })
 
@@ -149,7 +149,7 @@ describe('collectLinks', () => {
     })
 
     expect(collectLinks(repoRoot).map((found) => found.url)).toEqual([
-      'https://rxova.org/packages/react-inputs/overview/',
+      'https://rxova.dev/packages/react-inputs/overview/',
     ])
   })
 
@@ -162,7 +162,7 @@ describe('collectLinks', () => {
     })
 
     expect(collectLinks(repoRoot).map((found) => found.url)).toEqual([
-      'https://rxova.org/packages/react-inputs/components/otp/usage/',
+      'https://rxova.dev/packages/react-inputs/components/otp/usage/',
     ])
   })
 
@@ -194,7 +194,7 @@ describe('checkReadmeLinks', () => {
     expect(checkReadmeLinks({ repoRoot, dist })).toEqual([
       {
         file: 'README.md',
-        url: 'https://rxova.org/packages/react-inputs/components/otp/',
+        url: 'https://rxova.dev/packages/react-inputs/components/otp/',
         reason: 'no page or redirect at /components/otp/',
       },
     ])
@@ -231,7 +231,7 @@ describe('checkReadmeLinks', () => {
     expect(checkReadmeLinks({ repoRoot, dist })).toEqual([
       {
         file: 'README.md',
-        url: 'https://rxova.org/packages/react-inputs/components/otp/usage.md',
+        url: 'https://rxova.dev/packages/react-inputs/components/otp/usage.md',
         reason: 'no page or redirect at /components/otp/usage.md',
       },
     ])
@@ -279,7 +279,7 @@ describe('checkReadmeLinks', () => {
 
   it('ignores a sibling project that merely shares the URL prefix', async () => {
     const { repoRoot, dist } = await fixture({
-      repo: { 'README.md': 'https://rxova.org/packages/react-inputs-suite/overview/' },
+      repo: { 'README.md': 'https://rxova.dev/packages/react-inputs-suite/overview/' },
     })
 
     expect(checkReadmeLinks({ repoRoot, dist })).toEqual([])
@@ -316,7 +316,7 @@ describe('checkReadmeLinks', () => {
       expect(checkReadmeLinks({ repoRoot, dist })).toEqual([
         {
           file: 'README.md',
-          url: 'https://rxova.org/packages/react-inputs/components/otp/about/#styling',
+          url: 'https://rxova.dev/packages/react-inputs/components/otp/about/#styling',
           reason: '/components/otp/about/ exists but has no #styling',
         },
       ])
@@ -338,13 +338,13 @@ describe('formatFailures', () => {
     const message = formatFailures([
       {
         file: 'README.md',
-        url: `https://rxova.org/packages/react-inputs/gone/`,
+        url: `https://rxova.dev/packages/react-inputs/gone/`,
         reason: 'no page',
       },
     ])
 
     expect(message).toContain('README.md')
-    expect(message).toContain('https://rxova.org/packages/react-inputs/gone/')
+    expect(message).toContain('https://rxova.dev/packages/react-inputs/gone/')
     expect(message).toContain('no page')
     expect(message).toContain('astro.config.mjs')
   })
@@ -360,7 +360,7 @@ describe('the CLI the docs build runs', () => {
     const { code, output } = run(repoRoot, dist)
 
     expect(code).toBe(0)
-    expect(output).toContain('every https://rxova.org/packages/react-inputs link')
+    expect(output).toContain('every https://rxova.dev/packages/react-inputs link')
   })
 
   it('exits 1 and reports the broken link', async () => {

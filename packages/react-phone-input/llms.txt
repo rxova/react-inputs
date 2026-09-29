@@ -118,12 +118,12 @@ Or target the `data-*` attributes, which are public API covered by semver:
 
 ## Docs
 
-- Copyable labelled field: https://rxova.org/packages/react-inputs/r/phone-field.json
-- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/phone/about/#ui-library-recipes
+- Copyable labelled field: https://rxova.dev/packages/react-inputs/r/phone-field.json
+- Six maintained UI-library recipes: https://rxova.dev/packages/react-inputs/components/phone/about/#ui-library-recipes
 
-- Introduction: https://rxova.org/packages/react-inputs/components/phone/introduction/
-- Usage: https://rxova.org/packages/react-inputs/components/phone/usage/
-- Everything else (forms, validity, theming, SSR): https://rxova.org/packages/react-inputs/components/phone/about/
-- Migrating from another phone library: https://rxova.org/packages/react-inputs/components/phone/migrating/
-- Generated API reference: https://rxova.org/packages/react-inputs/components/phone/api/
-- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt
+- Introduction: https://rxova.dev/packages/react-inputs/components/phone/introduction/
+- Usage: https://rxova.dev/packages/react-inputs/components/phone/usage/
+- Everything else (forms, validity, theming, SSR): https://rxova.dev/packages/react-inputs/components/phone/about/
+- Migrating from another phone library: https://rxova.dev/packages/react-inputs/components/phone/migrating/
+- Generated API reference: https://rxova.dev/packages/react-inputs/components/phone/api/
+- Index of the whole suite for agents: https://rxova.dev/packages/react-inputs/llms.txt

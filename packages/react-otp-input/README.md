@@ -22,7 +22,7 @@ top — including the **tap-to-edit any slot** that the incumbent can't do.
 npm install @rxova/react-otp-input
 ```
 
-📖 **[Documentation & live examples →](https://rxova.org/packages/react-inputs/components/otp/introduction/)** — guides, form
+📖 **[Documentation & live examples →](https://rxova.dev/packages/react-inputs/components/otp/introduction/)** — guides, form
 recipes, theming, WebOTP, and migration guides from other OTP libraries.
 
 - **One real `<input>`** — paste, SMS autofill, IME, undo, native `<form>` submission and screen-reader
@@ -144,7 +144,7 @@ adapter:
 ```
 
 Full recipes for React Hook Form, Formik, React Final Form, TanStack Form and native forms are in
-the [form-library guide](https://rxova.org/packages/react-inputs/components/otp/about/#form-libraries).
+the [form-library guide](https://rxova.dev/packages/react-inputs/components/otp/about/#form-libraries).
 
 ## Styling
 
@@ -208,22 +208,22 @@ The docs contain maintained examples for shadcn/ui, Radix Themes, Material UI, C
 and Ant Design. Copy a ready-labelled wrapper with:
 
 ```bash
-npx shadcn@latest add https://rxova.org/packages/react-inputs/r/otp-field.json
+npx shadcn@latest add https://rxova.dev/packages/react-inputs/r/otp-field.json
 ```
 
-[Open the recipes](https://rxova.org/packages/react-inputs/components/otp/about/#ui-library-recipes).
+[Open the recipes](https://rxova.dev/packages/react-inputs/components/otp/about/#ui-library-recipes).
 
 ## Part of rxova
 
-Part of the [rxova headless React inputs](https://rxova.org/packages/react-inputs/overview) suite —
+Part of the [rxova headless React inputs](https://rxova.dev/packages/react-inputs/overview) suite —
 install the whole set from
 [`@rxova/react-inputs`](https://www.npmjs.com/package/@rxova/react-inputs), or read the full
-generated [API reference](https://rxova.org/packages/react-inputs/components/otp/api) for this
+generated [API reference](https://rxova.dev/packages/react-inputs/components/otp/api) for this
 package.
 
 Migrating? `npx @rxova/codemod input-otp-to-otp --dry ./src` handles most of the move from
 `input-otp`; the
-[migration guide](https://rxova.org/packages/react-inputs/components/otp/migrating/) covers that and
+[migration guide](https://rxova.dev/packages/react-inputs/components/otp/migrating/) covers that and
 `react-otp-input`.
 
 ## License

@@ -13,10 +13,10 @@ import { withBase } from './src/lib/base-url.mjs'
 import { componentPackages } from '../../packages/utils/component-packages.mjs'
 
 /**
- * Defaults keep the standalone build working; the rxova.org aggregator sets
+ * Defaults keep the standalone build working; the rxova.dev aggregator sets
  * DOCS_URL / DOCS_BASE_URL to mount these docs under /packages/react-inputs/.
  */
-const site = process.env.DOCS_URL ?? 'https://rxova.org'
+const site = process.env.DOCS_URL ?? 'https://rxova.dev'
 const base = process.env.DOCS_BASE_URL ?? '/'
 
 /**
@@ -250,7 +250,7 @@ export default defineConfig({
     // Emitted at the mount, not the domain root: under the aggregator this build
     // lives at /packages/react-inputs/, so the file lands at
     // <base>sitemap-index.xml and claims only URLs beneath that prefix, which is
-    // the scope a sitemap at a subpath is allowed to claim. rxova.org's root
+    // the scope a sitemap at a subpath is allowed to claim. rxova.dev's root
     // robots.txt is what points at it — this build cannot serve a robots.txt any
     // crawler would honour, because robots.txt is read only from the origin root.
     sitemap({ filter: indexable }),
