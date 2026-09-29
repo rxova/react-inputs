@@ -107,12 +107,12 @@ Or target the `data-*` attributes, which are public API covered by semver:
 
 ## Docs
 
-- Copyable labelled field: https://rxova.org/packages/react-inputs/r/otp-field.json
-- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/otp/about/#ui-library-recipes
+- Copyable labelled field: https://rxova.dev/packages/react-inputs/r/otp-field.json
+- Six maintained UI-library recipes: https://rxova.dev/packages/react-inputs/components/otp/about/#ui-library-recipes
 
-- Introduction: https://rxova.org/packages/react-inputs/components/otp/introduction/
-- Usage: https://rxova.org/packages/react-inputs/components/otp/usage/
-- Everything else (forms, theming, WebOTP, SSR): https://rxova.org/packages/react-inputs/components/otp/about/
-- Migrating from another OTP library: https://rxova.org/packages/react-inputs/components/otp/migrating/
-- Generated API reference: https://rxova.org/packages/react-inputs/components/otp/api/
-- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt
+- Introduction: https://rxova.dev/packages/react-inputs/components/otp/introduction/
+- Usage: https://rxova.dev/packages/react-inputs/components/otp/usage/
+- Everything else (forms, theming, WebOTP, SSR): https://rxova.dev/packages/react-inputs/components/otp/about/
+- Migrating from another OTP library: https://rxova.dev/packages/react-inputs/components/otp/migrating/
+- Generated API reference: https://rxova.dev/packages/react-inputs/components/otp/api/
+- Index of the whole suite for agents: https://rxova.dev/packages/react-inputs/llms.txt

@@ -14,7 +14,7 @@
  *
  * Snippet correctness is NOT checked here: `check-doc-snippets.ts` already
  * enumerates every package llms.txt and type-transpiles each fence, and the
- * rxova.org links are resolved against the built site by the docs build's
+ * rxova.dev links are resolved against the built site by the docs build's
  * `check-readme-links.mjs`. One rule, one place.
  *
  * ## The root index

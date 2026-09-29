@@ -94,7 +94,7 @@ describe('renderMarkdown', () => {
   const page = {
     title: 'Usage',
     description: 'How to use it.',
-    htmlUrl: 'https://rxova.org/packages/react-inputs/components/otp/usage/',
+    htmlUrl: 'https://rxova.dev/packages/react-inputs/components/otp/usage/',
     body: 'Body text.',
   }
 
@@ -105,7 +105,7 @@ describe('renderMarkdown', () => {
   })
 
   it('cites the human page it came from', () => {
-    assert.match(renderMarkdown(page), /^source: https:\/\/rxova\.org\/.*\/usage\/$/m)
+    assert.match(renderMarkdown(page), /^source: https:\/\/rxova\.dev\/.*\/usage\/$/m)
   })
 
   it('quotes frontmatter values, so a colon in a title cannot break the YAML', () => {

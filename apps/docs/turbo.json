@@ -11,7 +11,7 @@
       // These mount the site under the aggregator's base path and change every
       // emitted URL, so they belong in the cache key: without them a root-base
       // build could replay for the /packages/react-inputs/ build and the
-      // breakage would stay invisible until rxova.org served it. Declared here
+      // breakage would stay invisible until rxova.dev served it. Declared here
       // rather than on the root task so setting them does not also invalidate
       // the library builds, which never read them.
       "env": ["DOCS_URL", "DOCS_BASE_URL"]

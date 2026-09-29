@@ -21,7 +21,7 @@
 npm install @rxova/react-rating-input
 ```
 
-📖 **[Documentation & live examples →](https://rxova.org/packages/react-inputs/components/rating/introduction/)** — guides,
+📖 **[Documentation & live examples →](https://rxova.dev/packages/react-inputs/components/rating/introduction/)** — guides,
 form recipes, theming, and migration from `react-rating` / `react-stars`.
 
 - **Bring your own icon** — SVG, emoji, image, arbitrary JSX
@@ -307,21 +307,21 @@ The docs contain maintained examples for shadcn/ui, Radix Themes, Material UI, C
 and Ant Design. Copy a ready-labelled wrapper with:
 
 ```bash
-npx shadcn@latest add https://rxova.org/packages/react-inputs/r/rating-field.json
+npx shadcn@latest add https://rxova.dev/packages/react-inputs/r/rating-field.json
 ```
 
-[Open the recipes](https://rxova.org/packages/react-inputs/components/rating/about/#ui-library-recipes).
+[Open the recipes](https://rxova.dev/packages/react-inputs/components/rating/about/#ui-library-recipes).
 
 ## Part of rxova
 
-Part of the [rxova headless React inputs](https://rxova.org/packages/react-inputs/overview) suite —
+Part of the [rxova headless React inputs](https://rxova.dev/packages/react-inputs/overview) suite —
 install the whole set from
 [`@rxova/react-inputs`](https://www.npmjs.com/package/@rxova/react-inputs), or read the full
-generated [API reference](https://rxova.org/packages/react-inputs/components/rating/api) for this
+generated [API reference](https://rxova.dev/packages/react-inputs/components/rating/api) for this
 package.
 
 Migrating from `react-rating`, `react-stars` or plain radio buttons? The
-[migration guide](https://rxova.org/packages/react-inputs/components/rating/migrating/) has a
+[migration guide](https://rxova.dev/packages/react-inputs/components/rating/migrating/) has a
 section for each.
 
 ## License

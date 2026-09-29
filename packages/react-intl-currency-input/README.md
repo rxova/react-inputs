@@ -25,7 +25,7 @@ npm install @rxova/react-intl-currency-input
 Requires React and React DOM 18 or newer. Both are peer dependencies; there are no bundled runtime
 dependencies and no stylesheet to import.
 
-📖 **[Documentation & live examples →](https://rxova.org/packages/react-inputs/components/currency/introduction/)** — the
+📖 **[Documentation & live examples →](https://rxova.dev/packages/react-inputs/components/currency/introduction/)** — the
 locale matrix, formatting options, form recipes, and migration, with live editable examples you can
 change in the browser: locales, currencies, precision, digits, negatives and keyboard stepping.
 
@@ -170,7 +170,7 @@ _is_ the input — hence one selector hook where the composite inputs in the sui
 It defines no CSS custom properties: there is nothing painted on top of the input to configure, so
 `className` and ordinary CSS reach everything.
 
-See the **[complete styling guide](https://rxova.org/packages/react-inputs/components/currency/about/#styling)**
+See the **[complete styling guide](https://rxova.dev/packages/react-inputs/components/currency/about/#styling)**
 for labeled fields, CSS Modules, Tailwind, wrapper adornments, design-system variants, and RTL-safe
 layout.
 
@@ -198,7 +198,7 @@ function MuiPrice() {
 }
 ```
 
-See the **[styling guide](https://rxova.org/packages/react-inputs/components/currency/about/#styling)** for shadcn/ui,
+See the **[styling guide](https://rxova.dev/packages/react-inputs/components/currency/about/#styling)** for shadcn/ui,
 Radix Themes, MUI, Chakra UI, Mantine and Ant Design.
 
 ### `currencyForCountry(code)`
@@ -209,7 +209,7 @@ Best-effort ISO-3166 → ISO-4217 lookup for convenience. Prefer passing `curren
 
 `onChange` emits a `number`, so use a controlled adapter (RHF `Controller`, Formik `useField`,
 etc.). See the
-[form-library guide](https://rxova.org/packages/react-inputs/components/currency/about/#form-libraries)
+[form-library guide](https://rxova.dev/packages/react-inputs/components/currency/about/#form-libraries)
 for React Hook Form, Formik, React Final Form and TanStack Form.
 
 ## UI-library recipes
@@ -218,17 +218,17 @@ The docs contain maintained examples for shadcn/ui, Radix Themes, Material UI, C
 and Ant Design. Copy a ready-labelled wrapper with:
 
 ```bash
-npx shadcn@latest add https://rxova.org/packages/react-inputs/r/currency-field.json
+npx shadcn@latest add https://rxova.dev/packages/react-inputs/r/currency-field.json
 ```
 
-[Open the recipes](https://rxova.org/packages/react-inputs/components/currency/about/#ui-library-recipes).
+[Open the recipes](https://rxova.dev/packages/react-inputs/components/currency/about/#ui-library-recipes).
 
 ## Part of rxova
 
-Part of the [rxova headless React inputs](https://rxova.org/packages/react-inputs/overview) suite —
+Part of the [rxova headless React inputs](https://rxova.dev/packages/react-inputs/overview) suite —
 install the whole set from
 [`@rxova/react-inputs`](https://www.npmjs.com/package/@rxova/react-inputs), or read the full
-generated [API reference](https://rxova.org/packages/react-inputs/components/currency/api) for this
+generated [API reference](https://rxova.dev/packages/react-inputs/components/currency/api) for this
 package.
 
 ## License

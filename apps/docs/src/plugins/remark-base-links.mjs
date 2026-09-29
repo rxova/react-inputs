@@ -7,7 +7,7 @@ import { withBase } from '../lib/base-url.mjs'
  *
  * Docusaurus rewrote `/components/otp/about` to `<baseUrl>/components/otp/about`
  * for you; Astro does not. Every page here was written against that behaviour, so
- * under the rxova.org aggregator (DOCS_BASE_URL=/packages/react-inputs/) all 85 of
+ * under the rxova.dev aggregator (DOCS_BASE_URL=/packages/react-inputs/) all 85 of
  * them 404'd — which is what starlight-links-validator caught. The standalone
  * build hides it: with base '/' the links happen to be correct.
  *

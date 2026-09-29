@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://rxova.org/packages/react-inputs/">
+  <a href="https://rxova.dev/packages/react-inputs/">
     <img src="assets/logo.svg" width="112" alt="Rxova React Inputs logo" />
   </a>
 </p>
@@ -23,10 +23,10 @@
 </p>
 
 <p align="center">
-  <a href="https://rxova.org/packages/react-inputs/"><strong>Documentation</strong></a> ·
-  <a href="https://rxova.org/packages/react-inputs/getting-started/installation">Installation</a> ·
-  <a href="https://rxova.org/packages/react-inputs/getting-started/quick-start">Quick start</a> ·
-  <a href="https://rxova.org/packages/react-inputs/overview">Why Rxova React Inputs</a> ·
+  <a href="https://rxova.dev/packages/react-inputs/"><strong>Documentation</strong></a> ·
+  <a href="https://rxova.dev/packages/react-inputs/getting-started/installation">Installation</a> ·
+  <a href="https://rxova.dev/packages/react-inputs/getting-started/quick-start">Quick start</a> ·
+  <a href="https://rxova.dev/packages/react-inputs/overview">Why Rxova React Inputs</a> ·
   <a href="CONTRIBUTING.md">Contributing</a>
 </p>
 
@@ -131,22 +131,22 @@ when you want the value to submit natively from a plain `<form>`.
 ## Documentation
 
 Full guides, live editable examples and the generated API reference for Rxova React Inputs:
-**[rxova.org/packages/react-inputs](https://rxova.org/packages/react-inputs/)**
+**[rxova.dev/packages/react-inputs](https://rxova.dev/packages/react-inputs/)**
 
 | Component | Guide                                                                                        | API reference                                                          |
 | --------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Currency  | [Getting started](https://rxova.org/packages/react-inputs/components/currency/introduction/) | [API](https://rxova.org/packages/react-inputs/components/currency/api) |
-| Rating    | [Getting started](https://rxova.org/packages/react-inputs/components/rating/introduction/)   | [API](https://rxova.org/packages/react-inputs/components/rating/api)   |
-| OTP       | [Getting started](https://rxova.org/packages/react-inputs/components/otp/introduction/)      | [API](https://rxova.org/packages/react-inputs/components/otp/api)      |
-| Password  | [Getting started](https://rxova.org/packages/react-inputs/components/password/introduction/) | [API](https://rxova.org/packages/react-inputs/components/password/api) |
-| Phone     | [Getting started](https://rxova.org/packages/react-inputs/components/phone/introduction/)    | [API](https://rxova.org/packages/react-inputs/components/phone/api)    |
-| Date      | [Getting started](https://rxova.org/packages/react-inputs/components/date/introduction/)     | [API](https://rxova.org/packages/react-inputs/components/date/api)     |
-| Time      | [Getting started](https://rxova.org/packages/react-inputs/components/time/introduction/)     | [API](https://rxova.org/packages/react-inputs/components/time/api)     |
-| Tags      | [Getting started](https://rxova.org/packages/react-inputs/components/tags/introduction/)     | [API](https://rxova.org/packages/react-inputs/components/tags/api)     |
-| File      | [Getting started](https://rxova.org/packages/react-inputs/components/file/introduction/)     | [API](https://rxova.org/packages/react-inputs/components/file/api)     |
+| Currency  | [Getting started](https://rxova.dev/packages/react-inputs/components/currency/introduction/) | [API](https://rxova.dev/packages/react-inputs/components/currency/api) |
+| Rating    | [Getting started](https://rxova.dev/packages/react-inputs/components/rating/introduction/)   | [API](https://rxova.dev/packages/react-inputs/components/rating/api)   |
+| OTP       | [Getting started](https://rxova.dev/packages/react-inputs/components/otp/introduction/)      | [API](https://rxova.dev/packages/react-inputs/components/otp/api)      |
+| Password  | [Getting started](https://rxova.dev/packages/react-inputs/components/password/introduction/) | [API](https://rxova.dev/packages/react-inputs/components/password/api) |
+| Phone     | [Getting started](https://rxova.dev/packages/react-inputs/components/phone/introduction/)    | [API](https://rxova.dev/packages/react-inputs/components/phone/api)    |
+| Date      | [Getting started](https://rxova.dev/packages/react-inputs/components/date/introduction/)     | [API](https://rxova.dev/packages/react-inputs/components/date/api)     |
+| Time      | [Getting started](https://rxova.dev/packages/react-inputs/components/time/introduction/)     | [API](https://rxova.dev/packages/react-inputs/components/time/api)     |
+| Tags      | [Getting started](https://rxova.dev/packages/react-inputs/components/tags/introduction/)     | [API](https://rxova.dev/packages/react-inputs/components/tags/api)     |
+| File      | [Getting started](https://rxova.dev/packages/react-inputs/components/file/introduction/)     | [API](https://rxova.dev/packages/react-inputs/components/file/api)     |
 
 Accessibility, styling and form-library guidance lives on each component's About page — for example
-[Currency › About](https://rxova.org/packages/react-inputs/components/currency/about/).
+[Currency › About](https://rxova.dev/packages/react-inputs/components/currency/about/).
 
 ## Reading this with a coding agent
 
@@ -157,15 +157,15 @@ own `src/types.ts`, so a renamed prop cannot leave the file describing an API th
 
 - [`llms.txt`](llms.txt) — the repository index: which package is which, and what to read next.
 - [`AGENTS.md`](AGENTS.md) — for an agent _editing_ this repo, not using it.
-- [Every docs page as raw markdown](https://rxova.org/packages/react-inputs/) — add `.md` to any URL.
-- [`llms.txt`](https://rxova.org/packages/react-inputs/llms.txt) ·
-  [`llms-full.txt`](https://rxova.org/packages/react-inputs/llms-full.txt) — the docs index, and
+- [Every docs page as raw markdown](https://rxova.dev/packages/react-inputs/) — add `.md` to any URL.
+- [`llms.txt`](https://rxova.dev/packages/react-inputs/llms.txt) ·
+  [`llms-full.txt`](https://rxova.dev/packages/react-inputs/llms-full.txt) — the docs index, and
   every page inlined.
 
 ## Migrating
 
 Each component package includes migration guidance. Choose your component in the
-[Rxova React Inputs documentation](https://rxova.org/packages/react-inputs/) to find its available
+[Rxova React Inputs documentation](https://rxova.dev/packages/react-inputs/) to find its available
 guides.
 
 ## Contributing
@@ -204,7 +204,7 @@ packages/
   utils                       repo checks (private)
 apps/
   playground                  shared Vite playground
-  docs                        Astro Starlight site, published as part of rxova.org
+  docs                        Astro Starlight site, published as part of rxova.dev
 ```
 
 - **Turborepo** — task pipeline and caching (`turbo.json`)

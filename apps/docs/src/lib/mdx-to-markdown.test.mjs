@@ -19,7 +19,7 @@ import {
   absolutizeUrls,
 } from './mdx-to-markdown.mjs'
 
-const SITE = { origin: 'https://rxova.org', base: '/packages/react-inputs/' }
+const SITE = { origin: 'https://rxova.dev', base: '/packages/react-inputs/' }
 const run = (source) => mdxToMarkdown(source, SITE)
 
 describe('mapUnfenced', () => {
@@ -154,21 +154,21 @@ describe('absolutizeUrls', () => {
   it('resolves markdown links through the mount, not by concatenation', () => {
     assert.equal(
       absolutizeUrls('[API](/components/otp/api)', SITE),
-      '[API](https://rxova.org/packages/react-inputs/components/otp/api)',
+      '[API](https://rxova.dev/packages/react-inputs/components/otp/api)',
     )
   })
 
   it('resolves the raw HTML attributes overview.mdx is built from', () => {
     assert.equal(
       absolutizeUrls('<a href="/components/rating/api">API</a>', SITE),
-      '<a href="https://rxova.org/packages/react-inputs/components/rating/api">API</a>',
+      '<a href="https://rxova.dev/packages/react-inputs/components/rating/api">API</a>',
     )
   })
 
   it('resolves a BASE_URL expression attribute, which is how assets avoid hardcoding the mount', () => {
     assert.equal(
       absolutizeUrls('<img src={`${import.meta.env.BASE_URL}img/logos/otp.svg`} />', SITE),
-      '<img src="https://rxova.org/packages/react-inputs/img/logos/otp.svg" />',
+      '<img src="https://rxova.dev/packages/react-inputs/img/logos/otp.svg" />',
     )
   })
 

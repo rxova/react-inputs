@@ -1,4 +1,4 @@
-// https://rxova.org/packages/react-inputs/llms-full.txt — every page, inlined.
+// https://rxova.dev/packages/react-inputs/llms-full.txt — every page, inlined.
 //
 // For the case where one fetch should be the whole documentation set rather than
 // an index to follow. `scripts/check-md-routes.mjs` holds it to a size budget, so

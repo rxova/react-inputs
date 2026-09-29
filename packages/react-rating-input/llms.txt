@@ -107,12 +107,12 @@ Or target the `data-*` attributes, which are public API covered by semver:
 
 ## Docs
 
-- Copyable labelled field: https://rxova.org/packages/react-inputs/r/rating-field.json
-- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/rating/about/#ui-library-recipes
+- Copyable labelled field: https://rxova.dev/packages/react-inputs/r/rating-field.json
+- Six maintained UI-library recipes: https://rxova.dev/packages/react-inputs/components/rating/about/#ui-library-recipes
 
-- Introduction: https://rxova.org/packages/react-inputs/components/rating/introduction/
-- Usage: https://rxova.org/packages/react-inputs/components/rating/usage/
-- Everything else (forms, theming, custom icons, SSR): https://rxova.org/packages/react-inputs/components/rating/about/
-- Migrating from another rating library: https://rxova.org/packages/react-inputs/components/rating/migrating/
-- Generated API reference: https://rxova.org/packages/react-inputs/components/rating/api/
-- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt
+- Introduction: https://rxova.dev/packages/react-inputs/components/rating/introduction/
+- Usage: https://rxova.dev/packages/react-inputs/components/rating/usage/
+- Everything else (forms, theming, custom icons, SSR): https://rxova.dev/packages/react-inputs/components/rating/about/
+- Migrating from another rating library: https://rxova.dev/packages/react-inputs/components/rating/migrating/
+- Generated API reference: https://rxova.dev/packages/react-inputs/components/rating/api/
+- Index of the whole suite for agents: https://rxova.dev/packages/react-inputs/llms.txt

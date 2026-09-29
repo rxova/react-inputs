@@ -111,12 +111,12 @@ Or target the `data-*` attributes, which are public API covered by semver:
 
 ## Docs
 
-- Copyable labelled field: https://rxova.org/packages/react-inputs/r/file-field.json
-- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/file/about/#ui-library-recipes
+- Copyable labelled field: https://rxova.dev/packages/react-inputs/r/file-field.json
+- Six maintained UI-library recipes: https://rxova.dev/packages/react-inputs/components/file/about/#ui-library-recipes
 
-- Introduction: https://rxova.org/packages/react-inputs/components/file/introduction/
-- Usage: https://rxova.org/packages/react-inputs/components/file/usage/
-- Everything else (forms, drop zone, previews, SSR): https://rxova.org/packages/react-inputs/components/file/about/
-- Migrating from another file-upload library: https://rxova.org/packages/react-inputs/components/file/migrating/
-- Generated API reference: https://rxova.org/packages/react-inputs/components/file/api/
-- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt
+- Introduction: https://rxova.dev/packages/react-inputs/components/file/introduction/
+- Usage: https://rxova.dev/packages/react-inputs/components/file/usage/
+- Everything else (forms, drop zone, previews, SSR): https://rxova.dev/packages/react-inputs/components/file/about/
+- Migrating from another file-upload library: https://rxova.dev/packages/react-inputs/components/file/migrating/
+- Generated API reference: https://rxova.dev/packages/react-inputs/components/file/api/
+- Index of the whole suite for agents: https://rxova.dev/packages/react-inputs/llms.txt

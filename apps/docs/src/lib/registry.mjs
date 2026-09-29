@@ -1,6 +1,6 @@
 // The shadcn-style component registry: https://ui.shadcn.com/docs/registry
 //
-//   npx shadcn@latest add https://rxova.org/packages/react-inputs/r/otp-field.json
+//   npx shadcn@latest add https://rxova.dev/packages/react-inputs/r/otp-field.json
 //
 // `shadcn add` is now the default install verb in a lot of React projects, and an
 // agent working in one will reach for it before `npm install`. Being absent from

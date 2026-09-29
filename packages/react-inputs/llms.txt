@@ -89,7 +89,7 @@ through, and a test fails the build if a new export misses this list.
 
 ## Docs
 
-- Overview: https://rxova.org/packages/react-inputs/overview/
-- Installation: https://rxova.org/packages/react-inputs/getting-started/installation/
-- Quick start: https://rxova.org/packages/react-inputs/getting-started/quick-start/
-- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt
+- Overview: https://rxova.dev/packages/react-inputs/overview/
+- Installation: https://rxova.dev/packages/react-inputs/getting-started/installation/
+- Quick start: https://rxova.dev/packages/react-inputs/getting-started/quick-start/
+- Index of the whole suite for agents: https://rxova.dev/packages/react-inputs/llms.txt

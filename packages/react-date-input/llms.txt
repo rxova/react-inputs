@@ -112,12 +112,12 @@ plus the state hooks `data-complete`, `data-out-of-range`, `data-placeholder`,
 
 ## Docs
 
-- Copyable labelled field: https://rxova.org/packages/react-inputs/r/date-field.json
-- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/date/about/#ui-library-recipes
+- Copyable labelled field: https://rxova.dev/packages/react-inputs/r/date-field.json
+- Six maintained UI-library recipes: https://rxova.dev/packages/react-inputs/components/date/about/#ui-library-recipes
 
-- Introduction: https://rxova.org/packages/react-inputs/components/date/introduction/
-- Usage: https://rxova.org/packages/react-inputs/components/date/usage/
-- Everything else (forms, ranges, theming, SSR): https://rxova.org/packages/react-inputs/components/date/about/
-- Migrating from another date picker: https://rxova.org/packages/react-inputs/components/date/migrating/
-- Generated API reference: https://rxova.org/packages/react-inputs/components/date/api/
-- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt
+- Introduction: https://rxova.dev/packages/react-inputs/components/date/introduction/
+- Usage: https://rxova.dev/packages/react-inputs/components/date/usage/
+- Everything else (forms, ranges, theming, SSR): https://rxova.dev/packages/react-inputs/components/date/about/
+- Migrating from another date picker: https://rxova.dev/packages/react-inputs/components/date/migrating/
+- Generated API reference: https://rxova.dev/packages/react-inputs/components/date/api/
+- Index of the whole suite for agents: https://rxova.dev/packages/react-inputs/llms.txt

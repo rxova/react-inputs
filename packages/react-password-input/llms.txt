@@ -148,12 +148,12 @@ Or target the `data-*` attributes, which are public API covered by semver:
 
 ## Docs
 
-- Copyable labelled field: https://rxova.org/packages/react-inputs/r/password-field.json
-- Six maintained UI-library recipes: https://rxova.org/packages/react-inputs/components/password/about/#ui-library-recipes
+- Copyable labelled field: https://rxova.dev/packages/react-inputs/r/password-field.json
+- Six maintained UI-library recipes: https://rxova.dev/packages/react-inputs/components/password/about/#ui-library-recipes
 
-- Introduction: https://rxova.org/packages/react-inputs/components/password/introduction/
-- Usage: https://rxova.org/packages/react-inputs/components/password/usage/
-- Everything else (forms, theming, breach checks, SSR): https://rxova.org/packages/react-inputs/components/password/about/
-- Migrating from another password field: https://rxova.org/packages/react-inputs/components/password/migrating/
-- Generated API reference: https://rxova.org/packages/react-inputs/components/password/api/
-- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt
+- Introduction: https://rxova.dev/packages/react-inputs/components/password/introduction/
+- Usage: https://rxova.dev/packages/react-inputs/components/password/usage/
+- Everything else (forms, theming, breach checks, SSR): https://rxova.dev/packages/react-inputs/components/password/about/
+- Migrating from another password field: https://rxova.dev/packages/react-inputs/components/password/migrating/
+- Generated API reference: https://rxova.dev/packages/react-inputs/components/password/api/
+- Index of the whole suite for agents: https://rxova.dev/packages/react-inputs/llms.txt

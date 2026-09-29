@@ -22,7 +22,7 @@ Headless, zero-dependency, 12/24-hour from `Intl`.
 npm install @rxova/react-time-input
 ```
 
-📖 **[Documentation & live examples →](https://rxova.org/packages/react-inputs/components/time/introduction/)** — guides, form recipes, theming, locale handling, and migration from another time picker.
+📖 **[Documentation & live examples →](https://rxova.dev/packages/react-inputs/components/time/introduction/)** — guides, form recipes, theming, locale handling, and migration from another time picker.
 
 - **No popup.** A time is three short numbers. Typing `14:30` beats scrolling a column of 60.
 - **No date library.** 12/24-hour, segment order, separators and the AM/PM words all come from
@@ -261,21 +261,21 @@ The docs contain maintained examples for shadcn/ui, Radix Themes, Material UI, C
 and Ant Design. Copy a ready-labelled wrapper with:
 
 ```bash
-npx shadcn@latest add https://rxova.org/packages/react-inputs/r/time-field.json
+npx shadcn@latest add https://rxova.dev/packages/react-inputs/r/time-field.json
 ```
 
-[Open the recipes](https://rxova.org/packages/react-inputs/components/time/about/#ui-library-recipes).
+[Open the recipes](https://rxova.dev/packages/react-inputs/components/time/about/#ui-library-recipes).
 
 ## Part of rxova
 
-Part of the [rxova headless React inputs](https://rxova.org/packages/react-inputs/overview) suite —
+Part of the [rxova headless React inputs](https://rxova.dev/packages/react-inputs/overview) suite —
 install the whole set from
 [`@rxova/react-inputs`](https://www.npmjs.com/package/@rxova/react-inputs), or read the full
-generated [API reference](https://rxova.org/packages/react-inputs/components/time/api) for this package.
+generated [API reference](https://rxova.dev/packages/react-inputs/components/time/api) for this package.
 
 Cross-cutting guidance lives on this component's About page:
-[styling](https://rxova.org/packages/react-inputs/components/time/about/#styling) and [form libraries](https://rxova.org/packages/react-inputs/components/time/about/#form-libraries). Coming from
-another library? The [migration guide](https://rxova.org/packages/react-inputs/components/time/migrating/) maps the props across.
+[styling](https://rxova.dev/packages/react-inputs/components/time/about/#styling) and [form libraries](https://rxova.dev/packages/react-inputs/components/time/about/#form-libraries). Coming from
+another library? The [migration guide](https://rxova.dev/packages/react-inputs/components/time/migrating/) maps the props across.
 
 ## License
 

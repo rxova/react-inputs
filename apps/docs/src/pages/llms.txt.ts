@@ -1,4 +1,4 @@
-// https://rxova.org/packages/react-inputs/llms.txt — the agent-facing index.
+// https://rxova.dev/packages/react-inputs/llms.txt — the agent-facing index.
 //
 // See src/lib/llms.mjs for the document's shape. This is the adapter: read the
 // pages, read the component list the config injected, serve the text.

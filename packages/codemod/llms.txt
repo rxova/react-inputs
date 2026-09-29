@@ -79,6 +79,6 @@ Each transform is exported for `jscodeshift -t` directly:
 
 ## Docs
 
-- Migration guides: https://rxova.org/packages/react-inputs/components/otp/migrating/
-- The suite: https://rxova.org/packages/react-inputs/overview/
-- Index of the whole suite for agents: https://rxova.org/packages/react-inputs/llms.txt
+- Migration guides: https://rxova.dev/packages/react-inputs/components/otp/migrating/
+- The suite: https://rxova.dev/packages/react-inputs/overview/
+- Index of the whole suite for agents: https://rxova.dev/packages/react-inputs/llms.txt

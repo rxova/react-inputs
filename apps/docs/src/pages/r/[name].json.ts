@@ -1,6 +1,6 @@
 // One registry item per route: /r/otp-field.json and friends.
 //
-//   npx shadcn@latest add https://rxova.org/packages/react-inputs/r/otp-field.json
+//   npx shadcn@latest add https://rxova.dev/packages/react-inputs/r/otp-field.json
 //
 // See src/lib/registry.mjs for what these items deliberately are and are not.
 
