@@ -32,8 +32,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
-      - uses: ./.github/actions/setup-pnpm
-      - uses: ./.github/actions/turbo-cache
+      - uses: rxova/shared/actions/setup-pnpm@main
+      - uses: rxova/shared/actions/turbo-cache@main
       - run: pnpm install --frozen-lockfile
       # `docs:build` is a Turbo task: it builds the component packages first
       # (the docs import them for live examples), then runs the Astro/Starlight
@@ -70,34 +70,18 @@ jobs:
       # builds these docs itself. Contract: rxova/rxova-website
       # docs/INPUTS-CONTRACT.md.
       #
-      # A step rather than the `notify-website` job it replaces. That job made
-      # one API call and was billed a whole minute for it, and it needed a
-      # runner of its own only to depend on this one. `GITHUB_RUN_ID` is the
-      # same either way, which is the only thing the contract reads.
+      # A step rather than a job of its own: a job would make one API call and be
+      # billed a whole minute for it, and `GITHUB_RUN_ID` is the same either way,
+      # which is the only thing the contract reads.
       #
-      # No continue-on-error, unlike the pre-contract dispatch this replaces.
-      # Back then the aggregator rebuilt the docs from source on its own
-      # schedule, so a dropped notification only delayed a publish. Now the
-      # dispatch *is* the publish: swallowing a failure would leave the site
-      # serving stale docs with a green tick here and nothing to look at.
-      #
-      # `-F` only for schema, which the receiver compares as the number 1;
-      # everything else goes through `-f` so it stays a string, and an
-      # all-digit ref or sha cannot arrive as a number.
+      # No continue-on-error: the dispatch *is* the publish, so swallowing a
+      # failure would leave the site serving stale docs behind a green tick.
       #
       # `project` is react-inputs — the id in the aggregator's sources.json,
       # which is the repo name, not the shorter package scope.
       - name: Dispatch docs ingest to rxova.dev
         if: github.ref == 'refs/heads/main'
-        env:
-          GH_TOKEN: ${{ secrets.AGGREGATOR_DISPATCH_TOKEN }}
-        run: |
-          gh api repos/rxova/rxova-website/dispatches \
-            -f event_type=docs \
-            -F 'client_payload[schema]=1' \
-            -f 'client_payload[project]=react-inputs' \
-            -f "client_payload[ref]=${GITHUB_REF_NAME}" \
-            -f "client_payload[sha]=${GITHUB_SHA}" \
-            -f "client_payload[run_id]=${GITHUB_RUN_ID}" \
-            -f 'client_payload[base]=/packages/react-inputs/' \
-            -f 'client_payload[framework]=astro'
+        uses: rxova/shared/actions/notify-website@main
+        with:
+          project: react-inputs
+          token: ${{ secrets.AGGREGATOR_DISPATCH_TOKEN }}

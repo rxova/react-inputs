@@ -6,6 +6,8 @@ name: Release
 # browsers and all. Gating on CI's success gives the same guarantee ("a push to
 # main cannot publish something a PR would have been blocked on") without
 # running the checks a second time.
+#
+# This file keeps its name: npm trusted publishing is bound to `release.yml`.
 on:
   workflow_run:
     workflows: [CI]
@@ -23,67 +25,33 @@ jobs:
     # workflow_run fires on both success and failure; only release when CI
     # passed. Manual dispatch has no upstream run to gate on.
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      # Disable Husky for the whole job. The changesets action makes a
-      # `chore: version packages` commit, which would otherwise fire the local
-      # `pre-commit` hook and run `test:coverage` — the browser project plus a
-      # 95% per-file threshold. This job deliberately never installs Playwright
-      # browsers (it trusts CI's already-green run rather than re-verifying), so
-      # the hook cannot launch chromium, coverage collapses below threshold, and
-      # the release dies. Skipping the hook restores the "trust CI" design.
-      HUSKY: "0"
     permissions:
       contents: write # version commit and tags
-      pull-requests: write # the version PR
-      # npm trusted publishing (OIDC): lets us publish with provenance and no
-      # long-lived NPM_TOKEN in the repository.
-      id-token: write
+      pull-requests: write # the version pull request
+      id-token: write # npm trusted publishing (OIDC), with provenance
+    # changesets/action opens the `chore: version packages` pull request, and
+    # publishes once it is merged: `pnpm run release` builds every package
+    # through Turbo, then `changeset publish`. Husky is off in the shared job,
+    # so the version commit does not run the browser-backed pre-commit hook.
+    uses: rxova/shared/.github/workflows/changesets-release.yml@main
+
+  # Verifies the registry, rather than the workspace, after a publish: waits
+  # until npm serves each version changesets/action reported, installs them
+  # into a fresh project and imports every React package through ESM and
+  # CommonJS (`repoConfig.postPublish` in the root package.json).
+  post-publish-smoke:
+    name: freshly published packages from npm
+    needs: [release]
+    if: needs.release.outputs.published == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
         with:
-          # Check out main by name (not the workflow_run's detached SHA) so the
-          # changesets action knows its base branch when opening the version PR.
-          ref: main
-          fetch-depth: 0
-      - uses: ./.github/actions/setup-pnpm
-        with:
-          registry-url: "https://registry.npmjs.org"
-      - name: Upgrade npm for trusted publishing
-        run: npm install -g npm@^11.5.1
+          ref: ${{ github.event.repository.default_branch }}
+      - uses: rxova/shared/actions/setup-pnpm@main
       - run: pnpm install --frozen-lockfile
-
-      - name: Create version PR or publish
-        id: changesets
-        uses: changesets/action@v2
-        with:
-          # v2 renamed every input this step passes (`version` ->
-          # `version-script`, `publish` -> `publish-script`, `commit` ->
-          # `commit-message`, `title` -> `pr-title`) and stopped reading the
-          # token from the `GITHUB_TOKEN` env var. An unknown input is not an
-          # error to Actions, so keeping the v1 names would not fail the job —
-          # the action would just fall back to its defaults and open a
-          # `Version Packages` PR that runs `changeset version` without the
-          # build step below. Nothing in PR CI exercises this file, so that
-          # would have surfaced as a bad release, not a red check.
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          # `pnpm run release` = turbo run build && changeset publish, so every
-          # changed package is built in dependency order before publishing.
-          version-script: pnpm exec changeset version
-          publish-script: pnpm run release
-          commit-message: "chore: version packages"
-          pr-title: "chore: version packages"
-        env:
-          NPM_CONFIG_PROVENANCE: "true"
-
-      # v2 renamed the outputs to kebab-case: `publishedPackages` is now
-      # `published-packages` (`published` itself is unchanged). An unset output
-      # is the empty string rather than an error, so the old name would have
-      # left PUBLISHED_PACKAGES empty and this step would have "passed" against
-      # nothing — a green release that verified no package at all.
       - name: Verify freshly published packages from npm
-        if: steps.changesets.outputs.published == 'true'
-        run: pnpm run postpublish:smoke
         env:
-          PUBLISHED_PACKAGES: ${{ steps.changesets.outputs.published-packages }}
+          PUBLISHED_PACKAGES: ${{ needs.release.outputs.published-packages }}
+        run: pnpm run postpublish:smoke

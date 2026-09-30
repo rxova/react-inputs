@@ -71,8 +71,6 @@
     "pack:smoke": "rxova-repo-config pack-smoke",
     "prepack": "pnpm build",
     "size": "size-limit",
-    "react:min:install": "pnpm add -D react@18.3.1 react-dom@18.3.1 @types/react@18.3.27 @types/react-dom@18.3.7",
-    "test:react-min": "pnpm run react:min:install && pnpm exec vitest run --project browser && pnpm run typecheck",
     "e2e": "playwright test",
     "e2e:install": "playwright install --with-deps chromium firefox webkit",
     "demo": "vite --config demo/vite.config.ts",

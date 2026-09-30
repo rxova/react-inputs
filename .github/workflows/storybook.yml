@@ -33,8 +33,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
-      - uses: ./.github/actions/setup-pnpm
-      - uses: ./.github/actions/turbo-cache
+      - uses: rxova/shared/actions/setup-pnpm@main
+      - uses: rxova/shared/actions/turbo-cache@main
       - run: pnpm install --frozen-lockfile
       # A Turbo task: builds the component packages the stories import, then
       # runs `storybook build` in apps/storybook.
@@ -56,29 +56,16 @@ jobs:
       # /storybook/react-inputs/. The aggregator validates, persists, and
       # republishes; a rejection leaves the live site untouched.
       #
-      # A step rather than the `notify-website` job it replaces: that job made
-      # one API call, was billed a whole minute for it, and needed a runner of
-      # its own only to depend on this one. `GITHUB_RUN_ID` is the same either
-      # way, which is the only thing the contract reads.
-      #
-      # `-F` only for schema, which the receiver compares as the number 1;
-      # everything else goes through `-f` so it stays a string, and an
-      # all-digit ref or sha cannot arrive as a number.
+      # A step rather than a job of its own, as in docs.yml.
       #
       # `project` is storybook-react-inputs — the id in the aggregator's
       # sources.json, a `kind: storybook` surface mounted at
       # /storybook/react-inputs/.
       - name: Dispatch storybook ingest to rxova.dev
         if: github.ref == 'refs/heads/main'
-        env:
-          GH_TOKEN: ${{ secrets.AGGREGATOR_DISPATCH_TOKEN }}
-        run: |
-          gh api repos/rxova/rxova-website/dispatches \
-            -f event_type=docs \
-            -F 'client_payload[schema]=1' \
-            -f 'client_payload[project]=storybook-react-inputs' \
-            -f "client_payload[ref]=${GITHUB_REF_NAME}" \
-            -f "client_payload[sha]=${GITHUB_SHA}" \
-            -f "client_payload[run_id]=${GITHUB_RUN_ID}" \
-            -f 'client_payload[base]=/storybook/react-inputs/' \
-            -f 'client_payload[framework]=storybook'
+        uses: rxova/shared/actions/notify-website@main
+        with:
+          project: storybook-react-inputs
+          base: /storybook/react-inputs/
+          framework: storybook
+          token: ${{ secrets.AGGREGATOR_DISPATCH_TOKEN }}

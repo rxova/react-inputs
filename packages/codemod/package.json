@@ -38,7 +38,8 @@
     "pack:smoke": "rxova-repo-config pack-smoke",
     "test": "vitest run",
     "test:watch": "vitest",
-    "prepack": "pnpm build"
+    "prepack": "pnpm build",
+    "test:unit": "vitest run"
   },
   "dependencies": {
     "jscodeshift": "^17.4.0"
