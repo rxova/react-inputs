@@ -35,7 +35,7 @@
     "build": "tsdown",
     "typecheck": "tsc --noEmit",
     "check:exports": "publint --strict && attw --pack .",
-    "pack:smoke": "node --import tsx ../utils/codemod-pack-smoke.ts",
+    "pack:smoke": "rxova-repo-config pack-smoke",
     "test": "vitest run",
     "test:watch": "vitest",
     "prepack": "pnpm build"
@@ -67,5 +67,35 @@
   },
   "engines": {
     "node": ">=20.19.0"
+  },
+  "repoConfig": {
+    "packSmoke": {
+      "load": "never",
+      "bins": {
+        "rxova-codemod": {
+          "args": [
+            "--help"
+          ],
+          "expect": "input-otp-to-otp"
+        }
+      },
+      "run": [
+        {
+          "bin": "rxova-codemod",
+          "args": [
+            "input-otp-to-otp",
+            "fixture.tsx"
+          ],
+          "fixture": {
+            "path": "fixture.tsx",
+            "contents": "import { OTPInput } from 'input-otp'\nexport const Example = () => <OTPInput maxLength={6} />\n"
+          },
+          "expect": [
+            "from '@rxova/react-otp-input'",
+            "OtpInput"
+          ]
+        }
+      ]
+    }
   }
 }

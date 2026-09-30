@@ -13,7 +13,7 @@ import { useState, type ComponentType } from 'react'
  * that silently omits a new component is worse than no playground: it looks
  * complete.
  *
- * The registry module in packages/utils is deliberately NOT imported: it reads
+ * The registry module in scripts/ is deliberately NOT imported: it reads
  * the filesystem, and this bundle runs in a browser. `import.meta.glob` is the
  * same discovery performed at build time.
  */

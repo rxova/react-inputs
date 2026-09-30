@@ -7,7 +7,7 @@ import { defineConfig } from 'vitest/config'
  * `astro check`, starlight-links-validator and the link checker all run there —
  * so there is still no component suite here to configure.
  *
- * `test` and `test:coverage` are the same command, as in packages/utils: the
+ * `test` and `test:coverage` are the same command, as in the root scripts: the
  * component packages distinguish them (the latter adds the 95% per-file
  * thresholds, which do not apply to a script that reads the filesystem), and
  * both the push gate and CI fan out on the task *name*. Declaring both is what

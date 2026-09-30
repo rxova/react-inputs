@@ -14,11 +14,6 @@ import type { KnipConfig } from 'knip'
 export default {
   // Advice nobody has to act on is advice that stops being read.
   treatConfigHintsAsErrors: true,
-  // ci.yml runs `./node_modules/.bin/vitest` from inside each component package,
-  // on the Node under test rather than the toolchain's. Knip reads the
-  // invocation and looks for a root-level `vitest`, which deliberately is not
-  // there: every package that runs tests declares its own.
-  ignoreBinaries: ['vitest'],
   workspaces: {
     'apps/docs': {
       entry: [
@@ -71,14 +66,10 @@ export default {
         'react-hook-form',
       ],
     },
-    'packages/utils': {
-      ignore: [
-        // The types for component-packages.mjs. The module stays plain .mjs so
-        // an Astro config and a bare `node` call can import it without a build
-        // step; TypeScript picks this sibling up by filename, so nothing ever
-        // imports it by path.
-        'component-packages.d.mts',
-      ],
+    '.': {
+      // The repository scripts under scripts/, run by path from package.json
+      // and CI (`node --import tsx scripts/…`), never imported by a package.
+      entry: ['scripts/*.ts'],
     },
   },
 } satisfies KnipConfig

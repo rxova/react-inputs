@@ -6,13 +6,13 @@
   "description": "Rxova React Inputs: a suite of headless, accessible React input components.",
   "scripts": {
     "build": "turbo run build",
-    "typecheck": "turbo run typecheck",
+    "typecheck": "turbo run typecheck //#typecheck:scripts",
     "lint": "eslint . --cache --cache-location node_modules/.cache/eslint/.eslintcache",
     "lint:fix": "eslint . --fix --cache --cache-location node_modules/.cache/eslint/.eslintcache",
     "format": "prettier --write . --cache --cache-location node_modules/.cache/prettier/.prettiercache",
     "format:check": "prettier --check . --cache --cache-location node_modules/.cache/prettier/.prettiercache",
-    "test": "turbo run test",
-    "test:coverage": "turbo run test:coverage",
+    "test": "turbo run test //#test:scripts",
+    "test:coverage": "turbo run test:coverage //#test:scripts",
     "size": "turbo run size",
     "check:exports": "turbo run check:exports --concurrency=1",
     "pack:smoke": "turbo run pack:smoke --concurrency=1",
@@ -32,14 +32,16 @@
     "test:frameworks": "turbo run compat --filter='./apps/compat-*' --concurrency=1",
     "e2e:install": "playwright install --with-deps chromium firefox webkit",
     "release": "turbo run build && changeset publish",
-    "postpublish:smoke": "node --import tsx ./packages/utils/post-publish-smoke.ts",
+    "postpublish:smoke": "rxova-repo-config post-publish-smoke",
     "prepare": "husky",
-    "check:docs": "node --import tsx ./packages/utils/check-doc-snippets.ts",
-    "check:llms": "node --import tsx ./packages/utils/check-llms.ts",
-    "check:tokens": "node --import tsx ./packages/utils/check-tokens.ts",
-    "check:browsers": "node --import tsx ./packages/utils/check-browsers.ts",
-    "check:changeset": "node --import tsx ./packages/utils/check-changeset.ts",
-    "verify": "rxova-repo-config verify"
+    "check:llms": "rxova-repo-config check-llms",
+    "check:tokens": "node --import tsx ./scripts/check-tokens.ts",
+    "check:browsers": "node --import tsx ./scripts/check-browsers.ts",
+    "check:changeset": "rxova-repo-config check-changeset",
+    "verify": "rxova-repo-config verify",
+    "check:snippets": "rxova-repo-config check-snippets",
+    "test:scripts": "vitest run",
+    "typecheck:scripts": "tsc -p tsconfig.json"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
@@ -108,7 +110,7 @@
         },
         {
           "name": "Check doc snippets",
-          "command": "pnpm run check:docs"
+          "command": "pnpm run check:snippets"
         },
         {
           "name": "Check agent llms.txt files",
@@ -128,7 +130,7 @@
         },
         {
           "name": "Typecheck, test, build and size budgets",
-          "command": "pnpm exec turbo run typecheck test:coverage build size"
+          "command": "pnpm exec turbo run typecheck test:coverage build size //#typecheck:scripts //#test:scripts"
         },
         {
           "name": "Check package publishing metadata",
@@ -139,6 +141,23 @@
           "command": "pnpm run pack:smoke"
         }
       ]
+    },
+    "changeset": {
+      "singlePackage": true,
+      "scope": "shipped"
+    },
+    "llms": {
+      "api": "props"
+    },
+    "packages": {
+      "marker": "rxova.slug"
+    },
+    "postPublish": {
+      "importPattern": "^@rxova/react-",
+      "peers": {
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0"
+      }
     }
   },
   "engines": {

@@ -3,5 +3,8 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  "include": ["e2e", "playwright.config.ts", "knip.ts"]
+  // The repository's own scripts and root-level configs, outside any package.
+  // The .mjs modules stay outside the program (component-packages.mjs is
+  // imported by plain Node and the Astro config); its types live beside it.
+  "include": ["scripts/**/*.ts", "scripts/**/*.d.mts", "vitest.config.ts", "knip.ts"]
 }

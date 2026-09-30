@@ -3,7 +3,7 @@ import { join } from 'node:path'
 
 import { describe, expect, it } from 'vitest'
 
-import { componentPackages } from '../../../../packages/utils/component-packages.mjs'
+import { componentPackages } from '../../../../scripts/component-packages.mjs'
 import {
   axeTags,
   coverageFloor,

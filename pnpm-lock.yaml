@@ -208,7 +208,7 @@ importers:
         version: 0.1.1
       '@rxova/repo-config':
         specifier: ^0.5.0
-        version: 0.5.0(8a425ec04025b3a2c8c312a98e53683b)
+        version: 0.5.0(7d9449ff424ddf949eb7bb5a9d8f3770)
       '@rxova/ts-utils':
         specifier: ^0.2.1
         version: 0.2.1(react@19.3.0)
@@ -1444,15 +1444,6 @@ importers:
       vitest-browser-react:
         specifier: ^2.3.0
         version: 2.3.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@5.0.1)
-
-  packages/utils:
-    devDependencies:
-      typescript:
-        specifier: 6.0.3
-        version: 6.0.3
-      vitest:
-        specifier: ^5.0.1
-        version: 5.0.1(@types/node@26.6.1)(@vitest/browser-playwright@5.0.1)(@vitest/coverage-v8@5.0.1)(@vitest/ui@5.0.1)(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.13)(yaml@2.9.1))
 
 packages:
 
@@ -13881,7 +13872,7 @@ snapshots:
 
   '@rxova/docs-kit@0.1.1': {}
 
-  '@rxova/repo-config@0.5.0(8a425ec04025b3a2c8c312a98e53683b)':
+  '@rxova/repo-config@0.5.0(7d9449ff424ddf949eb7bb5a9d8f3770)':
     dependencies:
       prettier-plugin-astro: 1.1.0(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.3)(prettier@3.9.8)
     optionalDependencies:

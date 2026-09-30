@@ -24,8 +24,8 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-/** The repo root, from this file's location in packages/utils. */
-export const REPO_ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)), '../..')
+/** The repo root, from this file's location in scripts/. */
+export const REPO_ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)), '..')
 
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'))
 

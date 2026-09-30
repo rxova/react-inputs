@@ -10,7 +10,7 @@ import { sharedStarlightConfig } from '@rxova/astro-ui/starlight'
 import remarkLiveCode from './src/plugins/remark-live-code.mjs'
 import remarkBaseLinks from './src/plugins/remark-base-links.mjs'
 import { withBase } from './src/lib/base-url.mjs'
-import { componentPackages } from '../../packages/utils/component-packages.mjs'
+import { componentPackages } from '../../scripts/component-packages.mjs'
 
 /**
  * Defaults keep the standalone build working; the rxova.dev aggregator sets
@@ -21,7 +21,7 @@ const base = process.env.DOCS_BASE_URL ?? '/'
 
 /**
  * The components, discovered from the packages that declare themselves (see
- * packages/utils/component-packages.mjs). Drives the TypeDoc instances, the
+ * scripts/component-packages.mjs). Drives the TypeDoc instances, the
  * sidebar and the redirects below — a new input needs no edit here.
  *
  * `slug` is the content directory and the URL segment; `label` is the sidebar
