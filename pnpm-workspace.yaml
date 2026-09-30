@@ -157,6 +157,7 @@ minimumReleaseAgeExclude:
   # First-party shared tooling and helpers, published from rxova/shared.
   - '@rxova/repo-config'
   - '@rxova/ts-utils'
+  - '@rxova/docs-kit'
   - '@mui/core-downloads-tracker@9.3.0'
   - '@mui/material@9.3.0'
   - '@mui/private-theming@9.3.0'
@@ -164,6 +165,7 @@ minimumReleaseAgeExclude:
   - '@mui/system@9.3.0'
   - '@mui/types@9.3.0'
   - '@mui/utils@9.3.0'
+  - '@rxova/docs-kit@0.1.1'
 
 # The advisory lookup is the one request whose result is advisory rather than
 # required, and pnpm's default schedule -- a 60s fetch timeout and two retries --
