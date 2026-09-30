@@ -1,5 +1,18 @@
 # @rxova/react-otp-input
 
+## 1.0.5
+
+### Patch Changes
+
+- [#121](https://github.com/rxova/react-inputs/pull/121) [`fa090bb`](https://github.com/rxova/react-inputs/commit/fa090bbe65c476d19b0a3b1b0b2f473481b45a1d) - Point links at rxova.dev
+
+- [#124](https://github.com/rxova/react-inputs/pull/124) [`45dc6f7`](https://github.com/rxova/react-inputs/commit/45dc6f7a9bb90f975fc91b88de2d4c931d708130) - Build with the shared rxova tsdown preset, which targets ES2020: `??=` in the bundle is now emitted as `??` with an assignment, so the output also runs on engines without ES2021 syntax. The type declarations and README examples use the unified formatting (double quotes, semicolons). No API or behaviour change.
+
+- [#116](https://github.com/rxova/react-inputs/pull/116) [`a9b62e3`](https://github.com/rxova/react-inputs/commit/a9b62e35a51afd3a2cdd33148ee0054f283f542c) - Internal: the isomorphic layout effect now comes from `@rxova/ts-utils`, inlined at build time
+  
+  The package still has no runtime dependencies. The hook picks `useLayoutEffect` when a `document`
+  exists and `useEffect` otherwise, as before (the OTP input previously checked `window` rather than `document`, which differs only in runtimes that define one without the other).
+
 ## 1.0.4
 
 ### Patch Changes
