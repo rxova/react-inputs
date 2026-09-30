@@ -12,13 +12,13 @@
  * returning a default. A restructured config should break the docs build loudly;
  * the failure mode this exists to prevent is a green build that checked nothing.
  *
- * `.mjs` and dependency-free to match packages/utils: this runs inside an Astro
+ * `.mjs` and dependency-free to match scripts/component-packages.mjs: this runs inside an Astro
  * config/SSR load, alongside component-packages.mjs which it builds on.
  */
 import { existsSync, readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 
-import { componentPackages } from '../../../../packages/utils/component-packages.mjs'
+import { componentPackages } from '../../../../scripts/component-packages.mjs'
 
 /** The meta package, which carries the whole-suite budget rather than a component's. */
 const SUITE_DIR = 'react-inputs'

@@ -18,7 +18,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { viteFinal } from '@storybook/react-vite/preset'
 // Relative, like apps/docs/astro.config.mjs: the registry is dependency-free
 // and read across the workspace by path rather than through a package export.
-import { componentPackages, REPO_ROOT } from '../../../packages/utils/component-packages.mjs'
+import { componentPackages, REPO_ROOT } from '../../../scripts/component-packages.mjs'
 import mainConfig from '../.storybook/main'
 
 /** One component, as react-docgen-typescript describes it. */

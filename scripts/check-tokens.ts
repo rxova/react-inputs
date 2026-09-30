@@ -27,7 +27,7 @@
  *
  * Offline: reads files only.
  *
- * Usage: `node --import tsx ./packages/utils/check-tokens.ts [repoRoot]`.
+ * Usage: `node --import tsx ./scripts/check-tokens.ts [repoRoot]`.
  */
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join, relative, resolve } from 'node:path'

@@ -20,7 +20,7 @@ import { readFile, readdir } from 'node:fs/promises'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { componentPackages } from '../../../packages/utils/component-packages.mjs'
+import { componentPackages } from '../../../scripts/component-packages.mjs'
 
 const docsRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
 

@@ -58,12 +58,9 @@
     "pack:smoke": {
       "dependsOn": ["build"],
       "outputs": [],
-      // The component packages run `rxova-repo-config pack-smoke`, a root
-      // devDependency, so a new @rxova/repo-config version already changes every
-      // hash through the root's external dependencies. The codemod's smoke test is
-      // a script outside the package, so it is listed here to invalidate the cache
-      // when it changes.
-      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/utils/codemod-pack-smoke.ts"],
+      // Every package, the codemod included, runs `rxova-repo-config
+      // pack-smoke`, a root devDependency, so a new @rxova/repo-config version
+      // already changes every hash through the root's external dependencies.
       "outputLogs": "new-only"
     },
     "size": {
@@ -78,19 +75,18 @@
     // check reads — the authored READMEs and the checker itself. Touching
     // source, tests or the docs site cannot invalidate it, and editing any
     // README (or the script) invalidates it instead of replaying a stale pass.
-    "//#check:docs": {
+    "//#check:snippets": {
       "outputs": [],
       "inputs": [
         "README.md",
         "packages/*/README.md",
         // The packaged agent summaries carry snippets too, and this checker
         // type-transpiles them alongside the READMEs.
-        "packages/*/llms.txt",
-        "packages/utils/check-doc-snippets.ts"
+        "packages/*/llms.txt"
       ],
       "outputLogs": "new-only"
     },
-    // A root task for the same reason as check:docs, and keyed on the same kind
+    // A root task for the same reason as check:snippets, and keyed on the same kind
     // of narrow input set. `src/types.ts` is in there because the check that
     // matters compares each documented prop against the declared ones — so a
     // rename in types.ts has to invalidate this, or the drift it exists to catch
@@ -101,11 +97,12 @@
         "packages/*/llms.txt",
         "packages/*/package.json",
         "packages/*/src/types.ts",
-        "packages/utils/check-llms.ts"
+        // `repoConfig.llms` lives in the root manifest.
+        "package.json"
       ],
       "outputLogs": "new-only"
     },
-    // A root task (`//#`) for the same reason as check:docs: `pnpm dedupe
+    // A root task (`//#`) for the same reason as check:snippets: `pnpm dedupe
     // --check` reads the whole workspace in one pass from the root, so there is
     // nothing to fan out. It is the single most expensive check in the pre-push
     // gate (~23s) and yet a pure function of the dependency graph — the
@@ -124,6 +121,32 @@
         "package.json",
         "packages/*/package.json",
         "apps/*/package.json"
+      ],
+      "outputLogs": "new-only"
+    },
+    // The repository scripts under scripts/ (not a workspace package), and
+    // their tests.
+    "//#test:scripts": {
+      "outputs": [],
+      "inputs": [
+        "scripts/**",
+        "vitest.config.ts",
+        "tsconfig.json",
+        "package.json",
+        "packages/*/package.json",
+        "packages/*/src/**"
+      ],
+      "outputLogs": "new-only"
+    },
+    "//#typecheck:scripts": {
+      "outputs": [],
+      "inputs": [
+        "scripts/**",
+        "vitest.config.ts",
+        "knip.ts",
+        "tsconfig.json",
+        "tsconfig.base.json",
+        "package.json"
       ],
       "outputLogs": "new-only"
     },

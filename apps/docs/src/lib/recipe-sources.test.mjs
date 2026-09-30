@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { componentPackages } from '../../../../packages/utils/component-packages.mjs'
+import { componentPackages } from '../../../../scripts/component-packages.mjs'
 import {
   checkRecipeCoverage,
   recipeLibraries,

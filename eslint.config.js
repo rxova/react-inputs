@@ -79,13 +79,12 @@ export default defineConfig(
     rules: reactHooks.configs.recommended.rules,
   },
   {
-    // Repo check scripts in the private @rxova/utils package (and any
-    // top-level scripts/). The .ts files are covered by
-    // packages/utils/tsconfig.json.
+    // The repository scripts under scripts/. The .ts files are covered by the
+    // root tsconfig.json.
     //
     // These are CLIs: reporting to stdout/stderr is their entire output
     // contract, so the library-wide `no-console: error` does not apply.
-    files: ['scripts/**/*.{mjs,ts}', 'packages/utils/**/*.{mjs,ts}'],
+    files: ['scripts/**/*.{mjs,ts}'],
     languageOptions: { globals: globals.node, sourceType: 'module' },
     rules: { 'no-console': 'off' },
   },

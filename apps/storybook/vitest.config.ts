@@ -8,7 +8,7 @@ import { defineConfig } from 'vitest/config'
  * silently when it stops matching them.
  *
  * `test` and `test:coverage` are the same command, as in apps/docs and
- * packages/utils: the component packages distinguish them (the latter adds the
+ * the root scripts: the component packages distinguish them (the latter adds the
  * per-file thresholds, meaningless for a config check), and both the push gate
  * and CI fan out on the task *name* — declaring both is what puts this in
  * `pnpm run test:coverage`, the job CI actually runs.

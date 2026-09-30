@@ -70,14 +70,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Before the install, and deliberately: component-packages.mjs is
-      # dependency-free by design, so nothing downstream has to wait on pnpm for
-      # a list that is a directory read.
-      - id: list
-        run: node packages/utils/print-component-packages.mjs | tee -a "$GITHUB_OUTPUT"
-
       - uses: ./.github/actions/setup-pnpm
       - run: pnpm install --frozen-lockfile
+
+      # The packages that declare `rxova.slug` (repoConfig.packages.marker).
+      - id: list
+        run: pnpm exec rxova-repo-config list-packages --github-output
 
       - name: Lint the branch commits
         if: github.event_name == 'pull_request'
@@ -121,7 +119,7 @@ jobs:
       # and each package llms.txt, so a copy-pasteable example cannot rot into
       # something that does not parse. Invoked through Turbo (a `//#check:docs`
       # root task) so it replays from cache when none of them changed.
-      - run: pnpm exec turbo run check:docs
+      - run: pnpm exec turbo run check:snippets
       # The packaged llms.txt files are what a coding agent reads out of
       # node_modules, and nothing else in the repo looks at them — so a prop
       # renamed in types.ts would leave the table describing an API that no
@@ -402,9 +400,8 @@ jobs:
       # package ships needs one — its source, package.json, and everything in
       # the tarball, README.md and llms.txt included — while tests, e2e specs
       # and anything outside a published package are skipped. Each changeset
-      # file must name exactly one package. The check is repo-local
-      # (packages/utils/check-changeset.ts) because the shared one in
-      # @rxova/repo-config only asks when a package's code changes.
+      # file must name exactly one package (`repoConfig.changeset` in the root
+      # package.json: `scope: "shipped"`, `singlePackage: true`).
       #
       # The labels are handed over from the event payload rather than fetched:
       # a `labeled`/`unlabeled` event re-runs the job, so the payload is always
