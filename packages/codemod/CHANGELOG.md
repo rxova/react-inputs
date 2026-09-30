@@ -1,5 +1,13 @@
 # @rxova/codemod
 
+## 1.0.2
+
+### Patch Changes
+
+- [#124](https://github.com/rxova/react-inputs/pull/124) [`45dc6f7`](https://github.com/rxova/react-inputs/commit/45dc6f7a9bb90f975fc91b88de2d4c931d708130) - Build with the shared rxova tsdown preset (the output is unchanged). The README examples use the unified formatting (double quotes, semicolons).
+
+- [#121](https://github.com/rxova/react-inputs/pull/121) [`fa090bb`](https://github.com/rxova/react-inputs/commit/fa090bbe65c476d19b0a3b1b0b2f473481b45a1d) - Point links at rxova.dev
+
 ## 1.0.1
 
 ### Patch Changes

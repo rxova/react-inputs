@@ -1,5 +1,23 @@
 # @rxova/react-inputs
 
+## 1.1.1
+
+### Patch Changes
+
+- [#121](https://github.com/rxova/react-inputs/pull/121) [`fa090bb`](https://github.com/rxova/react-inputs/commit/fa090bbe65c476d19b0a3b1b0b2f473481b45a1d) - Point links at rxova.dev
+
+- [#124](https://github.com/rxova/react-inputs/pull/124) [`45dc6f7`](https://github.com/rxova/react-inputs/commit/45dc6f7a9bb90f975fc91b88de2d4c931d708130) - Build with the shared rxova tsdown preset (the output is unchanged). The README examples use the unified formatting (double quotes, semicolons).
+- Updated dependencies [[`fa090bb`](https://github.com/rxova/react-inputs/commit/fa090bbe65c476d19b0a3b1b0b2f473481b45a1d), [`fa090bb`](https://github.com/rxova/react-inputs/commit/fa090bbe65c476d19b0a3b1b0b2f473481b45a1d), [`fa090bb`](https://github.com/rxova/react-inputs/commit/fa090bbe65c476d19b0a3b1b0b2f473481b45a1d), [`fa090bb`](https://github.com/rxova/react-inputs/commit/fa090bbe65c476d19b0a3b1b0b2f473481b45a1d), [`fa090bb`](https://github.com/rxova/react-inputs/commit/fa090bbe65c476d19b0a3b1b0b2f473481b45a1d), [`fa090bb`](https://github.com/rxova/react-inputs/commit/fa090bbe65c476d19b0a3b1b0b2f473481b45a1d), [`fa090bb`](https://github.com/rxova/react-inputs/commit/fa090bbe65c476d19b0a3b1b0b2f473481b45a1d), [`fa090bb`](https://github.com/rxova/react-inputs/commit/fa090bbe65c476d19b0a3b1b0b2f473481b45a1d), [`fa090bb`](https://github.com/rxova/react-inputs/commit/fa090bbe65c476d19b0a3b1b0b2f473481b45a1d), [`45dc6f7`](https://github.com/rxova/react-inputs/commit/45dc6f7a9bb90f975fc91b88de2d4c931d708130), [`45dc6f7`](https://github.com/rxova/react-inputs/commit/45dc6f7a9bb90f975fc91b88de2d4c931d708130), [`45dc6f7`](https://github.com/rxova/react-inputs/commit/45dc6f7a9bb90f975fc91b88de2d4c931d708130), [`45dc6f7`](https://github.com/rxova/react-inputs/commit/45dc6f7a9bb90f975fc91b88de2d4c931d708130), [`45dc6f7`](https://github.com/rxova/react-inputs/commit/45dc6f7a9bb90f975fc91b88de2d4c931d708130), [`45dc6f7`](https://github.com/rxova/react-inputs/commit/45dc6f7a9bb90f975fc91b88de2d4c931d708130), [`45dc6f7`](https://github.com/rxova/react-inputs/commit/45dc6f7a9bb90f975fc91b88de2d4c931d708130), [`45dc6f7`](https://github.com/rxova/react-inputs/commit/45dc6f7a9bb90f975fc91b88de2d4c931d708130), [`45dc6f7`](https://github.com/rxova/react-inputs/commit/45dc6f7a9bb90f975fc91b88de2d4c931d708130), [`431b0d6`](https://github.com/rxova/react-inputs/commit/431b0d60e51ec48cc604f23dde1334a678c1c47b), [`a9b62e3`](https://github.com/rxova/react-inputs/commit/a9b62e35a51afd3a2cdd33148ee0054f283f542c), [`a9b62e3`](https://github.com/rxova/react-inputs/commit/a9b62e35a51afd3a2cdd33148ee0054f283f542c), [`a9b62e3`](https://github.com/rxova/react-inputs/commit/a9b62e35a51afd3a2cdd33148ee0054f283f542c), [`a9b62e3`](https://github.com/rxova/react-inputs/commit/a9b62e35a51afd3a2cdd33148ee0054f283f542c)]:
+  - @rxova/react-date-input@1.0.3
+  - @rxova/react-file-input@1.1.1
+  - @rxova/react-intl-currency-input@1.0.3
+  - @rxova/react-otp-input@1.0.5
+  - @rxova/react-password-input@1.0.3
+  - @rxova/react-phone-input@1.0.3
+  - @rxova/react-rating-input@1.0.2
+  - @rxova/react-tags-input@1.0.3
+  - @rxova/react-time-input@1.0.3
+
 ## 1.1.0
 
 ### Minor Changes

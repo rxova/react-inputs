@@ -1,5 +1,18 @@
 # @rxova/react-intl-currency-input
 
+## 1.0.3
+
+### Patch Changes
+
+- [#121](https://github.com/rxova/react-inputs/pull/121) [`fa090bb`](https://github.com/rxova/react-inputs/commit/fa090bbe65c476d19b0a3b1b0b2f473481b45a1d) - Point links at rxova.dev
+
+- [#124](https://github.com/rxova/react-inputs/pull/124) [`45dc6f7`](https://github.com/rxova/react-inputs/commit/45dc6f7a9bb90f975fc91b88de2d4c931d708130) - Build with the shared rxova tsdown preset (the JavaScript output is unchanged). The type declarations and README examples use the unified formatting (double quotes, semicolons). No API or behaviour change.
+
+- [#117](https://github.com/rxova/react-inputs/pull/117) [`431b0d6`](https://github.com/rxova/react-inputs/commit/431b0d60e51ec48cc604f23dde1334a678c1c47b) - Internal: development warnings now come from `@rxova/ts-utils`'s `createDevWarner`, inlined at build time
+  
+  The package still has no runtime dependencies, and warnings print, dedupe and stay silent in production as before. The
+  brotli size budget moves from 3.35 kB to 3.6 kB to make room for it, and the README badge follows.
+
 ## 1.0.2
 
 ### Patch Changes
