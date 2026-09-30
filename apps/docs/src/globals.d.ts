@@ -1,6 +1,6 @@
 // Build-time constants substituted by Vite.
 
-import type { ComponentRef } from './lib/docs-pages.d.mts'
+import type { ComponentRef } from './lib/site-markdown.d.mts'
 
 declare global {
   /**

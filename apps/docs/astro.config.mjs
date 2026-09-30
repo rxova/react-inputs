@@ -9,7 +9,7 @@ import sitemap from '@astrojs/sitemap'
 import { sharedStarlightConfig } from '@rxova/astro-ui/starlight'
 import remarkLiveCode from './src/plugins/remark-live-code.mjs'
 import remarkBaseLinks from './src/plugins/remark-base-links.mjs'
-import { withBase } from './src/lib/base-url.mjs'
+import { withBase } from '@rxova/docs-kit'
 import { componentPackages } from '../../scripts/component-packages.mjs'
 
 /**

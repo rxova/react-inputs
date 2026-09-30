@@ -1,6 +1,6 @@
-// Hand-written types for docs-md.mjs. See docs-pages.d.mts for why these are
-// authored rather than inferred.
+// Hand-written types for docs-md.mjs: the module stays plain JavaScript, and the
+// pages it returns are docs-kit's.
 
-import type { DocsPage } from './docs-pages.d.mts'
+import type { DocsPage } from '@rxova/docs-kit'
 
 export declare function docsPages(options: { origin: string; base?: string }): Promise<DocsPage[]>

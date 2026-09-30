@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && node ./scripts/check-md-routes.mjs && node ./scripts/check-registry.mjs && node ./scripts/check-readme-links.mjs",
+    "build": "astro build && rxova-docs-kit check-md-routes --untwinned index.html,404.html --max-index 40k --components LiveExample,CodeRecipes && node ./scripts/check-registry.mjs && node ./scripts/check-readme-links.mjs",
     "preview": "astro preview",
     "typecheck": "astro check",
     "test": "vitest run",

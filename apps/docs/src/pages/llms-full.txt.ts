@@ -1,14 +1,16 @@
 // https://rxova.dev/packages/react-inputs/llms-full.txt — every page, inlined.
 //
 // For the case where one fetch should be the whole documentation set rather than
-// an index to follow. `scripts/check-md-routes.mjs` holds it to a size budget, so
+// an index to follow. `rxova-docs-kit check-md-routes` holds it to a size budget, so
 // if the suite grows past what fits in a context window the build says so rather
 // than an agent silently truncating it.
 
 import type { APIRoute } from 'astro'
 
+import { llmsFull } from '@rxova/docs-kit'
+
 import { docsPages } from '../lib/docs-md.mjs'
-import { llmsFull } from '../lib/llms.mjs'
+import { llmsOptions } from '../lib/site-markdown.mjs'
 
 export const prerender = true
 
@@ -18,7 +20,7 @@ export const GET: APIRoute = async () => {
     base: import.meta.env.BASE_URL,
   })
 
-  return new Response(llmsFull(pages, __RXOVA_COMPONENTS__), {
+  return new Response(llmsFull(pages, llmsOptions(__RXOVA_COMPONENTS__)), {
     headers: { 'Content-Type': 'text/plain; charset=utf-8' },
   })
 }
