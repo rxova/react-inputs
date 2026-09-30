@@ -1,10 +1,8 @@
 #!/usr/bin/env sh
 set -e
 
-# eslint --fix + prettier --write over exactly the staged files.
-#
-# lint-staged already covers the staged set, so the full-repo `pnpm run lint`
-# this line used to carry was duplication.
+# eslint --fix + prettier --write over exactly the staged files
+# (lint-staged.config.js, the shared rxova preset).
 pnpm exec lint-staged
 
 # The whole-program checks lint-staged cannot do per-file: types are a property
@@ -16,8 +14,8 @@ pnpm exec lint-staged
 #
 # `test`, not `test:coverage`: the coverage thresholds need the browser project,
 # which is slow enough to push people around the hook. pre-push runs the
-# coverage variant, and CI runs it again.
+# coverage variant, and CI runs it again. The root tasks cover scripts/.
 #
 # Everything heavier — build, size budgets, audit, dedupe, packaging, e2e —
 # stays in pre-push (`repoConfig.verify` in the root package.json) and CI.
-pnpm exec turbo run typecheck test
+pnpm exec turbo run typecheck test //#typecheck:scripts //#test:scripts

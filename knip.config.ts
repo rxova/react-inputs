@@ -1,4 +1,4 @@
-import type { KnipConfig } from 'knip'
+import { baseKnipConfig } from '@rxova/repo-config/knip'
 
 /**
  * Unused files, exports and dependencies, as a gate rather than a report.
@@ -11,9 +11,11 @@ import type { KnipConfig } from 'knip'
  * only what inference cannot know — every entry a place where a file is reached
  * by something other than a TypeScript import.
  */
-export default {
-  // Advice nobody has to act on is advice that stops being read.
-  treatConfigHintsAsErrors: true,
+export default baseKnipConfig({
+  // The preset treats config hints as errors (advice nobody has to act on is
+  // advice that stops being read) and already lets apps/docs depend on
+  // @rxova/brand, which the Starlight preset from @rxova/astro-ui reaches only
+  // as a `customCss` string that Vite resolves from the site's root.
   workspaces: {
     'apps/docs': {
       entry: [
@@ -28,10 +30,6 @@ export default {
         // knip reads as config rather than as an import.
         'src/route-middleware.mjs',
       ],
-      // Reached only as a string: the Starlight preset from @rxova/astro-ui lists
-      // `@rxova/brand/fonts.css` in `customCss`, which Vite resolves from this
-      // site's root. Knip reads imports, so the path is invisible to it.
-      ignoreDependencies: ['@rxova/brand'],
       ignore: [
         // Two one-shot Docusaurus-to-Starlight migrations, deliberately kept:
         // their own headers say they stay so "the transforms it applied are
@@ -72,4 +70,4 @@ export default {
       entry: ['scripts/*.ts'],
     },
   },
-} satisfies KnipConfig
+})
