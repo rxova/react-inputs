@@ -41,6 +41,13 @@
       "outputs": [],
       "outputLogs": "new-only"
     },
+    // The `unit` project alone (no browser), which is what CI's Node matrix
+    // runs: pure logic, so it is where a Node version difference would show.
+    "test:unit": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "outputLogs": "new-only"
+    },
     "test:coverage": {
       "dependsOn": ["^build"],
       "outputs": ["coverage/**"],

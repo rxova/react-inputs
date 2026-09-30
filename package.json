@@ -41,7 +41,8 @@
     "verify": "rxova-repo-config verify",
     "check:snippets": "rxova-repo-config check-snippets",
     "test:scripts": "vitest run",
-    "typecheck:scripts": "tsc -p tsconfig.json"
+    "typecheck:scripts": "tsc -p tsconfig.json",
+    "test:unit": "turbo run test:unit //#test:scripts"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
