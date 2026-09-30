@@ -239,6 +239,7 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
           // On the zone, not on the `<input type="file">`: the input is
           // visually hidden, so focusing it would put the ring nowhere a
           // sighted keyboard user can see.
+          // eslint-disable-next-line jsx-a11y/no-autofocus -- the consumer's own `autoFocus` prop, forwarded as a native input's would be; off unless they pass it
           autoFocus={autoFocus}
           // The field's one tab stop, so it is what a screen reader announces
           // on Tab, and a hint alone does not say which field this is: the

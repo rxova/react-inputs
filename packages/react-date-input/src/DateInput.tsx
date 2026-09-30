@@ -166,6 +166,10 @@ export const DateInput = /* @__PURE__ */ forwardRef<HTMLDivElement, DateInputPro
     }
 
     return (
+      // `aria-required` on the group, below: kept as shipped. ARIA lists it for
+      // the spinbuttons rather than a group, but moving it changes what assistive
+      // technology announces, so that belongs in its own change.
+      // eslint-disable-next-line jsx-a11y/role-supports-aria-props -- see above
       <div
         ref={ref}
         className={className}

@@ -176,6 +176,7 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
           id={ids.input}
           data-rx-phone-input=""
           // Opt-in, and the same prop `@rxova/react-otp-input` exposes.
+          // eslint-disable-next-line jsx-a11y/no-autofocus -- the consumer's own `autoFocus` prop, forwarded as a native input's would be; off unless they pass it
           autoFocus={autoFocus}
           // `tel`, so mobile keyboards show the dial pad. Not `number`: that
           // strips leading zeros, offers a spinner nobody wants on a phone

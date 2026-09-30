@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-react'
@@ -70,11 +71,11 @@ describe('rendering', () => {
 
 describe('icon sources render identically', () => {
   it.each([
-    ['emoji', <>⭐</>],
-    ['ZWJ emoji', <>👩‍🍳</>],
-    ['variation selector emoji', <>❤️</>],
-    ['inline svg', <svg viewBox="0 0 10 10" width="1em" height="1em" />],
-    ['arbitrary jsx', <b>X</b>],
+    ['emoji', <Fragment key="emoji">⭐</Fragment>],
+    ['ZWJ emoji', <Fragment key="zwj">👩‍🍳</Fragment>],
+    ['variation selector emoji', <Fragment key="vs">❤️</Fragment>],
+    ['inline svg', <svg key="svg" viewBox="0 0 10 10" width="1em" height="1em" />],
+    ['arbitrary jsx', <b key="jsx">X</b>],
   ])('%s partial-fills to the same geometry', async (_name, node) => {
     const { container } = await render(<Rating value={2.5} icon={node} />)
     await expect.element(page.getByRole('img')).toBeInTheDocument()
