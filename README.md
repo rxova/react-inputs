@@ -201,7 +201,7 @@ packages/
   react-inputs                meta-package, re-exports the suite
   codemod                     jscodeshift migration transforms
   demo-kit                    shared demo primitives (private, dev-only)
-  utils                       repo checks (private)
+scripts/                      repo-specific checks (not a package)
 apps/
   playground                  shared Vite playground
   docs                        Astro Starlight site, published as part of rxova.dev
@@ -214,9 +214,13 @@ apps/
 - **Vitest** (unit + browser), **Playwright** e2e, **`@axe-core/playwright`** a11y,
   **size-limit** budgets, **publint** / **attw** export checks
 - **ESLint** flat config (type-checked), **Prettier**, **commitlint** + **husky** + **lint-staged**
+- The build, test, lint and commit presets, the verify gate and the release scripts come from
+  [`@rxova/repo-config`](https://github.com/rxova/shared/tree/main/packages/repo-config), the docs
+  site's agent-facing surfaces from `@rxova/docs-kit`, and CI from the reusable workflows in
+  [rxova/shared](https://github.com/rxova/shared)
 - `pnpm verify` runs the local release gate; `pnpm e2e` runs the whole-page suites with bounded
-  concurrency. `pnpm check:docs` type-checks every snippet in this README and in each package
-  README, so the examples above cannot rot.
+  concurrency. `pnpm check:snippets` parses every snippet in this README and in each package
+  README and `llms.txt`, so the examples above cannot rot.
 
 </details>
 

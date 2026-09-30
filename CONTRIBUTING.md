@@ -7,24 +7,24 @@ Thanks for taking the time to contribute.
 A pnpm + Turborepo monorepo: several published packages, one shared playground, and one shared
 docs site.
 
-| Path                                  | What lives there                                                                      |
-| ------------------------------------- | ------------------------------------------------------------------------------------- |
-| `packages/react-intl-currency-input/` | `@rxova/react-intl-currency-input` — locale-aware currency input.                     |
-| `packages/react-rating-input/`        | `@rxova/react-rating-input` — rating input (stars / any icon).                        |
-| `packages/react-otp-input/`           | `@rxova/react-otp-input` — OTP / one-time-code input.                                 |
-| `packages/react-phone-input/`         | `@rxova/react-phone-input` — international phone input.                               |
-| `packages/react-password-input/`      | `@rxova/react-password-input` — password input, strength meter, reveal toggle.        |
-| `packages/react-date-input/`          | `@rxova/react-date-input` — segmented date field, no calendar.                        |
-| `packages/react-time-input/`          | `@rxova/react-time-input` — segmented time field, no popup.                           |
-| `packages/react-tags-input/`          | `@rxova/react-tags-input` — tag / token input.                                        |
-| `packages/react-file-input/`          | `@rxova/react-file-input` — file picker and drop zone (no uploading).                 |
-| `packages/react-inputs/`              | `@rxova/react-inputs` — meta-package that re-exports the whole suite.                 |
-| `packages/codemod/`                   | `@rxova/codemod` — jscodeshift codemods (one transform per migration) for the suite.  |
-| `packages/utils/`                     | `@rxova/utils` — private tooling (doc-snippet, token, browser and pack checks, etc.). |
-| `packages/*/src/__tests__/`           | `*.test.ts(x)` run in node, `*.browser.test.tsx` run in Chromium.                     |
-| `packages/*/e2e/`                     | Playwright specs, per package, against the built shared playground.                   |
-| `apps/playground/`                    | `@rxova/playground` — Vite app for manual QA and the E2E target.                      |
-| `apps/docs/`                          | `@rxova/docs` — Astro Starlight site for the whole suite.                             |
+| Path                                  | What lives there                                                                     |
+| ------------------------------------- | ------------------------------------------------------------------------------------ |
+| `packages/react-intl-currency-input/` | `@rxova/react-intl-currency-input` — locale-aware currency input.                    |
+| `packages/react-rating-input/`        | `@rxova/react-rating-input` — rating input (stars / any icon).                       |
+| `packages/react-otp-input/`           | `@rxova/react-otp-input` — OTP / one-time-code input.                                |
+| `packages/react-phone-input/`         | `@rxova/react-phone-input` — international phone input.                              |
+| `packages/react-password-input/`      | `@rxova/react-password-input` — password input, strength meter, reveal toggle.       |
+| `packages/react-date-input/`          | `@rxova/react-date-input` — segmented date field, no calendar.                       |
+| `packages/react-time-input/`          | `@rxova/react-time-input` — segmented time field, no popup.                          |
+| `packages/react-tags-input/`          | `@rxova/react-tags-input` — tag / token input.                                       |
+| `packages/react-file-input/`          | `@rxova/react-file-input` — file picker and drop zone (no uploading).                |
+| `packages/react-inputs/`              | `@rxova/react-inputs` — meta-package that re-exports the whole suite.                |
+| `packages/codemod/`                   | `@rxova/codemod` — jscodeshift codemods (one transform per migration) for the suite. |
+| `scripts/`                            | Repo-specific checks (component registry, token namespaces, e2e browser list).       |
+| `packages/*/src/__tests__/`           | `*.test.ts(x)` run in node, `*.browser.test.tsx` run in Chromium.                    |
+| `packages/*/e2e/`                     | Playwright specs, per package, against the built shared playground.                  |
+| `apps/playground/`                    | `@rxova/playground` — Vite app for manual QA and the E2E target.                     |
+| `apps/docs/`                          | `@rxova/docs` — Astro Starlight site for the whole suite.                            |
 
 Each component package follows the same shape: pure logic modules with no React, a headless
 `use*` hook holding state, a thin rendering component, a `types.ts` public prop surface, and
@@ -77,15 +77,32 @@ Scope to one package with a filter: `pnpm --filter @rxova/react-otp-input test:b
 
 ## Pre-PR checklist
 
-CI runs, in order:
+`pnpm verify` runs the steps in `repoConfig.verify` (root `package.json`) in order, and CI runs the
+same checks through the reusable workflows in [rxova/shared](https://github.com/rxova/shared):
 
-1. `audit:check` · `dedupe:check`
-2. `format:check` · `lint` · `typecheck`
-3. `test:coverage` — **95% per file**, so a new file with thin tests fails even if the repo
-   average is fine
-4. `build` · `check:exports` (publint + attw) · `pack:smoke` (`rxova-repo-config pack-smoke`; the
-   codemod has its own)
-5. `size` · `e2e`
+1. `audit:check` · `dedupe:check` · `sherif:check` · `knip:check`
+2. `format:check` · `check:snippets` · `check:llms` · `check:tokens` · `check:browsers` · `lint`
+3. `typecheck` · `test:coverage` — **95% per file** (the `@rxova/repo-config/vitest` preset), so a
+   new file with thin tests fails even if the repo average is fine · `build` · `size`
+4. `check:exports` (publint + attw) · `pack:smoke` (`rxova-repo-config pack-smoke` for every
+   published package; the codemod's bin and transform run from its `repoConfig.packSmoke`)
+
+CI adds what `verify` leaves out: the unit suites on Node 22, 24 and 26, the packages on their
+`engines` floor, React 18, `e2e` in all three engines and the framework harnesses.
+
+The shared setup, in one place:
+
+| What                                                                                                             | From                                                                                                         |
+| ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `verify`, `check-changeset`, `check-llms`, `check-snippets`, `pack-smoke`, `post-publish-smoke`, `list-packages` | `@rxova/repo-config` (the `rxova-repo-config` bin), configured under `repoConfig` in the root `package.json` |
+| ESLint, Prettier, lint-staged, commitlint, changelog, knip, the tsconfig base                                    | `@rxova/repo-config` presets                                                                                 |
+| Each package's `tsdown`, `vitest` and `playwright` config                                                        | `reactBuildConfig` / `dualBuildConfig`, `baseVitestConfig`, `basePlaywrightConfig`                           |
+| The docs site's `.md` twins, `llms.txt`, `llms-full.txt` and their build check                                   | `@rxova/docs-kit`                                                                                            |
+| CI jobs and the setup actions                                                                                    | `rxova/shared` reusable workflows and actions, at `@main`                                                    |
+| Renovate                                                                                                         | `github>rxova/shared//renovate/default.json5`                                                                |
+
+Only `scripts/` (the token-namespace and e2e browser-list checks, the component registry) and the
+browser, e2e and framework CI jobs are this repository's own.
 
 Also:
 
@@ -96,7 +113,7 @@ Also:
   `llms.txt` fix is a release too. Tests, e2e specs, demos and anything outside a published package
   need none. A PR that ships nothing new despite touching those files (a dependency bump, say) can
   carry the `skip-changeset` label instead. The CI gate is `pnpm check:changeset`
-  (`packages/utils/check-changeset.ts`).
+  (`rxova-repo-config check-changeset` with `changeset.scope: "shipped"`).
 - **If you changed behaviour, change the prose in the same PR.** Grep the package README and the
   docs for the prop you touched. A fix that ships with docs still teaching the old behaviour ships
   invisible.
