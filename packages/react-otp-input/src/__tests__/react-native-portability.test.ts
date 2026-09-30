@@ -88,7 +88,7 @@ describe('core.ts declares no DOM or browser dependency', () => {
     for (const line of imports) {
       // The only allowed import is the type-only one from ./types; no runtime
       // module, no external dependency, nothing that could reach for a DOM.
-      expect(line).toMatch(/^import type .* from '\.\/types'$/)
+      expect(line).toMatch(/^import type .* from ['"]\.\/types['"];?$/)
     }
   })
 
