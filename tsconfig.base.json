@@ -1,21 +1,15 @@
 {
+  // The shared strict preset for React libraries (DOM libs, `react-jsx`),
+  // retargeted to ES2022: the components ship to browsers, and keeping the lib
+  // at ES2022 stops an ES2023-only API (`findLast`, `toSorted`, …) from
+  // type-checking in code tsdown will not polyfill.
+  "extends": "@rxova/repo-config/tsconfig.react.json",
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "jsx": "react-jsx",
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "noFallthroughCasesInSwitch": true,
-    "exactOptionalPropertyTypes": false,
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true
+    // The preset turns this on. The public props interfaces were written
+    // against `false` — `prop?: T` accepts an explicit `undefined`, which
+    // consumers forwarding optional props rely on — so it stays off here.
+    "exactOptionalPropertyTypes": false
   }
 }
