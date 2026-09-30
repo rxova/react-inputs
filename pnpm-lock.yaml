@@ -208,7 +208,7 @@ importers:
         version: 0.1.1
       '@rxova/repo-config':
         specifier: ^0.5.0
-        version: 0.5.0(7d9449ff424ddf949eb7bb5a9d8f3770)
+        version: 0.5.0(8a425ec04025b3a2c8c312a98e53683b)
       '@rxova/ts-utils':
         specifier: ^0.2.1
         version: 0.2.1(react@19.3.0)
@@ -13869,7 +13869,7 @@ snapshots:
 
   '@rxova/docs-kit@0.1.1': {}
 
-  '@rxova/repo-config@0.5.0(7d9449ff424ddf949eb7bb5a9d8f3770)':
+  '@rxova/repo-config@0.5.0(8a425ec04025b3a2c8c312a98e53683b)':
     dependencies:
       prettier-plugin-astro: 1.1.0(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.3)(prettier@3.9.8)
     optionalDependencies:
