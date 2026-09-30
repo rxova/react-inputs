@@ -2,10 +2,14 @@ packages:
   - packages/*
   - apps/*
 overrides:
-  # GHSA-mh99-v99m-4gvg: unbounded brace expansion crashes the process (DoS).
-  # Scoped to the 5.x line, which is the only one the advisory affects and the
-  # only one that resolves here (eslint's minimatch@10). Dev-only, never shipped.
-  brace-expansion@5: '>=5.0.8'
+  # GHSA-mh99-v99m-4gvg, GHSA-rgw5-rvv9-x895, GHSA-6j4f-fj2g-mc7p and
+  # GHSA-qhr7-859c-m2p7 (high), plus GHSA-q2hr-2g5m-vwhr (moderate): unbounded
+  # or deeply recursive brace expansion exhausts memory, stack or CPU (DoS).
+  # 5.0.12 is the first release that fixes all of them. Scoped to the 5.x line,
+  # the only one that resolves here (minimatch@10 under eslint and
+  # typescript-eslint). Dev-only, never shipped. Upper bound load-bearing as
+  # described for fast-uri below.
+  brace-expansion@5: '>=5.0.12 <6'
   # GHSA-7p8r-x3mc-p8w7: a backslash authority introducer lets a crafted URI
   # parse to an unexpected host (host confusion). Reached only through ajv, via
   # commitlint's config validator and the docs' YAML language server, so it is
