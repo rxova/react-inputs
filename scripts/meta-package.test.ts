@@ -39,7 +39,7 @@ describe('@rxova/react-inputs', () => {
   it('re-exports every component package', () => {
     const source = readFileSync(join(metaDir, 'src/index.ts'), 'utf8')
     const reExported = new Set(
-      [...source.matchAll(/export (?:\*|\{[^}]*\}) from '([^']+)'/g)]
+      [...source.matchAll(/export (?:\*|\{[^}]*\}) from ['"]([^'"]+)['"]/g)]
         .map(([, name]) => name)
         .filter((name) => name !== undefined),
     )
@@ -72,7 +72,7 @@ describe('@rxova/react-inputs', () => {
     const missing = components.flatMap((pkg) => {
       const source = readFileSync(join(REPO_ROOT, 'packages', pkg.dir, 'src/index.ts'), 'utf8')
       // A star re-export carries everything, so those packages need no listing.
-      if (meta.includes(`export * from '${pkg.name}'`)) return []
+      if (new RegExp(`export \\* from ['"]${pkg.name}['"]`).test(meta)) return []
 
       const exported = [...source.matchAll(/export (?:type )?\{([^}]*)\}/g)]
         .flatMap(([, names]) => (names ?? '').split(','))
