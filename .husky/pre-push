@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
 set -e
 
-# One ordered gate, the same list CI runs, so a green push means a green
-# pipeline. The steps are listed once, under `repoConfig.verify` in the root
-# package.json, and run by @rxova/repo-config; Turbo caches unchanged tasks so
-# re-runs are cheap. (E2E is not in verify — it runs as its
-# own CI job, matching the source repos.)
-pnpm run verify
+# The whole hook is `rxova-repo-config pre-push`: it skips a push that only
+# deletes refs and otherwise runs the same ordered gate CI runs
+# (`repoConfig.verify.steps` in the root package.json), so a green push means a
+# green pipeline. Turbo caches unchanged tasks, so re-runs are cheap. E2E is not
+# in verify — it runs as its own CI job.
+pnpm exec rxova-repo-config pre-push

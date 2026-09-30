@@ -1,10 +1,18 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@4.0.1/schema.json",
-  "changelog": ["./changelog-no-thanks.cjs", { "repo": "rxova/react-inputs" }],
+  "changelog": [
+    "@rxova/repo-config/changelog",
+    {
+      "repo": "rxova/react-inputs"
+    }
+  ],
   "commit": false,
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "privatePackages": { "version": false, "tag": false },
+  "privatePackages": {
+    "version": false,
+    "tag": false
+  },
   "ignore": []
 }
