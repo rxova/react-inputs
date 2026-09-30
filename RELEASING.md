@@ -16,10 +16,13 @@ The published packages (all `@rxova/*`, public):
 | `@rxova/react-inputs` (meta)       | —                                                                      |
 | `@rxova/codemod`                   | -                                                                      |
 
-`@rxova/utils`, `@rxova/playground`, and `@rxova/docs` are `private` and never publish.
+`@rxova/demo-kit`, `@rxova/playground`, `@rxova/storybook`, the `apps/compat-*` harnesses and
+`@rxova/docs` are `private` and never publish.
 
-Releases run from CI (`.github/workflows/release.yml`) via Changesets, publishing to npm
-with **provenance** through **OIDC trusted publishing** — no long-lived `NPM_TOKEN` in the repo.
+Releases run from CI (`.github/workflows/release.yml`, which calls the shared
+`changesets-release.yml` from rxova/shared) via Changesets, publishing to npm with **provenance**
+through **OIDC trusted publishing** — no long-lived `NPM_TOKEN` in the repo. The workflow file keeps
+its name because the trusted publisher on npm is bound to it.
 
 ## One-time setup
 
@@ -38,7 +41,7 @@ Publish once locally to claim each name, then switch to OIDC:
 ```bash
 npm login                        # as an @rxova owner
 pnpm run build
-pnpm -r --filter='./packages/*' --filter='!@rxova/utils' exec npm publish --access public
+pnpm -r --filter='./packages/*' --filter='!@rxova/demo-kit' exec npm publish --access public
 ```
 
 ## Cutting a release
@@ -48,7 +51,8 @@ pnpm -r --filter='./packages/*' --filter='!@rxova/utils' exec npm publish --acce
   a `minor` changeset rather than publishing the placeholder `0.0.0` from source.
 - Never edit package versions or changelogs by hand. The generated version PR is the review point
   for the exact version set and release notes.
-- After Changesets publishes, the release job installs the exact reported versions from npm in a
+- After Changesets publishes, the `post-publish-smoke` job (`rxova-repo-config post-publish-smoke`,
+  configured by `repoConfig.postPublish`) installs the exact reported versions from npm in a
   fresh project and resolves each React package through ESM and CommonJS. This catches registry
   propagation or a missing publication after the pre-release tarball checks have passed.
 
