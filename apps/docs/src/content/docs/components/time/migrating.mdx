@@ -91,7 +91,7 @@ range, not an arbitrary set. If you need "every hour except 13:00", validate on 
 ## Migrating from react-datetime
 
 `react-datetime` is a combined date **and** time control. If you use both halves, pair this package
-with [`@rxova/react-date-input`](../../date/introduction/):
+with [`@rxova/react-date-input`](/components/date/introduction/):
 
 ```tsx
 import { useState } from 'react'
@@ -142,4 +142,4 @@ function After() {
 
 `onChange` gives you the string directly rather than `event.target.value`. Note one real
 difference: the native input enforces `min`/`max` through constraint validation, and this one
-reports the time and marks the field instead — see [About](./about/).
+reports the time and marks the field instead — see [About](/components/time/about/).
