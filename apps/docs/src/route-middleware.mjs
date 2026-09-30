@@ -1,6 +1,6 @@
 import { defineRouteMiddleware } from '@astrojs/starlight/route-data'
 
-import { withBase } from './lib/base-url.mjs'
+import { withBase } from '@rxova/docs-kit'
 
 /**
  * Applies `base` to the splash page's hero action links.

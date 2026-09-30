@@ -1,6 +1,6 @@
 import { visit } from 'unist-util-visit'
 
-import { withBase } from '../lib/base-url.mjs'
+import { withBase } from '@rxova/docs-kit'
 
 /**
  * Prefixes the site-root-relative links in page content with the configured `base`.
@@ -27,7 +27,9 @@ export default function remarkBaseLinks({ base = '/' } = {}) {
   // Standalone build: nothing to prefix.
   if (base.replace(/\/+$/, '') === '') return () => {}
 
-  const rewrite = (url) => withBase(url, base)
+  // Only strings: a JSX attribute written as an expression (`src={…}`) carries
+  // an estree node here, which is the author's own code and left alone.
+  const rewrite = (url) => (typeof url === 'string' ? withBase(url, base) : url)
 
   return (tree, file) => {
     for (const action of file.data?.astro?.frontmatter?.hero?.actions ?? []) {

@@ -1,12 +1,16 @@
 // https://rxova.dev/packages/react-inputs/llms.txt — the agent-facing index.
 //
-// See src/lib/llms.mjs for the document's shape. This is the adapter: read the
-// pages, read the component list the config injected, serve the text.
+// The document is @rxova/docs-kit's `llmsIndex`; its sections, summary and
+// install preamble are this site's (src/lib/site-markdown.mjs). This is the
+// adapter: read the pages, read the component list the config injected, serve
+// the text.
 
 import type { APIRoute } from 'astro'
 
+import { llmsIndex } from '@rxova/docs-kit'
+
 import { docsPages } from '../lib/docs-md.mjs'
-import { llmsIndex } from '../lib/llms.mjs'
+import { installPreamble, llmsOptions } from '../lib/site-markdown.mjs'
 
 export const prerender = true
 
@@ -21,7 +25,13 @@ export const GET: APIRoute = async () => {
   // 404 in the one place it is meant to be pasted.
   const mount = `${import.meta.env.SITE}${import.meta.env.BASE_URL}`.replace(/\/$/, '')
 
-  return new Response(llmsIndex(pages, __RXOVA_COMPONENTS__, mount), {
+  const text = llmsIndex(pages, {
+    ...llmsOptions(__RXOVA_COMPONENTS__),
+    mount,
+    preamble: installPreamble(__RXOVA_COMPONENTS__, mount),
+  })
+
+  return new Response(text, {
     headers: { 'Content-Type': 'text/plain; charset=utf-8' },
   })
 }

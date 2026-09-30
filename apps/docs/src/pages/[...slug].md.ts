@@ -15,8 +15,9 @@
 
 import type { APIRoute, GetStaticPaths } from 'astro'
 
+import { renderMarkdown, type DocsPage } from '@rxova/docs-kit'
+
 import { docsPages } from '../lib/docs-md.mjs'
-import { renderMarkdown } from '../lib/docs-pages.mjs'
 
 export const prerender = true
 
@@ -32,6 +33,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const GET: APIRoute = ({ props }) =>
-  new Response(renderMarkdown(props.page), {
+  new Response(renderMarkdown((props as { page: DocsPage }).page), {
     headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
   })
