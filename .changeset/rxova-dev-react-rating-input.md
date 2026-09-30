@@ -1,5 +1,5 @@
 ---
-'@rxova/react-rating-input': patch
+"@rxova/react-rating-input": patch
 ---
 
 Point links at rxova.dev

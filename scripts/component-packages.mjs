@@ -20,14 +20,14 @@
  * Node. Deliberately dependency-free and synchronous: it runs inside an Astro
  * config load and inside a GitHub Actions step.
  */
-import { readdirSync, readFileSync } from 'node:fs'
-import { join, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { readdirSync, readFileSync } from "node:fs";
+import { join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 /** The repo root, from this file's location in scripts/. */
-export const REPO_ROOT = resolve(fileURLToPath(new URL('.', import.meta.url)), '..')
+export const REPO_ROOT = resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 
-const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'))
+const readJson = (path) => JSON.parse(readFileSync(path, "utf8"));
 
 /**
  * Every self-declared component package, alphabetically by label.
@@ -43,21 +43,21 @@ const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'))
  * list smeared across the manifests, the coupling this registry exists to shed.
  */
 export function componentPackages(repoRoot = REPO_ROOT) {
-  const packagesDir = join(repoRoot, 'packages')
+  const packagesDir = join(repoRoot, "packages");
 
   return readdirSync(packagesDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .flatMap((entry) => {
-      let manifest
+      let manifest;
       try {
-        manifest = readJson(join(packagesDir, entry.name, 'package.json'))
+        manifest = readJson(join(packagesDir, entry.name, "package.json"));
       } catch {
         // Not a package (or mid-scaffold): nothing to declare, nothing to run.
-        return []
+        return [];
       }
 
-      const rxova = manifest.rxova
-      if (!rxova?.slug) return []
+      const rxova = manifest.rxova;
+      if (!rxova?.slug) return [];
 
       return [
         {
@@ -68,11 +68,11 @@ export function componentPackages(repoRoot = REPO_ROOT) {
           title: rxova.title ?? rxova.label ?? rxova.slug,
           description: manifest.description ?? rxova.title ?? rxova.label ?? rxova.slug,
         },
-      ]
+      ];
     })
     .sort(
       (a, b) =>
-        a.label.localeCompare(b.label, undefined, { sensitivity: 'base' }) ||
+        a.label.localeCompare(b.label, undefined, { sensitivity: "base" }) ||
         a.slug.localeCompare(b.slug),
-    )
+    );
 }

@@ -1,7 +1,7 @@
-name: 'Bug report'
-description: 'Report a reproducible problem in an Rxova input package.'
-title: 'bug: '
-labels: ['bug']
+name: "Bug report"
+description: "Report a reproducible problem in an Rxova input package."
+title: "bug: "
+labels: ["bug"]
 body:
   - type: markdown
     attributes:
@@ -13,30 +13,30 @@ body:
     attributes:
       label: Package
       options:
-        - '@rxova/react-intl-currency-input'
-        - '@rxova/react-rating-input'
-        - '@rxova/react-otp-input'
-        - '@rxova/react-password-input'
-        - '@rxova/react-phone-input'
-        - '@rxova/react-date-input'
-        - '@rxova/react-time-input'
-        - '@rxova/react-tags-input'
-        - '@rxova/react-file-input'
-        - '@rxova/react-inputs (meta-package)'
+        - "@rxova/react-intl-currency-input"
+        - "@rxova/react-rating-input"
+        - "@rxova/react-otp-input"
+        - "@rxova/react-password-input"
+        - "@rxova/react-phone-input"
+        - "@rxova/react-date-input"
+        - "@rxova/react-time-input"
+        - "@rxova/react-tags-input"
+        - "@rxova/react-file-input"
+        - "@rxova/react-inputs (meta-package)"
     validations:
       required: true
   - type: input
     id: version
     attributes:
       label: Version
-      placeholder: '@rxova/react-date-input@x.y.z'
+      placeholder: "@rxova/react-date-input@x.y.z"
     validations:
       required: true
   - type: input
     id: react-version
     attributes:
       label: React version
-      placeholder: '19.2.0'
+      placeholder: "19.2.0"
     validations:
       required: true
   - type: dropdown
@@ -66,8 +66,8 @@ body:
     id: environment
     attributes:
       label: Browser, locale, writing direction, and assistive technology
-      description: 'Include everything relevant; write “not applicable” for non-browser build issues.'
-      placeholder: 'Safari 18, he-IL, RTL, VoiceOver'
+      description: "Include everything relevant; write “not applicable” for non-browser build issues."
+      placeholder: "Safari 18, he-IL, RTL, VoiceOver"
   - type: textarea
     id: expected
     attributes:
@@ -78,7 +78,7 @@ body:
     id: reproduction
     attributes:
       label: Reproduction
-      description: 'A minimal snippet, or a link to a StackBlitz/CodeSandbox. `pnpm dev` in this repo runs a playground you can adapt.'
+      description: "A minimal snippet, or a link to a StackBlitz/CodeSandbox. `pnpm dev` in this repo runs a playground you can adapt."
       render: tsx
     validations:
       required: true
@@ -87,7 +87,7 @@ body:
     attributes:
       label: Anything else applicable?
       options:
-        - label: 'The page is right-to-left'
-        - label: 'The user prefers reduced motion'
-        - label: 'A strict Content Security Policy is in effect'
-        - label: 'Custom `--rx-<component>-*` CSS variables are set'
+        - label: "The page is right-to-left"
+        - label: "The user prefers reduced motion"
+        - label: "A strict Content Security Policy is in effect"
+        - label: "Custom `--rx-<component>-*` CSS variables are set"

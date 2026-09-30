@@ -1,5 +1,5 @@
 ---
-'@rxova/react-phone-input': patch
+"@rxova/react-phone-input": patch
 ---
 
 Point links at rxova.dev

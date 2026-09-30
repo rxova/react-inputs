@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-export { PhoneInput } from './PhoneInput'
-export { usePhoneInput } from './usePhoneInput'
-export type { UsePhoneInputOptions, UsePhoneInputResult } from './usePhoneInput'
+export { PhoneInput } from "./PhoneInput";
+export { usePhoneInput } from "./usePhoneInput";
+export type { UsePhoneInputOptions, UsePhoneInputResult } from "./usePhoneInput";
 export {
   COUNTRIES,
   MAX_NATIONAL_DIGITS,
@@ -11,8 +11,8 @@ export {
   countryForDial,
   countryName,
   flagEmoji,
-} from './countries'
-export type { Country } from './countries'
+} from "./countries";
+export type { Country } from "./countries";
 export {
   digitsOnly,
   formatNational,
@@ -20,12 +20,12 @@ export {
   isPossible,
   lengthsFor,
   parsePhone,
-} from './phone'
-export type { ParsedPhone } from './phone'
+} from "./phone";
+export type { ParsedPhone } from "./phone";
 export type {
   PhoneCountryState,
   PhoneDetails,
   PhoneInputProps,
   PhoneWarning,
   PhoneWarningCode,
-} from './types'
+} from "./types";

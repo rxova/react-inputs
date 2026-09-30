@@ -1,29 +1,29 @@
-'use client'
+"use client";
 
-import { useId } from 'react'
-import { FileInput, type FileInputProps } from '@rxova/react-file-input'
+import { useId } from "react";
+import { FileInput, type FileInputProps } from "@rxova/react-file-input";
 
-import './file-field.css'
+import "./file-field.css";
 
 export interface FileFieldProps extends Omit<
   FileInputProps,
-  'label' | 'aria-label' | 'aria-describedby' | 'invalid'
+  "label" | "aria-label" | "aria-describedby" | "invalid"
 > {
-  label: string
-  description?: string
-  error?: string
+  label: string;
+  description?: string;
+  error?: string;
 }
 
 /** A labelled file field copied into the consumer by the Rxova registry. */
 export function FileField({ label, description, error, id, ...props }: FileFieldProps) {
-  const generated = useId()
-  const fieldId = id ?? generated
+  const generated = useId();
+  const fieldId = id ?? generated;
   const describedBy = [description && `${fieldId}-description`, error && `${fieldId}-error`]
     .filter(Boolean)
-    .join(' ')
+    .join(" ");
 
   return (
-    <div className="rx-field" data-invalid={error ? '' : undefined}>
+    <div className="rx-field" data-invalid={error ? "" : undefined}>
       <label className="rx-field__label" htmlFor={`${fieldId}-input`}>
         {label}
       </label>
@@ -45,5 +45,5 @@ export function FileField({ label, description, error, id, ...props }: FileField
         </p>
       ) : null}
     </div>
-  )
+  );
 }

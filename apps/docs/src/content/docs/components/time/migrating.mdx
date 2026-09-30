@@ -1,8 +1,8 @@
 ---
-title: 'Time input — Migrating'
+title: "Time input — Migrating"
 description: 'Move to @rxova/react-time-input from react-time-picker, rc-time-picker, react-datetime or a plain <input type="time">.'
 sidebar:
-  label: 'Migrating'
+  label: "Migrating"
   order: 4
 ---
 
@@ -33,26 +33,26 @@ locale-formatted string. This hands you `"14:30"`.
 ### Before
 
 ```tsx
-import { useState } from 'react'
-import TimePicker from 'react-time-picker'
-import 'react-time-picker/dist/TimePicker.css'
-import 'react-clock/dist/Clock.css'
+import { useState } from "react";
+import TimePicker from "react-time-picker";
+import "react-time-picker/dist/TimePicker.css";
+import "react-clock/dist/Clock.css";
 
 function Form() {
-  const [value, setValue] = useState<string | null>('10:00')
-  return <TimePicker onChange={setValue} value={value} disableClock />
+  const [value, setValue] = useState<string | null>("10:00");
+  return <TimePicker onChange={setValue} value={value} disableClock />;
 }
 ```
 
 ### After
 
 ```tsx
-import { useState } from 'react'
-import { TimeInput } from '@rxova/react-time-input'
+import { useState } from "react";
+import { TimeInput } from "@rxova/react-time-input";
 
 function Form() {
-  const [value, setValue] = useState<string | null>('10:00')
-  return <TimeInput label="Time" value={value} onChange={setValue} />
+  const [value, setValue] = useState<string | null>("10:00");
+  return <TimeInput label="Time" value={value} onChange={setValue} />;
 }
 ```
 
@@ -75,13 +75,13 @@ which you were disabling anyway — and drop seven runtime dependencies and two 
 | `open`, `popupClassName`, …        | —                           | No popup                                      |
 
 ```ts
-import moment from 'moment'
+import moment from "moment";
 
 // moment -> value
-const value = existing ? existing.format('HH:mm') : null
+const value = existing ? existing.format("HH:mm") : null;
 
 // value -> moment, when something downstream still needs one
-const asMoment = value ? moment(value, 'HH:mm') : null
+const asMoment = value ? moment(value, "HH:mm") : null;
 ```
 
 Note `disabledHours`/`disabledMinutes` have no equivalent: this component models a contiguous
@@ -94,22 +94,22 @@ range, not an arbitrary set. If you need "every hour except 13:00", validate on 
 with [`@rxova/react-date-input`](/components/date/introduction/):
 
 ```tsx
-import { useState } from 'react'
-import { DateInput } from '@rxova/react-date-input'
-import { TimeInput } from '@rxova/react-time-input'
+import { useState } from "react";
+import { DateInput } from "@rxova/react-date-input";
+import { TimeInput } from "@rxova/react-time-input";
 
 function When() {
-  const [date, setDate] = useState<string | null>(null)
-  const [time, setTime] = useState<string | null>(null)
+  const [date, setDate] = useState<string | null>(null);
+  const [time, setTime] = useState<string | null>(null);
   // Compose at the boundary, where you know which timezone you mean.
-  const isoLocal = date && time ? `${date}T${time}` : null
+  const isoLocal = date && time ? `${date}T${time}` : null;
   return (
     <>
       <DateInput label="Date" value={date} onChange={setDate} />
       <TimeInput label="Time" value={time} onChange={setTime} />
-      <input type="hidden" name="when" value={isoLocal ?? ''} />
+      <input type="hidden" name="when" value={isoLocal ?? ""} />
     </>
-  )
+  );
 }
 ```
 
@@ -127,16 +127,16 @@ OS one.
 The value format is **identical** (`HH:mm`, 24-hour), so the swap is mechanical:
 
 ```tsx
-import { TimeInput } from '@rxova/react-time-input'
+import { TimeInput } from "@rxova/react-time-input";
 
 // Before
 function Before() {
-  return <input type="time" name="at" min="09:00" max="17:00" />
+  return <input type="time" name="at" min="09:00" max="17:00" />;
 }
 
 // After
 function After() {
-  return <TimeInput label="At" name="at" min="09:00" max="17:00" />
+  return <TimeInput label="At" name="at" min="09:00" max="17:00" />;
 }
 ```
 

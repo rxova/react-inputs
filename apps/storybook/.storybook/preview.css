@@ -53,7 +53,7 @@
   color: inherit;
   font-family: inherit;
 }
-.story input:not([data-rx-otp-input])[aria-invalid='true'],
+.story input:not([data-rx-otp-input])[aria-invalid="true"],
 .story input:not([data-rx-otp-input])[data-invalid] {
   border-color: #c0392b;
   outline-color: #c0392b;

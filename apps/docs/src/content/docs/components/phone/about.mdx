@@ -1,13 +1,13 @@
 ---
-title: 'Phone input — About'
-description: 'Possible versus valid numbers, where the country data comes from, shared calling codes, trunk prefixes and how the caret is managed.'
+title: "Phone input — About"
+description: "Possible versus valid numbers, where the country data comes from, shared calling codes, trunk prefixes and how the caret is managed."
 sidebar:
-  label: 'About'
+  label: "About"
   order: 3
 ---
 
-import CodeRecipes from '@rxova/astro-ui/components/CodeRecipes.astro'
-import { recipesFor } from '../../../../lib/recipe-sources.mjs'
+import CodeRecipes from "@rxova/astro-ui/components/CodeRecipes.astro";
+import { recipesFor } from "../../../../lib/recipe-sources.mjs";
 
 The decisions behind the component, and the ones you should disagree with deliberately rather than
 by accident.
@@ -28,11 +28,11 @@ the assignment rules for every carrier block in the world, and the right place t
 server, where the metadata costs nothing and the answer can be trusted.
 
 ```ts
-import { parsePhone } from '@rxova/react-phone-input'
+import { parsePhone } from "@rxova/react-phone-input";
 
-parsePhone('+442071234567').possible // true  — 10 digits, which the UK uses
-parsePhone('+4420712').possible // false — no UK number is 5 digits
-parsePhone('+9912345678').possible // false — no such calling code
+parsePhone("+442071234567").possible; // true  — 10 digits, which the UK uses
+parsePhone("+4420712").possible; // false — no UK number is 5 digits
+parsePhone("+9912345678").possible; // false — no such calling code
 ```
 
 That last case is worth noting: an explicit `+` whose calling code matches nothing is never
@@ -259,7 +259,7 @@ you `details.possible` and `details.country` alongside the value.
 
 ```tsx
 function PhoneField() {
-  const [field, , helpers] = useField<string>('phone')
+  const [field, , helpers] = useField<string>("phone");
   return (
     <PhoneInput
       label="Phone"
@@ -268,7 +268,7 @@ function PhoneField() {
       onChange={(value) => helpers.setValue(value)}
       onBlur={() => helpers.setTouched(true)}
     />
-  )
+  );
 }
 ```
 
@@ -312,4 +312,4 @@ and the number box — so picking a country does not mark the field touched befo
 The country selector and number input are one field. These recipes preserve that focus and blur
 boundary while using the design system for labels, help text, and errors.
 
-<CodeRecipes idPrefix="integration" recipes={recipesFor('phone')} />
+<CodeRecipes idPrefix="integration" recipes={recipesFor("phone")} />

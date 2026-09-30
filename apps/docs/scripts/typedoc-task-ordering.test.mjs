@@ -17,32 +17,32 @@
  * it is there, so removing it fails here rather than as an intermittent CI red
  * weeks later.
  */
-import { readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
-import { describe, expect, it } from 'vitest'
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { describe, expect, it } from "vitest";
 
-const configPath = fileURLToPath(new URL('../turbo.json', import.meta.url))
+const configPath = fileURLToPath(new URL("../turbo.json", import.meta.url));
 
 /** turbo.json permits comments, which `JSON.parse` does not. */
 const readJsonc = (path) =>
   JSON.parse(
-    readFileSync(path, 'utf8')
-      .replace(/^\s*\/\/.*$/gm, '')
-      .replace(/\/\*[\s\S]*?\*\//g, ''),
-  )
+    readFileSync(path, "utf8")
+      .replace(/^\s*\/\/.*$/gm, "")
+      .replace(/\/\*[\s\S]*?\*\//g, ""),
+  );
 
-describe('docs task ordering', () => {
-  it('runs typecheck after build, so the two never share the TypeDoc output', () => {
-    const config = readJsonc(configPath)
+describe("docs task ordering", () => {
+  it("runs typecheck after build, so the two never share the TypeDoc output", () => {
+    const config = readJsonc(configPath);
 
-    expect(config.tasks?.typecheck?.dependsOn).toContain('build')
-  })
+    expect(config.tasks?.typecheck?.dependsOn).toContain("build");
+  });
 
-  it('still builds against freshly built dependencies', () => {
+  it("still builds against freshly built dependencies", () => {
     // `^build` is what the root task provides and what typecheck needs for the
     // workspace packages' types. Depending on the local build must not drop it.
-    const config = readJsonc(configPath)
+    const config = readJsonc(configPath);
 
-    expect(config.tasks?.typecheck?.dependsOn).toContain('^build')
-  })
-})
+    expect(config.tasks?.typecheck?.dependsOn).toContain("^build");
+  });
+});

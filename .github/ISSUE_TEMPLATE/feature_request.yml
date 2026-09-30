@@ -1,49 +1,49 @@
-name: 'Feature request'
-description: 'Suggest a capability for the Rxova React Inputs suite.'
-title: 'feat: '
-labels: ['enhancement']
+name: "Feature request"
+description: "Suggest a capability for the Rxova React Inputs suite."
+title: "feat: "
+labels: ["enhancement"]
 body:
   - type: dropdown
     id: package
     attributes:
       label: Package
       options:
-        - '@rxova/react-intl-currency-input'
-        - '@rxova/react-rating-input'
-        - '@rxova/react-otp-input'
-        - '@rxova/react-password-input'
-        - '@rxova/react-phone-input'
-        - '@rxova/react-date-input'
-        - '@rxova/react-time-input'
-        - '@rxova/react-tags-input'
-        - '@rxova/react-file-input'
-        - '@rxova/react-inputs (whole suite)'
+        - "@rxova/react-intl-currency-input"
+        - "@rxova/react-rating-input"
+        - "@rxova/react-otp-input"
+        - "@rxova/react-password-input"
+        - "@rxova/react-phone-input"
+        - "@rxova/react-date-input"
+        - "@rxova/react-time-input"
+        - "@rxova/react-tags-input"
+        - "@rxova/react-file-input"
+        - "@rxova/react-inputs (whole suite)"
     validations:
       required: true
   - type: textarea
     id: problem
     attributes:
       label: What problem are you trying to solve?
-      description: 'Describe the use case, not the solution. What are you building?'
+      description: "Describe the use case, not the solution. What are you building?"
     validations:
       required: true
   - type: textarea
     id: proposal
     attributes:
       label: Proposed API
-      description: 'Sketch the props or usage you would want.'
+      description: "Sketch the props or usage you would want."
       render: tsx
   - type: textarea
     id: workaround
     attributes:
       label: Current workaround
-      description: 'Can you achieve this with the existing component, its hook, or native platform APIs? If so, what remains unsatisfying?'
+      description: "Can you achieve this with the existing component, its hook, or native platform APIs? If so, what remains unsatisfying?"
   - type: checkboxes
     id: constraints
     attributes:
       label: Constraints
-      description: 'These are hard project rules; a proposal that breaks one needs a strong argument.'
+      description: "These are hard project rules; a proposal that breaks one needs a strong argument."
       options:
-        - label: 'This does not require a runtime dependency'
-        - label: 'This does not require shipping a stylesheet'
-        - label: 'This does not regress accessibility'
+        - label: "This does not require a runtime dependency"
+        - label: "This does not require shipping a stylesheet"
+        - label: "This does not regress accessibility"

@@ -9,7 +9,7 @@ overrides:
   # the only one that resolves here (minimatch@10 under eslint and
   # typescript-eslint). Dev-only, never shipped. Upper bound load-bearing as
   # described for fast-uri below.
-  brace-expansion@5: '>=5.0.12 <6'
+  brace-expansion@5: ">=5.0.12 <6"
   # GHSA-7p8r-x3mc-p8w7: a backslash authority introducer lets a crafted URI
   # parse to an unexpected host (host confusion). Reached only through ajv, via
   # commitlint's config validator and the docs' YAML language server, so it is
@@ -18,7 +18,7 @@ overrides:
   # The upper bound is load-bearing: the replacement side is a range, not just
   # a floor, so a bare '>=3.1.5' resolves to the newest 4.x and silently pushes
   # ajv across a major.
-  fast-uri@3: '>=3.1.6 <4'
+  fast-uri@3: ">=3.1.6 <4"
   # GHSA-5p4m-2wfm-xmqj: quadratic CPU consumption resolving !!omap (DoS on
   # untrusted YAML). Both major lines resolve here and both are vulnerable, so
   # each needs its own entry — the 3.x fix was not backported below 3.15.1.
@@ -28,8 +28,8 @@ overrides:
   # The upper bounds are load-bearing for the same reason as fast-uri above:
   # js-yaml 5.x exists, so a bare '>=4.3.1' would drag both lines across a major
   # that these dependents do not declare support for.
-  js-yaml@3: '>=3.15.1 <4'
-  js-yaml@4: '>=4.3.2 <5'
+  js-yaml@3: ">=3.15.1 <4"
+  js-yaml@4: ">=4.3.2 <5"
   # GHSA-2v37-7h3g-55p8: a custom alphabet with size zero loops forever (DoS).
   # Only the 3.x line is affected — 5.1.16 and 6.0.0 also resolve here and both
   # sit outside the advisory's `<3.3.18` range — so one scoped entry covers it
@@ -44,7 +44,7 @@ overrides:
   # gate went red on a commit that touched only .github/. That is exactly what
   # `audit:check` is deliberately not a Turbo task for: a cached pass would have
   # replayed over it and shipped.
-  nanoid@3: '>=3.3.18 <4'
+  nanoid@3: ">=3.3.18 <4"
   # The same staleness the nanoid note above describes, now on five more
   # packages. `js-yaml@4`'s floor moved from 4.3.1 to 4.3.2 upstream and is
   # bumped in place. The other four had no entry at all: `astro` and `sharp`
@@ -56,10 +56,10 @@ overrides:
   #
   # Upper bounds load-bearing for the reason given above: a bare floor resolves
   # to the next major and pushes a dependent across it silently.
-  astro@7: '>=7.2.8 <8'
-  next@16: '>=16.3.3 <17'
-  sharp@0.35: '>=0.35.4 <0.36'
-  svgo@4: '>=4.1.0 <5'
+  astro@7: ">=7.2.8 <8"
+  next@16: ">=16.3.3 <17"
+  sharp@0.35: ">=0.35.4 <0.36"
+  svgo@4: ">=4.1.0 <5"
   # GHSA-jxfw-x594-9x9m: unescaped Unicode line separators in logged request
   # fields let a client forge extra log lines. Reached only through
   # apps/compat-remix > @react-router/serve (directly, and again under
@@ -69,7 +69,7 @@ overrides:
   # Scoped to 1.x, the only line that resolves here.
   #
   # Upper bound load-bearing as above.
-  morgan@1: '>=1.12.0 <2'
+  morgan@1: ">=1.12.0 <2"
   # GHSA-4mjr-xmp4-gh2g: an attacker-controlled `isBuffer` property sends the
   # parser into a denial of service. GHSA-x5fp-wj9c-mxmx: bracket-key comma
   # parsing slips past `arrayLimit`. One entry covers both, since 6.16.0 fixes
@@ -81,7 +81,7 @@ overrides:
   # that resolves here.
   #
   # Upper bound load-bearing as above.
-  qs@6: '>=6.16.0 <7'
+  qs@6: ">=6.16.0 <7"
 
   # GHSA-9rgm-9g3h-6x36: devalue <5.9.1 can be driven into a denial of service
   # by malformed input to `parse`/`unflatten`; 5.9.2 is the first patched
@@ -92,7 +92,7 @@ overrides:
   # depends on >=5.9.2 itself.
   #
   # Upper bound load-bearing as above.
-  devalue@5: '>=5.9.2 <6'
+  devalue@5: ">=5.9.2 <6"
 #
 # No `auditConfig.ignoreGhsas`. The single entry that lived here suppressed
 # GHSA-mh99-v99m-4gvg for one unfixable copy reached through
@@ -117,55 +117,55 @@ overrides:
 # `@types/react` into them, so the React 18 run checks against 18 types
 # throughout.
 packageExtensions:
-  '@tanstack/react-form':
+  "@tanstack/react-form":
     peerDependencies:
-      '@types/react': '*'
+      "@types/react": "*"
     peerDependenciesMeta:
-      '@types/react':
+      "@types/react":
         optional: true
   formik:
     peerDependencies:
-      '@types/react': '*'
+      "@types/react": "*"
     peerDependenciesMeta:
-      '@types/react':
+      "@types/react":
         optional: true
   react-final-form:
     peerDependencies:
-      '@types/react': '*'
+      "@types/react": "*"
     peerDependenciesMeta:
-      '@types/react':
+      "@types/react":
         optional: true
   react-hook-form:
     peerDependencies:
-      '@types/react': '*'
+      "@types/react": "*"
     peerDependenciesMeta:
-      '@types/react':
+      "@types/react":
         optional: true
 allowBuilds:
   core-js: false
   esbuild: true
   sharp: true
 minimumReleaseAgeExclude:
-  - '@vitejs/plugin-react@6.0.4'
+  - "@vitejs/plugin-react@6.0.4"
   # Reviewed dependency upgrades requested before the 24-hour quarantine ends.
   # Exact pins keep the exception from applying to later releases.
   - lint-staged@17.2.0
   - tsdown@0.22.14
   - verkit@0.3.0
-  - '@rxova/brand'
-  - '@rxova/astro-ui'
+  - "@rxova/brand"
+  - "@rxova/astro-ui"
   # First-party shared tooling and helpers, published from rxova/shared.
-  - '@rxova/repo-config'
-  - '@rxova/ts-utils'
-  - '@rxova/docs-kit'
-  - '@mui/core-downloads-tracker@9.3.0'
-  - '@mui/material@9.3.0'
-  - '@mui/private-theming@9.3.0'
-  - '@mui/styled-engine@9.3.0'
-  - '@mui/system@9.3.0'
-  - '@mui/types@9.3.0'
-  - '@mui/utils@9.3.0'
-  - '@rxova/docs-kit@0.1.1'
+  - "@rxova/repo-config"
+  - "@rxova/ts-utils"
+  - "@rxova/docs-kit"
+  - "@mui/core-downloads-tracker@9.3.0"
+  - "@mui/material@9.3.0"
+  - "@mui/private-theming@9.3.0"
+  - "@mui/styled-engine@9.3.0"
+  - "@mui/system@9.3.0"
+  - "@mui/types@9.3.0"
+  - "@mui/utils@9.3.0"
+  - "@rxova/docs-kit@0.1.1"
 
 # The advisory lookup is the one request whose result is advisory rather than
 # required, and pnpm's default schedule -- a 60s fetch timeout and two retries --

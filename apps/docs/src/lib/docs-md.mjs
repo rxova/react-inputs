@@ -9,8 +9,8 @@
 // The pipeline is @rxova/docs-kit's; what this site adds to it lives in
 // site-markdown.mjs, which is plain and tested.
 
-import { getCollection } from 'astro:content'
-import { docsPages as buildPages } from '@rxova/docs-kit'
+import { getCollection } from "astro:content";
+import { docsPages as buildPages } from "@rxova/docs-kit";
 
 import {
   expandCodeRecipes,
@@ -18,9 +18,9 @@ import {
   expandLiveExamples,
   sectionOf,
   stripLiveMeta,
-} from './site-markdown.mjs'
-import { recipesFor } from './recipe-sources.mjs'
-import { frameworkCompatibilityMarkdown } from './framework-proof.mjs'
+} from "./site-markdown.mjs";
+import { recipesFor } from "./recipe-sources.mjs";
+import { frameworkCompatibilityMarkdown } from "./framework-proof.mjs";
 
 /**
  * The component list, injected by astro.config.mjs from `componentPackages()`.
@@ -32,7 +32,7 @@ import { frameworkCompatibilityMarkdown } from './framework-proof.mjs'
  * instances, so it is the right place to read it — this stays one source of truth,
  * reached at the only point in the build that can reach it.
  */
-const COMPONENTS = __RXOVA_COMPONENTS__
+const COMPONENTS = __RXOVA_COMPONENTS__;
 
 /**
  * Every documentation page, normalized to markdown and sorted by id.
@@ -43,8 +43,8 @@ const COMPONENTS = __RXOVA_COMPONENTS__
  * docs-kit's default: a hollowed-out `.md` of a landing page teaches an agent
  * nothing, and `overview.mdx` is the page that answers "what is this suite".
  */
-export async function docsPages({ origin, base = '/' }) {
-  return buildPages(await getCollection('docs'), {
+export async function docsPages({ origin, base = "/" }) {
+  return buildPages(await getCollection("docs"), {
     origin,
     base,
     sectionOf: (id) => sectionOf(id, COMPONENTS),
@@ -57,5 +57,5 @@ export async function docsPages({ origin, base = '/' }) {
       ],
       fenceOpen: stripLiveMeta,
     },
-  })
+  });
 }

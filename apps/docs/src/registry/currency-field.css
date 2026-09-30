@@ -36,12 +36,12 @@
 /* Both hooks: `data-invalid` is this library's, `aria-invalid` is the platform's
    and is what a form library will set. Styling only one leaves the other silent. */
 .rx-field input[data-invalid],
-.rx-field input[aria-invalid='true'] {
+.rx-field input[aria-invalid="true"] {
   border-color: hsl(var(--destructive, 0 84% 60%));
 }
 
 .rx-field input[data-invalid]:focus-visible,
-.rx-field input[aria-invalid='true']:focus-visible {
+.rx-field input[aria-invalid="true"]:focus-visible {
   outline-color: hsl(var(--destructive, 0 84% 60%));
 }
 

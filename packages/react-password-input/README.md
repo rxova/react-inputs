@@ -41,10 +41,10 @@ npm install @rxova/react-password-input
 The minimum useful field: masked, with a reveal toggle and a Caps Lock warning.
 
 ```tsx
-import { PasswordInput } from '@rxova/react-password-input'
+import { PasswordInput } from "@rxova/react-password-input";
 
 function SignIn() {
-  return <PasswordInput label="Password" name="password" autoComplete="current-password" />
+  return <PasswordInput label="Password" name="password" autoComplete="current-password" />;
 }
 ```
 
@@ -54,11 +54,11 @@ Turn on the meter and the checklist. `onValidityChange` fires on transitions onl
 to wire straight into state.
 
 ```tsx
-import { useState } from 'react'
-import { PasswordInput, commonRules } from '@rxova/react-password-input'
+import { useState } from "react";
+import { PasswordInput, commonRules } from "@rxova/react-password-input";
 
 function SignUp({ email }: { email: string }) {
-  const [valid, setValid] = useState(false)
+  const [valid, setValid] = useState(false);
 
   return (
     <>
@@ -70,7 +70,7 @@ function SignUp({ email }: { email: string }) {
         minScore={3}
         minLength={10}
         userInputs={[email]}
-        blocklist={['acme', 'acmecorp']}
+        blocklist={["acme", "acmecorp"]}
         rules={[commonRules.digit, { ...commonRules.symbol, optional: true }]}
         onValidityChange={setValid}
       />
@@ -78,7 +78,7 @@ function SignUp({ email }: { email: string }) {
         Create account
       </button>
     </>
-  )
+  );
 }
 ```
 
@@ -91,9 +91,9 @@ what those are. Values are compared locally and never leave the browser.
 `estimateStrength` is a pure function you can call directly.
 
 ```ts
-import { estimateStrength } from '@rxova/react-password-input'
+import { estimateStrength } from "@rxova/react-password-input";
 
-const result = estimateStrength('Tr0ub4dor&3', { userInputs: ['ada@example.com'] })
+const result = estimateStrength("Tr0ub4dor&3", { userInputs: ["ada@example.com"] });
 // { score: 3, entropy: 72.27, penalties: [], effectiveLength: 11 }
 ```
 
@@ -120,9 +120,9 @@ buys. If you need
 that, buy it deliberately:
 
 ```tsx
-import { zxcvbn } from '@zxcvbn-ts/core'
-import { PasswordInput } from '@rxova/react-password-input'
-import type { PasswordScore } from '@rxova/react-password-input'
+import { zxcvbn } from "@zxcvbn-ts/core";
+import { PasswordInput } from "@rxova/react-password-input";
+import type { PasswordScore } from "@rxova/react-password-input";
 
 function Field() {
   return (
@@ -130,16 +130,16 @@ function Field() {
       label="Password"
       showStrength
       estimate={(password) => {
-        const result = zxcvbn(password)
+        const result = zxcvbn(password);
         return {
           score: result.score as PasswordScore,
           entropy: Math.log2(result.guesses),
           penalties: [],
           effectiveLength: password.length,
-        }
+        };
       }}
     />
-  )
+  );
 }
 ```
 
@@ -155,23 +155,23 @@ a breach-corpus check, and rate limiting on the server.
 is entirely yours. The library issues no request of its own — that is the point of the shape.
 
 ```tsx
-import { PasswordInput } from '@rxova/react-password-input'
+import { PasswordInput } from "@rxova/react-password-input";
 
 /** Have I Been Pwned's k-anonymity API: only a 5-character hash prefix is sent. */
 async function checkPwned(password: string, signal: AbortSignal) {
-  const bytes = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(password))
+  const bytes = await crypto.subtle.digest("SHA-1", new TextEncoder().encode(password));
   const hash = [...new Uint8Array(bytes)]
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('')
-    .toUpperCase()
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("")
+    .toUpperCase();
   const response = await fetch(`https://api.pwnedpasswords.com/range/${hash.slice(0, 5)}`, {
     signal,
-  })
-  return (await response.text()).includes(hash.slice(5))
+  });
+  return (await response.text()).includes(hash.slice(5));
 }
 
 function Field() {
-  return <PasswordInput label="Password" showStrength checkCompromised={checkPwned} />
+  return <PasswordInput label="Password" showStrength checkCompromised={checkPwned} />;
 }
 ```
 
@@ -191,7 +191,7 @@ into `Password1!` and measurably lowers real entropy.
 If you need the checklist anyway, `commonRules` has the four:
 
 ```tsx
-import { PasswordInput, commonRules } from '@rxova/react-password-input'
+import { PasswordInput, commonRules } from "@rxova/react-password-input";
 
 function Field() {
   return (
@@ -204,7 +204,7 @@ function Field() {
         { ...commonRules.symbol, optional: true },
       ]}
     />
-  )
+  );
 }
 ```
 
@@ -220,12 +220,12 @@ Final Form and TanStack Form all work with no adapter. The `ref` lands on the in
 is what `setFocus()` and focus-first-error patterns expect.
 
 ```tsx
-import { useForm } from 'react-hook-form'
-import { PasswordInput } from '@rxova/react-password-input'
+import { useForm } from "react-hook-form";
+import { PasswordInput } from "@rxova/react-password-input";
 
 function SignIn() {
-  const { register, handleSubmit } = useForm<{ password: string }>()
-  const { ref, onChange, ...field } = register('password', { required: true })
+  const { register, handleSubmit } = useForm<{ password: string }>();
+  const { ref, onChange, ...field } = register("password", { required: true });
 
   return (
     <form onSubmit={handleSubmit(() => undefined)}>
@@ -237,7 +237,7 @@ function SignIn() {
       />
       <button type="submit">Sign in</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -297,18 +297,18 @@ surface is `PasswordInputProps` in `types.ts`, which is public API covered by se
 a prop it cannot use as given. Wire it to Sentry or your logger:
 
 ```tsx
-import * as Sentry from '@sentry/react'
-import { PasswordInput } from '@rxova/react-password-input'
+import * as Sentry from "@sentry/react";
+import { PasswordInput } from "@rxova/react-password-input";
 
 function Field() {
   return (
     <PasswordInput
       label="Password"
       onWarn={(warning) => {
-        Sentry.captureMessage(warning.message, { level: 'warning', extra: { ...warning } })
+        Sentry.captureMessage(warning.message, { level: "warning", extra: { ...warning } });
       }}
     />
-  )
+  );
 }
 ```
 
@@ -327,22 +327,22 @@ are genuinely hard to get right: caret restoration across the `type` swap, and t
 debounced breach check.
 
 ```tsx
-import { usePasswordInput } from '@rxova/react-password-input'
+import { usePasswordInput } from "@rxova/react-password-input";
 
 function CustomField() {
-  const field = usePasswordInput({ minLength: 10 })
+  const field = usePasswordInput({ minLength: 10 });
 
   return (
     <div>
       <input
         ref={(node) => {
-          field.inputRef.current = node
+          field.inputRef.current = node;
         }}
         id={field.ids.input}
         type={field.type}
         value={field.value}
         onChange={(event) => {
-          field.setValue(event.target.value)
+          field.setValue(event.target.value);
         }}
         onKeyDown={field.handleModifierEvent}
         onKeyUp={field.handleModifierEvent}
@@ -352,16 +352,16 @@ function CustomField() {
         type="button"
         aria-pressed={field.revealed}
         onMouseDown={(event) => {
-          field.captureSelection()
-          event.preventDefault()
+          field.captureSelection();
+          event.preventDefault();
         }}
         onClick={field.toggleReveal}
       >
-        {field.revealed ? 'Hide' : 'Show'}
+        {field.revealed ? "Hide" : "Show"}
       </button>
       {field.capsLock ? <p role="status">Caps Lock is on</p> : null}
     </div>
-  )
+  );
 }
 ```
 

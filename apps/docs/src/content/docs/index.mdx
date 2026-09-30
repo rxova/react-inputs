@@ -8,7 +8,7 @@ hero:
   # build time. The source of truth stays the repo-root assets/logo.svg.
   image:
     file: ../../assets/logo.svg
-    alt: ''
+    alt: ""
   tagline: >-
     Lightweight, accessible and UX-first, with zero runtime dependencies. Every
     release is tested end-to-end in three browsers, scanned against WCAG, and
@@ -23,13 +23,13 @@ hero:
       variant: primary
 ---
 
-import LiveExample from '@components/LiveExample.astro'
-import Section from '@rxova/astro-ui/components/Section.astro'
-import QuickStart from '@rxova/astro-ui/components/QuickStart.astro'
-import ValueGrid from '@rxova/astro-ui/components/ValueGrid.astro'
-import ProofStats from '@rxova/astro-ui/components/ProofStats.astro'
-import SizeTable from '@rxova/astro-ui/components/SizeTable.astro'
-import CtaBand from '@rxova/astro-ui/components/CtaBand.astro'
+import LiveExample from "@components/LiveExample.astro";
+import Section from "@rxova/astro-ui/components/Section.astro";
+import QuickStart from "@rxova/astro-ui/components/QuickStart.astro";
+import ValueGrid from "@rxova/astro-ui/components/ValueGrid.astro";
+import ProofStats from "@rxova/astro-ui/components/ProofStats.astro";
+import SizeTable from "@rxova/astro-ui/components/SizeTable.astro";
+import CtaBand from "@rxova/astro-ui/components/CtaBand.astro";
 import {
   suiteBudget,
   packageBudgets,
@@ -37,32 +37,32 @@ import {
   e2eBrowsers,
   axeTags,
   license,
-} from '../../lib/proof.mjs'
+} from "../../lib/proof.mjs";
 
-export const suite = suiteBudget()
-export const budgets = packageBudgets()
-export const floor = coverageFloor()
-export const browsers = e2eBrowsers()
-export const tags = axeTags()
-export const licence = license()
+export const suite = suiteBudget();
+export const budgets = packageBudgets();
+export const floor = coverageFloor();
+export const browsers = e2eBrowsers();
+export const tags = axeTags();
+export const licence = license();
 
 <CtaBand
   title="Start with one input"
   lede="Take the whole suite, or just the one package you need today. The bundle budgets, the tests and the accessibility guarantees are the same either way."
   actions={[
     {
-      text: 'Star on GitHub',
-      href: 'https://github.com/rxova/react-inputs',
-      variant: 'primary',
+      text: "Star on GitHub",
+      href: "https://github.com/rxova/react-inputs",
+      variant: "primary",
       external: true,
     },
     {
-      text: 'Open Storybook',
-      href: 'https://rxova.dev/storybook/react-inputs/',
+      text: "Open Storybook",
+      href: "https://rxova.dev/storybook/react-inputs/",
       external: true,
     },
     {
-      text: 'Read the docs',
+      text: "Read the docs",
       // Explicit BASE_URL, not a bare '/getting-started/…': remark-base-links
       // only rewrites plain-string href attributes on JSX nodes, and this one
       // is a value inside an expression, so the plugin never sees it. Under the
@@ -79,13 +79,13 @@ export const licence = license()
   <QuickStart command="npm install @rxova/react-inputs">
 
 ```tsx
-import { CurrencyInput } from '@rxova/react-inputs'
+import { CurrencyInput } from "@rxova/react-inputs";
 
 export function Price({ value, onChange }) {
   // `name` is all it takes to post with the form.
   return (
     <CurrencyInput name="price" locale="de-DE" currency="EUR" value={value} onChange={onChange} />
-  )
+  );
 }
 ```
 
@@ -100,33 +100,33 @@ export function Price({ value, onChange }) {
   <ValueGrid
     items={[
       {
-        icon: 'shield-check',
-        title: 'Maintained, in the open',
-        body: 'Shipped under the Rxova organisation alongside Journey and use-everywhere. Changesets-driven releases, provenance-signed npm publishes, an API reference generated from source.',
+        icon: "shield-check",
+        title: "Maintained, in the open",
+        body: "Shipped under the Rxova organisation alongside Journey and use-everywhere. Changesets-driven releases, provenance-signed npm publishes, an API reference generated from source.",
       },
       {
-        icon: 'feather',
-        title: 'Lightweight, and held to it',
-        body: 'Every package carries a size budget that CI enforces on each build. Exceed it and the build fails — the number on this page is that budget, not an estimate.',
+        icon: "feather",
+        title: "Lightweight, and held to it",
+        body: "Every package carries a size budget that CI enforces on each build. Exceed it and the build fails — the number on this page is that budget, not an estimate.",
       },
       {
-        icon: 'unplug',
-        title: 'No dependencies to inherit',
-        body: '<code>react</code> is the only peer. Nothing else reaches your bundle, nothing else can break you, and everything tree-shakes down to what you actually imported.',
+        icon: "unplug",
+        title: "No dependencies to inherit",
+        body: "<code>react</code> is the only peer. Nothing else reaches your bundle, nothing else can break you, and everything tree-shakes down to what you actually imported.",
       },
       {
-        icon: 'accessibility',
-        title: 'Accessible by construction',
-        body: 'Native platform semantics do the work — an interactive rating is a real radiogroup, and an OTP field is one real input. Keyboard, focus and form behaviour come from the browser, and every build is checked with axe.',
+        icon: "accessibility",
+        title: "Accessible by construction",
+        body: "Native platform semantics do the work — an interactive rating is a real radiogroup, and an OTP field is one real input. Keyboard, focus and form behaviour come from the browser, and every build is checked with axe.",
       },
       {
-        icon: 'text-cursor-input',
-        title: 'UX-first, down to the caret',
-        body: 'The caret stays where you put it while the value reformats underneath. Paste works. Autofill works. So do IME composition, RTL and server rendering.',
+        icon: "text-cursor-input",
+        title: "UX-first, down to the caret",
+        body: "The caret stays where you put it while the value reformats underneath. Paste works. Autofill works. So do IME composition, RTL and server rendering.",
       },
       {
-        icon: 'languages',
-        title: 'Correct on the seams',
+        icon: "languages",
+        title: "Correct on the seams",
         body: "Bulgarian's space-only-above-9999 grouping, Hindi lakh grouping, Arabic-Indic digits, formatted paste, Chrome's auto-translate rewriting your DOM. The cases that only show up in production.",
       },
     ]}
@@ -142,9 +142,9 @@ export function Price({ value, onChange }) {
   <ProofStats
     stats={[
       {
-        value: '0',
-        label: 'Runtime dependencies',
-        note: 'react is the only peer, across every package',
+        value: "0",
+        label: "Runtime dependencies",
+        note: "react is the only peer, across every package",
       },
       {
         value: `${suite.wholeKb} kB`,
@@ -153,23 +153,23 @@ export function Price({ value, onChange }) {
       },
       {
         value: `${floor.statements}%`,
-        label: 'Coverage floor, per file',
-        note: 'Per-file thresholds, so a thin module cannot hide behind a well-covered one',
+        label: "Coverage floor, per file",
+        note: "Per-file thresholds, so a thin module cannot hide behind a well-covered one",
       },
       {
         value: `${browsers.length}`,
-        label: 'Engines under E2E',
-        note: browsers.join(', '),
+        label: "Engines under E2E",
+        note: browsers.join(", "),
       },
       {
-        value: '0',
-        label: 'Accessibility violations',
-        note: `axe-core against ${tags.join(', ')} — including RTL and error states`,
+        value: "0",
+        label: "Accessibility violations",
+        note: `axe-core against ${tags.join(", ")} — including RTL and error states`,
       },
       {
         value: licence,
-        label: 'Licensed, every package',
-        note: 'Permissive and unchanged since the first release — use it at work without asking anyone',
+        label: "Licensed, every package",
+        note: "Permissive and unchanged since the first release — use it at work without asking anyone",
       },
     ]}
   />

@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-export { FileInput } from './FileInput'
-export { useFileInput } from './useFileInput'
-export type { UseFileInputOptions, UseFileInputResult } from './useFileInput'
+export { FileInput } from "./FileInput";
+export { useFileInput } from "./useFileInput";
+export type { UseFileInputOptions, UseFileInputResult } from "./useFileInput";
 export {
   attempt,
   attemptAll,
@@ -12,12 +12,12 @@ export {
   formatBytes,
   isPreviewable,
   matchesAccept,
-} from './files'
-export type { FileAccepted, FileAttempt, FileRejected, FileRejection, FileRules } from './files'
+} from "./files";
+export type { FileAccepted, FileAttempt, FileRejected, FileRejection, FileRules } from "./files";
 export type {
   FileEntry,
   FileEntryState,
   FileInputProps,
   FileWarning,
   FileWarningCode,
-} from './types'
+} from "./types";

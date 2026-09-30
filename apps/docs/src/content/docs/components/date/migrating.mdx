@@ -1,8 +1,8 @@
 ---
-title: 'Date input — Migrating'
+title: "Date input — Migrating"
 description: 'Move to @rxova/react-date-input from react-datepicker, react-day-picker, @react-aria/datepicker or a plain <input type="date">.'
 sidebar:
-  label: 'Migrating'
+  label: "Migrating"
   order: 4
 ---
 
@@ -30,25 +30,25 @@ or offer both.
 ### Before
 
 ```tsx
-import { useState } from 'react'
-import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
+import { useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function Form() {
-  const [date, setDate] = useState<Date | null>(null)
-  return <DatePicker selected={date} onChange={setDate} dateFormat="dd/MM/yyyy" />
+  const [date, setDate] = useState<Date | null>(null);
+  return <DatePicker selected={date} onChange={setDate} dateFormat="dd/MM/yyyy" />;
 }
 ```
 
 ### After
 
 ```tsx
-import { useState } from 'react'
-import { DateInput } from '@rxova/react-date-input'
+import { useState } from "react";
+import { DateInput } from "@rxova/react-date-input";
 
 function Form() {
-  const [date, setDate] = useState<string | null>(null)
-  return <DateInput label="Date" locale="en-GB" value={date} onChange={setDate} />
+  const [date, setDate] = useState<string | null>(null);
+  return <DateInput label="Date" locale="en-GB" value={date} onChange={setDate} />;
 }
 ```
 
@@ -60,18 +60,18 @@ If the rest of your app still wants `Date` objects, convert where the timezone q
 be answered — not inside the component:
 
 ```ts
-import { fromISO, toISO } from '@rxova/react-date-input'
+import { fromISO, toISO } from "@rxova/react-date-input";
 
 /** Local midnight. Use this when the date means "a day in the user's calendar". */
 function toLocalDate(iso: string): Date {
-  const parts = fromISO(iso)
-  if (!parts) throw new Error(`Not an ISO date: ${iso}`)
-  return new Date(parts.year, parts.month - 1, parts.day)
+  const parts = fromISO(iso);
+  if (!parts) throw new Error(`Not an ISO date: ${iso}`);
+  return new Date(parts.year, parts.month - 1, parts.day);
 }
 
 /** The inverse, reading back the same local fields. */
 function fromLocalDate(date: Date): string | null {
-  return toISO({ year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate() })
+  return toISO({ year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate() });
 }
 ```
 
@@ -84,12 +84,12 @@ Note both functions use the _local_ accessors consistently. Mixing `new Date(iso
 is a product decision: replace the popover-and-grid with a typed field where the date is known.
 
 ```tsx
-import { useState } from 'react'
-import { DateInput } from '@rxova/react-date-input'
+import { useState } from "react";
+import { DateInput } from "@rxova/react-date-input";
 
 function Birthday() {
-  const [value, setValue] = useState<string | null>(null)
-  return <DateInput label="Date of birth" value={value} onChange={setValue} max="2026-07-29" />
+  const [value, setValue] = useState<string | null>(null);
+  return <DateInput label="Date of birth" value={value} onChange={setValue} max="2026-07-29" />;
 }
 ```
 
@@ -111,12 +111,12 @@ type.
 | `minValue` / `maxValue`                       | `min` / `max`                       | ISO strings           |
 
 ```tsx
-import { useState } from 'react'
-import { DateInput } from '@rxova/react-date-input'
+import { useState } from "react";
+import { DateInput } from "@rxova/react-date-input";
 
 function Field() {
-  const [value, setValue] = useState<string | null>('2026-03-15')
-  return <DateInput label="Date" value={value} onChange={setValue} />
+  const [value, setValue] = useState<string | null>("2026-03-15");
+  return <DateInput label="Date" value={value} onChange={setValue} />;
 }
 ```
 
@@ -132,16 +132,16 @@ some platforms it cannot be operated in the format your users expect.
 The value format is **identical** — `YYYY-MM-DD` — so the swap is mechanical:
 
 ```tsx
-import { DateInput } from '@rxova/react-date-input'
+import { DateInput } from "@rxova/react-date-input";
 
 // Before
 function Before() {
-  return <input type="date" name="due" min="2026-01-01" />
+  return <input type="date" name="due" min="2026-01-01" />;
 }
 
 // After
 function After() {
-  return <DateInput label="Due" name="due" min="2026-01-01" />
+  return <DateInput label="Due" name="due" min="2026-01-01" />;
 }
 ```
 

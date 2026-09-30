@@ -1,4 +1,4 @@
-import { createDevWarner } from '@rxova/ts-utils'
+import { createDevWarner } from "@rxova/ts-utils";
 
 /**
  * Development-only diagnostics, from the shared rxova dev warner.
@@ -9,10 +9,10 @@ import { createDevWarner } from '@rxova/ts-utils'
  * under a `process.env.NODE_ENV !== 'production'` guard so a production bundler
  * drops their message strings.
  */
-const warner = createDevWarner({ prefix: 'react-intl-currency-input' })
+const warner = createDevWarner({ prefix: "react-intl-currency-input" });
 
 /** Warn once per unique `key`. No-op in production. */
-export const devWarnOnce = warner.warnOnce
+export const devWarnOnce = warner.warnOnce;
 
 /** Test-only: reset the dedupe set so each test starts clean. */
-export const resetWarnings = warner.reset
+export const resetWarnings = warner.reset;

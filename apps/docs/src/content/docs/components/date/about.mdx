@@ -1,13 +1,13 @@
 ---
-title: 'Date input — About'
-description: 'Why the date input returns a string instead of a Date, how segment bounds narrow as you type, and how locale handling and accessibility work.'
+title: "Date input — About"
+description: "Why the date input returns a string instead of a Date, how segment bounds narrow as you type, and how locale handling and accessibility work."
 sidebar:
-  label: 'About'
+  label: "About"
   order: 3
 ---
 
-import CodeRecipes from '@rxova/astro-ui/components/CodeRecipes.astro'
-import { recipesFor } from '../../../../lib/recipe-sources.mjs'
+import CodeRecipes from "@rxova/astro-ui/components/CodeRecipes.astro";
+import { recipesFor } from "../../../../lib/recipe-sources.mjs";
 
 The decisions behind the component, and the ones you should disagree with deliberately rather than
 by accident.
@@ -18,8 +18,8 @@ This is the decision everything else follows from.
 
 ```js
 // Somewhere west of Greenwich:
-new Date('2026-03-01').getDate() // 28  — parsed as UTC midnight
-new Date(2026, 2, 1).getDate() // 1   — parsed as local midnight
+new Date("2026-03-01").getDate(); // 28  — parsed as UTC midnight
+new Date(2026, 2, 1).getDate(); // 1   — parsed as local midnight
 ```
 
 A calendar date is a year, a month and a day. It is **not** a point in time. The moment it becomes
@@ -37,17 +37,17 @@ and be explicit about the zone you mean.
 ## No rollover
 
 ```js
-new Date(2026, 1, 31) // 3 March 2026
+new Date(2026, 1, 31); // 3 March 2026
 ```
 
 A field built on that silently changes the month the user chose. This one refuses:
 
 ```ts
-import { toISO } from '@rxova/react-date-input'
+import { toISO } from "@rxova/react-date-input";
 
-toISO({ year: 2026, month: 2, day: 31 }) // null
-toISO({ year: 2024, month: 2, day: 29 }) // '2024-02-29'
-toISO({ year: 2023, month: 2, day: 29 }) // null
+toISO({ year: 2026, month: 2, day: 31 }); // null
+toISO({ year: 2024, month: 2, day: 29 }); // '2024-02-29'
+toISO({ year: 2023, month: 2, day: 29 }); // null
 ```
 
 When the user changes the _month_ under an existing day, the day is **clamped**: 31 January then
@@ -86,11 +86,11 @@ Segment order, separators and month names all come from `Intl.DateTimeFormat`. E
 ICU already, so this costs nothing and is correct for locales we have never heard of.
 
 ```ts
-import { segmentOrder } from '@rxova/react-date-input'
+import { segmentOrder } from "@rxova/react-date-input";
 
-segmentOrder('en-US') // ['month', 'day', 'year']
-segmentOrder('en-GB') // ['day', 'month', 'year']
-segmentOrder('ja-JP') // ['year', 'month', 'day']
+segmentOrder("en-US"); // ['month', 'day', 'year']
+segmentOrder("en-GB"); // ['day', 'month', 'year']
+segmentOrder("ja-JP"); // ['year', 'month', 'day']
 ```
 
 Leading and trailing affixes are trimmed: `ko-KR` and `hu-HU` end with a `.`, `ja-JP` with `日` —
@@ -233,7 +233,7 @@ With a `name`, the component emits a hidden input carrying the ISO value:
 
 ```tsx
 function Field() {
-  const [field, , helpers] = useField<string | null>('due')
+  const [field, , helpers] = useField<string | null>("due");
   return (
     <DateInput
       label="Date"
@@ -242,7 +242,7 @@ function Field() {
       onChange={(value) => helpers.setValue(value)}
       onBlur={() => helpers.setTouched(true)}
     />
-  )
+  );
 }
 ```
 
@@ -256,7 +256,7 @@ function Field() {
     <DateInput
       label="Date"
       name={input.name}
-      value={input.value === '' ? null : String(input.value)}
+      value={input.value === "" ? null : String(input.value)}
       onChange={input.onChange}
       onBlur={input.onBlur}
     />
@@ -288,4 +288,4 @@ job: the component takes `null` for empty.
 Keep the locale-ordered spinbutton segments as one widget. The surrounding design-system field
 provides visual hierarchy without flattening the date into a fictional native text input.
 
-<CodeRecipes idPrefix="integration" recipes={recipesFor('date')} />
+<CodeRecipes idPrefix="integration" recipes={recipesFor("date")} />

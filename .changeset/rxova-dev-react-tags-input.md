@@ -1,5 +1,5 @@
 ---
-'@rxova/react-tags-input': patch
+"@rxova/react-tags-input": patch
 ---
 
 Point links at rxova.dev

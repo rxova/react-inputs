@@ -1,4 +1,4 @@
-import type { PasswordRule, PasswordWarning } from './types'
+import type { PasswordRule, PasswordWarning } from "./types";
 
 /**
  * Development-only diagnostics.
@@ -13,21 +13,21 @@ import type { PasswordRule, PasswordWarning } from './types'
 export function inspectMinLength(raw: number, used: number): PasswordWarning | null {
   if (!Number.isFinite(raw) || raw < 0) {
     return {
-      code: 'min-length-negative',
-      prop: 'minLength',
+      code: "min-length-negative",
+      prop: "minLength",
       received: String(raw),
       message: `\`minLength\` must be a non-negative number; received ${String(raw)}. Using ${String(used)}.`,
-    }
+    };
   }
   if (!Number.isInteger(raw)) {
     return {
-      code: 'min-length-non-integer',
-      prop: 'minLength',
+      code: "min-length-non-integer",
+      prop: "minLength",
       received: String(raw),
       message: `\`minLength\` must be an integer; received ${String(raw)}. Using ${String(used)}.`,
-    }
+    };
   }
-  return null
+  return null;
 }
 
 /** Describe a `maxLength` that sits below `minLength`, which no password could satisfy. */
@@ -36,13 +36,14 @@ export function inspectMaxLength(
   minLength: number,
   used: number,
 ): PasswordWarning | null {
-  if (maxLength === undefined || (Number.isFinite(maxLength) && maxLength >= minLength)) return null
+  if (maxLength === undefined || (Number.isFinite(maxLength) && maxLength >= minLength))
+    return null;
   return {
-    code: 'max-length-below-min',
-    prop: 'maxLength',
+    code: "max-length-below-min",
+    prop: "maxLength",
     received: String(maxLength),
     message: `\`maxLength\` (${String(maxLength)}) is below \`minLength\` (${String(minLength)}); no password can satisfy both. Using ${String(used)}.`,
-  }
+  };
 }
 
 /**
@@ -50,19 +51,19 @@ export function inspectMaxLength(
  * one row unreachable in tests and unstable across re-renders.
  */
 export function inspectRuleIds(rules: PasswordRule[]): PasswordWarning | null {
-  const seen = new Set<string>()
+  const seen = new Set<string>();
   for (const rule of rules) {
     if (seen.has(rule.id)) {
       return {
-        code: 'duplicate-rule-id',
-        prop: 'rules',
+        code: "duplicate-rule-id",
+        prop: "rules",
         received: rule.id,
         message: `Two rules share the id "${rule.id}". Ids are used as React keys and as \`data-rule\` values, so they must be unique.`,
-      }
+      };
     }
-    seen.add(rule.id)
+    seen.add(rule.id);
   }
-  return null
+  return null;
 }
 
 /**
@@ -72,14 +73,14 @@ export function inspectRuleIds(rules: PasswordRule[]): PasswordWarning | null {
  * worth saying out loud.
  */
 export function inspectAutoComplete(autoComplete: string): PasswordWarning | null {
-  if (autoComplete !== '' && autoComplete !== 'off') return null
+  if (autoComplete !== "" && autoComplete !== "off") return null;
   return {
-    code: 'autocomplete-missing',
-    prop: 'autoComplete',
+    code: "autocomplete-missing",
+    prop: "autoComplete",
     received: autoComplete,
     message:
       '`autoComplete` is empty or "off", which stops password managers from filling or generating this field. Use "current-password" to sign in, or "new-password" to sign up or change a password.',
-  }
+  };
 }
 
 /**
@@ -88,12 +89,12 @@ export function inspectAutoComplete(autoComplete: string): PasswordWarning | nul
  * exactly the kind of thing that ships unnoticed.
  */
 export function inspectEstimate(threw: boolean): PasswordWarning | null {
-  if (!threw) return null
+  if (!threw) return null;
   return {
-    code: 'estimate-threw',
-    prop: 'estimate',
-    received: 'threw',
+    code: "estimate-threw",
+    prop: "estimate",
+    received: "threw",
     message:
-      '`estimate` threw and was ignored; the built-in estimator was used for this password instead.',
-  }
+      "`estimate` threw and was ignored; the built-in estimator was used for this password instead.",
+  };
 }

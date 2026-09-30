@@ -70,12 +70,12 @@ One US-dollar amount, rendered for nine locales — watch the symbol jump sides 
 ## Quick start
 
 ```tsx
-import { useState } from 'react'
-import { CurrencyInput } from '@rxova/react-intl-currency-input'
+import { useState } from "react";
+import { CurrencyInput } from "@rxova/react-intl-currency-input";
 
 function Price() {
-  const [value, setValue] = useState<number | null>(50000)
-  return <CurrencyInput locale="bg-BG" currency="EUR" value={value} onChange={setValue} />
+  const [value, setValue] = useState<number | null>(50000);
+  return <CurrencyInput locale="bg-BG" currency="EUR" value={value} onChange={setValue} />;
 }
 ```
 
@@ -180,21 +180,21 @@ The headless core. Returns `{ inputProps, value, display, focused, setValue, for
 spread `inputProps` onto your own `<input>`.
 
 ```tsx
-import { useState } from 'react'
-import { TextField } from '@mui/material'
-import { useCurrencyInput } from '@rxova/react-intl-currency-input'
+import { useState } from "react";
+import { TextField } from "@mui/material";
+import { useCurrencyInput } from "@rxova/react-intl-currency-input";
 
 function MuiPrice() {
-  const [value, setValue] = useState<number | null>(null)
+  const [value, setValue] = useState<number | null>(null);
   const currency = useCurrencyInput({
-    locale: 'de-DE',
-    currency: 'EUR',
+    locale: "de-DE",
+    currency: "EUR",
     value,
     onChange: setValue,
-  })
-  const { inputMode, ...textFieldProps } = currency.inputProps
+  });
+  const { inputMode, ...textFieldProps } = currency.inputProps;
 
-  return <TextField {...textFieldProps} label="Price" slotProps={{ htmlInput: { inputMode } }} />
+  return <TextField {...textFieldProps} label="Price" slotProps={{ htmlInput: { inputMode } }} />;
 }
 ```
 

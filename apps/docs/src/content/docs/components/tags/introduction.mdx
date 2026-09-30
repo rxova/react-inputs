@@ -1,8 +1,8 @@
 ---
-title: 'Tags input'
-description: 'A headless React tag and token input where the keyboard actually works — real roving tabindex, announced add and remove, 3.6 kB, zero dependencies.'
+title: "Tags input"
+description: "A headless React tag and token input where the keyboard actually works — real roving tabindex, announced add and remove, 3.6 kB, zero dependencies."
 sidebar:
-  label: 'Introduction'
+  label: "Introduction"
   order: 1
 ---
 
@@ -50,12 +50,12 @@ npm install @rxova/react-tags-input
 ```
 
 ```tsx
-import { useState } from 'react'
-import { TagsInput } from '@rxova/react-tags-input'
+import { useState } from "react";
+import { TagsInput } from "@rxova/react-tags-input";
 
 function Topics() {
-  const [tags, setTags] = useState<string[]>([])
-  return <TagsInput label="Topics" value={tags} onChange={setTags} placeholder="Add a topic" />
+  const [tags, setTags] = useState<string[]>([]);
+  return <TagsInput label="Topics" value={tags} onChange={setTags} placeholder="Add a topic" />;
 }
 ```
 

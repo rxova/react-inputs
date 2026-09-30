@@ -1,6 +1,6 @@
 ---
-title: 'Quick start'
-description: 'Add your first Rxova input to a React form in a few lines: controlled values, plain-value change handlers and native form submission.'
+title: "Quick start"
+description: "Add your first Rxova input to a React form in a few lines: controlled values, plain-value change handlers and native form submission."
 sidebar:
   order: 2
 ---
@@ -11,13 +11,13 @@ the _value_ — never a DOM event — so these drop straight into a form library
 controlled adapter. Here are three of the nine; the rest follow the same shape.
 
 ```tsx
-import { useState } from 'react'
-import { CurrencyInput, Rating, OtpInput } from '@rxova/react-inputs'
+import { useState } from "react";
+import { CurrencyInput, Rating, OtpInput } from "@rxova/react-inputs";
 
 function Example() {
-  const [price, setPrice] = useState<number | null>(null)
-  const [score, setScore] = useState(0)
-  const [code, setCode] = useState('')
+  const [price, setPrice] = useState<number | null>(null);
+  const [score, setScore] = useState(0);
+  const [code, setCode] = useState("");
 
   return (
     <>
@@ -25,7 +25,7 @@ function Example() {
       <Rating value={score} onChange={setScore} precision={0.5} label="Rate your meal" />
       <OtpInput length={6} value={code} onChange={setCode} />
     </>
-  )
+  );
 }
 ```
 

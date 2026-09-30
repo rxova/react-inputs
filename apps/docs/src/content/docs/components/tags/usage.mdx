@@ -1,8 +1,8 @@
 ---
-title: 'Tags input — Usage'
-description: 'Use the tags input in React: adding and removing tokens, keyboard navigation, duplicate handling, validation and form submission.'
+title: "Tags input — Usage"
+description: "Use the tags input in React: adding and removing tokens, keyboard navigation, duplicate handling, validation and form submission."
 sidebar:
-  label: 'Usage'
+  label: "Usage"
   order: 2
 ---
 
@@ -13,29 +13,29 @@ straight past the whole list. (`TagsInput` and `useState` are already in scope.)
 
 ```tsx live
 function TryIt() {
-  const [tags, setTags] = useState(['react', 'a11y'])
+  const [tags, setTags] = useState(["react", "a11y"]);
   return (
-    <div style={{ display: 'grid', gap: '0.75rem' }}>
+    <div style={{ display: "grid", gap: "0.75rem" }}>
       <TagsInput label="Topics" value={tags} onChange={setTags} placeholder="Add a topic" />
       <code>{JSON.stringify(tags)}</code>
     </div>
-  )
+  );
 }
 ```
 
 ## Controlled and uncontrolled
 
 ```tsx
-import { useState } from 'react'
-import { TagsInput } from '@rxova/react-tags-input'
+import { useState } from "react";
+import { TagsInput } from "@rxova/react-tags-input";
 
 function Controlled() {
-  const [tags, setTags] = useState<string[]>([])
-  return <TagsInput label="Topics" value={tags} onChange={setTags} />
+  const [tags, setTags] = useState<string[]>([]);
+  return <TagsInput label="Topics" value={tags} onChange={setTags} />;
 }
 
 function Uncontrolled() {
-  return <TagsInput label="Topics" defaultValue={['react']} />
+  return <TagsInput label="Topics" defaultValue={["react"]} />;
 }
 ```
 
@@ -59,23 +59,23 @@ function Uncontrolled() {
 
 ```tsx live
 function Constrained() {
-  const [rejection, setRejection] = useState(null)
+  const [rejection, setRejection] = useState(null);
   return (
-    <div style={{ display: 'grid', gap: '0.5rem' }}>
+    <div style={{ display: "grid", gap: "0.5rem" }}>
       <TagsInput
         label="At most three lowercase topics"
         max={3}
         minLength={2}
         maxLength={12}
         transform={(raw) => raw.toLowerCase()}
-        validate={(tag) => (tag.startsWith('x') ? 'no x-words here' : true)}
+        validate={(tag) => (tag.startsWith("x") ? "no x-words here" : true)}
         onReject={setRejection}
       />
       <small>
-        {rejection ? `${rejection.reason}: ${rejection.message ?? rejection.tag}` : ' '}
+        {rejection ? `${rejection.reason}: ${rejection.message ?? rejection.tag}` : " "}
       </small>
     </div>
-  )
+  );
 }
 ```
 
@@ -90,10 +90,10 @@ Reasons: `empty`, `duplicate`, `max-reached`, `too-short`, `too-long`, `invalid`
 ## Delimiters and paste
 
 ```tsx
-import { TagsInput } from '@rxova/react-tags-input'
+import { TagsInput } from "@rxova/react-tags-input";
 
 function Spaced() {
-  return <TagsInput label="Topics" delimiters={[' ', 'Enter']} />
+  return <TagsInput label="Topics" delimiters={[" ", "Enter"]} />;
 }
 ```
 
@@ -115,15 +115,15 @@ it as a delimiter would commit half-composed text and swallow the keystroke.
 ## Forms
 
 ```tsx
-import { TagsInput } from '@rxova/react-tags-input'
+import { TagsInput } from "@rxova/react-tags-input";
 
 function Form() {
   return (
     <form action="/profile" method="post">
-      <TagsInput label="Skills" name="skills" defaultValue={['react', 'a11y']} />
+      <TagsInput label="Skills" name="skills" defaultValue={["react", "a11y"]} />
       <button type="submit">Save</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -156,17 +156,17 @@ pixels WCAG 2.5.8 requires. The full list of properties and `data-*` hooks is in
 ## Custom tags
 
 ```tsx
-import { TagsInput } from '@rxova/react-tags-input'
+import { TagsInput } from "@rxova/react-tags-input";
 
 function Coloured() {
   return (
     <TagsInput
       label="Topics"
-      defaultValue={['react', 'a11y']}
+      defaultValue={["react", "a11y"]}
       renderTag={({ tag, focused }) => <strong data-focused={focused}>#{tag}</strong>}
       removeLabel={(tag) => `Remove the ${tag} topic`}
     />
-  )
+  );
 }
 ```
 
@@ -179,10 +179,10 @@ rendering.
 and the focus bookkeeping after a removal.
 
 ```tsx
-import { useTagsInput } from '@rxova/react-tags-input'
+import { useTagsInput } from "@rxova/react-tags-input";
 
 function CustomTags() {
-  const field = useTagsInput({ max: 5 })
+  const field = useTagsInput({ max: 5 });
 
   return (
     <div onBlur={field.handleBlur}>
@@ -192,19 +192,19 @@ function CustomTags() {
             {tag}
             <button
               ref={(node) => {
-                field.tagRefs.current[index] = node
+                field.tagRefs.current[index] = node;
               }}
               type="button"
               tabIndex={index === field.activeIndex ? 0 : -1}
               aria-label={`Remove ${tag}`}
               onClick={() => {
-                field.removeAt(index)
+                field.removeAt(index);
               }}
               onKeyDown={(event) => {
-                field.handleTagKeyDown(event, index)
+                field.handleTagKeyDown(event, index);
               }}
               onFocus={() => {
-                field.setFocusedIndex(index)
+                field.setFocusedIndex(index);
               }}
             >
               ×
@@ -214,18 +214,18 @@ function CustomTags() {
       </ul>
       <input
         ref={(node) => {
-          field.inputRef.current = node
+          field.inputRef.current = node;
         }}
         value={field.text}
         onChange={(event) => {
-          field.setText(event.target.value)
+          field.setText(event.target.value);
         }}
         onKeyDown={field.handleInputKeyDown}
         onPaste={field.handlePaste}
       />
       <span aria-live="polite">{field.announcement}</span>
     </div>
-  )
+  );
 }
 ```
 

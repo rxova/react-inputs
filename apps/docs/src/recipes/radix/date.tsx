@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { Box, Text } from '@radix-ui/themes'
-import { DateInput } from '@rxova/react-date-input'
+import { Box, Text } from "@radix-ui/themes";
+import { DateInput } from "@rxova/react-date-input";
 
 export function RadixDate() {
   return (
@@ -14,5 +14,5 @@ export function RadixDate() {
         Enter a calendar date.
       </Text>
     </Box>
-  )
+  );
 }

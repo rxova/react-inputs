@@ -1,8 +1,8 @@
 ---
-title: 'Date input'
-description: 'A segmented React date field with no calendar, no date library and no timezone bugs — keyboard-first, locale-ordered through Intl, zero dependencies.'
+title: "Date input"
+description: "A segmented React date field with no calendar, no date library and no timezone bugs — keyboard-first, locale-ordered through Intl, zero dependencies."
 sidebar:
-  label: 'Introduction'
+  label: "Introduction"
   order: 1
 ---
 
@@ -33,8 +33,8 @@ single most common source of off-by-one bugs in this space.
 
 ```js
 // Somewhere west of Greenwich:
-new Date('2026-03-01').getDate() // 28  — parsed as UTC midnight
-new Date(2026, 2, 1).getDate() // 1   — parsed as local midnight
+new Date("2026-03-01").getDate(); // 28  — parsed as UTC midnight
+new Date(2026, 2, 1).getDate(); // 1   — parsed as local midnight
 ```
 
 **The one zero-dependency segmented field** in the registry has effectively no adoption, no
@@ -58,12 +58,12 @@ npm install @rxova/react-date-input
 ```
 
 ```tsx
-import { useState } from 'react'
-import { DateInput } from '@rxova/react-date-input'
+import { useState } from "react";
+import { DateInput } from "@rxova/react-date-input";
 
 function Birthday() {
-  const [value, setValue] = useState<string | null>(null)
-  return <DateInput label="Date of birth" value={value} onChange={setValue} />
+  const [value, setValue] = useState<string | null>(null);
+  return <DateInput label="Date of birth" value={value} onChange={setValue} />;
 }
 ```
 

@@ -1,13 +1,13 @@
-import { useState } from 'react'
-import type { Meta, StoryObj } from '@storybook/react-vite'
-import { fn } from 'storybook/test'
-import { TimeInput } from '@rxova/react-time-input'
+import { useState } from "react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { fn } from "storybook/test";
+import { TimeInput } from "@rxova/react-time-input";
 
 const meta = {
-  title: 'Components/Time input',
+  title: "Components/Time input",
   component: TimeInput,
   args: {
-    label: 'Start time',
+    label: "Start time",
     showSeconds: false,
     minuteStep: 1,
     emitOutOfRange: true,
@@ -20,12 +20,12 @@ const meta = {
   },
   argTypes: {
     locale: {
-      control: 'select',
-      options: ['en-US', 'en-GB', 'de-DE', 'ja-JP', 'ar-EG'],
+      control: "select",
+      options: ["en-US", "en-GB", "de-DE", "ja-JP", "ar-EG"],
     },
-    hour12: { control: 'boolean' },
-    minuteStep: { control: 'select', options: [1, 5, 10, 15, 30] },
-    secondStep: { control: 'select', options: [1, 5, 10, 15, 30] },
+    hour12: { control: "boolean" },
+    minuteStep: { control: "select", options: [1, 5, 10, 15, 30] },
+    secondStep: { control: "select", options: [1, 5, 10, 15, 30] },
     value: { control: false },
     // Objects, functions and nodes have no useful control representation.
     placeholders: { control: false },
@@ -41,26 +41,26 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof TimeInput>
+} satisfies Meta<typeof TimeInput>;
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 /** Every prop is live in the Controls panel; the spies log to Actions. */
-export const Playground: Story = {}
+export const Playground: Story = {};
 
 /**
  * The clock follows the locale by default — `en-US` shows AM/PM, `de-DE` a
  * 24-hour field. The value stays 24-hour either way.
  */
 export const TwelveHourClock: Story = {
-  args: { locale: 'en-US', hour12: true, defaultValue: '14:30', label: 'Meeting time' },
-}
+  args: { locale: "en-US", hour12: true, defaultValue: "14:30", label: "Meeting time" },
+};
 
 /** `hour12: false` forces the 24-hour field whatever the locale would pick. */
 export const TwentyFourHourClock: Story = {
-  args: { locale: 'en-US', hour12: false, defaultValue: '14:30' },
-}
+  args: { locale: "en-US", hour12: false, defaultValue: "14:30" },
+};
 
 /**
  * The value is always `HH:mm[:ss]`, 24-hour, whatever the field displays: one
@@ -69,30 +69,30 @@ export const TwentyFourHourClock: Story = {
  */
 export const CanonicalValueOut: Story = {
   render: function CanonicalValueOut(args) {
-    const [value, setValue] = useState<string | null>('14:30')
+    const [value, setValue] = useState<string | null>("14:30");
     return (
       <>
         <TimeInput {...args} hour12 value={value} onChange={setValue} />
         <output>
-          value: <code>{value ?? 'null'}</code>
+          value: <code>{value ?? "null"}</code>
         </output>
       </>
-    )
+    );
   },
-}
+};
 
 /** A seconds segment, with its own arrow-key step. */
 export const WithSeconds: Story = {
-  args: { showSeconds: true, secondStep: 15, defaultValue: '09:05:30' },
-}
+  args: { showSeconds: true, secondStep: 15, defaultValue: "09:05:30" },
+};
 
 /**
  * `minuteStep` is the arrow-key increment, not a constraint on typing — it must
  * divide 60. Useful for booking grids.
  */
 export const SteppedMinutes: Story = {
-  args: { minuteStep: 15, defaultValue: '09:00', label: 'Slot (15-minute steps)' },
-}
+  args: { minuteStep: 15, defaultValue: "09:00", label: "Slot (15-minute steps)" },
+};
 
 /**
  * `min`/`max` bound the field. `emitOutOfRange` still reports a completed time
@@ -100,22 +100,22 @@ export const SteppedMinutes: Story = {
  */
 export const WithRange: Story = {
   args: {
-    min: '09:00',
-    max: '17:00',
-    defaultValue: '10:30',
-    label: 'Office hours only',
+    min: "09:00",
+    max: "17:00",
+    defaultValue: "10:30",
+    label: "Office hours only",
   },
-}
+};
 
 /** Per-segment placeholders and accessible names, for a localised field. */
 export const CustomSegmentLabels: Story = {
   args: {
-    locale: 'de-DE',
-    label: 'Uhrzeit',
-    placeholders: { hour: 'SS', minute: 'MM' },
-    segmentLabels: { hour: 'Stunde', minute: 'Minute' },
+    locale: "de-DE",
+    label: "Uhrzeit",
+    placeholders: { hour: "SS", minute: "MM" },
+    segmentLabels: { hour: "Stunde", minute: "Minute" },
   },
-}
+};
 
 /** `invalid` sets `aria-invalid` and `data-invalid`; the ring is a consumer token. */
 export const Invalid: Story = {
@@ -127,18 +127,18 @@ export const Invalid: Story = {
       </p>
     </>
   ),
-  args: { defaultValue: '03:00' },
-}
+  args: { defaultValue: "03:00" },
+};
 
 /** Disabled: exposed to assistive tech, not editable. */
 export const Disabled: Story = {
-  args: { disabled: true, defaultValue: '14:30' },
-}
+  args: { disabled: true, defaultValue: "14:30" },
+};
 
 /** Read-only: the value is shown and focusable, but not editable. */
 export const ReadOnly: Story = {
-  args: { readOnly: true, defaultValue: '14:30' },
-}
+  args: { readOnly: true, defaultValue: "14:30" },
+};
 
 /**
  * With `name` set the component emits a hidden input carrying the 24-hour
@@ -146,19 +146,19 @@ export const ReadOnly: Story = {
  */
 export const InAForm: Story = {
   render: function InAForm(args) {
-    const [submitted, setSubmitted] = useState<string | null>(null)
+    const [submitted, setSubmitted] = useState<string | null>(null);
     return (
       <form
         className="story"
         onSubmit={(e) => {
-          e.preventDefault()
-          setSubmitted(JSON.stringify(Object.fromEntries(new FormData(e.currentTarget))))
+          e.preventDefault();
+          setSubmitted(JSON.stringify(Object.fromEntries(new FormData(e.currentTarget))));
         }}
       >
         <TimeInput {...args} name="time" />
         <button type="submit">Submit</button>
-        <output>{submitted ?? 'not submitted'}</output>
+        <output>{submitted ?? "not submitted"}</output>
       </form>
-    )
+    );
   },
-}
+};

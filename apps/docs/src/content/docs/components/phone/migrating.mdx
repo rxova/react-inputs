@@ -1,8 +1,8 @@
 ---
-title: 'Phone input — Migrating'
-description: 'Move to @rxova/react-phone-input from react-phone-number-input, react-phone-input-2, react-international-phone or a plain tel input.'
+title: "Phone input — Migrating"
+description: "Move to @rxova/react-phone-input from react-phone-number-input, react-phone-input-2, react-international-phone or a plain tel input."
 sidebar:
-  label: 'Migrating'
+  label: "Migrating"
   order: 4
 ---
 
@@ -32,12 +32,12 @@ it costs nothing.
 ### Before
 
 ```tsx
-import { useState } from 'react'
-import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
-import 'react-phone-number-input/style.css'
+import { useState } from "react";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 function Signup() {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState("");
   return (
     <>
       <PhoneInput defaultCountry="GB" value={value} onChange={setValue} />
@@ -45,19 +45,19 @@ function Signup() {
         Continue
       </button>
     </>
-  )
+  );
 }
 ```
 
 ### After
 
 ```tsx
-import { useState } from 'react'
-import { PhoneInput } from '@rxova/react-phone-input'
+import { useState } from "react";
+import { PhoneInput } from "@rxova/react-phone-input";
 
 function Signup() {
-  const [value, setValue] = useState('')
-  const [possible, setPossible] = useState(false)
+  const [value, setValue] = useState("");
+  const [possible, setPossible] = useState(false);
   return (
     <>
       <PhoneInput
@@ -65,15 +65,15 @@ function Signup() {
         defaultCountry="GB"
         value={value}
         onChange={(next, details) => {
-          setValue(next)
-          setPossible(details.possible)
+          setValue(next);
+          setPossible(details.possible);
         }}
       />
       <button type="submit" disabled={!possible}>
         Continue
       </button>
     </>
-  )
+  );
 }
 ```
 
@@ -86,10 +86,10 @@ Move it to where the metadata is free:
 
 ```ts
 // On the server.
-import { isValidPhoneNumber } from 'libphonenumber-js'
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 export function check(e164: string) {
-  return isValidPhoneNumber(e164)
+  return isValidPhoneNumber(e164);
 }
 ```
 
@@ -112,20 +112,20 @@ object as a second argument, so the value shape changes.
 | `inputProps`                             | `name`, `required`, `placeholder`, … | Ordinary props                        |
 
 ```tsx
-import { useState } from 'react'
-import { PhoneInput } from '@rxova/react-phone-input'
+import { useState } from "react";
+import { PhoneInput } from "@rxova/react-phone-input";
 
 function Field() {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState("");
   return (
     <PhoneInput
       label="Phone"
-      countries={['GB', 'IE', 'US']}
+      countries={["GB", "IE", "US"]}
       defaultCountry="GB"
       value={value}
       onChange={setValue}
     />
-  )
+  );
 }
 ```
 
@@ -146,10 +146,10 @@ The closest relative — also zero-dependency — but it bundles its own country
 | `usePhoneInput`                          | `usePhoneInput`                     | Both expose a headless hook                     |
 
 ```tsx
-import { PhoneInput } from '@rxova/react-phone-input'
+import { PhoneInput } from "@rxova/react-phone-input";
 
 function Field() {
-  return <PhoneInput label="Phone" defaultCountry="ua" />
+  return <PhoneInput label="Phone" defaultCountry="ua" />;
 }
 ```
 
@@ -159,16 +159,16 @@ If you are currently storing whatever the user typed, this is mostly a gain: you
 E.164 value, a country, and a length check.
 
 ```tsx
-import { PhoneInput } from '@rxova/react-phone-input'
+import { PhoneInput } from "@rxova/react-phone-input";
 
 // Before
 function Before() {
-  return <input type="tel" name="phone" />
+  return <input type="tel" name="phone" />;
 }
 
 // After — the form still posts under `phone`, now as E.164.
 function After() {
-  return <PhoneInput label="Phone" name="phone" defaultCountry="US" />
+  return <PhoneInput label="Phone" name="phone" defaultCountry="US" />;
 }
 ```
 
@@ -176,8 +176,8 @@ Existing rows in your database will be in whatever shape they were saved in. `pa
 normalise them, given a country to interpret national numbers against:
 
 ```ts
-import { parsePhone } from '@rxova/react-phone-input'
+import { parsePhone } from "@rxova/react-phone-input";
 
-parsePhone('(415) 555-2671', 'US').e164 // '+14155552671'
-parsePhone('020 7123 4567', 'GB').e164 // '+442071234567'
+parsePhone("(415) 555-2671", "US").e164; // '+14155552671'
+parsePhone("020 7123 4567", "GB").e164; // '+442071234567'
 ```

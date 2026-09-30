@@ -1,9 +1,9 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
-import { describe, expect, it } from 'vitest'
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { describe, expect, it } from "vitest";
 
-import { componentPackages, REPO_ROOT } from './component-packages.mjs'
-import { readManifest } from './manifest.js'
+import { componentPackages, REPO_ROOT } from "./component-packages.mjs";
+import { readManifest } from "./manifest.js";
 
 /**
  * `@rxova/react-inputs` is the "whole suite from one install" package. Its
@@ -25,27 +25,27 @@ import { readManifest } from './manifest.js'
  * not which of the two forms carried it.
  */
 
-const metaDir = join(REPO_ROOT, 'packages/react-inputs')
-const components = componentPackages()
+const metaDir = join(REPO_ROOT, "packages/react-inputs");
+const components = componentPackages();
 
-describe('@rxova/react-inputs', () => {
-  it('depends on every component package', () => {
-    const manifest = readManifest(join(metaDir, 'package.json'))
-    const dependencies = Object.keys(manifest.dependencies ?? {})
+describe("@rxova/react-inputs", () => {
+  it("depends on every component package", () => {
+    const manifest = readManifest(join(metaDir, "package.json"));
+    const dependencies = Object.keys(manifest.dependencies ?? {});
 
-    expect(dependencies.sort()).toEqual(components.map((pkg) => pkg.name).sort())
-  })
+    expect(dependencies.sort()).toEqual(components.map((pkg) => pkg.name).sort());
+  });
 
-  it('re-exports every component package', () => {
-    const source = readFileSync(join(metaDir, 'src/index.ts'), 'utf8')
+  it("re-exports every component package", () => {
+    const source = readFileSync(join(metaDir, "src/index.ts"), "utf8");
     const reExported = new Set(
       [...source.matchAll(/export (?:\*|\{[^}]*\}) from ['"]([^'"]+)['"]/g)]
         .map(([, name]) => name)
         .filter((name) => name !== undefined),
-    )
+    );
 
-    expect([...reExported].sort()).toEqual(components.map((pkg) => pkg.name).sort())
-  })
+    expect([...reExported].sort()).toEqual(components.map((pkg) => pkg.name).sort());
+  });
 
   /**
    * Six helper names genuinely mean different things in two packages each, so
@@ -53,44 +53,44 @@ describe('@rxova/react-inputs', () => {
    * convenient. They are the only names allowed to be missing.
    */
   const COLLISIONS = new Set([
-    'toISO',
-    'fromISO',
-    'compareISO',
-    'withinRange',
-    'attempt',
-    'attemptAll',
-  ])
+    "toISO",
+    "fromISO",
+    "compareISO",
+    "withinRange",
+    "attempt",
+    "attemptAll",
+  ]);
 
-  it('re-exports every name the component packages export, collisions aside', () => {
+  it("re-exports every name the component packages export, collisions aside", () => {
     // The four packages that export by name were a hand-picked subset, and a
     // hand-picked subset is wrong in a way nothing reports: `onPartsChange` is
     // typed `(parts: DateParts) => void` and was re-exported while `DateParts`
     // was not, so a consumer could see the prop and had no way to name its
     // argument. This is the check that would have said so.
-    const meta = readFileSync(join(metaDir, 'src/index.ts'), 'utf8')
+    const meta = readFileSync(join(metaDir, "src/index.ts"), "utf8");
 
     const missing = components.flatMap((pkg) => {
-      const source = readFileSync(join(REPO_ROOT, 'packages', pkg.dir, 'src/index.ts'), 'utf8')
+      const source = readFileSync(join(REPO_ROOT, "packages", pkg.dir, "src/index.ts"), "utf8");
       // A star re-export carries everything, so those packages need no listing.
-      if (new RegExp(`export \\* from ['"]${pkg.name}['"]`).test(meta)) return []
+      if (new RegExp(`export \\* from ['"]${pkg.name}['"]`).test(meta)) return [];
 
       const exported = [...source.matchAll(/export (?:type )?\{([^}]*)\}/g)]
-        .flatMap(([, names]) => (names ?? '').split(','))
+        .flatMap(([, names]) => (names ?? "").split(","))
         .map(
           (name) =>
             name
               .trim()
               .split(/\s+as\s+/)
-              .pop() ?? '',
+              .pop() ?? "",
         )
-        .filter(Boolean)
+        .filter(Boolean);
 
       return exported
         .filter((name) => !COLLISIONS.has(name))
         .filter((name) => !new RegExp(`\\b${name}\\b`).test(meta))
-        .map((name) => `${pkg.name}: ${name}`)
-    })
+        .map((name) => `${pkg.name}: ${name}`);
+    });
 
-    expect(missing).toEqual([])
-  })
-})
+    expect(missing).toEqual([]);
+  });
+});

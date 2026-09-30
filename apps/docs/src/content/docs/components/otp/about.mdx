@@ -1,14 +1,14 @@
 ---
-title: 'OTP input — About'
-description: 'WebOTP autofill on Android Chrome, custom slot rendering, form integration, styling hooks and UI-library recipes for the OTP input.'
+title: "OTP input — About"
+description: "WebOTP autofill on Android Chrome, custom slot rendering, form integration, styling hooks and UI-library recipes for the OTP input."
 sidebar:
-  label: 'About'
+  label: "About"
   order: 3
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components'
-import CodeRecipes from '@rxova/astro-ui/components/CodeRecipes.astro'
-import { recipesFor } from '../../../../lib/recipe-sources.mjs'
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import CodeRecipes from "@rxova/astro-ui/components/CodeRecipes.astro";
+import { recipesFor } from "../../../../lib/recipe-sources.mjs";
 
 ## WebOTP
 
@@ -30,11 +30,11 @@ user grants an incoming code, it fills the whole field at once.
 Use `useWebOTP` to drive any target — including a custom [headless](/components/otp/about) render:
 
 ```tsx
-import { useOtpInput, useWebOTP } from '@rxova/react-otp-input'
+import { useOtpInput, useWebOTP } from "@rxova/react-otp-input";
 
 function Field() {
-  const otp = useOtpInput({ length: 6 })
-  useWebOTP({ enabled: true, onReceive: otp.setValue })
+  const otp = useOtpInput({ length: 6 });
+  useWebOTP({ enabled: true, onReceive: otp.setValue });
   // …render with otp's prop-getters…
 }
 ```
@@ -46,7 +46,7 @@ dangling-timer class of bug (a `credentials.get` left in flight past unmount res
 setState on a gone component). Pass your own `signal` to cancel it too:
 
 ```tsx
-useWebOTP({ enabled, onReceive, signal: controller.signal })
+useWebOTP({ enabled, onReceive, signal: controller.signal });
 ```
 
 It only ever runs where `'OTPCredential' in window` — so on iOS, desktop, and non-Chrome Android it
@@ -64,7 +64,7 @@ you:
 
 ```tsx live
 function Dashes() {
-  const [code, setCode] = useState('42')
+  const [code, setCode] = useState("42");
   return (
     <OtpInput
       length={4}
@@ -72,25 +72,25 @@ function Dashes() {
       onChange={setCode}
       label="Code"
       render={({ slots }) => (
-        <div style={{ display: 'inline-flex', gap: '0.6rem' }}>
+        <div style={{ display: "inline-flex", gap: "0.6rem" }}>
           {slots.map((slot) => (
             <span
               key={slot.index}
               style={{
-                fontFamily: 'ui-monospace, monospace',
-                fontSize: '1.5rem',
-                borderBottom: '3px solid currentColor',
-                minWidth: '1.6rem',
-                textAlign: 'center',
+                fontFamily: "ui-monospace, monospace",
+                fontSize: "1.5rem",
+                borderBottom: "3px solid currentColor",
+                minWidth: "1.6rem",
+                textAlign: "center",
               }}
             >
-              {slot.char ?? (slot.hasFakeCaret ? '|' : ' ')}
+              {slot.char ?? (slot.hasFakeCaret ? "|" : " ")}
             </span>
           ))}
         </div>
       )}
     />
-  )
+  );
 }
 ```
 
@@ -148,8 +148,8 @@ verify, or advance focus from there. That keeps the decision yours:
 
 ```tsx live
 function Complete() {
-  const [code, setCode] = useState('')
-  const [status, setStatus] = useState('waiting')
+  const [code, setCode] = useState("");
+  const [status, setStatus] = useState("waiting");
   return (
     <div>
       <OtpInput
@@ -159,9 +159,9 @@ function Complete() {
         onComplete={(v) => setStatus(`verifying ${v}…`)}
         label="Code"
       />
-      <p style={{ fontSize: '0.9rem' }}>{status}</p>
+      <p style={{ fontSize: "0.9rem" }}>{status}</p>
     </div>
-  )
+  );
 }
 ```
 
@@ -273,9 +273,9 @@ Full example: [TanStack Form recipe](/components/otp/about).
 ```tsx
 <form
   onSubmit={(e) => {
-    e.preventDefault()
-    const data = new FormData(e.currentTarget)
-    verify(data.get('code'))
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    verify(data.get("code"));
   }}
 >
   <OtpInput name="code" length={6} required label="One-time code" />
@@ -318,21 +318,21 @@ Try it — everything below is just tokens:
 
 ```tsx live
 function Themed() {
-  const [code, setCode] = useState('123')
+  const [code, setCode] = useState("123");
   return (
     <div
       style={{
-        '--rx-otp-slot-size': '3rem',
-        '--rx-otp-radius': '0.9rem',
-        '--rx-otp-gap': '0.4rem',
-        '--rx-otp-border': '2px solid #5a45d6',
-        '--rx-otp-active-ring': '3px solid #f5a623',
-        '--rx-otp-font-size': '1.4rem',
+        "--rx-otp-slot-size": "3rem",
+        "--rx-otp-radius": "0.9rem",
+        "--rx-otp-gap": "0.4rem",
+        "--rx-otp-border": "2px solid #5a45d6",
+        "--rx-otp-active-ring": "3px solid #f5a623",
+        "--rx-otp-font-size": "1.4rem",
       }}
     >
       <OtpInput length={6} value={code} onChange={setCode} label="Themed code" />
     </div>
-  )
+  );
 }
 ```
 
@@ -421,15 +421,15 @@ function VerifyForm() {
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault()
-        const data = new FormData(e.currentTarget)
-        verify(data.get('code'))
+        e.preventDefault();
+        const data = new FormData(e.currentTarget);
+        verify(data.get("code"));
       }}
     >
       <OtpInput name="code" length={6} required label="One-time code" />
       <button type="submit">Verify</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -447,18 +447,18 @@ Prefer to verify the moment the code is complete rather than on a button press? 
 Because `onChange` emits a `string`, wire it through `<Controller>`:
 
 ```tsx
-import { Controller, useForm } from 'react-hook-form'
-import { OtpInput } from '@rxova/react-otp-input'
+import { Controller, useForm } from "react-hook-form";
+import { OtpInput } from "@rxova/react-otp-input";
 
 function VerifyForm() {
-  const { control, handleSubmit } = useForm<{ code: string }>({ defaultValues: { code: '' } })
+  const { control, handleSubmit } = useForm<{ code: string }>({ defaultValues: { code: "" } });
 
   return (
     <form onSubmit={handleSubmit((values) => verify(values.code))}>
       <Controller
         name="code"
         control={control}
-        rules={{ minLength: { value: 6, message: 'Enter all six digits' } }}
+        rules={{ minLength: { value: 6, message: "Enter all six digits" } }}
         render={({ field, fieldState }) => (
           <>
             <OtpInput
@@ -470,7 +470,7 @@ function VerifyForm() {
               name={field.name}
               inputRef={field.ref}
               invalid={fieldState.invalid}
-              aria-describedby={fieldState.error ? 'code-error' : undefined}
+              aria-describedby={fieldState.error ? "code-error" : undefined}
             />
             {fieldState.error && (
               <p id="code-error" role="alert">
@@ -482,7 +482,7 @@ function VerifyForm() {
       />
       <button type="submit">Verify</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -501,11 +501,11 @@ To submit automatically once the code completes, use `onComplete` instead of a s
 Bind the field with `useField` and push updates through `setValue`:
 
 ```tsx
-import { useField } from 'formik'
-import { OtpInput } from '@rxova/react-otp-input'
+import { useField } from "formik";
+import { OtpInput } from "@rxova/react-otp-input";
 
 function CodeField() {
-  const [field, meta, helpers] = useField<string>('code')
+  const [field, meta, helpers] = useField<string>("code");
   return (
     <>
       <OtpInput
@@ -516,7 +516,7 @@ function CodeField() {
         onChange={(value) => helpers.setValue(value)}
         onBlur={() => helpers.setTouched(true)}
         invalid={Boolean(meta.touched && meta.error)}
-        aria-describedby={meta.touched && meta.error ? 'code-error' : undefined}
+        aria-describedby={meta.touched && meta.error ? "code-error" : undefined}
       />
       {meta.touched && meta.error && (
         <p id="code-error" role="alert">
@@ -524,7 +524,7 @@ function CodeField() {
         </p>
       )}
     </>
-  )
+  );
 }
 ```
 
@@ -537,14 +537,14 @@ Use a `Field` render prop. React Final Form represents an empty field as `''` �
 valid empty code, so unlike a numeric field there is **no value guard to write**.
 
 ```tsx
-import { Form, Field } from 'react-final-form'
-import { OtpInput } from '@rxova/react-otp-input'
+import { Form, Field } from "react-final-form";
+import { OtpInput } from "@rxova/react-otp-input";
 
 function VerifyForm() {
   return (
     <Form
       onSubmit={(values) => verify(values.code)}
-      validate={(v) => (v.code?.length === 6 ? {} : { code: 'Enter all six digits' })}
+      validate={(v) => (v.code?.length === 6 ? {} : { code: "Enter all six digits" })}
       render={({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
           <Field name="code">
@@ -558,7 +558,7 @@ function VerifyForm() {
                   onChange={input.onChange}
                   onBlur={input.onBlur}
                   invalid={Boolean(meta.touched && meta.error)}
-                  aria-describedby={meta.touched && meta.error ? 'code-error' : undefined}
+                  aria-describedby={meta.touched && meta.error ? "code-error" : undefined}
                 />
                 {meta.touched && meta.error && (
                   <p id="code-error" role="alert">
@@ -572,7 +572,7 @@ function VerifyForm() {
         </form>
       )}
     />
-  )
+  );
 }
 ```
 
@@ -590,26 +590,26 @@ Use a `form.Field` render prop. `field.handleChange` takes the emitted `string` 
 code, so there's nothing to coerce.
 
 ```tsx
-import { useForm } from '@tanstack/react-form'
-import { OtpInput } from '@rxova/react-otp-input'
+import { useForm } from "@tanstack/react-form";
+import { OtpInput } from "@rxova/react-otp-input";
 
 function VerifyForm() {
   const form = useForm({
-    defaultValues: { code: '' },
+    defaultValues: { code: "" },
     onSubmit: ({ value }) => verify(value.code),
-  })
+  });
 
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault()
-        void form.handleSubmit()
+        e.preventDefault();
+        void form.handleSubmit();
       }}
     >
       <form.Field
         name="code"
         validators={{
-          onChange: ({ value }) => (value.length === 6 ? undefined : 'Enter all six digits'),
+          onChange: ({ value }) => (value.length === 6 ? undefined : "Enter all six digits"),
         }}
       >
         {(field) => (
@@ -622,11 +622,11 @@ function VerifyForm() {
               onChange={(value) => field.handleChange(value)}
               onBlur={field.handleBlur}
               invalid={!field.state.meta.isValid}
-              aria-describedby={field.state.meta.isValid ? undefined : 'code-error'}
+              aria-describedby={field.state.meta.isValid ? undefined : "code-error"}
             />
             {!field.state.meta.isValid && (
               <p id="code-error" role="alert">
-                {field.state.meta.errors.join(', ')}
+                {field.state.meta.errors.join(", ")}
               </p>
             )}
           </>
@@ -634,7 +634,7 @@ function VerifyForm() {
       </form.Field>
       <button type="submit">Verify</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -650,4 +650,4 @@ function VerifyForm() {
 Keep the one real input and its slot geometry intact; the design system owns the surrounding label,
 description, error, spacing, and theme.
 
-<CodeRecipes idPrefix="integration" recipes={recipesFor('otp')} />
+<CodeRecipes idPrefix="integration" recipes={recipesFor("otp")} />

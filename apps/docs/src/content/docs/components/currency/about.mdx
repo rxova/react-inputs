@@ -1,14 +1,14 @@
 ---
-title: 'Currency input — About'
-description: 'How the currency input handles localization and styling, plus recipes for form libraries, UI libraries and custom inputs.'
+title: "Currency input — About"
+description: "How the currency input handles localization and styling, plus recipes for form libraries, UI libraries and custom inputs."
 sidebar:
-  label: 'About'
+  label: "About"
   order: 3
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components'
-import CodeRecipes from '@rxova/astro-ui/components/CodeRecipes.astro'
-import { recipesFor } from '../../../../lib/recipe-sources.mjs'
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import CodeRecipes from "@rxova/astro-ui/components/CodeRecipes.astro";
+import { recipesFor } from "../../../../lib/recipe-sources.mjs";
 
 ## Localization
 
@@ -19,23 +19,23 @@ symbol placement, fraction digits, grouping rules, digits — is read from `Intl
 
 ```tsx live
 function Demo() {
-  const [locale, setLocale] = React.useState('bg-BG')
-  const [currency, setCurrency] = React.useState('EUR')
-  const [value, setValue] = React.useState(1234567.89)
+  const [locale, setLocale] = React.useState("bg-BG");
+  const [currency, setCurrency] = React.useState("EUR");
+  const [value, setValue] = React.useState(1234567.89);
   return (
     <div>
       <label>
-        Locale{' '}
+        Locale{" "}
         <select value={locale} onChange={(e) => setLocale(e.target.value)}>
-          {['bg-BG', 'de-DE', 'fr-FR', 'en-US', 'hi-IN', 'ja-JP', 'ar-EG', 'de-CH'].map((l) => (
+          {["bg-BG", "de-DE", "fr-FR", "en-US", "hi-IN", "ja-JP", "ar-EG", "de-CH"].map((l) => (
             <option key={l}>{l}</option>
           ))}
         </select>
-      </label>{' '}
+      </label>{" "}
       <label>
-        Currency{' '}
+        Currency{" "}
         <select value={currency} onChange={(e) => setCurrency(e.target.value)}>
-          {['EUR', 'USD', 'JPY', 'INR', 'EGP', 'CHF', 'KWD'].map((c) => (
+          {["EUR", "USD", "JPY", "INR", "EGP", "CHF", "KWD"].map((c) => (
             <option key={c}>{c}</option>
           ))}
         </select>
@@ -50,7 +50,7 @@ function Demo() {
         />
       </p>
     </div>
-  )
+  );
 }
 ```
 
@@ -60,7 +60,7 @@ These examples compile against the UI-library versions used by this repository. 
 inputs can hand their hook contract to the design system; composite widgets keep their tested
 semantics intact and use the design system for field chrome.
 
-<CodeRecipes idPrefix="integration" recipes={recipesFor('currency')} />
+<CodeRecipes idPrefix="integration" recipes={recipesFor("currency")} />
 
 ### `locale`, or `language` + `country`
 
@@ -68,7 +68,7 @@ You can pass a BCP-47 `locale` directly, or the `language` and `country` separat
 app already carries. `locale` wins when both are present.
 
 ```tsx
-import { CurrencyInput } from '@rxova/react-intl-currency-input'
+import { CurrencyInput } from "@rxova/react-intl-currency-input";
 
 function LocaleExamples() {
   return (
@@ -79,7 +79,7 @@ function LocaleExamples() {
       {/* …or pass its language and country separately. */}
       <CurrencyInput language="bg" country="BG" currency="EUR" aria-label="Amount by parts" />
     </>
-  )
+  );
 }
 ```
 
@@ -120,7 +120,7 @@ function Demo() {
         </li>
       ))}
     </ul>
-  )
+  );
 }
 ```
 
@@ -139,14 +139,14 @@ KWD always 3), while the separators, symbol placement and digits follow the **la
 function Demo() {
   return (
     <ul>
-      {['en-US', 'de-DE', 'fr-FR', 'ja-JP', 'hi-IN', 'ru-RU', 'pt-BR'].map((locale) => (
+      {["en-US", "de-DE", "fr-FR", "ja-JP", "hi-IN", "ru-RU", "pt-BR"].map((locale) => (
         <li key={locale}>
-          <code>{locale}</code>:{' '}
+          <code>{locale}</code>:{" "}
           <CurrencyInput locale={locale} currency="USD" value={1234567.5} aria-label={locale} />
         </li>
       ))}
     </ul>
-  )
+  );
 }
 ```
 
@@ -180,19 +180,19 @@ returns native-compatible `inputProps`; the UI library keeps ownership of labels
 text, slots, themes, and layout.
 
 ```tsx
-import { useState } from 'react'
-import { useCurrencyInput } from '@rxova/react-intl-currency-input'
+import { useState } from "react";
+import { useCurrencyInput } from "@rxova/react-intl-currency-input";
 
 function HeadlessExample() {
-  const [value, setValue] = useState<number | null>(null)
+  const [value, setValue] = useState<number | null>(null);
   const currency = useCurrencyInput({
-    locale: 'bg-BG',
-    currency: 'EUR',
+    locale: "bg-BG",
+    currency: "EUR",
     value,
     onChange: setValue,
-  })
+  });
 
-  return <input {...currency.inputProps} aria-label="Amount" />
+  return <input {...currency.inputProps} aria-label="Amount" />;
 }
 ```
 
@@ -205,20 +205,20 @@ your application, so the hook props spread directly onto it. Keep error semantic
 and the control.
 
 ```tsx
-import { useState } from 'react'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { useCurrencyInput } from '@rxova/react-intl-currency-input'
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useCurrencyInput } from "@rxova/react-intl-currency-input";
 
 export function ShadcnPrice() {
-  const [value, setValue] = useState<number | null>(null)
-  const invalid = value !== null && value < 1
+  const [value, setValue] = useState<number | null>(null);
+  const invalid = value !== null && value < 1;
   const { inputProps } = useCurrencyInput({
-    locale: 'bg-BG',
-    currency: 'EUR',
+    locale: "bg-BG",
+    currency: "EUR",
     value,
     onChange: setValue,
-  })
+  });
 
   return (
     <div className="grid gap-2" data-invalid={invalid || undefined}>
@@ -228,7 +228,7 @@ export function ShadcnPrice() {
         id="price"
         name="price"
         aria-invalid={invalid || undefined}
-        aria-describedby={invalid ? 'price-error' : undefined}
+        aria-describedby={invalid ? "price-error" : undefined}
         className="text-end tabular-nums"
       />
       {invalid && (
@@ -237,7 +237,7 @@ export function ShadcnPrice() {
         </p>
       )}
     </div>
-  )
+  );
 }
 ```
 
@@ -249,19 +249,19 @@ decoration; do not add a fixed `€` or `$` slot because `Intl` already places t
 token on the correct side.
 
 ```tsx
-import { useState } from 'react'
-import { Text, TextField } from '@radix-ui/themes'
-import { useCurrencyInput } from '@rxova/react-intl-currency-input'
+import { useState } from "react";
+import { Text, TextField } from "@radix-ui/themes";
+import { useCurrencyInput } from "@rxova/react-intl-currency-input";
 
 export function RadixPrice() {
-  const [value, setValue] = useState<number | null>(null)
-  const invalid = value !== null && value < 1
+  const [value, setValue] = useState<number | null>(null);
+  const invalid = value !== null && value < 1;
   const { inputProps } = useCurrencyInput({
-    locale: 'de-DE',
-    currency: 'EUR',
+    locale: "de-DE",
+    currency: "EUR",
     value,
     onChange: setValue,
-  })
+  });
 
   return (
     <label>
@@ -271,9 +271,9 @@ export function RadixPrice() {
       <TextField.Root
         {...inputProps}
         name="price"
-        color={invalid ? 'red' : undefined}
+        color={invalid ? "red" : undefined}
         aria-invalid={invalid || undefined}
-        aria-describedby={invalid ? 'radix-price-error' : undefined}
+        aria-describedby={invalid ? "radix-price-error" : undefined}
       />
       {invalid && (
         <Text id="radix-price-error" as="div" size="1" color="red" mt="1">
@@ -281,7 +281,7 @@ export function RadixPrice() {
         </Text>
       )}
     </label>
-  )
+  );
 }
 ```
 
@@ -293,20 +293,20 @@ the underlying HTML input, so route `inputMode` there and spread the remaining c
 `TextField`.
 
 ```tsx
-import { useState } from 'react'
-import TextField from '@mui/material/TextField'
-import { useCurrencyInput } from '@rxova/react-intl-currency-input'
+import { useState } from "react";
+import TextField from "@mui/material/TextField";
+import { useCurrencyInput } from "@rxova/react-intl-currency-input";
 
 export function MuiPrice() {
-  const [value, setValue] = useState<number | null>(null)
-  const invalid = value !== null && value < 1
+  const [value, setValue] = useState<number | null>(null);
+  const invalid = value !== null && value < 1;
   const { inputProps } = useCurrencyInput({
-    locale: 'de-DE',
-    currency: 'EUR',
+    locale: "de-DE",
+    currency: "EUR",
     value,
     onChange: setValue,
-  })
-  const { inputMode, ...textFieldProps } = inputProps
+  });
+  const { inputMode, ...textFieldProps } = inputProps;
 
   return (
     <TextField
@@ -314,11 +314,11 @@ export function MuiPrice() {
       name="price"
       label="Price"
       error={invalid}
-      helperText={invalid ? 'Price must be at least 1 €.' : 'Enter the price before tax.'}
+      helperText={invalid ? "Price must be at least 1 €." : "Enter the price before tax."}
       slotProps={{ htmlInput: { inputMode } }}
-      sx={{ '& input': { textAlign: 'end', fontVariantNumeric: 'tabular-nums' } }}
+      sx={{ "& input": { textAlign: "end", fontVariantNumeric: "tabular-nums" } }}
     />
-  )
+  );
 }
 ```
 
@@ -331,19 +331,19 @@ Chakra's [`Input`](https://chakra-ui.com/docs/components/input) accepts native i
 it with `Field` for the visible label, helper text, and error state.
 
 ```tsx
-import { useState } from 'react'
-import { Field, Input } from '@chakra-ui/react'
-import { useCurrencyInput } from '@rxova/react-intl-currency-input'
+import { useState } from "react";
+import { Field, Input } from "@chakra-ui/react";
+import { useCurrencyInput } from "@rxova/react-intl-currency-input";
 
 export function ChakraPrice() {
-  const [value, setValue] = useState<number | null>(null)
-  const invalid = value !== null && value < 1
+  const [value, setValue] = useState<number | null>(null);
+  const invalid = value !== null && value < 1;
   const { inputProps } = useCurrencyInput({
-    locale: 'fr-FR',
-    currency: 'EUR',
+    locale: "fr-FR",
+    currency: "EUR",
     value,
     onChange: setValue,
-  })
+  });
 
   return (
     <Field.Root invalid={invalid}>
@@ -352,7 +352,7 @@ export function ChakraPrice() {
       <Field.HelperText>Enter the price before tax.</Field.HelperText>
       <Field.ErrorText>Price must be at least 1 €.</Field.ErrorText>
     </Field.Root>
-  )
+  );
 }
 ```
 
@@ -362,19 +362,19 @@ Mantine [`TextInput`](https://mantine.dev/core/text-input/) supports all native 
 provides its own accessible label, description, error message, and Styles API.
 
 ```tsx
-import { useState } from 'react'
-import { TextInput } from '@mantine/core'
-import { useCurrencyInput } from '@rxova/react-intl-currency-input'
+import { useState } from "react";
+import { TextInput } from "@mantine/core";
+import { useCurrencyInput } from "@rxova/react-intl-currency-input";
 
 export function MantinePrice() {
-  const [value, setValue] = useState<number | null>(null)
-  const invalid = value !== null && value < 1
+  const [value, setValue] = useState<number | null>(null);
+  const invalid = value !== null && value < 1;
   const { inputProps } = useCurrencyInput({
-    locale: 'fr-FR',
-    currency: 'EUR',
+    locale: "fr-FR",
+    currency: "EUR",
     value,
     onChange: setValue,
-  })
+  });
 
   return (
     <TextInput
@@ -382,10 +382,10 @@ export function MantinePrice() {
       name="price"
       label="Price"
       description="Enter the price before tax."
-      error={invalid ? 'Price must be at least 1 €.' : undefined}
-      styles={{ input: { textAlign: 'end', fontVariantNumeric: 'tabular-nums' } }}
+      error={invalid ? "Price must be at least 1 €." : undefined}
+      styles={{ input: { textAlign: "end", fontVariantNumeric: "tabular-nums" } }}
     />
-  )
+  );
 }
 ```
 
@@ -396,34 +396,34 @@ contract. Use `Form.Item` for layout and validation presentation, but leave nume
 hook rather than giving the same field to Ant Form's automatic value injection.
 
 ```tsx
-import { useState } from 'react'
-import { Form, Input } from 'antd'
-import { useCurrencyInput } from '@rxova/react-intl-currency-input'
+import { useState } from "react";
+import { Form, Input } from "antd";
+import { useCurrencyInput } from "@rxova/react-intl-currency-input";
 
 export function AntPrice() {
-  const [value, setValue] = useState<number | null>(null)
-  const invalid = value !== null && value < 1
+  const [value, setValue] = useState<number | null>(null);
+  const invalid = value !== null && value < 1;
   const { inputProps } = useCurrencyInput({
-    locale: 'en-US',
-    currency: 'USD',
+    locale: "en-US",
+    currency: "USD",
     value,
     onChange: setValue,
-  })
+  });
 
   return (
     <Form.Item
       label="Price"
-      validateStatus={invalid ? 'error' : undefined}
-      help={invalid ? 'Price must be at least $1.' : 'Enter the price before tax.'}
+      validateStatus={invalid ? "error" : undefined}
+      help={invalid ? "Price must be at least $1." : "Enter the price before tax."}
     >
       <Input
         {...inputProps}
         name="price"
-        status={invalid ? 'error' : undefined}
-        style={{ textAlign: 'end', fontVariantNumeric: 'tabular-nums' }}
+        status={invalid ? "error" : undefined}
+        style={{ textAlign: "end", fontVariantNumeric: "tabular-nums" }}
       />
     </Form.Item>
-  )
+  );
 }
 ```
 
@@ -449,8 +449,8 @@ compose it explicitly:
 <YourInput
   {...inputProps}
   onBlur={(event) => {
-    inputProps.onBlur(event)
-    markTouched()
+    inputProps.onBlur(event);
+    markTouched();
   }}
 />
 ```
@@ -482,46 +482,46 @@ underneath is valid CSS you can paste into your own stylesheet.
 
 ```tsx live
 function StylingPlayground() {
-  const [value, setValue] = React.useState(1234567.89)
-  const [locale, setLocale] = React.useState('bg-BG')
-  const [fontSize, setFontSize] = React.useState(1)
-  const [padding, setPadding] = React.useState(0.75)
-  const [radius, setRadius] = React.useState(0.5)
-  const [align, setAlign] = React.useState('end')
-  const [border, setBorder] = React.useState('#94a3b8')
-  const [surface, setSurface] = React.useState('#ffffff')
-  const [text, setText] = React.useState('#0f172a')
+  const [value, setValue] = React.useState(1234567.89);
+  const [locale, setLocale] = React.useState("bg-BG");
+  const [fontSize, setFontSize] = React.useState(1);
+  const [padding, setPadding] = React.useState(0.75);
+  const [radius, setRadius] = React.useState(0.5);
+  const [align, setAlign] = React.useState("end");
+  const [border, setBorder] = React.useState("#94a3b8");
+  const [surface, setSurface] = React.useState("#ffffff");
+  const [text, setText] = React.useState("#0f172a");
 
   const style = {
-    boxSizing: 'border-box',
-    inlineSize: '100%',
-    maxInlineSize: '24rem',
-    minBlockSize: '2.75rem',
+    boxSizing: "border-box",
+    inlineSize: "100%",
+    maxInlineSize: "24rem",
+    minBlockSize: "2.75rem",
     border: `1px solid ${border}`,
     borderRadius: `${radius}rem`,
     padding: `${padding * 0.75}rem ${padding}rem`,
     background: surface,
     color: text,
-    font: 'inherit',
+    font: "inherit",
     fontSize: `${fontSize}rem`,
-    fontVariantNumeric: 'tabular-nums',
+    fontVariantNumeric: "tabular-nums",
     textAlign: align,
-  }
+  };
 
   const Row = ({ label, children, output }) => (
     <label
       style={{
-        display: 'grid',
-        gridTemplateColumns: '5.5rem minmax(8rem, 1fr) 4.5rem',
-        alignItems: 'center',
-        gap: '0.75rem',
+        display: "grid",
+        gridTemplateColumns: "5.5rem minmax(8rem, 1fr) 4.5rem",
+        alignItems: "center",
+        gap: "0.75rem",
       }}
     >
-      <span style={{ fontSize: '0.875rem' }}>{label}</span>
+      <span style={{ fontSize: "0.875rem" }}>{label}</span>
       {children}
-      <code style={{ textAlign: 'end' }}>{output}</code>
+      <code style={{ textAlign: "end" }}>{output}</code>
     </label>
-  )
+  );
 
   const css = `.money-input {
   box-sizing: border-box;
@@ -537,30 +537,30 @@ function StylingPlayground() {
   font-size: ${fontSize}rem;
   font-variant-numeric: tabular-nums;
   text-align: ${align};
-}`
+}`;
 
   return (
-    <div style={{ display: 'grid', gap: '1.25rem' }}>
-      <div style={{ display: 'grid', gap: '0.5rem' }}>
+    <div style={{ display: "grid", gap: "1.25rem" }}>
+      <div style={{ display: "grid", gap: "0.5rem" }}>
         <label htmlFor="styled-amount" style={{ fontWeight: 650 }}>
           Amount
         </label>
         <CurrencyInput
           id="styled-amount"
           locale={locale}
-          currency={locale === 'ar-EG' ? 'EGP' : locale === 'hi-IN' ? 'INR' : 'EUR'}
+          currency={locale === "ar-EG" ? "EGP" : locale === "hi-IN" ? "INR" : "EUR"}
           value={value}
           onChange={setValue}
           style={style}
         />
-        <span style={{ color: '#475569', fontSize: '0.875rem' }}>
+        <span style={{ color: "#475569", fontSize: "0.875rem" }}>
           Focus, edit, then blur to see the two display states.
         </span>
       </div>
 
-      <div style={{ display: 'grid', gap: '0.625rem', maxWidth: 520 }}>
-        <label style={{ display: 'grid', gridTemplateColumns: '5.5rem 1fr', gap: '0.75rem' }}>
-          <span style={{ fontSize: '0.875rem' }}>locale</span>
+      <div style={{ display: "grid", gap: "0.625rem", maxWidth: 520 }}>
+        <label style={{ display: "grid", gridTemplateColumns: "5.5rem 1fr", gap: "0.75rem" }}>
+          <span style={{ fontSize: "0.875rem" }}>locale</span>
           <select value={locale} onChange={(event) => setLocale(event.target.value)}>
             <option value="bg-BG">bg-BG · Bulgarian</option>
             <option value="en-US">en-US · English</option>
@@ -600,8 +600,8 @@ function StylingPlayground() {
             onChange={(event) => setRadius(+event.target.value)}
           />
         </Row>
-        <label style={{ display: 'grid', gridTemplateColumns: '5.5rem 1fr', gap: '0.75rem' }}>
-          <span style={{ fontSize: '0.875rem' }}>alignment</span>
+        <label style={{ display: "grid", gridTemplateColumns: "5.5rem 1fr", gap: "0.75rem" }}>
+          <span style={{ fontSize: "0.875rem" }}>alignment</span>
           <select value={align} onChange={(event) => setAlign(event.target.value)}>
             <option value="start">start</option>
             <option value="center">center</option>
@@ -609,9 +609,9 @@ function StylingPlayground() {
           </select>
         </label>
         {[
-          ['border', border, setBorder],
-          ['surface', surface, setSurface],
-          ['text', text, setText],
+          ["border", border, setBorder],
+          ["surface", surface, setSurface],
+          ["text", text, setText],
         ].map(([label, color, setColor]) => (
           <Row key={label} label={label} output={color}>
             <input type="color" value={color} onChange={(event) => setColor(event.target.value)} />
@@ -621,7 +621,7 @@ function StylingPlayground() {
 
       <pre style={{ margin: 0 }}>{css}</pre>
     </div>
-  )
+  );
 }
 ```
 
@@ -631,16 +631,16 @@ The component deliberately owns only currency behavior. Your application owns th
 validation message, spacing, colors, and layout:
 
 ```tsx
-import { useId, useState } from 'react'
-import { CurrencyInput } from '@rxova/react-intl-currency-input'
-import './price-field.css'
+import { useId, useState } from "react";
+import { CurrencyInput } from "@rxova/react-intl-currency-input";
+import "./price-field.css";
 
 export function PriceField() {
-  const id = useId()
-  const hintId = `${id}-hint`
-  const errorId = `${id}-error`
-  const [value, setValue] = useState<number | null>(null)
-  const invalid = value !== null && value < 0.5
+  const id = useId();
+  const hintId = `${id}-hint`;
+  const errorId = `${id}-error`;
+  const [value, setValue] = useState<number | null>(null);
+  const invalid = value !== null && value < 0.5;
 
   return (
     <div className="price-field">
@@ -657,7 +657,7 @@ export function PriceField() {
         onChange={setValue}
         placeholder="0,00"
         invalid={invalid}
-        aria-describedby={`${hintId}${invalid ? ` ${errorId}` : ''}`}
+        aria-describedby={`${hintId}${invalid ? ` ${errorId}` : ""}`}
       />
       <p id={hintId} className="price-field__hint">
         Enter the price before tax.
@@ -668,7 +668,7 @@ export function PriceField() {
         </p>
       )}
     </div>
-  )
+  );
 }
 ```
 
@@ -775,12 +775,12 @@ Because the output is a native input, selectors do not depend on undocumented in
 ### CSS Modules
 
 ```tsx
-import { useState } from 'react'
-import { CurrencyInput } from '@rxova/react-intl-currency-input'
-import styles from './PriceField.module.css'
+import { useState } from "react";
+import { CurrencyInput } from "@rxova/react-intl-currency-input";
+import styles from "./PriceField.module.css";
 
 function PriceField() {
-  const [value, setValue] = useState<number | null>(null)
+  const [value, setValue] = useState<number | null>(null);
 
   return (
     <CurrencyInput
@@ -791,7 +791,7 @@ function PriceField() {
       onChange={setValue}
       aria-label="Price"
     />
-  )
+  );
 }
 ```
 
@@ -885,24 +885,24 @@ Wrap `CurrencyInput` once when your product needs a fixed visual contract. You c
 library's complete prop surface while adding your own size and tone variants:
 
 ```tsx
-import type { CurrencyInputProps } from '@rxova/react-intl-currency-input'
+import type { CurrencyInputProps } from "@rxova/react-intl-currency-input";
 
 type MoneyFieldProps = CurrencyInputProps & {
-  size?: 'compact' | 'comfortable'
-}
+  size?: "compact" | "comfortable";
+};
 
-export function MoneyField({ size = 'comfortable', className = '', ...props }: MoneyFieldProps) {
-  return <CurrencyInput {...props} data-size={size} className={`money-field ${className}`} />
+export function MoneyField({ size = "comfortable", className = "", ...props }: MoneyFieldProps) {
+  return <CurrencyInput {...props} data-size={size} className={`money-field ${className}`} />;
 }
 ```
 
 ```css
-.money-field[data-size='compact'] {
+.money-field[data-size="compact"] {
   min-block-size: 2rem;
   padding: 0.25rem 0.5rem;
 }
 
-.money-field[data-size='comfortable'] {
+.money-field[data-size="comfortable"] {
   min-block-size: 2.75rem;
   padding: 0.625rem 0.75rem;
 }
@@ -927,22 +927,22 @@ export function MoneyField({ size = 'comfortable', className = '', ...props }: M
 Give the field a `name` and it participates in a plain `<form>`.
 
 ```tsx
-import { CurrencyInput } from '@rxova/react-intl-currency-input'
+import { CurrencyInput } from "@rxova/react-intl-currency-input";
 
 function PriceForm() {
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault()
-        const data = new FormData(e.currentTarget)
-        console.log(data.get('price'))
+        e.preventDefault();
+        const data = new FormData(e.currentTarget);
+        console.log(data.get("price"));
       }}
     >
       <label htmlFor="price">Price</label>
       <CurrencyInput id="price" name="price" locale="en-US" currency="USD" defaultValue={50000} />
       <button type="submit">Submit</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -963,20 +963,20 @@ For most apps the recommended path is a form library — the recipes in this sec
 a `Controller`, the one documented path. `field.onChange` accepts the value directly.
 
 ```tsx
-import { Controller, useForm } from 'react-hook-form'
-import { CurrencyInput } from '@rxova/react-intl-currency-input'
+import { Controller, useForm } from "react-hook-form";
+import { CurrencyInput } from "@rxova/react-intl-currency-input";
 
 function PriceForm() {
   const { control, handleSubmit } = useForm<{ price: number | null }>({
     defaultValues: { price: null },
-  })
+  });
 
   return (
     <form onSubmit={handleSubmit((values) => console.log(values.price))}>
       <Controller
         name="price"
         control={control}
-        rules={{ required: 'Enter a price', min: { value: 1, message: 'Must be greater than 0' } }}
+        rules={{ required: "Enter a price", min: { value: 1, message: "Must be greater than 0" } }}
         render={({ field, fieldState }) => (
           <>
             <label htmlFor="price">Price</label>
@@ -990,7 +990,7 @@ function PriceForm() {
               name={field.name}
               ref={field.ref}
               invalid={fieldState.invalid}
-              aria-describedby={fieldState.error ? 'price-error' : undefined}
+              aria-describedby={fieldState.error ? "price-error" : undefined}
             />
             {fieldState.error && <p id="price-error">{fieldState.error.message}</p>}
           </>
@@ -998,7 +998,7 @@ function PriceForm() {
       />
       <button type="submit">Submit</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -1011,11 +1011,11 @@ Wire `value` and `onChange` to the field; pass Formik's `field.onBlur` through s
 works — it reads `event.target.name`, which the underlying input carries.
 
 ```tsx
-import { Formik, Form, useField } from 'formik'
-import { CurrencyInput } from '@rxova/react-intl-currency-input'
+import { Formik, Form, useField } from "formik";
+import { CurrencyInput } from "@rxova/react-intl-currency-input";
 
 function PriceField() {
-  const [field, meta, helpers] = useField<number | null>('price')
+  const [field, meta, helpers] = useField<number | null>("price");
   return (
     <>
       <label htmlFor="price">Price</label>
@@ -1031,14 +1031,14 @@ function PriceField() {
       />
       {meta.touched && meta.error && <p>{meta.error}</p>}
     </>
-  )
+  );
 }
 
 function PriceForm() {
   return (
     <Formik
       initialValues={{ price: null as number | null }}
-      validate={(v) => (v.price == null ? { price: 'Enter a price' } : {})}
+      validate={(v) => (v.price == null ? { price: "Enter a price" } : {})}
       onSubmit={(values) => console.log(values.price)}
     >
       <Form>
@@ -1046,7 +1046,7 @@ function PriceForm() {
         <button type="submit">Submit</button>
       </Form>
     </Formik>
-  )
+  );
 }
 ```
 
@@ -1056,14 +1056,14 @@ React Final Form represents an empty field as `''`, so coerce it to `null` for `
 clamp already handles a stray `''`, but the example is explicit.
 
 ```tsx
-import { Form, Field } from 'react-final-form'
-import { CurrencyInput } from '@rxova/react-intl-currency-input'
+import { Form, Field } from "react-final-form";
+import { CurrencyInput } from "@rxova/react-intl-currency-input";
 
 function PriceForm() {
   return (
     <Form
       onSubmit={(values) => console.log(values.price)}
-      validate={(v) => (v.price == null ? { price: 'Enter a price' } : {})}
+      validate={(v) => (v.price == null ? { price: "Enter a price" } : {})}
       render={({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
           <Field name="price">
@@ -1074,7 +1074,7 @@ function PriceForm() {
                   id="price"
                   locale="de-DE"
                   currency="EUR"
-                  value={typeof input.value === 'number' ? input.value : null}
+                  value={typeof input.value === "number" ? input.value : null}
                   onChange={input.onChange}
                   onBlur={input.onBlur}
                   name={input.name}
@@ -1088,7 +1088,7 @@ function PriceForm() {
         </form>
       )}
     />
-  )
+  );
 }
 ```
 
@@ -1097,20 +1097,20 @@ function PriceForm() {
 Bind `field.state.value` and `field.handleChange`; pass `field.handleBlur` for touched state.
 
 ```tsx
-import { useForm } from '@tanstack/react-form'
-import { CurrencyInput } from '@rxova/react-intl-currency-input'
+import { useForm } from "@tanstack/react-form";
+import { CurrencyInput } from "@rxova/react-intl-currency-input";
 
 function PriceForm() {
   const form = useForm({
     defaultValues: { price: 0 },
     onSubmit: ({ value }) => console.log(value.price),
-  })
+  });
 
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault()
-        void form.handleSubmit()
+        e.preventDefault();
+        void form.handleSubmit();
       }}
     >
       <form.Field name="price">
@@ -1131,6 +1131,6 @@ function PriceForm() {
       </form.Field>
       <button type="submit">Submit</button>
     </form>
-  )
+  );
 }
 ```

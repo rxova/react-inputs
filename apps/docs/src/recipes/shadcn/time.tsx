@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { TimeField } from '@/components/rxova/time-field'
+import { TimeField } from "@/components/rxova/time-field";
 
 export function ShadcnTime() {
   return (
@@ -10,5 +10,5 @@ export function ShadcnTime() {
       name="startTime"
       locale="en-US"
     />
-  )
+  );
 }

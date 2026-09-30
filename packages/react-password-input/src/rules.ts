@@ -1,4 +1,4 @@
-import type { PasswordRule, PasswordRuleState } from './types'
+import type { PasswordRule, PasswordRuleState } from "./types";
 
 /**
  * The default requirement set: one rule, about length.
@@ -13,39 +13,39 @@ import type { PasswordRule, PasswordRuleState } from './types'
 export function defaultRules(minLength: number): PasswordRule[] {
   return [
     {
-      id: 'min-length',
+      id: "min-length",
       label: `At least ${String(minLength)} characters`,
       // Spread, not `.length`: a string's `.length` counts UTF-16 code units,
       // so an emoji or an astral-plane character would count as two and let a
       // 4-glyph password satisfy an 8-character rule.
       test: (password) => Array.from(password).length >= minLength,
     },
-  ]
+  ];
 }
 
 /** Ready-made rules for products that must ship a composition checklist. */
 export const commonRules = {
   lowercase: {
-    id: 'lowercase',
-    label: 'A lowercase letter',
+    id: "lowercase",
+    label: "A lowercase letter",
     test: (password: string) => /\p{Ll}/u.test(password),
   },
   uppercase: {
-    id: 'uppercase',
-    label: 'An uppercase letter',
+    id: "uppercase",
+    label: "An uppercase letter",
     test: (password: string) => /\p{Lu}/u.test(password),
   },
   digit: {
-    id: 'digit',
-    label: 'A number',
+    id: "digit",
+    label: "A number",
     test: (password: string) => /\p{Nd}/u.test(password),
   },
   symbol: {
-    id: 'symbol',
-    label: 'A symbol',
+    id: "symbol",
+    label: "A symbol",
     test: (password: string) => /[\p{P}\p{S}]/u.test(password),
   },
-} satisfies Record<string, PasswordRule>
+} satisfies Record<string, PasswordRule>;
 
 /**
  * Evaluate every rule against the current password.
@@ -56,17 +56,17 @@ export const commonRules = {
  */
 export function evaluateRules(rules: PasswordRule[], password: string): PasswordRuleState[] {
   return rules.map((rule) => {
-    let met: boolean
+    let met: boolean;
     try {
-      met = rule.test(password)
+      met = rule.test(password);
     } catch {
-      met = false
+      met = false;
     }
-    return { ...rule, met }
-  })
+    return { ...rule, met };
+  });
 }
 
 /** True when every non-optional rule passes. */
 export function rulesSatisfied(states: PasswordRuleState[]): boolean {
-  return states.every((rule) => rule.optional === true || rule.met)
+  return states.every((rule) => rule.optional === true || rule.met);
 }

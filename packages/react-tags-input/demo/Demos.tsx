@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { Section } from '@rxova/demo-kit'
-import { TagsInput } from '@rxova/react-tags-input'
-import type { TagAttempt, TagsWarning } from '@rxova/react-tags-input'
+import { useState } from "react";
+import { Section } from "@rxova/demo-kit";
+import { TagsInput } from "@rxova/react-tags-input";
+import type { TagAttempt, TagsWarning } from "@rxova/react-tags-input";
 
 /**
  * The E2E target. Every section is something the Playwright suite drives, so
@@ -11,10 +11,10 @@ import type { TagAttempt, TagsWarning } from '@rxova/react-tags-input'
  * test.
  */
 export function TagsDemos() {
-  const [tags, setTags] = useState<string[]>(['react'])
-  const [rejection, setRejection] = useState<TagAttempt | null>(null)
-  const [warnings, setWarnings] = useState<TagsWarning[]>([])
-  const [submitted, setSubmitted] = useState<string[] | null>(null)
+  const [tags, setTags] = useState<string[]>(["react"]);
+  const [rejection, setRejection] = useState<TagAttempt | null>(null);
+  const [warnings, setWarnings] = useState<TagsWarning[]>([]);
+  const [submitted, setSubmitted] = useState<string[] | null>(null);
 
   return (
     <>
@@ -24,11 +24,11 @@ export function TagsDemos() {
 
       <Section id="controlled" title="Controlled" note="The value is a string array.">
         <TagsInput label="Controlled topics" value={tags} onChange={setTags} />
-        <p data-testid="value">{tags.join('|') || 'empty'}</p>
+        <p data-testid="value">{tags.join("|") || "empty"}</p>
         <button
           type="button"
           onClick={() => {
-            setTags(['vue', 'svelte'])
+            setTags(["vue", "svelte"]);
           }}
         >
           Replace
@@ -36,7 +36,7 @@ export function TagsDemos() {
         <button
           type="button"
           onClick={() => {
-            setTags([])
+            setTags([]);
           }}
         >
           Clear
@@ -54,13 +54,13 @@ export function TagsDemos() {
           minLength={2}
           maxLength={12}
           transform={(raw) => raw.toLowerCase()}
-          validate={(tag) => (tag.startsWith('x') ? 'no x-words here' : true)}
+          validate={(tag) => (tag.startsWith("x") ? "no x-words here" : true)}
           onReject={setRejection}
         />
         <p data-testid="rejection">
-          {rejection ? `${rejection.reason ?? 'none'}:${rejection.tag}` : ''}
+          {rejection ? `${rejection.reason ?? "none"}:${rejection.tag}` : ""}
         </p>
-        <p data-testid="rejection-message">{rejection?.message ?? ''}</p>
+        <p data-testid="rejection-message">{rejection?.message ?? ""}</p>
       </Section>
 
       <Section id="warnings" title="Diagnostics" note="onWarn receives every rejected prop.">
@@ -70,7 +70,7 @@ export function TagsDemos() {
           onWarn={(warning) => {
             setWarnings((previous) =>
               previous.some((w) => w.code === warning.code) ? previous : [...previous, warning],
-            )
+            );
           }}
         />
         <ul data-testid="warning-codes">
@@ -83,8 +83,8 @@ export function TagsDemos() {
       <Section id="native-form" title="Native form" note="Posts one hidden input per tag.">
         <form
           onSubmit={(event) => {
-            event.preventDefault()
-            setSubmitted(new FormData(event.currentTarget).getAll('skills').map(String))
+            event.preventDefault();
+            setSubmitted(new FormData(event.currentTarget).getAll("skills").map(String));
           }}
         >
           {/*
@@ -93,25 +93,25 @@ export function TagsDemos() {
             user reads. The entry box derives its id as `${id}-input`.
           */}
           <label htmlFor="skills-input">Skills</label>
-          <TagsInput id="skills" name="skills" defaultValue={['react', 'a11y']} />
+          <TagsInput id="skills" name="skills" defaultValue={["react", "a11y"]} />
           <button type="submit">Save</button>
         </form>
-        <p data-testid="submitted">{submitted === null ? '' : submitted.join('|')}</p>
+        <p data-testid="submitted">{submitted === null ? "" : submitted.join("|")}</p>
       </Section>
 
       <Section id="states" title="States" note="Disabled and read-only.">
         <p data-testid="state-disabled">
-          <TagsInput label="Disabled topics" disabled defaultValue={['react']} />
+          <TagsInput label="Disabled topics" disabled defaultValue={["react"]} />
         </p>
         <p data-testid="state-readonly">
           <TagsInput
             label="Read-only topics"
             readOnly
-            value={['react', 'vue']}
+            value={["react", "vue"]}
             onChange={() => undefined}
           />
         </p>
       </Section>
     </>
-  )
+  );
 }

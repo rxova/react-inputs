@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { Box, Text } from '@radix-ui/themes'
-import { PhoneInput } from '@rxova/react-phone-input'
+import { Box, Text } from "@radix-ui/themes";
+import { PhoneInput } from "@rxova/react-phone-input";
 
 export function RadixPhone() {
   return (
@@ -14,5 +14,5 @@ export function RadixPhone() {
         Include a country calling code.
       </Text>
     </Box>
-  )
+  );
 }

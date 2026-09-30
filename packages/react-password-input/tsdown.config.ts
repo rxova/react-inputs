@@ -1,5 +1,5 @@
-import { defineConfig } from 'tsdown'
-import { reactBuildConfig } from '@rxova/repo-config/tsdown'
+import { defineConfig } from "tsdown";
+import { reactBuildConfig } from "@rxova/repo-config/tsdown";
 
 // Dual ESM + CJS. A password field is the kind of thing that gets retrofitted
 // into an old auth screen, and those are disproportionately still CJS/Jest.
@@ -9,4 +9,4 @@ import { reactBuildConfig } from '@rxova/repo-config/tsdown'
 // the package keeps its zero-runtime-dependency promise. Rolldown preserves the
 // `use client` directive already present in src/index.ts, so no banner is added
 // (it would be emitted twice).
-export default defineConfig(reactBuildConfig({ entry: { index: 'src/index.ts' } }))
+export default defineConfig(reactBuildConfig({ entry: { index: "src/index.ts" } }));

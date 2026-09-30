@@ -1,8 +1,8 @@
 ---
-title: 'Phone input — Usage'
-description: 'Use the phone input in React: controlled country, accepted formats, restricting the country list, localised names, keyboard selection and forms.'
+title: "Phone input — Usage"
+description: "Use the phone input in React: controlled country, accepted formats, restricting the country list, localised names, keyboard selection and forms."
 sidebar:
-  label: 'Usage'
+  label: "Usage"
   order: 2
 ---
 
@@ -13,34 +13,34 @@ and `useState` are already in scope.)
 
 ```tsx live
 function TryIt() {
-  const [details, setDetails] = useState(null)
+  const [details, setDetails] = useState(null);
   return (
-    <div style={{ display: 'grid', gap: '0.75rem' }}>
+    <div style={{ display: "grid", gap: "0.75rem" }}>
       <PhoneInput
         label="Phone number"
         defaultCountry="GB"
         locale="en"
         onChange={(value, next) => setDetails(next)}
       />
-      <code>{details ? JSON.stringify(details) : 'nothing yet'}</code>
+      <code>{details ? JSON.stringify(details) : "nothing yet"}</code>
     </div>
-  )
+  );
 }
 ```
 
 ## Controlled and uncontrolled
 
 ```tsx
-import { useState } from 'react'
-import { PhoneInput } from '@rxova/react-phone-input'
+import { useState } from "react";
+import { PhoneInput } from "@rxova/react-phone-input";
 
 function Controlled() {
-  const [phone, setPhone] = useState('')
-  return <PhoneInput label="Phone" value={phone} onChange={setPhone} defaultCountry="US" />
+  const [phone, setPhone] = useState("");
+  return <PhoneInput label="Phone" value={phone} onChange={setPhone} defaultCountry="US" />;
 }
 
 function Uncontrolled() {
-  return <PhoneInput label="Phone" defaultValue="+14155552671" />
+  return <PhoneInput label="Phone" defaultValue="+14155552671" />;
 }
 ```
 
@@ -92,11 +92,11 @@ function Restricted() {
   return (
     <PhoneInput
       label="European number"
-      countries={['GB', 'IE', 'FR', 'DE', 'ES']}
+      countries={["GB", "IE", "FR", "DE", "ES"]}
       defaultCountry="GB"
       locale="en"
     />
-  )
+  );
 }
 ```
 
@@ -109,11 +109,11 @@ usable field.
 ```tsx live
 function Localised() {
   return (
-    <div style={{ display: 'grid', gap: '0.5rem' }}>
-      <PhoneInput label="English" countries={['FR', 'DE', 'JP']} defaultCountry="FR" locale="en" />
-      <PhoneInput label="Français" countries={['FR', 'DE', 'JP']} defaultCountry="FR" locale="fr" />
+    <div style={{ display: "grid", gap: "0.5rem" }}>
+      <PhoneInput label="English" countries={["FR", "DE", "JP"]} defaultCountry="FR" locale="en" />
+      <PhoneInput label="Français" countries={["FR", "DE", "JP"]} defaultCountry="FR" locale="fr" />
     </div>
-  )
+  );
 }
 ```
 
@@ -125,7 +125,7 @@ With a `name`, the component emits a hidden input carrying the E.164 value, so a
 the canonical number rather than what is on screen:
 
 ```tsx
-import { PhoneInput } from '@rxova/react-phone-input'
+import { PhoneInput } from "@rxova/react-phone-input";
 
 function Form() {
   return (
@@ -133,7 +133,7 @@ function Form() {
       <PhoneInput label="Phone" name="phone" defaultCountry="US" />
       <button type="submit">Sign up</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -146,7 +146,7 @@ country actually uses.
 
 ```tsx live
 function Demo() {
-  return <PhoneInput label="Phone number" defaultCountry="US" showValidity />
+  return <PhoneInput label="Phone number" defaultCountry="US" showValidity />;
 }
 ```
 
@@ -166,7 +166,7 @@ Custom wording, including none at all:
   defaultCountry="FR"
   showValidity
   validityLabel={({ possible, country }) =>
-    possible ? '' : `Check the number of digits for ${country?.iso2 ?? 'this country'}.`
+    possible ? "" : `Check the number of digits for ${country?.iso2 ?? "this country"}.`
   }
 />
 ```
@@ -193,25 +193,25 @@ If you replace the option content with `renderCountry`, keep the name first or y
 ## Gating on possibility
 
 ```tsx
-import { useState } from 'react'
-import { PhoneInput } from '@rxova/react-phone-input'
+import { useState } from "react";
+import { PhoneInput } from "@rxova/react-phone-input";
 
 function Signup() {
-  const [ok, setOk] = useState(false)
+  const [ok, setOk] = useState(false);
   return (
     <>
       <PhoneInput
         label="Phone"
         defaultCountry="US"
         onChange={(_value, details) => {
-          setOk(details.possible)
+          setOk(details.possible);
         }}
       />
       <button type="submit" disabled={!ok}>
         Continue
       </button>
     </>
-  )
+  );
 }
 ```
 
@@ -242,17 +242,17 @@ The `data-*` attributes are public API, covered by semver. The full list is in t
 which is the part worth not rewriting.
 
 ```tsx
-import { usePhoneInput } from '@rxova/react-phone-input'
+import { usePhoneInput } from "@rxova/react-phone-input";
 
 function CustomField() {
-  const field = usePhoneInput({ defaultCountry: 'GB' })
+  const field = usePhoneInput({ defaultCountry: "GB" });
 
   return (
     <div onBlur={field.handleBlur}>
       <select
         value={field.country?.iso2}
         onChange={(event) => {
-          field.selectCountry(event.target.value)
+          field.selectCountry(event.target.value);
         }}
       >
         {field.countries.map((country) => (
@@ -263,14 +263,14 @@ function CustomField() {
       </select>
       <input
         ref={(node) => {
-          field.inputRef.current = node
+          field.inputRef.current = node;
         }}
         type="tel"
         value={field.text}
         onChange={field.handleInputChange}
       />
     </div>
-  )
+  );
 }
 ```
 

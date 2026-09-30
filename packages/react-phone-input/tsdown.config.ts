@@ -1,5 +1,5 @@
-import { defineConfig } from 'tsdown'
-import { reactBuildConfig } from '@rxova/repo-config/tsdown'
+import { defineConfig } from "tsdown";
+import { reactBuildConfig } from "@rxova/repo-config/tsdown";
 
 // Dual ESM + CJS. ESM-only would lock out the CJS/Jest long tail
 // that a drop-in rating component lives in.
@@ -9,4 +9,4 @@ import { reactBuildConfig } from '@rxova/repo-config/tsdown'
 // the package keeps its zero-runtime-dependency promise. Rolldown preserves the
 // `use client` directive already present in src/index.ts, so no banner is added
 // (it would be emitted twice).
-export default defineConfig(reactBuildConfig({ entry: { index: 'src/index.ts' } }))
+export default defineConfig(reactBuildConfig({ entry: { index: "src/index.ts" } }));

@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-export { TimeInput } from './TimeInput'
-export { useTimeInput } from './useTimeInput'
-export type { UseTimeInputOptions, UseTimeInputResult } from './useTimeInput'
+export { TimeInput } from "./TimeInput";
+export { useTimeInput } from "./useTimeInput";
+export type { UseTimeInputOptions, UseTimeInputResult } from "./useTimeInput";
 export {
   AM,
   PM,
@@ -13,10 +13,10 @@ export {
   toDisplayHour,
   toISO,
   withinRange,
-} from './time'
-export type { TimeParts, TimeSegment } from './time'
-export { dayPeriodNames, timePieces, usesHour12 } from './segments'
-export type { TimePiece } from './segments'
+} from "./time";
+export type { TimeParts, TimeSegment } from "./time";
+export { dayPeriodNames, timePieces, usesHour12 } from "./segments";
+export type { TimePiece } from "./segments";
 export type {
   TimeInputProps,
   TimePlaceholders,
@@ -24,4 +24,4 @@ export type {
   TimeSegmentState,
   TimeWarning,
   TimeWarningCode,
-} from './types'
+} from "./types";

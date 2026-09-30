@@ -1,7 +1,7 @@
-import { forwardRef, useCallback } from 'react'
-import type { ChangeEvent, FocusEvent } from 'react'
-import { useCurrencyInput } from './useCurrencyInput'
-import type { CurrencyInputProps } from './types'
+import { forwardRef, useCallback } from "react";
+import type { ChangeEvent, FocusEvent } from "react";
+import { useCurrencyInput } from "./useCurrencyInput";
+import type { CurrencyInputProps } from "./types";
 
 /**
  * A localized currency `<input>`. By default it formats as you type
@@ -45,7 +45,7 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
       className,
       style,
       ...rest
-    } = props
+    } = props;
 
     const { inputProps, ref: hookRef } = useCurrencyInput({
       locale,
@@ -64,18 +64,18 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
       step,
       transformRawValue,
       formatMode,
-    })
+    });
 
     // Live mode manages the caret through the hook's ref, so point both the
     // hook's ref and any forwarded ref at the same node.
     const setRef = useCallback(
       (node: HTMLInputElement | null) => {
-        hookRef.current = node
-        if (typeof ref === 'function') ref(node)
-        else if (ref) ref.current = node
+        hookRef.current = node;
+        if (typeof ref === "function") ref(node);
+        else if (ref) ref.current = node;
       },
       [hookRef, ref],
-    )
+    );
 
     return (
       <input
@@ -85,35 +85,35 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
         style={style}
         type="text"
         inputMode="decimal"
-        autoComplete={rest.autoComplete ?? 'off'}
+        autoComplete={rest.autoComplete ?? "off"}
         aria-invalid={invalid ? true : undefined}
         // Every component in the suite carries a `data-rx-<slug>-root` selector
         // hook. This one renders a single element, so the root *is* the input —
         // hence one attribute here where the composite components carry two.
         data-rx-currency-root=""
-        data-invalid={invalid ? '' : undefined}
+        data-invalid={invalid ? "" : undefined}
         value={inputProps.value}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          inputProps.onChange(event)
-          onNativeChange?.(event)
+          inputProps.onChange(event);
+          onNativeChange?.(event);
         }}
         onFocus={(event: FocusEvent<HTMLInputElement>) => {
-          inputProps.onFocus(event)
-          onFocus?.(event)
+          inputProps.onFocus(event);
+          onFocus?.(event);
         }}
         onBlur={(event: FocusEvent<HTMLInputElement>) => {
-          inputProps.onBlur(event)
-          onBlur?.(event)
+          inputProps.onBlur(event);
+          onBlur?.(event);
         }}
         onKeyDown={(event) => {
-          inputProps.onKeyDown(event)
-          onKeyDown?.(event)
+          inputProps.onKeyDown(event);
+          onKeyDown?.(event);
         }}
         onBeforeInput={(event) => {
-          inputProps.onBeforeInput(event)
-          onBeforeInput?.(event)
+          inputProps.onBeforeInput(event);
+          onBeforeInput?.(event);
         }}
       />
-    )
+    );
   },
-)
+);

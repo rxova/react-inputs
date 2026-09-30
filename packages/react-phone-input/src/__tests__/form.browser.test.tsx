@@ -1,11 +1,11 @@
-import { describe, expect, it, vi } from 'vitest'
-import { page, userEvent } from 'vitest/browser'
-import { render } from 'vitest-browser-react'
-import { Controller, useForm } from 'react-hook-form'
-import { Form, Formik, useField } from 'formik'
-import { Field as FinalField, Form as FinalForm } from 'react-final-form'
-import { useForm as useTanstackForm } from '@tanstack/react-form'
-import { PhoneInput } from '../PhoneInput'
+import { describe, expect, it, vi } from "vitest";
+import { page, userEvent } from "vitest/browser";
+import { render } from "vitest-browser-react";
+import { Controller, useForm } from "react-hook-form";
+import { Form, Formik, useField } from "formik";
+import { Field as FinalField, Form as FinalForm } from "react-final-form";
+import { useForm as useTanstackForm } from "@tanstack/react-form";
+import { PhoneInput } from "../PhoneInput";
 
 /**
  * The whole loop for each integration: type → library state updates → submit
@@ -17,38 +17,38 @@ import { PhoneInput } from '../PhoneInput'
  * that stored its own display text would make the grouping a database concern.
  */
 function box(): HTMLInputElement {
-  return document.querySelector<HTMLInputElement>('[data-rx-phone-input]')!
+  return document.querySelector<HTMLInputElement>("[data-rx-phone-input]")!;
 }
 
-describe('native form, no library', () => {
-  it('posts E.164 under its name, not the formatted text', async () => {
-    const onSubmit = vi.fn()
+describe("native form, no library", () => {
+  it("posts E.164 under its name, not the formatted text", async () => {
+    const onSubmit = vi.fn();
     await render(
       <form
         onSubmit={(event) => {
-          event.preventDefault()
-          onSubmit(Object.fromEntries(new FormData(event.currentTarget)))
+          event.preventDefault();
+          onSubmit(Object.fromEntries(new FormData(event.currentTarget)));
         }}
       >
         <PhoneInput name="phone" label="Phone" defaultCountry="GB" />
         <button type="submit">Save</button>
       </form>,
-    )
-    box().focus()
-    await userEvent.keyboard('2071234567')
-    await page.getByRole('button', { name: 'Save' }).click()
+    );
+    box().focus();
+    await userEvent.keyboard("2071234567");
+    await page.getByRole("button", { name: "Save" }).click();
 
-    expect(onSubmit).toHaveBeenCalledWith({ phone: '+442071234567' })
-  })
-})
+    expect(onSubmit).toHaveBeenCalledWith({ phone: "+442071234567" });
+  });
+});
 
-describe('react-hook-form via Controller', () => {
+describe("react-hook-form via Controller", () => {
   function Harness({ onValid }: { onValid: (value: unknown) => void }) {
-    const { control, handleSubmit } = useForm<{ phone: string }>({ defaultValues: { phone: '' } })
+    const { control, handleSubmit } = useForm<{ phone: string }>({ defaultValues: { phone: "" } });
     return (
       <form
         onSubmit={(event) => {
-          void handleSubmit(onValid)(event)
+          void handleSubmit(onValid)(event);
         }}
       >
         <Controller
@@ -62,7 +62,7 @@ describe('react-hook-form via Controller', () => {
               // The second argument is the details object; RHF wants the value
               // alone, so this cannot be `field.onChange` passed by reference.
               onChange={(value) => {
-                field.onChange(value)
+                field.onChange(value);
               }}
               onBlur={field.onBlur}
               name={field.name}
@@ -72,25 +72,25 @@ describe('react-hook-form via Controller', () => {
         />
         <button type="submit">Save</button>
       </form>
-    )
+    );
   }
 
-  it('binds E.164 and submits it', async () => {
-    const onValid = vi.fn()
-    await render(<Harness onValid={onValid} />)
-    box().focus()
-    await userEvent.keyboard('4155552671')
-    await page.getByRole('button', { name: 'Save' }).click()
+  it("binds E.164 and submits it", async () => {
+    const onValid = vi.fn();
+    await render(<Harness onValid={onValid} />);
+    box().focus();
+    await userEvent.keyboard("4155552671");
+    await page.getByRole("button", { name: "Save" }).click();
 
     await vi.waitFor(() => {
-      expect(onValid).toHaveBeenCalledWith({ phone: '+14155552671' }, expect.anything())
-    })
-  })
-})
+      expect(onValid).toHaveBeenCalledWith({ phone: "+14155552671" }, expect.anything());
+    });
+  });
+});
 
-describe('formik via useField', () => {
+describe("formik via useField", () => {
   function Field() {
-    const [field, meta, helpers] = useField<string>('phone')
+    const [field, meta, helpers] = useField<string>("phone");
     return (
       <>
         <PhoneInput
@@ -103,62 +103,62 @@ describe('formik via useField', () => {
         />
         <output data-testid="touched">{String(meta.touched)}</output>
       </>
-    )
+    );
   }
 
-  it('drives Formik state and submits E.164', async () => {
-    const onSubmit = vi.fn()
+  it("drives Formik state and submits E.164", async () => {
+    const onSubmit = vi.fn();
     await render(
-      <Formik initialValues={{ phone: '' }} onSubmit={(values) => onSubmit(values)}>
+      <Formik initialValues={{ phone: "" }} onSubmit={(values) => onSubmit(values)}>
         <Form>
           <Field />
           <button type="submit">Save</button>
         </Form>
       </Formik>,
-    )
-    box().focus()
-    await userEvent.keyboard('2071234567')
-    await page.getByRole('button', { name: 'Save' }).click()
+    );
+    box().focus();
+    await userEvent.keyboard("2071234567");
+    await page.getByRole("button", { name: "Save" }).click();
 
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledWith({ phone: '+442071234567' })
-    })
-  })
+      expect(onSubmit).toHaveBeenCalledWith({ phone: "+442071234567" });
+    });
+  });
 
-  it('marks touched only once focus leaves the field, not on the country select', async () => {
+  it("marks touched only once focus leaves the field, not on the country select", async () => {
     // The select is inside the field. Marking the field touched when someone
     // picks their country would show "required" before they have typed a digit.
     await render(
-      <Formik initialValues={{ phone: '' }} onSubmit={() => undefined}>
+      <Formik initialValues={{ phone: "" }} onSubmit={() => undefined}>
         <Form>
           <Field />
           <button type="submit">Save</button>
         </Form>
       </Formik>,
-    )
-    box().focus()
-    document.querySelector<HTMLSelectElement>('[data-rx-phone-country]')!.focus()
+    );
+    box().focus();
+    document.querySelector<HTMLSelectElement>("[data-rx-phone-country]")!.focus();
 
-    await expect.element(page.getByTestId('touched')).toMatchTextContent('false')
+    await expect.element(page.getByTestId("touched")).toMatchTextContent("false");
 
-    await page.getByRole('button', { name: 'Save' }).click()
+    await page.getByRole("button", { name: "Save" }).click();
 
-    await expect.element(page.getByTestId('touched')).toMatchTextContent('true')
-  })
-})
+    await expect.element(page.getByTestId("touched")).toMatchTextContent("true");
+  });
+});
 
-describe('react-final-form via Field', () => {
-  it('binds the field and submits E.164', async () => {
-    const onSubmit = vi.fn()
+describe("react-final-form via Field", () => {
+  it("binds the field and submits E.164", async () => {
+    const onSubmit = vi.fn();
     await render(
       <FinalForm
         onSubmit={(values) => {
-          onSubmit(values)
+          onSubmit(values);
         }}
         render={({ handleSubmit }) => (
           <form
             onSubmit={(event) => {
-              void handleSubmit(event)
+              void handleSubmit(event);
             }}
           >
             <FinalField name="phone">
@@ -169,7 +169,7 @@ describe('react-final-form via Field', () => {
                   defaultCountry="GB"
                   value={String(input.value)}
                   onChange={(value) => {
-                    input.onChange(value)
+                    input.onChange(value);
                   }}
                   onBlur={input.onBlur}
                 />
@@ -179,30 +179,30 @@ describe('react-final-form via Field', () => {
           </form>
         )}
       />,
-    )
-    box().focus()
-    await userEvent.keyboard('2071234567')
-    await page.getByRole('button', { name: 'Save' }).click()
+    );
+    box().focus();
+    await userEvent.keyboard("2071234567");
+    await page.getByRole("button", { name: "Save" }).click();
 
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledWith({ phone: '+442071234567' })
-    })
-  })
-})
+      expect(onSubmit).toHaveBeenCalledWith({ phone: "+442071234567" });
+    });
+  });
+});
 
-describe('TanStack Form via form.Field', () => {
+describe("TanStack Form via form.Field", () => {
   function Harness({ onValid }: { onValid: (value: unknown) => void }) {
     const form = useTanstackForm({
-      defaultValues: { phone: '' },
+      defaultValues: { phone: "" },
       onSubmit: ({ value }) => {
-        onValid(value)
+        onValid(value);
       },
-    })
+    });
     return (
       <form
         onSubmit={(event) => {
-          event.preventDefault()
-          void form.handleSubmit()
+          event.preventDefault();
+          void form.handleSubmit();
         }}
       >
         <form.Field name="phone">
@@ -213,7 +213,7 @@ describe('TanStack Form via form.Field', () => {
               defaultCountry="US"
               value={field.state.value}
               onChange={(value) => {
-                field.handleChange(value)
+                field.handleChange(value);
               }}
               onBlur={field.handleBlur}
             />
@@ -221,18 +221,18 @@ describe('TanStack Form via form.Field', () => {
         </form.Field>
         <button type="submit">Save</button>
       </form>
-    )
+    );
   }
 
-  it('binds E.164 and submits it', async () => {
-    const onValid = vi.fn()
-    await render(<Harness onValid={onValid} />)
-    box().focus()
-    await userEvent.keyboard('4155552671')
-    await page.getByRole('button', { name: 'Save' }).click()
+  it("binds E.164 and submits it", async () => {
+    const onValid = vi.fn();
+    await render(<Harness onValid={onValid} />);
+    box().focus();
+    await userEvent.keyboard("4155552671");
+    await page.getByRole("button", { name: "Save" }).click();
 
     await vi.waitFor(() => {
-      expect(onValid).toHaveBeenCalledWith({ phone: '+14155552671' })
-    })
-  })
-})
+      expect(onValid).toHaveBeenCalledWith({ phone: "+14155552671" });
+    });
+  });
+});

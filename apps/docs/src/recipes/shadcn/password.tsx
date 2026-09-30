@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { PasswordField } from '@/components/rxova/password-field'
+import { PasswordField } from "@/components/rxova/password-field";
 
 export function ShadcnPassword() {
   return (
@@ -10,5 +10,5 @@ export function ShadcnPassword() {
       name="password"
       showStrength
     />
-  )
+  );
 }

@@ -10,7 +10,7 @@
 
 /** Why a file was refused. Stable codes, safe to `switch` on. */
 export type FileRejection =
-  'type' | 'too-large' | 'too-small' | 'duplicate' | 'max-files' | 'invalid'
+  "type" | "too-large" | "too-small" | "duplicate" | "max-files" | "invalid";
 
 /**
  * The outcome of trying to accept one file. What `attempt` actually returns is
@@ -18,18 +18,18 @@ export type FileRejection =
  * know whether `reason` is set.
  */
 export interface FileAttempt {
-  file: File
-  accepted: boolean
-  reason?: FileRejection
+  file: File;
+  accepted: boolean;
+  reason?: FileRejection;
   /** A human-readable reason, when `validate` supplied one. */
-  message?: string
+  message?: string;
 }
 
 /** A file that passed every rule. */
 export interface FileAccepted extends FileAttempt {
-  accepted: true
-  reason?: undefined
-  message?: undefined
+  accepted: true;
+  reason?: undefined;
+  message?: undefined;
 }
 
 /**
@@ -37,8 +37,8 @@ export interface FileAccepted extends FileAttempt {
  * own copy needs no fallback for a missing one.
  */
 export interface FileRejected extends FileAttempt {
-  accepted: false
-  reason: FileRejection
+  accepted: false;
+  reason: FileRejection;
 }
 
 export interface FileRules {
@@ -46,17 +46,17 @@ export interface FileRules {
    * Comma-separated `accept` string, exactly as `<input accept>` takes it:
    * extensions (`.png`), full types (`image/png`), and wildcards (`image/*`).
    */
-  accept?: string
+  accept?: string;
   /** Largest allowed file, in bytes. */
-  maxSize?: number
+  maxSize?: number;
   /** Smallest allowed file, in bytes. Catches the 0-byte file a failed copy leaves behind. */
-  minSize?: number
+  minSize?: number;
   /** Maximum number of files. */
-  maxFiles?: number
+  maxFiles?: number;
   /** Treat two files with the same name, size and timestamp as the same file. @default true */
-  dedupe?: boolean
+  dedupe?: boolean;
   /** Final say. Return `true`, `false`, or a string explaining the refusal. */
-  validate?: (file: File, existing: File[]) => boolean | string
+  validate?: (file: File, existing: File[]) => boolean | string;
 }
 
 /**
@@ -68,15 +68,15 @@ export interface FileRules {
  * all three are the same file for any practical purpose.
  */
 export function fileKey(file: File): string {
-  return `${file.name}:${String(file.size)}:${String(file.lastModified)}`
+  return `${file.name}:${String(file.size)}:${String(file.lastModified)}`;
 }
 
 /** The lowercase extension including the dot, or `''` when there is none. */
 export function extensionOf(name: string): string {
-  const dot = name.lastIndexOf('.')
+  const dot = name.lastIndexOf(".");
   // A leading dot is a Unix hidden file, not an extension: `.gitignore` has no
   // extension, and treating it as one would match it against `.gitignore` only.
-  return dot <= 0 ? '' : name.slice(dot).toLowerCase()
+  return dot <= 0 ? "" : name.slice(dot).toLowerCase();
 }
 
 /**
@@ -89,44 +89,44 @@ export function extensionOf(name: string): string {
  * can decide.
  */
 export function matchesAccept(file: File, accept: string | undefined): boolean {
-  if (accept === undefined || accept.trim() === '') return true
+  if (accept === undefined || accept.trim() === "") return true;
 
   const patterns = accept
-    .split(',')
+    .split(",")
     .map((entry) => entry.trim().toLowerCase())
-    .filter((entry) => entry !== '')
-  if (patterns.length === 0) return true
+    .filter((entry) => entry !== "");
+  if (patterns.length === 0) return true;
 
-  const type = file.type.toLowerCase()
-  const extension = extensionOf(file.name)
+  const type = file.type.toLowerCase();
+  const extension = extensionOf(file.name);
 
   return patterns.some((pattern) => {
-    if (pattern.startsWith('.')) return extension === pattern
-    if (pattern.endsWith('/*')) {
-      const group = pattern.slice(0, -1)
-      return type !== '' && type.startsWith(group)
+    if (pattern.startsWith(".")) return extension === pattern;
+    if (pattern.endsWith("/*")) {
+      const group = pattern.slice(0, -1);
+      return type !== "" && type.startsWith(group);
     }
-    return type !== '' && type === pattern
-  })
+    return type !== "" && type === pattern;
+  });
 }
 
 /** Bytes as a short human string. Used in the default rejection messages. */
 export function formatBytes(bytes: number): string {
-  if (!Number.isFinite(bytes) || bytes < 0) return '0 B'
-  const units = ['B', 'kB', 'MB', 'GB', 'TB']
-  let value = bytes
-  let unit = 0
+  if (!Number.isFinite(bytes) || bytes < 0) return "0 B";
+  const units = ["B", "kB", "MB", "GB", "TB"];
+  let value = bytes;
+  let unit = 0;
   while (value >= 1000 && unit < units.length - 1) {
-    value /= 1000
-    unit++
+    value /= 1000;
+    unit++;
   }
   // Decimal units, not binary: `1 kB` here means 1000 bytes, which is what
   // every operating system's file browser shows the user.
-  const rounded = value >= 100 || unit === 0 ? Math.round(value) : Math.round(value * 10) / 10
+  const rounded = value >= 100 || unit === 0 ? Math.round(value) : Math.round(value * 10) / 10;
   // The `?? 'B'` can never fire — the loop stops at the last unit — but
   // `noUncheckedIndexedAccess` requires the fallback to be written.
   /* v8 ignore next */
-  return `${String(rounded)} ${units[unit] ?? 'B'}`
+  return `${String(rounded)} ${units[unit] ?? "B"}`;
 }
 
 /**
@@ -141,7 +141,7 @@ export function attempt(
   file: File,
   rules: FileRules = {},
 ): FileAccepted | FileRejected {
-  return attemptWith(existing, file, rules)
+  return attemptWith(existing, file, rules);
 }
 
 /**
@@ -164,45 +164,45 @@ function attemptWith(
   rules: FileRules = {},
   isDuplicate?: (file: File) => boolean,
 ): FileAccepted | FileRejected {
-  const { accept, maxSize, minSize, maxFiles, dedupe = true, validate } = rules
+  const { accept, maxSize, minSize, maxFiles, dedupe = true, validate } = rules;
 
   if (maxFiles !== undefined && existing.length >= maxFiles) {
-    return { file, accepted: false, reason: 'max-files' }
+    return { file, accepted: false, reason: "max-files" };
   }
-  if (!matchesAccept(file, accept)) return { file, accepted: false, reason: 'type' }
+  if (!matchesAccept(file, accept)) return { file, accepted: false, reason: "type" };
   if (maxSize !== undefined && file.size > maxSize) {
-    return { file, accepted: false, reason: 'too-large' }
+    return { file, accepted: false, reason: "too-large" };
   }
   if (minSize !== undefined && file.size < minSize) {
-    return { file, accepted: false, reason: 'too-small' }
+    return { file, accepted: false, reason: "too-small" };
   }
   if (dedupe) {
     const duplicate = isDuplicate
       ? isDuplicate(file)
-      : existing.some((entry) => fileKey(entry) === fileKey(file))
-    if (duplicate) return { file, accepted: false, reason: 'duplicate' }
+      : existing.some((entry) => fileKey(entry) === fileKey(file));
+    if (duplicate) return { file, accepted: false, reason: "duplicate" };
   }
 
   if (validate) {
-    let verdict: boolean | string
+    let verdict: boolean | string;
     try {
-      verdict = validate(file, existing as File[])
+      verdict = validate(file, existing as File[]);
     } catch {
       // `validate` is consumer code running on every selected file. A broken
       // predicate refuses the file rather than taking the form down.
-      verdict = false
+      verdict = false;
     }
     if (verdict !== true) {
       return {
         file,
         accepted: false,
-        reason: 'invalid',
-        message: typeof verdict === 'string' ? verdict : undefined,
-      }
+        reason: "invalid",
+        message: typeof verdict === "string" ? verdict : undefined,
+      };
     }
   }
 
-  return { file, accepted: true }
+  return { file, accepted: true };
 }
 
 /**
@@ -223,12 +223,12 @@ function attemptWith(
  * no sequence of calls that can put the two out of step.
  */
 function accumulate(initial: File[]): {
-  list: readonly File[]
-  has: (file: File) => boolean
-  add: (file: File) => void
+  list: readonly File[];
+  has: (file: File) => boolean;
+  add: (file: File) => void;
 } {
-  const list = [...initial]
-  const keys = new Set(list.map(fileKey))
+  const list = [...initial];
+  const keys = new Set(list.map(fileKey));
 
   return {
     /**
@@ -240,10 +240,10 @@ function accumulate(initial: File[]): {
     list,
     has: (file: File) => keys.has(fileKey(file)),
     add: (file: File) => {
-      list.push(file)
-      keys.add(fileKey(file))
+      list.push(file);
+      keys.add(fileKey(file));
     },
-  }
+  };
 }
 
 /**
@@ -258,37 +258,37 @@ export function attemptAll(
   candidates: File[],
   rules: FileRules = {},
 ): { files: File[]; results: (FileAccepted | FileRejected)[] } {
-  const accepted = accumulate(existing)
-  const results: (FileAccepted | FileRejected)[] = []
+  const accepted = accumulate(existing);
+  const results: (FileAccepted | FileRejected)[] = [];
 
   for (const candidate of candidates) {
-    const result = attemptWith(accepted.list, candidate, rules, accepted.has)
-    results.push(result)
-    if (result.accepted) accepted.add(result.file)
+    const result = attemptWith(accepted.list, candidate, rules, accepted.has);
+    results.push(result);
+    if (result.accepted) accepted.add(result.file);
   }
-  return { files: [...accepted.list], results }
+  return { files: [...accepted.list], results };
 }
 
 /** A default, human-readable explanation for a rejection. */
 export function describeRejection(result: FileAttempt, rules: FileRules = {}): string {
-  const { accept, maxSize, minSize, maxFiles } = rules
+  const { accept, maxSize, minSize, maxFiles } = rules;
   switch (result.reason) {
-    case 'type':
-      return `${result.file.name} is not an accepted file type${accept === undefined ? '' : ` (${accept})`}.`
-    case 'too-large':
-      return `${result.file.name} is ${formatBytes(result.file.size)}; the limit is ${formatBytes(maxSize ?? 0)}.`
-    case 'too-small':
-      return `${result.file.name} is ${formatBytes(result.file.size)}, below the ${formatBytes(minSize ?? 0)} minimum.`
-    case 'duplicate':
-      return `${result.file.name} has already been added.`
-    case 'max-files':
-      return `You can add at most ${String(maxFiles ?? 0)} files.`
+    case "type":
+      return `${result.file.name} is not an accepted file type${accept === undefined ? "" : ` (${accept})`}.`;
+    case "too-large":
+      return `${result.file.name} is ${formatBytes(result.file.size)}; the limit is ${formatBytes(maxSize ?? 0)}.`;
+    case "too-small":
+      return `${result.file.name} is ${formatBytes(result.file.size)}, below the ${formatBytes(minSize ?? 0)} minimum.`;
+    case "duplicate":
+      return `${result.file.name} has already been added.`;
+    case "max-files":
+      return `You can add at most ${String(maxFiles ?? 0)} files.`;
     default:
-      return result.message ?? `${result.file.name} was not accepted.`
+      return result.message ?? `${result.file.name} was not accepted.`;
   }
 }
 
 /** Files a preview URL can meaningfully be made for. */
 export function isPreviewable(file: File): boolean {
-  return file.type.startsWith('image/')
+  return file.type.startsWith("image/");
 }

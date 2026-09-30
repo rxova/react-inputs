@@ -1,25 +1,25 @@
-import { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { CurrencyInput, currencyForCountry } from '@rxova/react-intl-currency-input'
-import type { CurrencyDisplay, CurrencyInputChange } from '@rxova/react-intl-currency-input'
-import { Section } from '@rxova/demo-kit'
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { CurrencyInput, currencyForCountry } from "@rxova/react-intl-currency-input";
+import type { CurrencyDisplay, CurrencyInputChange } from "@rxova/react-intl-currency-input";
+import { Section } from "@rxova/demo-kit";
 
 /**
  * The manual QA surface and the page the E2E suite drives. Each block carries a
  * `data-testid` so specs target intent rather than DOM shape.
  */
 
-const LOCALES = ['bg-BG', 'de-DE', 'fr-FR', 'en-US', 'en-IN', 'hi-IN', 'ja-JP', 'ar-EG', 'de-CH']
-const CURRENCIES = ['EUR', 'BGN', 'USD', 'GBP', 'JPY', 'INR', 'EGP', 'CHF', 'KWD']
+const LOCALES = ["bg-BG", "de-DE", "fr-FR", "en-US", "en-IN", "hi-IN", "ja-JP", "ar-EG", "de-CH"];
+const CURRENCIES = ["EUR", "BGN", "USD", "GBP", "JPY", "INR", "EGP", "CHF", "KWD"];
 
 function Playground() {
-  const [locale, setLocale] = useState('bg-BG')
-  const [currency, setCurrency] = useState('EUR')
-  const [display, setDisplay] = useState<CurrencyDisplay>('symbol')
-  const [allowNegative, setAllowNegative] = useState(false)
-  const [minFraction, setMinFraction] = useState(0)
-  const [formatMode, setFormatMode] = useState<'live' | 'blur'>('live')
-  const [value, setValue] = useState<number | null>(50000)
+  const [locale, setLocale] = useState("bg-BG");
+  const [currency, setCurrency] = useState("EUR");
+  const [display, setDisplay] = useState<CurrencyDisplay>("symbol");
+  const [allowNegative, setAllowNegative] = useState(false);
+  const [minFraction, setMinFraction] = useState(0);
+  const [formatMode, setFormatMode] = useState<"live" | "blur">("live");
+  const [value, setValue] = useState<number | null>(50000);
 
   return (
     <Section
@@ -34,9 +34,9 @@ function Playground() {
             data-testid="locale"
             value={locale}
             onChange={(e) => {
-              setLocale(e.target.value)
-              const guessed = currencyForCountry(e.target.value.split('-')[1] ?? '')
-              if (guessed) setCurrency(guessed)
+              setLocale(e.target.value);
+              const guessed = currencyForCountry(e.target.value.split("-")[1] ?? "");
+              if (guessed) setCurrency(guessed);
             }}
           >
             {LOCALES.map((l) => (
@@ -52,7 +52,7 @@ function Playground() {
             data-testid="currency"
             value={currency}
             onChange={(e) => {
-              setCurrency(e.target.value)
+              setCurrency(e.target.value);
             }}
           >
             {CURRENCIES.map((c) => (
@@ -68,10 +68,10 @@ function Playground() {
             data-testid="display"
             value={display}
             onChange={(e) => {
-              setDisplay(e.target.value as CurrencyDisplay)
+              setDisplay(e.target.value as CurrencyDisplay);
             }}
           >
-            {(['symbol', 'narrowSymbol', 'code', 'name'] as const).map((d) => (
+            {(["symbol", "narrowSymbol", "code", "name"] as const).map((d) => (
               <option key={d} value={d}>
                 {d}
               </option>
@@ -84,10 +84,10 @@ function Playground() {
             data-testid="format-mode"
             value={formatMode}
             onChange={(e) => {
-              setFormatMode(e.target.value as 'live' | 'blur')
+              setFormatMode(e.target.value as "live" | "blur");
             }}
           >
-            {(['live', 'blur'] as const).map((m) => (
+            {(["live", "blur"] as const).map((m) => (
               <option key={m} value={m}>
                 {m}
               </option>
@@ -102,7 +102,7 @@ function Playground() {
             max={4}
             value={minFraction}
             onChange={(e) => {
-              setMinFraction(Number(e.target.value))
+              setMinFraction(Number(e.target.value));
             }}
           />
         </label>
@@ -111,7 +111,7 @@ function Playground() {
             type="checkbox"
             checked={allowNegative}
             onChange={(e) => {
-              setAllowNegative(e.target.checked)
+              setAllowNegative(e.target.checked);
             }}
           />
           Allow negative
@@ -136,27 +136,27 @@ function Playground() {
 
       <dl className="readout">
         <dt>Numeric value</dt>
-        <dd data-testid="value">{value ?? '∅ (empty)'}</dd>
+        <dd data-testid="value">{value ?? "∅ (empty)"}</dd>
       </dl>
     </Section>
-  )
+  );
 }
 
 const TRICKY: { locale: string; currency: string; note: string }[] = [
-  { locale: 'bg-BG', currency: 'EUR', note: 'Space group separator, only above 9999' },
-  { locale: 'de-DE', currency: 'EUR', note: 'Dot group, comma decimal, trailing symbol' },
-  { locale: 'fr-FR', currency: 'EUR', note: 'Narrow no-break space group separator' },
-  { locale: 'ja-JP', currency: 'JPY', note: 'No fraction digits' },
-  { locale: 'ar-KW', currency: 'KWD', note: 'Three fraction digits' },
-  { locale: 'ar-EG', currency: 'EGP', note: 'Native (Arabic-Indic) digits, RTL' },
-  { locale: 'hi-IN', currency: 'INR', note: 'Lakh grouping: 12,34,567' },
-  { locale: 'de-CH', currency: 'CHF', note: 'Apostrophe group separator' },
-]
+  { locale: "bg-BG", currency: "EUR", note: "Space group separator, only above 9999" },
+  { locale: "de-DE", currency: "EUR", note: "Dot group, comma decimal, trailing symbol" },
+  { locale: "fr-FR", currency: "EUR", note: "Narrow no-break space group separator" },
+  { locale: "ja-JP", currency: "JPY", note: "No fraction digits" },
+  { locale: "ar-KW", currency: "KWD", note: "Three fraction digits" },
+  { locale: "ar-EG", currency: "EGP", note: "Native (Arabic-Indic) digits, RTL" },
+  { locale: "hi-IN", currency: "INR", note: "Lakh grouping: 12,34,567" },
+  { locale: "de-CH", currency: "CHF", note: "Apostrophe group separator" },
+];
 
 function TrickyGrid() {
   const [values, setValues] = useState<Record<string, number | null>>(() =>
     Object.fromEntries(TRICKY.map((t) => [t.locale, 1234567.89])),
-  )
+  );
   return (
     <Section
       id="tricky"
@@ -176,23 +176,23 @@ function TrickyGrid() {
               currency={t.currency}
               value={values[t.locale] ?? null}
               onChange={(v) => {
-                setValues((prev) => ({ ...prev, [t.locale]: v }))
+                setValues((prev) => ({ ...prev, [t.locale]: v }));
               }}
             />
           </div>
         ))}
       </div>
     </Section>
-  )
+  );
 }
 
 interface FormValues {
-  price: number | null
+  price: number | null;
 }
 
 function FormDemo() {
-  const { control, handleSubmit } = useForm<FormValues>({ defaultValues: { price: null } })
-  const [submitted, setSubmitted] = useState<number | null | undefined>(undefined)
+  const { control, handleSubmit } = useForm<FormValues>({ defaultValues: { price: null } });
+  const [submitted, setSubmitted] = useState<number | null | undefined>(undefined);
 
   return (
     <Section
@@ -203,16 +203,16 @@ function FormDemo() {
       <form
         onSubmit={(e) => {
           void handleSubmit((v) => {
-            setSubmitted(v.price)
-          })(e)
+            setSubmitted(v.price);
+          })(e);
         }}
       >
         <Controller
           name="price"
           control={control}
           rules={{
-            required: 'Enter a price',
-            min: { value: 1, message: 'Must be greater than 0' },
+            required: "Enter a price",
+            min: { value: 1, message: "Must be greater than 0" },
           }}
           render={({ field, fieldState }) => (
             <div className="field">
@@ -228,7 +228,7 @@ function FormDemo() {
                 name={field.name}
                 ref={field.ref}
                 invalid={fieldState.invalid}
-                aria-describedby={fieldState.error ? 'price-err' : undefined}
+                aria-describedby={fieldState.error ? "price-err" : undefined}
               />
               {fieldState.error ? (
                 <p id="price-err" className="error" data-testid="form-error">
@@ -242,25 +242,25 @@ function FormDemo() {
       </form>
       {submitted !== undefined ? (
         <p className="readout" data-testid="form-result">
-          Submitted: {submitted ?? '∅'}
+          Submitted: {submitted ?? "∅"}
         </p>
       ) : null}
     </Section>
-  )
+  );
 }
 
 /** Purpose-built controls for destructive/manual QA and durable E2E edge cases. */
 function StressLab() {
-  const [controlled, setControlled] = useState<number | null>(12.5)
-  const [stressLocale, setStressLocale] = useState<'en-US' | 'de-DE'>('en-US')
-  const [lastChange, setLastChange] = useState<CurrencyInputChange | null>(null)
-  const [stepped, setStepped] = useState<number | null>(0)
-  const [negativeStep, setNegativeStep] = useState<number | null>(0)
-  const [transformed, setTransformed] = useState<number | null>(null)
+  const [controlled, setControlled] = useState<number | null>(12.5);
+  const [stressLocale, setStressLocale] = useState<"en-US" | "de-DE">("en-US");
+  const [lastChange, setLastChange] = useState<CurrencyInputChange | null>(null);
+  const [stepped, setStepped] = useState<number | null>(0);
+  const [negativeStep, setNegativeStep] = useState<number | null>(0);
+  const [transformed, setTransformed] = useState<number | null>(null);
 
   const keepInputFocused = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-  }
+    event.preventDefault();
+  };
 
   return (
     <Section
@@ -276,11 +276,11 @@ function StressLab() {
             data-testid="stress-controlled"
             formatMode="blur"
             locale={stressLocale}
-            currency={stressLocale === 'en-US' ? 'USD' : 'EUR'}
+            currency={stressLocale === "en-US" ? "USD" : "EUR"}
             value={controlled}
             onChange={(next, meta) => {
-              setControlled(next)
-              setLastChange(meta)
+              setControlled(next);
+              setLastChange(meta);
             }}
           />
           <div className="button-row">
@@ -289,7 +289,7 @@ function StressLab() {
               data-testid="external-set"
               onMouseDown={keepInputFocused}
               onClick={() => {
-                setControlled(42.5)
+                setControlled(42.5);
               }}
             >
               Set 42.5 externally
@@ -299,7 +299,7 @@ function StressLab() {
               data-testid="external-clear"
               onMouseDown={keepInputFocused}
               onClick={() => {
-                setControlled(null)
+                setControlled(null);
               }}
             >
               Clear externally
@@ -309,14 +309,14 @@ function StressLab() {
               data-testid="external-locale"
               onMouseDown={keepInputFocused}
               onClick={() => {
-                setStressLocale((old) => (old === 'en-US' ? 'de-DE' : 'en-US'))
+                setStressLocale((old) => (old === "en-US" ? "de-DE" : "en-US"));
               }}
             >
               Toggle locale
             </button>
           </div>
-          <output data-testid="stress-controlled-value">{controlled ?? '∅'}</output>
-          <output data-testid="stress-meta">{lastChange ? JSON.stringify(lastChange) : '∅'}</output>
+          <output data-testid="stress-controlled-value">{controlled ?? "∅"}</output>
+          <output data-testid="stress-meta">{lastChange ? JSON.stringify(lastChange) : "∅"}</output>
         </div>
 
         <div className="cell">
@@ -331,7 +331,7 @@ function StressLab() {
             value={stepped}
             onChange={setStepped}
           />
-          <output data-testid="stress-step-value">{stepped ?? '∅'}</output>
+          <output data-testid="stress-step-value">{stepped ?? "∅"}</output>
         </div>
 
         <div className="cell">
@@ -347,7 +347,7 @@ function StressLab() {
             value={negativeStep}
             onChange={setNegativeStep}
           />
-          <output data-testid="stress-negative-step-value">{negativeStep ?? '∅'}</output>
+          <output data-testid="stress-negative-step-value">{negativeStep ?? "∅"}</output>
         </div>
 
         <div className="cell">
@@ -360,9 +360,9 @@ function StressLab() {
             currency="USD"
             value={transformed}
             onChange={setTransformed}
-            transformRawValue={(raw) => raw.replaceAll('_', '')}
+            transformRawValue={(raw) => raw.replaceAll("_", "")}
           />
-          <output data-testid="stress-transform-value">{transformed ?? '∅'}</output>
+          <output data-testid="stress-transform-value">{transformed ?? "∅"}</output>
         </div>
 
         <div className="cell">
@@ -378,10 +378,10 @@ function StressLab() {
         </div>
       </div>
     </Section>
-  )
+  );
 }
 
-export function CurrencyDemos({ dir = 'ltr' }: { dir?: 'ltr' | 'rtl' } = {}) {
+export function CurrencyDemos({ dir = "ltr" }: { dir?: "ltr" | "rtl" } = {}) {
   return (
     <main dir={dir}>
       <Playground />
@@ -389,9 +389,9 @@ export function CurrencyDemos({ dir = 'ltr' }: { dir?: 'ltr' | 'rtl' } = {}) {
       <FormDemo />
       <StressLab />
     </main>
-  )
+  );
 }
 
 // Default export is the playground contract: it discovers demos by module,
 // not by name. The named export stays for this package.
-export default CurrencyDemos
+export default CurrencyDemos;

@@ -1,14 +1,14 @@
 ---
-title: 'Rating input — About'
-description: 'How partial fills are rendered, when the component is a radiogroup versus an image, and how to style it with tokens and data attributes.'
+title: "Rating input — About"
+description: "How partial fills are rendered, when the component is a radiogroup versus an image, and how to style it with tokens and data attributes."
 sidebar:
-  label: 'About'
+  label: "About"
   order: 3
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components'
-import CodeRecipes from '@rxova/astro-ui/components/CodeRecipes.astro'
-import { recipesFor } from '../../../../lib/recipe-sources.mjs'
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import CodeRecipes from "@rxova/astro-ui/components/CodeRecipes.astro";
+import { recipesFor } from "../../../../lib/recipe-sources.mjs";
 
 ## Custom icons
 
@@ -26,12 +26,12 @@ function Heart() {
     <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true">
       <path d="M12 21s-8-4.9-8-10.4A4.6 4.6 0 0 1 12 7a4.6 4.6 0 0 1 8 3.6C20 16.1 12 21 12 21z" />
     </svg>
-  )
+  );
 }
 ```
 
 ```tsx
-<Rating value={3.5} max={5} icon={<Heart />} style={{ '--rx-rating-color-filled': 'crimson' }} />
+<Rating value={3.5} max={5} icon={<Heart />} style={{ "--rx-rating-color-filled": "crimson" }} />
 ```
 
 Provide a distinct outline for the empty state, or omit `emptyIcon` to reuse the same icon dimmed:
@@ -66,7 +66,7 @@ SVG alike. Pass an explicit `emptyIcon` to control the empty look yourself.
 For conditional icons, pass a function. It receives per-icon state and returns a node:
 
 ```tsx
-<Rating value={2.5} icon={(s) => <span>{s.partial ? '◐' : s.filled ? '●' : '○'}</span>} />
+<Rating value={2.5} icon={(s) => <span>{s.partial ? "◐" : s.filled ? "●" : "○"}</span>} />
 ```
 
 The state object:
@@ -124,14 +124,14 @@ because `field` already carries `value`, `onChange`, `onBlur`, `name`, and `ref`
 <Controller
   name="rating"
   control={control}
-  rules={{ min: { value: 1, message: 'Please rate' } }}
+  rules={{ min: { value: 1, message: "Please rate" } }}
   render={({ field, fieldState }) => (
     <>
       <Rating
         {...field} // value, onChange, onBlur, name, ref all line up
         precision={0.5}
         invalid={fieldState.invalid}
-        aria-describedby={fieldState.error ? 'rating-err' : undefined}
+        aria-describedby={fieldState.error ? "rating-err" : undefined}
       />
       {fieldState.error && <p id="rating-err">{fieldState.error.message}</p>}
     </>
@@ -192,44 +192,44 @@ panel underneath is the exact CSS you'd paste into your own stylesheet.
 
 ```tsx live
 function StylingPlayground() {
-  const [size, setSize] = useState(2.5)
-  const [gap, setGap] = useState(0.25)
-  const [filled, setFilled] = useState('#f5a623')
-  const [empty, setEmpty] = useState('#d8d8d8')
-  const [hover, setHover] = useState('#f5a623')
-  const [transition, setTransition] = useState(120)
-  const [score, setScore] = useState(3.5)
+  const [size, setSize] = useState(2.5);
+  const [gap, setGap] = useState(0.25);
+  const [filled, setFilled] = useState("#f5a623");
+  const [empty, setEmpty] = useState("#d8d8d8");
+  const [hover, setHover] = useState("#f5a623");
+  const [transition, setTransition] = useState(120);
+  const [score, setScore] = useState(3.5);
 
   const vars = {
-    '--rx-rating-size': `${size}rem`,
-    '--rx-rating-gap': `${gap}rem`,
-    '--rx-rating-color-filled': filled,
-    '--rx-rating-color-empty': empty,
-    '--rx-rating-color-hover': hover,
-    '--rx-rating-transition': `${transition}ms`,
-  }
+    "--rx-rating-size": `${size}rem`,
+    "--rx-rating-gap": `${gap}rem`,
+    "--rx-rating-color-filled": filled,
+    "--rx-rating-color-empty": empty,
+    "--rx-rating-color-hover": hover,
+    "--rx-rating-transition": `${transition}ms`,
+  };
 
   const Row = ({ label, children }) => (
     <label
       style={{
-        display: 'grid',
-        gridTemplateColumns: '7rem 1fr auto',
-        alignItems: 'center',
-        gap: '0.75rem',
+        display: "grid",
+        gridTemplateColumns: "7rem 1fr auto",
+        alignItems: "center",
+        gap: "0.75rem",
       }}
     >
-      <span style={{ fontSize: '0.85rem' }}>{label}</span>
+      <span style={{ fontSize: "0.85rem" }}>{label}</span>
       {children}
     </label>
-  )
+  );
 
   return (
-    <div style={{ display: 'grid', gap: '1.25rem' }}>
-      <div style={{ minHeight: `${size * 1.4}rem`, display: 'flex', alignItems: 'center' }}>
+    <div style={{ display: "grid", gap: "1.25rem" }}>
+      <div style={{ minHeight: `${size * 1.4}rem`, display: "flex", alignItems: "center" }}>
         <Rating value={score} onChange={setScore} precision={0.5} style={vars} label="Playground" />
       </div>
 
-      <div style={{ display: 'grid', gap: '0.5rem', maxWidth: 460 }}>
+      <div style={{ display: "grid", gap: "0.5rem", maxWidth: 460 }}>
         <Row label="size">
           <input
             type="range"
@@ -280,10 +280,10 @@ function StylingPlayground() {
       <pre style={{ margin: 0 }}>
         {`[data-rx-rating-root] {\n${Object.entries(vars)
           .map(([k, v]) => `  ${k}: ${v};`)
-          .join('\n')}\n}`}
+          .join("\n")}\n}`}
       </pre>
     </div>
-  )
+  );
 }
 ```
 
@@ -313,10 +313,10 @@ Size is a single property, in any unit. Set it inline for one instance, or on an
 whole group. Since it's a `font-size`, relative units (`em`, `%`) inherit naturally.
 
 ```tsx live
-<div style={{ display: 'grid', gap: '0.75rem' }}>
-  <Rating value={3.5} style={{ '--rx-rating-size': '1rem' }} />
-  <Rating value={3.5} style={{ '--rx-rating-size': '1.75rem' }} />
-  <Rating value={3.5} style={{ '--rx-rating-size': '3rem' }} />
+<div style={{ display: "grid", gap: "0.75rem" }}>
+  <Rating value={3.5} style={{ "--rx-rating-size": "1rem" }} />
+  <Rating value={3.5} style={{ "--rx-rating-size": "1.75rem" }} />
+  <Rating value={3.5} style={{ "--rx-rating-size": "3rem" }} />
 </div>
 ```
 
@@ -325,10 +325,10 @@ whole group. Since it's a `font-size`, relative units (`em`, `%`) inherit natura
 The space between icons. `0` packs them flush; larger values give an airier row.
 
 ```tsx live
-<div style={{ display: 'grid', gap: '0.75rem', fontSize: '1.75rem' }}>
-  <Rating value={3.5} style={{ '--rx-rating-gap': '0' }} />
-  <Rating value={3.5} style={{ '--rx-rating-gap': '0.25rem' }} />
-  <Rating value={3.5} style={{ '--rx-rating-gap': '0.75rem' }} />
+<div style={{ display: "grid", gap: "0.75rem", fontSize: "1.75rem" }}>
+  <Rating value={3.5} style={{ "--rx-rating-gap": "0" }} />
+  <Rating value={3.5} style={{ "--rx-rating-gap": "0.25rem" }} />
+  <Rating value={3.5} style={{ "--rx-rating-gap": "0.75rem" }} />
 </div>
 ```
 
@@ -340,19 +340,19 @@ tint. **Hover over the interactive one** to see the hover colour.
 
 ```tsx live
 function Colours() {
-  const [score, setScore] = useState(3)
+  const [score, setScore] = useState(3);
   const brand = {
-    '--rx-rating-color-filled': '#6d28d9',
-    '--rx-rating-color-empty': '#e5e7eb',
-    '--rx-rating-color-hover': '#c026d3',
-    '--rx-rating-size': '2rem',
-  }
+    "--rx-rating-color-filled": "#6d28d9",
+    "--rx-rating-color-empty": "#e5e7eb",
+    "--rx-rating-color-hover": "#c026d3",
+    "--rx-rating-size": "2rem",
+  };
   return (
-    <div style={{ display: 'grid', gap: '0.75rem' }}>
+    <div style={{ display: "grid", gap: "0.75rem" }}>
       <Rating value={3.5} style={brand} />
       <Rating value={score} onChange={setScore} precision={0.5} style={brand} label="Pick" />
     </div>
-  )
+  );
 }
 ```
 
@@ -369,15 +369,15 @@ When you don't pass an `emptyIcon`, the track is the _same_ glyph as the fill, d
 why the default is `grayscale(1) opacity(0.35)` rather than a grey colour.
 
 ```tsx live
-<div style={{ display: 'grid', gap: '0.75rem', fontSize: '2rem' }}>
+<div style={{ display: "grid", gap: "0.75rem", fontSize: "2rem" }}>
   <Rating value={2.5} icon="⭐" />
   <Rating
     value={2.5}
     icon="⭐"
-    style={{ '--rx-rating-empty-filter': 'grayscale(1) opacity(0.2)' }}
+    style={{ "--rx-rating-empty-filter": "grayscale(1) opacity(0.2)" }}
   />
-  <Rating value={2.5} icon="⭐" style={{ '--rx-rating-empty-filter': 'sepia(1) opacity(0.5)' }} />
-  <Rating value={2.5} icon="⭐" style={{ '--rx-rating-empty-filter': 'none' }} />
+  <Rating value={2.5} icon="⭐" style={{ "--rx-rating-empty-filter": "sepia(1) opacity(0.5)" }} />
+  <Rating value={2.5} icon="⭐" style={{ "--rx-rating-empty-filter": "none" }} />
 </div>
 ```
 
@@ -387,9 +387,9 @@ so the component leaves it alone.
 ```tsx live
 <Rating
   value={2.5}
-  style={{ '--rx-rating-size': '2rem' }}
+  style={{ "--rx-rating-size": "2rem" }}
   icon={<span>●</span>}
-  emptyIcon={<span style={{ color: '#cbd5e1' }}>○</span>}
+  emptyIcon={<span style={{ color: "#cbd5e1" }}>○</span>}
 />
 ```
 
@@ -400,7 +400,7 @@ Crank it up here and hover slowly to watch the fill glide.
 
 ```tsx live
 function Motion() {
-  const [score, setScore] = useState(2)
+  const [score, setScore] = useState(2);
   return (
     <Rating
       value={score}
@@ -408,12 +408,12 @@ function Motion() {
       precision={0.5}
       label="Slow fill"
       style={{
-        '--rx-rating-size': '2.5rem',
-        '--rx-rating-transition': '450ms',
-        '--rx-rating-color-hover': '#22c55e',
+        "--rx-rating-size": "2.5rem",
+        "--rx-rating-transition": "450ms",
+        "--rx-rating-color-hover": "#22c55e",
       }}
     />
-  )
+  );
 }
 ```
 
@@ -436,7 +436,7 @@ into the rating below and use the arrow keys.
 
 ```tsx live
 function Focus() {
-  const [score, setScore] = useState(0)
+  const [score, setScore] = useState(0);
   return (
     <Rating
       value={score}
@@ -444,13 +444,13 @@ function Focus() {
       precision={1}
       label="Focus me with Tab, then arrow keys"
       style={{
-        '--rx-rating-size': '2.5rem',
-        '--rx-rating-focus-ring': '3px solid #2563eb',
-        '--rx-rating-focus-ring-offset': '4px',
-        '--rx-rating-focus-ring-radius': '6px',
+        "--rx-rating-size": "2.5rem",
+        "--rx-rating-focus-ring": "3px solid #2563eb",
+        "--rx-rating-focus-ring-offset": "4px",
+        "--rx-rating-focus-ring-radius": "6px",
       }}
     />
-  )
+  );
 }
 ```
 
@@ -499,11 +499,11 @@ selector — no per-instance props. A red error look driven only by the `invalid
 The same states, side by side:
 
 ```tsx live
-<div style={{ display: 'grid', gap: '0.75rem', fontSize: '1.75rem' }}>
+<div style={{ display: "grid", gap: "0.75rem", fontSize: "1.75rem" }}>
   <Rating
     value={3}
     invalid
-    style={{ '--rx-rating-color-filled': '#dc2626', '--rx-rating-color-empty': '#fecaca' }}
+    style={{ "--rx-rating-color-filled": "#dc2626", "--rx-rating-color-empty": "#fecaca" }}
   />
   <Rating value={3} onChange={() => {}} disabled style={{ opacity: 0.5 }} />
   <Rating value={3.5} />
@@ -520,7 +520,7 @@ icons, or only the icons under the pointer:
 }
 
 /* Give the fill layer a subtle glow. */
-[data-rx-rating-layer='fill'] {
+[data-rx-rating-layer="fill"] {
   filter: drop-shadow(0 0 2px currentColor);
 }
 ```
@@ -583,10 +583,10 @@ component, no `!important`, no reaching into internals.
 ```
 
 ```tsx
-import styles from './Rating.module.css'
+import styles from "./Rating.module.css";
 
 function Stars() {
-  return <Rating className={styles.brand} value={4.3} />
+  return <Rating className={styles.brand} value={4.3} />;
 }
 ```
 
@@ -618,14 +618,14 @@ Because the knobs are custom properties, a styled wrapper only needs to _set var
 has to know the component's internals:
 
 ```tsx
-import styled from 'styled-components'
-import { Rating } from '@rxova/react-rating-input'
+import styled from "styled-components";
+import { Rating } from "@rxova/react-rating-input";
 
 const BrandRating = styled(Rating)`
   --rx-rating-color-filled: ${(p) => p.theme.colors.brand};
   --rx-rating-color-empty: ${(p) => p.theme.colors.subtle};
   --rx-rating-size: 1.5rem;
-`
+`;
 ```
 
 None of these add a runtime dependency to `@rxova/react-rating-input` — they are entirely your styling
@@ -670,7 +670,7 @@ inputs — because that is what it renders.
 Give it a `name` and a `defaultValue`. The chosen value is submitted under that name:
 
 ```tsx
-import { Rating } from '@rxova/react-rating-input'
+import { Rating } from "@rxova/react-rating-input";
 
 function Feedback() {
   return (
@@ -678,7 +678,7 @@ function Feedback() {
       <Rating name="score" defaultValue={0} onChange={() => {}} precision={1} label="Score" />
       <button type="submit">Submit</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -686,9 +686,9 @@ On submit, the form body includes `score=<value>`. Reading it back:
 
 ```tsx
 function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-  event.preventDefault()
-  const data = new FormData(event.currentTarget)
-  const score = Number(data.get('score')) // the selected rating
+  event.preventDefault();
+  const data = new FormData(event.currentTarget);
+  const score = Number(data.get("score")); // the selected rating
 }
 ```
 
@@ -705,18 +705,18 @@ Hold the value in React state and still submit natively — `name` works in both
 
 ```tsx
 function Feedback() {
-  const [score, setScore] = useState(0)
+  const [score, setScore] = useState(0);
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault()
-        console.log(new FormData(e.currentTarget).get('score'))
+        e.preventDefault();
+        console.log(new FormData(e.currentTarget).get("score"));
       }}
     >
       <Rating name="score" value={score} onChange={setScore} precision={1} label="Score" />
       <button type="submit">Submit</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -735,20 +735,20 @@ field with its native validation message.
 `value`, `onChange`, `onBlur`, `name`, and `ref`, which line up one-to-one with `Rating`'s props.
 
 ```tsx
-import { useForm, Controller } from 'react-hook-form'
-import { Rating } from '@rxova/react-rating-input'
+import { useForm, Controller } from "react-hook-form";
+import { Rating } from "@rxova/react-rating-input";
 
-type Values = { rating: number }
+type Values = { rating: number };
 
 function ReviewForm() {
-  const { control, handleSubmit } = useForm<Values>({ defaultValues: { rating: 0 } })
+  const { control, handleSubmit } = useForm<Values>({ defaultValues: { rating: 0 } });
 
   return (
     <form onSubmit={handleSubmit((values) => console.log(values))}>
       <Controller
         name="rating"
         control={control}
-        rules={{ min: { value: 1, message: 'Please rate before submitting' } }}
+        rules={{ min: { value: 1, message: "Please rate before submitting" } }}
         render={({ field, fieldState }) => (
           <>
             <Rating
@@ -756,7 +756,7 @@ function ReviewForm() {
               precision={0.5}
               label="Overall"
               invalid={fieldState.invalid}
-              aria-describedby={fieldState.error ? 'rating-error' : undefined}
+              aria-describedby={fieldState.error ? "rating-error" : undefined}
             />
             {fieldState.error && (
               <p id="rating-error" role="alert">
@@ -768,7 +768,7 @@ function ReviewForm() {
       />
       <button type="submit">Send review</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -789,11 +789,11 @@ Bridge Formik's `useField` helpers to `Rating`'s controlled props. `helpers.setV
 `number` that `onChange` emits directly.
 
 ```tsx
-import { Formik, Form, useField } from 'formik'
-import { Rating } from '@rxova/react-rating-input'
+import { Formik, Form, useField } from "formik";
+import { Rating } from "@rxova/react-rating-input";
 
 function RatingField({ name, label }: { name: string; label: string }) {
-  const [field, meta, helpers] = useField<number>(name)
+  const [field, meta, helpers] = useField<number>(name);
 
   return (
     <>
@@ -813,14 +813,14 @@ function RatingField({ name, label }: { name: string; label: string }) {
         </p>
       )}
     </>
-  )
+  );
 }
 
 function ReviewForm() {
   return (
     <Formik
       initialValues={{ rating: 0 }}
-      validate={(v) => (v.rating < 1 ? { rating: 'Please rate before submitting' } : {})}
+      validate={(v) => (v.rating < 1 ? { rating: "Please rate before submitting" } : {})}
       onSubmit={(values) => console.log(values)}
     >
       <Form>
@@ -828,7 +828,7 @@ function ReviewForm() {
         <button type="submit">Send review</button>
       </Form>
     </Formik>
-  )
+  );
 }
 ```
 
@@ -846,14 +846,14 @@ Use a `Field` render prop. The one thing to know: React Final Form represents an
 `''`** (an empty string), so guard the value into a number before handing it to `Rating`.
 
 ```tsx
-import { Form, Field } from 'react-final-form'
-import { Rating } from '@rxova/react-rating-input'
+import { Form, Field } from "react-final-form";
+import { Rating } from "@rxova/react-rating-input";
 
 function ReviewForm() {
   return (
     <Form
       onSubmit={(values) => console.log(values)}
-      validate={(v) => (Number(v.rating) >= 1 ? {} : { rating: 'Please rate before submitting' })}
+      validate={(v) => (Number(v.rating) >= 1 ? {} : { rating: "Please rate before submitting" })}
       render={({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
           <Field name="rating">
@@ -861,13 +861,13 @@ function ReviewForm() {
               <>
                 <Rating
                   // RFF uses '' for an empty field, which is not a number.
-                  value={typeof input.value === 'number' ? input.value : 0}
+                  value={typeof input.value === "number" ? input.value : 0}
                   onChange={input.onChange}
                   onBlur={input.onBlur}
                   precision={1}
                   label="Overall"
                   invalid={meta.touched && !!meta.error}
-                  aria-describedby={meta.touched && meta.error ? 'rating-error' : undefined}
+                  aria-describedby={meta.touched && meta.error ? "rating-error" : undefined}
                 />
                 {meta.touched && meta.error && (
                   <p id="rating-error" role="alert">
@@ -881,7 +881,7 @@ function ReviewForm() {
         </form>
       )}
     />
-  )
+  );
 }
 ```
 
@@ -900,26 +900,26 @@ Bridge a [TanStack Form](https://tanstack.com/form) field to `Rating`'s controll
 the field touched when focus leaves the whole group.
 
 ```tsx
-import { useForm } from '@tanstack/react-form'
-import { Rating } from '@rxova/react-rating-input'
+import { useForm } from "@tanstack/react-form";
+import { Rating } from "@rxova/react-rating-input";
 
 function ReviewForm() {
   const form = useForm({
     defaultValues: { rating: 0 },
     onSubmit: ({ value }) => console.log(value),
-  })
+  });
 
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault()
-        void form.handleSubmit()
+        e.preventDefault();
+        void form.handleSubmit();
       }}
     >
       <form.Field
         name="rating"
         validators={{
-          onChange: ({ value }) => (value < 1 ? 'Please rate before submitting' : undefined),
+          onChange: ({ value }) => (value < 1 ? "Please rate before submitting" : undefined),
         }}
       >
         {(field) => (
@@ -932,11 +932,11 @@ function ReviewForm() {
               precision={0.5}
               label="Overall"
               invalid={!field.state.meta.isValid}
-              aria-describedby={field.state.meta.isValid ? undefined : 'rating-error'}
+              aria-describedby={field.state.meta.isValid ? undefined : "rating-error"}
             />
             {!field.state.meta.isValid && (
               <p id="rating-error" role="alert">
-                {field.state.meta.errors.join(', ')}
+                {field.state.meta.errors.join(", ")}
               </p>
             )}
           </>
@@ -944,7 +944,7 @@ function ReviewForm() {
       </form.Field>
       <button type="submit">Send review</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -964,4 +964,4 @@ function ReviewForm() {
 The Rxova component remains the radiogroup; the design system supplies field layout and validation
 presentation without replacing native radio semantics.
 
-<CodeRecipes idPrefix="integration" recipes={recipesFor('rating')} />
+<CodeRecipes idPrefix="integration" recipes={recipesFor("rating")} />

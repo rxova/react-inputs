@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { DateField } from '@/components/rxova/date-field'
+import { DateField } from "@/components/rxova/date-field";
 
 export function ShadcnDate() {
   return (
@@ -10,5 +10,5 @@ export function ShadcnDate() {
       name="startDate"
       locale="en-US"
     />
-  )
+  );
 }

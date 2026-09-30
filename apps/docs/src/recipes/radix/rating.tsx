@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Box, Text } from '@radix-ui/themes'
-import { Rating } from '@rxova/react-rating-input'
+import { useState } from "react";
+import { Box, Text } from "@radix-ui/themes";
+import { Rating } from "@rxova/react-rating-input";
 
 export function RadixRating() {
-  const [value, setValue] = useState(4)
+  const [value, setValue] = useState(4);
 
   return (
     <Box>
@@ -17,5 +17,5 @@ export function RadixRating() {
         Choose a score from one to five.
       </Text>
     </Box>
-  )
+  );
 }

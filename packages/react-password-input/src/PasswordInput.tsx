@@ -1,8 +1,8 @@
-import { forwardRef } from 'react'
-import type { CSSProperties, ReactNode } from 'react'
-import { usePasswordInput } from './usePasswordInput'
-import { STRENGTH_LABELS } from './strength'
-import type { PasswordInputProps, PasswordRevealState } from './types'
+import { forwardRef } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { usePasswordInput } from "./usePasswordInput";
+import { STRENGTH_LABELS } from "./strength";
+import type { PasswordInputProps, PasswordRevealState } from "./types";
 
 /**
  * Two paths in one 24x24 box: an eye, and an eye with a slash across it. Inline
@@ -13,64 +13,64 @@ const EYE = (
   <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true">
     <path d="M12 5c-5 0-9 4.5-10 7 1 2.5 5 7 10 7s9-4.5 10-7c-1-2.5-5-7-10-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-2.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z" />
   </svg>
-)
+);
 
 const EYE_OFF = (
   <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true">
     <path d="M12 5c-5 0-9 4.5-10 7 .6 1.4 2.2 3.6 4.6 5.2l-2 2L6 20.6 20.6 6 19.2 4.6l-2.4 2.4A10.6 10.6 0 0 0 12 5zm0 12c-1 0-2-.2-2.9-.5l1.6-1.6a2.5 2.5 0 0 0 3.2-3.2l2-2A5 5 0 0 1 12 17zm9.9-5.1C21 9.7 19.6 8 17.9 6.7l-1.5 1.5c1.8 1.2 3.1 2.8 3.7 3.8-.9 1.7-3.6 5-8.1 5-.5 0-1 0-1.4-.1l-1.7 1.7c1 .3 2 .4 3.1.4 5 0 9-4.5 10-7z" />
   </svg>
-)
+);
 
 // Only layout-critical declarations are inlined. Everything visual is a CSS
 // custom property or a `data-*` hook, so there is no stylesheet to import.
 const rootStyle: CSSProperties = {
-  display: 'inline-flex',
-  flexDirection: 'column',
-  gap: 'var(--rx-password-gap, 0.375rem)',
-}
+  display: "inline-flex",
+  flexDirection: "column",
+  gap: "var(--rx-password-gap, 0.375rem)",
+};
 
 const fieldStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 'var(--rx-password-field-gap, 0.25rem)',
-}
+  display: "flex",
+  alignItems: "center",
+  gap: "var(--rx-password-field-gap, 0.25rem)",
+};
 
 const inputStyle: CSSProperties = {
   // The reveal button sits beside the input rather than floating over it, so
   // the text can never run underneath the icon at any font size or zoom level.
-  flex: '1 1 auto',
+  flex: "1 1 auto",
   minWidth: 0,
-  font: 'inherit',
-}
+  font: "inherit",
+};
 
 const toggleStyle: CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
   flexShrink: 0,
   // 24px of hit area at the default font size. Below this the button fails
   // WCAG 2.5.8 Target Size (Minimum) on touch.
-  minWidth: 'var(--rx-password-toggle-size, 1.75rem)',
-  minHeight: 'var(--rx-password-toggle-size, 1.75rem)',
+  minWidth: "var(--rx-password-toggle-size, 1.75rem)",
+  minHeight: "var(--rx-password-toggle-size, 1.75rem)",
   padding: 0,
-  font: 'inherit',
+  font: "inherit",
   lineHeight: 1,
-  background: 'none',
+  background: "none",
   border: 0,
-  color: 'inherit',
-  cursor: 'pointer',
-}
+  color: "inherit",
+  cursor: "pointer",
+};
 
 const trackStyle: CSSProperties = {
-  display: 'flex',
-  gap: 'var(--rx-password-meter-gap, 0.125rem)',
-  height: 'var(--rx-password-meter-height, 0.25rem)',
-}
+  display: "flex",
+  gap: "var(--rx-password-meter-gap, 0.125rem)",
+  height: "var(--rx-password-meter-height, 0.25rem)",
+};
 
 const listStyle: CSSProperties = {
   margin: 0,
-  paddingInlineStart: 'var(--rx-password-rules-indent, 1.25rem)',
-}
+  paddingInlineStart: "var(--rx-password-rules-indent, 1.25rem)",
+};
 
 /**
  * Off-screen but still in the accessibility tree. `display: none` and
@@ -78,22 +78,22 @@ const listStyle: CSSProperties = {
  * thing this element exists to stay in.
  */
 const visuallyHidden: CSSProperties = {
-  position: 'absolute',
+  position: "absolute",
   width: 1,
   height: 1,
   padding: 0,
   margin: -1,
-  overflow: 'hidden',
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  whiteSpace: 'nowrap',
+  overflow: "hidden",
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  whiteSpace: "nowrap",
   border: 0,
-}
+};
 
-const SEGMENTS = 4
+const SEGMENTS = 4;
 
 function render<T>(node: ReactNode | ((state: T) => ReactNode), state: T): ReactNode {
-  return typeof node === 'function' ? node(state) : node
+  return typeof node === "function" ? node(state) : node;
 }
 
 /**
@@ -120,24 +120,24 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
       strengthLabel,
       rules: rulesProp,
       showRules = rulesProp !== undefined,
-      capsLockLabel = 'Caps Lock is on',
-      compromisedLabel = 'This password has appeared in a data breach. Choose a different one.',
+      capsLockLabel = "Caps Lock is on",
+      compromisedLabel = "This password has appeared in a data breach. Choose a different one.",
       name,
       required,
       disabled = false,
       readOnly = false,
-      autoComplete = 'current-password',
+      autoComplete = "current-password",
       placeholder,
       invalid,
       label,
       className,
       style,
       autoFocus,
-      'aria-label': ariaLabel,
-      'aria-describedby': describedBy,
-    } = props
+      "aria-label": ariaLabel,
+      "aria-describedby": describedBy,
+    } = props;
 
-    const field = usePasswordInput(props)
+    const field = usePasswordInput(props);
     const {
       value,
       revealed,
@@ -158,14 +158,14 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
       handleModifierEvent,
       handleBlur,
       handleFocus,
-    } = field
+    } = field;
 
-    const revealState: PasswordRevealState = { revealed, disabled }
+    const revealState: PasswordRevealState = { revealed, disabled };
     const toggleName =
-      (typeof revealLabel === 'function' ? revealLabel(revealState) : revealLabel) ??
-      (revealed ? 'Hide password' : 'Show password')
+      (typeof revealLabel === "function" ? revealLabel(revealState) : revealLabel) ??
+      (revealed ? "Hide password" : "Show password");
 
-    const caption = strengthLabel ? strengthLabel(strength) : STRENGTH_LABELS[strength.score]
+    const caption = strengthLabel ? strengthLabel(strength) : STRENGTH_LABELS[strength.score];
 
     // Only the ids that actually render — a dangling aria-describedby is a
     // WCAG failure, and axe reports it as one.
@@ -175,20 +175,20 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
       showRules ? ids.rules : undefined,
     ]
       .filter(Boolean)
-      .join(' ')
+      .join(" ");
 
-    const metCount = rules.filter((rule) => rule.met).length
+    const metCount = rules.filter((rule) => rule.met).length;
 
     return (
       <div
         className={className}
         style={{ ...rootStyle, ...style }}
         data-rx-password-root=""
-        data-revealed={revealed ? '' : undefined}
-        data-disabled={disabled ? '' : undefined}
-        data-readonly={readOnly ? '' : undefined}
-        data-invalid={invalid ? '' : undefined}
-        data-valid={valid ? '' : undefined}
+        data-revealed={revealed ? "" : undefined}
+        data-disabled={disabled ? "" : undefined}
+        data-readonly={readOnly ? "" : undefined}
+        data-invalid={invalid ? "" : undefined}
+        data-valid={valid ? "" : undefined}
         data-score={showStrength ? strength.score : undefined}
         onFocus={handleFocus}
         onBlur={handleBlur}
@@ -200,8 +200,8 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
           cannot compose against. A node goes into a hidden span the input
           points at, because `aria-label` only takes a string.
         */}
-        {label !== undefined && typeof label !== 'string' ? (
-          <span id={ids.label} style={{ display: 'none' }}>
+        {label !== undefined && typeof label !== "string" ? (
+          <span id={ids.label} style={{ display: "none" }}>
             {label}
           </span>
         ) : null}
@@ -209,9 +209,9 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
         <div style={fieldStyle} data-rx-password-field="">
           <input
             ref={(node) => {
-              inputRef.current = node
-              if (typeof ref === 'function') ref(node)
-              else if (ref) ref.current = node
+              inputRef.current = node;
+              if (typeof ref === "function") ref(node);
+              else if (ref) ref.current = node;
             }}
             id={ids.input}
             data-rx-password-input=""
@@ -237,16 +237,16 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
             autoCorrect="off"
             spellCheck={false}
             aria-invalid={invalid ? true : undefined}
-            aria-label={ariaLabel ?? (typeof label === 'string' ? label : undefined)}
+            aria-label={ariaLabel ?? (typeof label === "string" ? label : undefined)}
             aria-labelledby={
-              ariaLabel === undefined && label !== undefined && typeof label !== 'string'
+              ariaLabel === undefined && label !== undefined && typeof label !== "string"
                 ? ids.label
                 : undefined
             }
-            aria-describedby={describedByIds === '' ? undefined : describedByIds}
+            aria-describedby={describedByIds === "" ? undefined : describedByIds}
             style={inputStyle}
             onChange={(event) => {
-              setValue(event.target.value)
+              setValue(event.target.value);
             }}
             onKeyDown={handleModifierEvent}
             onKeyUp={handleModifierEvent}
@@ -285,8 +285,8 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
               // of an unfocused field. Mouse only — Tab still focuses the
               // button normally, so keyboard users lose nothing.
               onMouseDown={(event) => {
-                captureSelection()
-                event.preventDefault()
+                captureSelection();
+                event.preventDefault();
               }}
               onClick={toggleReveal}
             >
@@ -316,7 +316,7 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
               aria-valuenow={strength.score}
               // The number alone reads as "2" with no unit. valuetext is what
               // makes it "Fair" — which is the only part a user can act on.
-              aria-valuetext={typeof caption === 'string' ? caption : undefined}
+              aria-valuetext={typeof caption === "string" ? caption : undefined}
               aria-label="Password strength"
               data-rx-password-meter=""
               style={trackStyle}
@@ -326,14 +326,14 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
                   key={index}
                   aria-hidden="true"
                   data-rx-password-segment={index}
-                  data-filled={index < strength.score ? '' : undefined}
+                  data-filled={index < strength.score ? "" : undefined}
                   style={{
                     flex: 1,
                     background:
                       index < strength.score
                         ? `var(--rx-password-meter-fill-${String(strength.score)}, var(--rx-password-meter-fill, currentColor))`
-                        : 'var(--rx-password-meter-track, rgba(0 0 0 / 0.15))',
-                    borderRadius: 'var(--rx-password-meter-radius, 999px)',
+                        : "var(--rx-password-meter-track, rgba(0 0 0 / 0.15))",
+                    borderRadius: "var(--rx-password-meter-radius, 999px)",
                   }}
                 />
               ))}
@@ -347,17 +347,17 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
         {showRules ? (
           <ul id={ids.rules} data-rx-password-rules="" style={listStyle}>
             {rules.map((rule) => (
-              <li key={rule.id} data-rule={rule.id} data-met={rule.met ? '' : undefined}>
+              <li key={rule.id} data-rule={rule.id} data-met={rule.met ? "" : undefined}>
                 {/*
                   The met/unmet state is carried in the text, not only in colour
                   or an icon — WCAG 1.4.1 (Use of Colour). The marker itself is
                   aria-hidden so it is not read as "check mark" before the label.
                 */}
                 <span aria-hidden="true" data-rx-password-rule-marker="">
-                  {rule.met ? '✓ ' : '· '}
+                  {rule.met ? "✓ " : "· "}
                 </span>
                 {rule.label}
-                <span style={visuallyHidden}>{rule.met ? ' — met' : ' — not met'}</span>
+                <span style={visuallyHidden}>{rule.met ? " — met" : " — not met"}</span>
               </li>
             ))}
           </ul>
@@ -384,11 +384,11 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
           whole reason the caption is bucketed rather than a percentage.
         */}
         <span aria-live="polite" data-rx-password-announcement="" style={visuallyHidden}>
-          {showStrength && typeof caption === 'string' ? caption : ''}
-          {showRules ? ` ${String(metCount)} of ${String(rules.length)} requirements met.` : ''}
-          {checking ? ' Checking password.' : ''}
+          {showStrength && typeof caption === "string" ? caption : ""}
+          {showRules ? ` ${String(metCount)} of ${String(rules.length)} requirements met.` : ""}
+          {checking ? " Checking password." : ""}
         </span>
       </div>
-    )
+    );
   },
-)
+);

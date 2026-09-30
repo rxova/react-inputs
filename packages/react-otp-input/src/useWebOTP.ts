@@ -1,27 +1,27 @@
-import { useEffect } from 'react'
+import { useEffect } from "react";
 
 /**
  * The WebOTP shape isn't in the DOM lib types yet, so declare the sliver we
  * touch. `OTPCredential` extends `Credential` with the delivered `code`.
  */
 interface OTPCredential extends Credential {
-  readonly code: string
+  readonly code: string;
 }
 interface OTPCredentialRequestOptions extends CredentialRequestOptions {
-  otp: { transport: string[] }
+  otp: { transport: string[] };
 }
 
 export interface UseWebOTPOptions {
   /** When false (the default path for an unset prop), the hook is inert. */
-  enabled?: boolean
+  enabled?: boolean;
   /** Called with the received code, already the raw digits from the SMS. */
-  onReceive: (code: string) => void
+  onReceive: (code: string) => void;
   /** Optional external signal; the request also aborts on unmount. */
-  signal?: AbortSignal
+  signal?: AbortSignal;
 }
 
 interface OTPCredentialsContainer {
-  get(options: OTPCredentialRequestOptions): Promise<OTPCredential | null>
+  get(options: OTPCredentialRequestOptions): Promise<OTPCredential | null>;
 }
 
 /**
@@ -32,12 +32,12 @@ interface OTPCredentialsContainer {
  */
 export function getOTPCredentials(): OTPCredentialsContainer | null {
   /* v8 ignore next -- SSR guard; the getter is only called from a client effect */
-  if (typeof window === 'undefined' || !('OTPCredential' in window)) return null
+  if (typeof window === "undefined" || !("OTPCredential" in window)) return null;
   const credentials = navigator.credentials as
-    (CredentialsContainer & OTPCredentialsContainer) | undefined
+    (CredentialsContainer & OTPCredentialsContainer) | undefined;
   /* v8 ignore next -- credentials.get is always present alongside OTPCredential */
-  if (!credentials || typeof credentials.get !== 'function') return null
-  return credentials
+  if (!credentials || typeof credentials.get !== "function") return null;
+  return credentials;
 }
 
 /**
@@ -52,33 +52,33 @@ export function getOTPCredentials(): OTPCredentialsContainer | null {
  */
 export function useWebOTP({ enabled, onReceive, signal }: UseWebOTPOptions): void {
   useEffect(() => {
-    if (!enabled) return
-    const credentials = getOTPCredentials()
-    if (!credentials) return
+    if (!enabled) return;
+    const credentials = getOTPCredentials();
+    if (!credentials) return;
 
-    const controller = new AbortController()
+    const controller = new AbortController();
     // Fold an external abort into ours so a caller can cancel too.
     const onExternalAbort = () => {
-      controller.abort()
-    }
+      controller.abort();
+    };
     if (signal) {
-      if (signal.aborted) return
-      signal.addEventListener('abort', onExternalAbort)
+      if (signal.aborted) return;
+      signal.addEventListener("abort", onExternalAbort);
     }
 
     credentials
-      .get({ otp: { transport: ['sms'] }, signal: controller.signal })
+      .get({ otp: { transport: ["sms"] }, signal: controller.signal })
       .then((credential) => {
-        if (credential?.code) onReceive(credential.code)
+        if (credential?.code) onReceive(credential.code);
       })
       .catch(() => {
         // AbortError on unmount, or the user dismissing the SMS prompt. Neither
         // is exceptional for progressive enhancement — swallow and stay quiet.
-      })
+      });
 
     return () => {
-      controller.abort()
-      if (signal) signal.removeEventListener('abort', onExternalAbort)
-    }
-  }, [enabled, onReceive, signal])
+      controller.abort();
+      if (signal) signal.removeEventListener("abort", onExternalAbort);
+    };
+  }, [enabled, onReceive, signal]);
 }

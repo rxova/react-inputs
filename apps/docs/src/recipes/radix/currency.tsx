@@ -1,17 +1,17 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Text, TextField } from '@radix-ui/themes'
-import { useCurrencyInput } from '@rxova/react-intl-currency-input'
+import { useState } from "react";
+import { Text, TextField } from "@radix-ui/themes";
+import { useCurrencyInput } from "@rxova/react-intl-currency-input";
 
 export function RadixCurrency() {
-  const [value, setValue] = useState<number | null>(null)
+  const [value, setValue] = useState<number | null>(null);
   const { inputProps, ref } = useCurrencyInput({
-    locale: 'en-US',
-    currency: 'USD',
+    locale: "en-US",
+    currency: "USD",
     value,
     onChange: setValue,
-  })
+  });
 
   return (
     <label>
@@ -20,5 +20,5 @@ export function RadixCurrency() {
       </Text>
       <TextField.Root {...inputProps} ref={ref} name="price" />
     </label>
-  )
+  );
 }

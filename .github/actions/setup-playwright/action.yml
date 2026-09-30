@@ -9,7 +9,7 @@ inputs:
       contributors and CI install the same thing. Jobs that only drive Vitest
       browser mode should pass "chromium".
     required: false
-    default: ''
+    default: ""
 
 runs:
   using: composite

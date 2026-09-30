@@ -254,9 +254,6 @@ importers:
       prettier:
         specifier: ^3.9.8
         version: 3.9.8
-      prettier-plugin-astro:
-        specifier: ^1.0.1
-        version: 1.0.1(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.3)(prettier@3.9.8)
       sherif:
         specifier: ^1.13.0
         version: 1.13.0
@@ -18333,6 +18330,7 @@ snapshots:
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
+    optional: true
 
   prettier-plugin-astro@1.1.0(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.3)(prettier@3.9.8):
     dependencies:

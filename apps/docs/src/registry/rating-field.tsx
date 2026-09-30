@@ -1,29 +1,29 @@
-'use client'
+"use client";
 
-import { useId } from 'react'
-import { Rating, type RatingProps } from '@rxova/react-rating-input'
+import { useId } from "react";
+import { Rating, type RatingProps } from "@rxova/react-rating-input";
 
-import './rating-field.css'
+import "./rating-field.css";
 
 export interface RatingFieldProps extends Omit<
   RatingProps,
-  'label' | 'aria-describedby' | 'invalid'
+  "label" | "aria-describedby" | "invalid"
 > {
-  label: string
-  description?: string
-  error?: string
+  label: string;
+  description?: string;
+  error?: string;
 }
 
 /** A labelled rating field copied into the consumer by the Rxova registry. */
 export function RatingField({ label, description, error, id, ...props }: RatingFieldProps) {
-  const generated = useId()
-  const fieldId = id ?? generated
+  const generated = useId();
+  const fieldId = id ?? generated;
   const describedBy = [description && `${fieldId}-description`, error && `${fieldId}-error`]
     .filter(Boolean)
-    .join(' ')
+    .join(" ");
 
   return (
-    <div className="rx-field" data-invalid={error ? '' : undefined}>
+    <div className="rx-field" data-invalid={error ? "" : undefined}>
       <span className="rx-field__label">{label}</span>
       <Rating
         {...props}
@@ -43,5 +43,5 @@ export function RatingField({ label, description, error, id, ...props }: RatingF
         </p>
       ) : null}
     </div>
-  )
+  );
 }

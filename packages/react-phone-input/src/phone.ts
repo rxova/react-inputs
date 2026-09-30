@@ -3,8 +3,8 @@ import {
   MIN_NATIONAL_DIGITS,
   countryByISO2,
   countryForDial,
-} from './countries'
-import type { Country } from './countries'
+} from "./countries";
+import type { Country } from "./countries";
 
 /**
  * Parsing, formatting and possibility checks.
@@ -24,31 +24,31 @@ import type { Country } from './countries'
 /** The result of interpreting whatever is in the field. */
 export interface ParsedPhone {
   /** The country the number resolves to, if one can be determined. */
-  country: Country | undefined
+  country: Country | undefined;
   /** National significant digits — no calling code, no trunk prefix. */
-  national: string
+  national: string;
   /** `+` followed by calling code and national digits, or `''` when incomplete. */
-  e164: string
+  e164: string;
   /** The national part is a length this country actually uses. */
-  possible: boolean
+  possible: boolean;
 }
 
 /** Keep only the digits. Handles Arabic-Indic and full-width numerals too. */
 export function digitsOnly(input: string): string {
-  let out = ''
+  let out = "";
   for (const char of input) {
     // `?? 0` is unreachable: `char` comes from iterating a string, so it is
     // never empty. Excluded rather than "covered" by a test that cannot exist.
     /* v8 ignore next */
-    const code = char.codePointAt(0) ?? 0
+    const code = char.codePointAt(0) ?? 0;
     // ASCII 0-9.
-    if (code >= 48 && code <= 57) out += char
+    if (code >= 48 && code <= 57) out += char;
     // Arabic-Indic 0660-0669, Extended Arabic-Indic 06F0-06F9, full-width FF10-FF19.
-    else if (code >= 0x0660 && code <= 0x0669) out += String(code - 0x0660)
-    else if (code >= 0x06f0 && code <= 0x06f9) out += String(code - 0x06f0)
-    else if (code >= 0xff10 && code <= 0xff19) out += String(code - 0xff10)
+    else if (code >= 0x0660 && code <= 0x0669) out += String(code - 0x0660);
+    else if (code >= 0x06f0 && code <= 0x06f9) out += String(code - 0x06f0);
+    else if (code >= 0xff10 && code <= 0xff19) out += String(code - 0xff10);
   }
-  return out
+  return out;
 }
 
 /**
@@ -60,35 +60,35 @@ export function digitsOnly(input: string): string {
  * `+39 06 …` is correct. Encoding the exception is smaller and more honest than
  * pretending the rule is universal.
  */
-const KEEPS_LEADING_ZERO = new Set(['IT'])
+const KEEPS_LEADING_ZERO = new Set(["IT"]);
 
 /** Drop a national trunk prefix, if this country uses one. */
 export function stripTrunkPrefix(country: Country | undefined, digits: string): string {
-  if (country === undefined) return digits
-  if (KEEPS_LEADING_ZERO.has(country.iso2)) return digits
+  if (country === undefined) return digits;
+  if (KEEPS_LEADING_ZERO.has(country.iso2)) return digits;
   // Only one zero, and only at the front: `00` is an international prefix and
   // is handled before this is ever reached.
-  return digits.startsWith('0') ? digits.slice(1) : digits
+  return digits.startsWith("0") ? digits.slice(1) : digits;
 }
 
 /** Accepted national-number lengths for a country, or the generic E.164 bounds. */
 export function lengthsFor(country: Country | undefined): { min: number; max: number } {
   if (country === undefined || country.lengths.length === 0) {
-    return { min: MIN_NATIONAL_DIGITS, max: MAX_NATIONAL_DIGITS }
+    return { min: MIN_NATIONAL_DIGITS, max: MAX_NATIONAL_DIGITS };
   }
-  return { min: Math.min(...country.lengths), max: Math.max(...country.lengths) }
+  return { min: Math.min(...country.lengths), max: Math.max(...country.lengths) };
 }
 
 /** The national part is a length this country actually uses. */
 export function isPossible(country: Country | undefined, national: string): boolean {
-  if (national === '') return false
+  if (national === "") return false;
   if (country === undefined) {
-    return national.length >= MIN_NATIONAL_DIGITS && national.length <= MAX_NATIONAL_DIGITS
+    return national.length >= MIN_NATIONAL_DIGITS && national.length <= MAX_NATIONAL_DIGITS;
   }
   if (country.lengths.length === 0) {
-    return national.length >= MIN_NATIONAL_DIGITS && national.length <= MAX_NATIONAL_DIGITS
+    return national.length >= MIN_NATIONAL_DIGITS && national.length <= MAX_NATIONAL_DIGITS;
   }
-  return country.lengths.includes(national.length)
+  return country.lengths.includes(national.length);
 }
 
 /**
@@ -102,48 +102,48 @@ export function isPossible(country: Country | undefined, national: string): bool
  * - `020 7123 4567` — national, interpreted against `defaultCountry`
  */
 export function parsePhone(input: string, defaultCountry?: string): ParsedPhone {
-  const trimmed = input.trim()
-  const digits = digitsOnly(trimmed)
-  const selected = defaultCountry === undefined ? undefined : countryByISO2(defaultCountry)
+  const trimmed = input.trim();
+  const digits = digitsOnly(trimmed);
+  const selected = defaultCountry === undefined ? undefined : countryByISO2(defaultCountry);
 
   // `00` is the international prefix across most of the world; `011` is the
   // NANP's. Both mean "what follows is a calling code", exactly like `+`.
   const international =
-    trimmed.startsWith('+') ||
-    digits.startsWith('00') ||
-    (selected?.dial === '1' && digits.startsWith('011'))
+    trimmed.startsWith("+") ||
+    digits.startsWith("00") ||
+    (selected?.dial === "1" && digits.startsWith("011"));
 
   if (international) {
-    const rest = trimmed.startsWith('+')
+    const rest = trimmed.startsWith("+")
       ? digits
-      : digits.startsWith('00')
+      : digits.startsWith("00")
         ? digits.slice(2)
-        : digits.slice(3)
-    const country = countryForDial(rest)
-    const national = country === undefined ? rest : rest.slice(country.dial.length)
+        : digits.slice(3);
+    const country = countryForDial(rest);
+    const national = country === undefined ? rest : rest.slice(country.dial.length);
     return {
       country,
       national,
-      e164: country === undefined || national === '' ? '' : `+${country.dial}${national}`,
+      e164: country === undefined || national === "" ? "" : `+${country.dial}${national}`,
       // An explicit `+` whose calling code matches nothing is not "possible" at
       // any length. Falling through to the generic 4–15 bounds here would
       // report `+99 12345` as fine, which is the one case where the international
       // prefix tells us for certain that it is not.
       possible: country === undefined ? false : isPossible(country, national),
-    }
+    };
   }
 
-  const national = stripTrunkPrefix(selected, digits)
+  const national = stripTrunkPrefix(selected, digits);
   return {
     country: selected,
     national,
-    e164: selected === undefined || national === '' ? '' : `+${selected.dial}${national}`,
+    e164: selected === undefined || national === "" ? "" : `+${selected.dial}${national}`,
     possible: isPossible(selected, national),
-  }
+  };
 }
 
 /** Fallback grouping when the table has no convention for a country. */
-const GENERIC_GROUP = 3
+const GENERIC_GROUP = 3;
 
 /**
  * Group national digits for display.
@@ -153,21 +153,21 @@ const GENERIC_GROUP = 3
  * reads as digits instead of a wall.
  */
 export function formatNational(national: string, groups: number[]): string {
-  if (national === '') return ''
-  const parts: string[] = []
-  let index = 0
+  if (national === "") return "";
+  const parts: string[] = [];
+  let index = 0;
 
   for (const size of groups) {
-    if (index >= national.length) break
-    parts.push(national.slice(index, index + size))
-    index += size
+    if (index >= national.length) break;
+    parts.push(national.slice(index, index + size));
+    index += size;
   }
   while (index < national.length) {
-    parts.push(national.slice(index, index + GENERIC_GROUP))
-    index += GENERIC_GROUP
+    parts.push(national.slice(index, index + GENERIC_GROUP));
+    index += GENERIC_GROUP;
   }
 
-  return parts.join(' ')
+  return parts.join(" ");
 }
 
 /**
@@ -179,17 +179,17 @@ export function formatNational(national: string, groups: number[]): string {
  * both redundant and editable in two places at once.
  */
 export function formatPhone(parsed: ParsedPhone, international: boolean): string {
-  const national = formatNational(parsed.national, parsed.country?.groups ?? [])
-  if (!international) return national
+  const national = formatNational(parsed.national, parsed.country?.groups ?? []);
+  if (!international) return national;
   if (parsed.country === undefined) {
     // A bare `+` formats as `+`, not as nothing. This is the first keystroke of
     // every international number: returning `''` here erased the plus the
     // instant it was typed, so the digits that followed were read as a national
     // number and the country could never change. Character-by-character entry
     // is the only way to see it — filling the whole string at once hides it.
-    return `+${parsed.national}`
+    return `+${parsed.national}`;
   }
-  return national === '' ? `+${parsed.country.dial}` : `+${parsed.country.dial} ${national}`
+  return national === "" ? `+${parsed.country.dial}` : `+${parsed.country.dial} ${national}`;
 }
 
 /**
@@ -201,22 +201,22 @@ export function formatPhone(parsed: ParsedPhone, international: boolean): string
  * caret, then walk the formatted string until that many have been passed.
  */
 export function caretForDigitIndex(formatted: string, digitsBefore: number): number {
-  if (digitsBefore <= 0) return formatted.startsWith('+') ? 1 : 0
-  let seen = 0
+  if (digitsBefore <= 0) return formatted.startsWith("+") ? 1 : 0;
+  let seen = 0;
   for (let index = 0; index < formatted.length; index++) {
     // `?? ''` is unreachable: `index` is bounded by the string's own length.
     /* v8 ignore next */
-    if (/\d/.test(formatted[index] ?? '')) {
-      seen++
-      if (seen === digitsBefore) return index + 1
+    if (/\d/.test(formatted[index] ?? "")) {
+      seen++;
+      if (seen === digitsBefore) return index + 1;
     }
   }
-  return formatted.length
+  return formatted.length;
 }
 
 /** How many digits sit before `caret` in `text`. */
 export function digitsBeforeCaret(text: string, caret: number): number {
-  return digitsOnly(text.slice(0, caret)).length
+  return digitsOnly(text.slice(0, caret)).length;
 }
 
 /**
@@ -240,9 +240,9 @@ export function deleteDigit(
   for (let at = step < 0 ? caret - 1 : caret; at >= 0 && at < text.length; at += step) {
     // `?? ''` is unreachable: `at` is bounded by the string's own length.
     /* v8 ignore next */
-    if (/\d/.test(text[at] ?? '')) {
-      return { text: text.slice(0, at) + text.slice(at + 1), caret: step < 0 ? at : caret }
+    if (/\d/.test(text[at] ?? "")) {
+      return { text: text.slice(0, at) + text.slice(at + 1), caret: step < 0 ? at : caret };
     }
   }
-  return { text, caret }
+  return { text, caret };
 }

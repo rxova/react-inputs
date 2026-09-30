@@ -20,25 +20,25 @@
  * moment the site is mounted under /packages/use-everywhere/.
  */
 
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from 'node:fs'
-import { join, dirname, relative } from 'node:path'
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from "node:fs";
+import { join, dirname, relative } from "node:path";
 
-const SRC = 'docs'
-const DEST = 'src/content/docs'
+const SRC = "docs";
+const DEST = "src/content/docs";
 
 /** Docusaurus aside type -> Starlight equivalent. */
-const ASIDES = { info: 'note', warning: 'caution' }
+const ASIDES = { info: "note", warning: "caution" };
 
 /**
  * Inline styles in the live examples referenced Docusaurus's theme variables,
  * which do not exist here. Mapped onto the brand tokens.
  */
 const IFM_VARS = {
-  '--ifm-color-primary': '--rx-primary',
-  '--ifm-color-emphasis-300': '--rx-rule',
-  '--ifm-color-emphasis-400': '--rx-rule-strong',
-  '--ifm-color-emphasis-700': '--rx-muted',
-}
+  "--ifm-color-primary": "--rx-primary",
+  "--ifm-color-emphasis-300": "--rx-rule",
+  "--ifm-color-emphasis-400": "--rx-rule-strong",
+  "--ifm-color-emphasis-700": "--rx-muted",
+};
 
 /**
  * docs/api/** is TypeDoc output and is deliberately NOT migrated: it is
@@ -47,55 +47,55 @@ const IFM_VARS = {
  * markdown containing bare generics (`Promise<void>`, `Map<string, T>`) that
  * Astro parses as HTML tags.
  */
-const SKIP = ['api']
+const SKIP = ["api"];
 
 function walk(dir, out = []) {
   for (const entry of readdirSync(dir)) {
-    if (SKIP.includes(entry)) continue
-    const full = join(dir, entry)
-    if (statSync(full).isDirectory()) walk(full, out)
-    else if (entry.endsWith('.md') || entry.endsWith('.mdx')) out.push(full)
+    if (SKIP.includes(entry)) continue;
+    const full = join(dir, entry);
+    if (statSync(full).isDirectory()) walk(full, out);
+    else if (entry.endsWith(".md") || entry.endsWith(".mdx")) out.push(full);
   }
-  return out
+  return out;
 }
 
 function parseFrontmatter(text) {
-  const match = /^---\n([\s\S]*?)\n---\n?/.exec(text)
-  if (!match) return { data: {}, body: text }
-  const data = {}
-  for (const line of match[1].split('\n')) {
-    const kv = /^([A-Za-z_][\w-]*):\s*(.*)$/.exec(line.trim())
-    if (kv) data[kv[1]] = kv[2].trim()
+  const match = /^---\n([\s\S]*?)\n---\n?/.exec(text);
+  if (!match) return { data: {}, body: text };
+  const data = {};
+  for (const line of match[1].split("\n")) {
+    const kv = /^([A-Za-z_][\w-]*):\s*(.*)$/.exec(line.trim());
+    if (kv) data[kv[1]] = kv[2].trim();
   }
-  return { data, body: text.slice(match[0].length) }
+  return { data, body: text.slice(match[0].length) };
 }
 
 /** Escape a title for a double-quoted YAML scalar. */
-const yamlString = (s) => `"${s.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`
+const yamlString = (s) => `"${s.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
 
-let lifted = 0
-let asidesMapped = 0
-let asideTitles = 0
-let varsMapped = 0
-let promotedToMdx = 0
+let lifted = 0;
+let asidesMapped = 0;
+let asideTitles = 0;
+let varsMapped = 0;
+let promotedToMdx = 0;
 
 for (const file of walk(SRC)) {
-  const raw = readFileSync(file, 'utf8')
-  const { data, body: originalBody } = parseFrontmatter(raw)
-  let body = originalBody
+  const raw = readFileSync(file, "utf8");
+  const { data, body: originalBody } = parseFrontmatter(raw);
+  let body = originalBody;
 
   // 1. Lift the first H1 into `title` and drop it from the body.
-  let title = data.title
-  const h1 = /^#\s+(.+?)\s*$/m.exec(body)
+  let title = data.title;
+  const h1 = /^#\s+(.+?)\s*$/m.exec(body);
   if (!title && h1) {
-    title = h1[1]
-    lifted++
+    title = h1[1];
+    lifted++;
   }
   // Whether the title was lifted here or already sat in frontmatter, the H1 has
   // to go: Starlight renders the title itself, so leaving it in the body puts
   // two copies of the same heading on the page.
-  if (h1) body = body.replace(h1[0], '').replace(/^\n+/, '')
-  if (!title) throw new Error(`${file}: no title and no H1 to lift`)
+  if (h1) body = body.replace(h1[0], "").replace(/^\n+/, "");
+  if (!title) throw new Error(`${file}: no title and no H1 to lift`);
 
   // 2. Map the asides Starlight does not have, and convert titled asides.
   //
@@ -105,17 +105,17 @@ for (const file of walk(SRC)) {
   // directive, and the whole block collapses into a paragraph of literal
   // `:::tip ... :::` text on the page.
   body = body.replace(/^:::(\w+)([ \t]+(?!\[)(.+?))?[ \t]*$/gm, (whole, kind, _sp, rawTitle) => {
-    const mapped = ASIDES[kind] ?? kind
-    if (!ASIDES[kind] && !rawTitle) return whole
-    if (ASIDES[kind]) asidesMapped++
-    if (rawTitle) asideTitles++
-    return rawTitle ? `:::${mapped}[${rawTitle}]` : `:::${mapped}`
-  })
+    const mapped = ASIDES[kind] ?? kind;
+    if (!ASIDES[kind] && !rawTitle) return whole;
+    if (ASIDES[kind]) asidesMapped++;
+    if (rawTitle) asideTitles++;
+    return rawTitle ? `:::${mapped}[${rawTitle}]` : `:::${mapped}`;
+  });
 
   for (const [from, to] of Object.entries(IFM_VARS)) {
     if (body.includes(from)) {
-      body = body.split(from).join(to)
-      varsMapped++
+      body = body.split(from).join(to);
+      varsMapped++;
     }
   }
 
@@ -127,106 +127,106 @@ for (const file of walk(SRC)) {
   // slash, and a root-absolute path would break under the aggregator's mount.
   body = body.replace(
     /\{useBaseUrl\('\/img\/([^']+)'\)\}/g,
-    (_m, path) => '{`${import.meta.env.BASE_URL}img/' + path + '`}',
-  )
-  body = body.replace(/^import useBaseUrl from '@docusaurus\/useBaseUrl';?\n/gm, '')
+    (_m, path) => "{`${import.meta.env.BASE_URL}img/" + path + "`}",
+  );
+  body = body.replace(/^import useBaseUrl from '@docusaurus\/useBaseUrl';?\n/gm, "");
 
   // Markdown images cannot hold an expression, so root-absolute ones become the
   // same base-aware <img> as the rest.
   body = body.replace(
     /!\[([^\]]*)\]\(\/img\/([^)]+)\)/g,
     (_m, alt, path) =>
-      '<img src={`${import.meta.env.BASE_URL}img/' +
+      "<img src={`${import.meta.env.BASE_URL}img/" +
       path +
       '`} alt="' +
-      alt.replace(/"/g, '&quot;') +
+      alt.replace(/"/g, "&quot;") +
       '" />',
-  )
+  );
 
   // Raw JSX <img src="/inputs/img/..."> — a hardcoded site prefix that matched
   // no configured base even under Docusaurus. Attribute form, possibly split
   // across lines, so the markdown and useBaseUrl passes above both miss it.
   body = body.replace(
     /src="\/(?:inputs\/)?img\/([^"]+)"/g,
-    (_m, path) => 'src={`${import.meta.env.BASE_URL}img/' + path + '`}',
-  )
+    (_m, path) => "src={`${import.meta.env.BASE_URL}img/" + path + "`}",
+  );
 
   // Starlight ships its own Tabs; two Docusaurus imports collapse into one.
-  body = body.replace(/^import Tabs from '@theme\/Tabs';?\n/gm, '')
+  body = body.replace(/^import Tabs from '@theme\/Tabs';?\n/gm, "");
   body = body.replace(
     /^import TabItem from '@theme\/TabItem';?\n/gm,
     "import { Tabs, TabItem } from '@astrojs/starlight/components'\n",
-  )
-  body = body.replace(/<Tabs groupId=/g, '<Tabs syncKey=')
-  body = body.replace(/<TabItem\s+value="[^"]*"\s+/g, '<TabItem ')
-  body = body.replace(/(<TabItem[^>]*?)\s+default>/g, '$1>')
+  );
+  body = body.replace(/<Tabs groupId=/g, "<Tabs syncKey=");
+  body = body.replace(/<TabItem\s+value="[^"]*"\s+/g, "<TabItem ");
+  body = body.replace(/(<TabItem[^>]*?)\s+default>/g, "$1>");
 
   // Astro lowercases route slugs, so camelCase symbols in generated-API links
   // no longer resolve.
   body = body.replace(
     /(\/components\/\w+\/api\/[a-z-]+\/)([A-Za-z0-9_]+)/g,
     (_m, prefix, symbol) => prefix + symbol.toLowerCase(),
-  )
+  );
 
-  const front = [`title: ${yamlString(title.replace(/`/g, ''))}`]
-  if (data.description) front.push(`description: ${data.description}`)
+  const front = [`title: ${yamlString(title.replace(/`/g, ""))}`];
+  if (data.description) front.push(`description: ${data.description}`);
   if (data.sidebar_position || data.sidebar_label) {
-    front.push('sidebar:')
-    if (data.sidebar_position) front.push(`  order: ${data.sidebar_position}`)
-    if (data.sidebar_label) front.push(`  label: ${yamlString(data.sidebar_label)}`)
+    front.push("sidebar:");
+    if (data.sidebar_position) front.push(`  order: ${data.sidebar_position}`);
+    if (data.sidebar_label) front.push(`  label: ${yamlString(data.sidebar_label)}`);
   }
   // Starlight takes a slug too, but without the leading slash.
-  if (data.slug && data.slug !== '/') front.push(`slug: ${data.slug.replace(/^\//, '')}`)
+  if (data.slug && data.slug !== "/") front.push(`slug: ${data.slug.replace(/^\//, "")}`);
 
   // The one page carrying `slug: /` becomes the site index. Starlight wants the
   // file at the collection root for that, so it is relocated rather than slugged.
-  const isIndex = data.slug === '/'
+  const isIndex = data.slug === "/";
 
   // A page with a ```tsx live fence has to be .mdx: remark-live-code replaces
   // the fence with a JSX element, which plain markdown cannot carry.
-  const needsMdx = /^```[jt]sx?\s+[^\n]*\blive\b/m.test(body) || file.endsWith('.mdx')
-  if (needsMdx && !file.endsWith('.mdx')) promotedToMdx++
+  const needsMdx = /^```[jt]sx?\s+[^\n]*\blive\b/m.test(body) || file.endsWith(".mdx");
+  if (needsMdx && !file.endsWith(".mdx")) promotedToMdx++;
 
-  const ext = needsMdx ? '.mdx' : '.md'
-  const rel = relative(SRC, file).replace(/\.mdx?$/, ext)
-  const target = isIndex ? join(DEST, `index${ext}`) : join(DEST, rel)
+  const ext = needsMdx ? ".mdx" : ".md";
+  const rel = relative(SRC, file).replace(/\.mdx?$/, ext);
+  const target = isIndex ? join(DEST, `index${ext}`) : join(DEST, rel);
 
-  mkdirSync(dirname(target), { recursive: true })
-  writeFileSync(target, `---\n${front.join('\n')}\n---\n\n${body.trimStart()}`)
+  mkdirSync(dirname(target), { recursive: true });
+  writeFileSync(target, `---\n${front.join("\n")}\n---\n\n${body.trimStart()}`);
 }
 
-console.log(`migrated ${walk(SRC).length} files`)
-console.log(`  titles lifted from H1: ${lifted}`)
-console.log(`  asides remapped:       ${asidesMapped}`)
-console.log(`  aside titles bracketed:${asideTitles}`)
-console.log(`  --ifm-* vars remapped: ${varsMapped}`)
-console.log(`  promoted .md -> .mdx:  ${promotedToMdx}`)
+console.log(`migrated ${walk(SRC).length} files`);
+console.log(`  titles lifted from H1: ${lifted}`);
+console.log(`  asides remapped:       ${asidesMapped}`);
+console.log(`  aside titles bracketed:${asideTitles}`);
+console.log(`  --ifm-* vars remapped: ${varsMapped}`);
+console.log(`  promoted .md -> .mdx:  ${promotedToMdx}`);
 
 // A root-absolute asset reference resolves against the domain, not the site's
 // base path — invisible in a standalone build, broken the moment the aggregator
 // mounts these docs under /packages/react-inputs/. Fail loudly instead.
-const offenders = []
+const offenders = [];
 for (const file of walk(SRC)) {
-  const out = join(DEST, relative(SRC, file).replace(/\.mdx?$/, ''))
-  void out
+  const out = join(DEST, relative(SRC, file).replace(/\.mdx?$/, ""));
+  void out;
 }
 for (const file of walkOut(DEST)) {
-  const text = readFileSync(file, 'utf8')
+  const text = readFileSync(file, "utf8");
   for (const m of text.matchAll(/(?:src|href)="(\/(?!\/)[^"]*)"/g)) {
-    if (/^\/(img|inputs)\b/.test(m[1])) offenders.push(`${file}: ${m[1]}`)
+    if (/^\/(img|inputs)\b/.test(m[1])) offenders.push(`${file}: ${m[1]}`);
   }
 }
 if (offenders.length) {
-  console.error('\nRoot-absolute asset references survived migration:')
-  offenders.forEach((o) => console.error('  ' + o))
-  process.exit(1)
+  console.error("\nRoot-absolute asset references survived migration:");
+  offenders.forEach((o) => console.error("  " + o));
+  process.exit(1);
 }
 
 function walkOut(dir, out = []) {
   for (const entry of readdirSync(dir)) {
-    const full = join(dir, entry)
-    if (statSync(full).isDirectory()) walkOut(full, out)
-    else if (/\.mdx?$/.test(entry)) out.push(full)
+    const full = join(dir, entry);
+    if (statSync(full).isDirectory()) walkOut(full, out);
+    else if (/\.mdx?$/.test(entry)) out.push(full);
   }
-  return out
+  return out;
 }

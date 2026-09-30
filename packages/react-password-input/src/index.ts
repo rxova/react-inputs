@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
-export { PasswordInput } from './PasswordInput'
-export { usePasswordInput } from './usePasswordInput'
-export type { UsePasswordInputOptions, UsePasswordInputResult } from './usePasswordInput'
-export { estimateStrength, STRENGTH_LABELS } from './strength'
-export type { EstimateStrengthOptions } from './strength'
-export { commonRules, defaultRules, evaluateRules, rulesSatisfied } from './rules'
+export { PasswordInput } from "./PasswordInput";
+export { usePasswordInput } from "./usePasswordInput";
+export type { UsePasswordInputOptions, UsePasswordInputResult } from "./usePasswordInput";
+export { estimateStrength, STRENGTH_LABELS } from "./strength";
+export type { EstimateStrengthOptions } from "./strength";
+export { commonRules, defaultRules, evaluateRules, rulesSatisfied } from "./rules";
 export type {
   PasswordInputProps,
   PasswordPenaltyCode,
@@ -16,4 +16,4 @@ export type {
   PasswordStrength,
   PasswordWarning,
   PasswordWarningCode,
-} from './types'
+} from "./types";

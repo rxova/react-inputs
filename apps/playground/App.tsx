@@ -1,4 +1,4 @@
-import { useState, type ComponentType } from 'react'
+import { useState, type ComponentType } from "react";
 
 /**
  * The manual-QA aggregator: it renders each package's own demo (the same one
@@ -18,39 +18,39 @@ import { useState, type ComponentType } from 'react'
  * same discovery performed at build time.
  */
 
-type Direction = 'ltr' | 'rtl'
-type DemoComponent = ComponentType<{ dir?: Direction }>
+type Direction = "ltr" | "rtl";
+type DemoComponent = ComponentType<{ dir?: Direction }>;
 
 interface Route {
-  slug: string
-  title: string
-  label: string
-  Demos: DemoComponent
+  slug: string;
+  title: string;
+  label: string;
+  Demos: DemoComponent;
 }
 
 const demoModules = import.meta.glob<{ default: DemoComponent }>(
-  '../../packages/*/demo/Demos.tsx',
+  "../../packages/*/demo/Demos.tsx",
   { eager: true },
-)
+);
 
 const manifests = import.meta.glob<{
-  default: { rxova?: { slug?: string; title?: string; label?: string } }
-}>('../../packages/*/package.json', { eager: true })
+  default: { rxova?: { slug?: string; title?: string; label?: string } };
+}>("../../packages/*/package.json", { eager: true });
 
 /** `../../packages/<dir>/…` → `<dir>`. */
-const directoryOf = (path: string) => path.split('/')[3] ?? ''
+const directoryOf = (path: string) => path.split("/")[3] ?? "";
 
 const manifestsByDirectory = new Map(
   Object.entries(manifests).map(([path, module]) => [directoryOf(path), module.default]),
-)
+);
 
 const routes: Route[] = Object.entries(demoModules)
   .flatMap(([path, module]) => {
-    const rxova = manifestsByDirectory.get(directoryOf(path))?.rxova
+    const rxova = manifestsByDirectory.get(directoryOf(path))?.rxova;
     // A demo without a declaration is not addressable — there is no slug to
     // route it under. componentPackages() applies the same rule, and its suite
     // fails when a demo-carrying package forgets to declare itself.
-    if (!rxova?.slug) return []
+    if (!rxova?.slug) return [];
 
     return [
       {
@@ -59,15 +59,15 @@ const routes: Route[] = Object.entries(demoModules)
         label: rxova.label ?? rxova.slug,
         Demos: module.default,
       },
-    ]
+    ];
   })
   // Alphabetically by label, matching componentPackages() — the build-time
   // discovery this file mirrors. Display order is derived, not declared.
   .sort(
     (a, b) =>
-      a.label.localeCompare(b.label, undefined, { sensitivity: 'base' }) ||
+      a.label.localeCompare(b.label, undefined, { sensitivity: "base" }) ||
       a.slug.localeCompare(b.slug),
-  )
+  );
 
 function Landing() {
   return (
@@ -81,7 +81,7 @@ function Landing() {
         ))}
       </ul>
     </main>
-  )
+  );
 }
 
 /**
@@ -90,7 +90,7 @@ function Landing() {
  * and a new input gets it for free.
  */
 function DemoRoute({ title, Demos }: Route) {
-  const [rtl, setRtl] = useState(false)
+  const [rtl, setRtl] = useState(false);
 
   return (
     <>
@@ -102,21 +102,21 @@ function DemoRoute({ title, Demos }: Route) {
             data-testid="rtl-toggle"
             checked={rtl}
             onChange={(e) => {
-              setRtl(e.target.checked)
-              document.documentElement.dir = e.target.checked ? 'rtl' : 'ltr'
+              setRtl(e.target.checked);
+              document.documentElement.dir = e.target.checked ? "rtl" : "ltr";
             }}
           />
           Right-to-left
         </label>
       </header>
-      <Demos dir={rtl ? 'rtl' : 'ltr'} />
+      <Demos dir={rtl ? "rtl" : "ltr"} />
     </>
-  )
+  );
 }
 
 export function App() {
-  const path = window.location.pathname
-  const route = routes.find((candidate) => path === `/${candidate.slug}`)
+  const path = window.location.pathname;
+  const route = routes.find((candidate) => path === `/${candidate.slug}`);
 
-  return route ? <DemoRoute {...route} /> : <Landing />
+  return route ? <DemoRoute {...route} /> : <Landing />;
 }

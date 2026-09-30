@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { Section } from '@rxova/demo-kit'
-import { PhoneInput } from '@rxova/react-phone-input'
-import type { PhoneDetails, PhoneWarning } from '@rxova/react-phone-input'
+import { useState } from "react";
+import { Section } from "@rxova/demo-kit";
+import { PhoneInput } from "@rxova/react-phone-input";
+import type { PhoneDetails, PhoneWarning } from "@rxova/react-phone-input";
 
 /**
  * The E2E target. Every section is something the Playwright suite drives, so
@@ -11,9 +11,9 @@ import type { PhoneDetails, PhoneWarning } from '@rxova/react-phone-input'
  * test.
  */
 export function PhoneDemos() {
-  const [details, setDetails] = useState<PhoneDetails | null>(null)
-  const [warnings, setWarnings] = useState<PhoneWarning[]>([])
-  const [submitted, setSubmitted] = useState<string | null>(null)
+  const [details, setDetails] = useState<PhoneDetails | null>(null);
+  const [warnings, setWarnings] = useState<PhoneWarning[]>([]);
+  const [submitted, setSubmitted] = useState<string | null>(null);
 
   return (
     <>
@@ -39,12 +39,12 @@ export function PhoneDemos() {
           defaultCountry="GB"
           locale="en"
           onChange={(_value, next) => {
-            setDetails(next)
+            setDetails(next);
           }}
         />
-        <p data-testid="e164">{details?.e164 ?? ''}</p>
-        <p data-testid="country">{details?.country ?? ''}</p>
-        <p data-testid="possible">{details === null ? '' : String(details.possible)}</p>
+        <p data-testid="e164">{details?.e164 ?? ""}</p>
+        <p data-testid="country">{details?.country ?? ""}</p>
+        <p data-testid="possible">{details === null ? "" : String(details.possible)}</p>
       </Section>
 
       <Section
@@ -54,7 +54,7 @@ export function PhoneDemos() {
       >
         <PhoneInput
           label="European number"
-          countries={['GB', 'IE', 'FR', 'DE', 'ES']}
+          countries={["GB", "IE", "FR", "DE", "ES"]}
           defaultCountry="GB"
           locale="en"
         />
@@ -63,7 +63,7 @@ export function PhoneDemos() {
       <Section id="locale" title="Localised names" note="Country names come from Intl.">
         <PhoneInput
           label="Numéro de téléphone"
-          countries={['FR', 'DE', 'GB']}
+          countries={["FR", "DE", "GB"]}
           defaultCountry="FR"
           locale="fr"
         />
@@ -90,7 +90,7 @@ export function PhoneDemos() {
           onWarn={(warning) => {
             setWarnings((previous) =>
               previous.some((w) => w.code === warning.code) ? previous : [...previous, warning],
-            )
+            );
           }}
         />
         <ul data-testid="warning-codes">
@@ -103,9 +103,9 @@ export function PhoneDemos() {
       <Section id="native-form" title="Native form" note="Posts E.164 as a hidden field.">
         <form
           onSubmit={(event) => {
-            event.preventDefault()
-            const entry = new FormData(event.currentTarget).get('mobile')
-            setSubmitted(typeof entry === 'string' ? entry : '')
+            event.preventDefault();
+            const entry = new FormData(event.currentTarget).get("mobile");
+            setSubmitted(typeof entry === "string" ? entry : "");
           }}
         >
           <PhoneInput
@@ -117,7 +117,7 @@ export function PhoneDemos() {
           />
           <button type="submit">Save</button>
         </form>
-        <p data-testid="submitted">{submitted ?? ''}</p>
+        <p data-testid="submitted">{submitted ?? ""}</p>
       </Section>
 
       <Section id="states" title="States" note="Disabled and read-only.">
@@ -135,5 +135,5 @@ export function PhoneDemos() {
         </p>
       </Section>
     </>
-  )
+  );
 }

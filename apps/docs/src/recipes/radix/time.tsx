@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { Box, Text } from '@radix-ui/themes'
-import { TimeInput } from '@rxova/react-time-input'
+import { Box, Text } from "@radix-ui/themes";
+import { TimeInput } from "@rxova/react-time-input";
 
 export function RadixTime() {
   return (
@@ -14,5 +14,5 @@ export function RadixTime() {
         Enter a local time.
       </Text>
     </Box>
-  )
+  );
 }

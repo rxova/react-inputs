@@ -1,72 +1,72 @@
-import { forwardRef } from 'react'
-import type { CSSProperties } from 'react'
-import { useFileInput } from './useFileInput'
-import type { FileEntryState, FileInputProps } from './types'
+import { forwardRef } from "react";
+import type { CSSProperties } from "react";
+import { useFileInput } from "./useFileInput";
+import type { FileEntryState, FileInputProps } from "./types";
 
 // Only layout-critical declarations are inlined. Everything visual is a CSS
 // custom property or a `data-*` hook, so there is no stylesheet to import.
 const rootStyle: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'var(--rx-file-gap, 0.5rem)',
-  font: 'inherit',
-}
+  display: "flex",
+  flexDirection: "column",
+  gap: "var(--rx-file-gap, 0.5rem)",
+  font: "inherit",
+};
 
 const zoneStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 'var(--rx-file-zone-gap, 0.5rem)',
-  padding: 'var(--rx-file-zone-padding, 1rem)',
-  border: 'var(--rx-file-zone-border, 1px dashed currentColor)',
-  borderRadius: 'var(--rx-file-zone-radius, 0.375rem)',
-  font: 'inherit',
-  color: 'inherit',
-  background: 'var(--rx-file-zone-background, transparent)',
-  cursor: 'pointer',
-  textAlign: 'center',
-}
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: "var(--rx-file-zone-gap, 0.5rem)",
+  padding: "var(--rx-file-zone-padding, 1rem)",
+  border: "var(--rx-file-zone-border, 1px dashed currentColor)",
+  borderRadius: "var(--rx-file-zone-radius, 0.375rem)",
+  font: "inherit",
+  color: "inherit",
+  background: "var(--rx-file-zone-background, transparent)",
+  cursor: "pointer",
+  textAlign: "center",
+};
 
 const listStyle: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'var(--rx-file-list-gap, 0.25rem)',
+  display: "flex",
+  flexDirection: "column",
+  gap: "var(--rx-file-list-gap, 0.25rem)",
   margin: 0,
   padding: 0,
-  listStyle: 'none',
-}
+  listStyle: "none",
+};
 
 const rowStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 'var(--rx-file-row-gap, 0.5rem)',
-}
+  display: "flex",
+  alignItems: "center",
+  gap: "var(--rx-file-row-gap, 0.5rem)",
+};
 
 const previewStyle: CSSProperties = {
-  width: 'var(--rx-file-preview-size, 2.5rem)',
-  height: 'var(--rx-file-preview-size, 2.5rem)',
-  objectFit: 'cover',
-  borderRadius: 'var(--rx-file-preview-radius, 0.25rem)',
+  width: "var(--rx-file-preview-size, 2.5rem)",
+  height: "var(--rx-file-preview-size, 2.5rem)",
+  objectFit: "cover",
+  borderRadius: "var(--rx-file-preview-radius, 0.25rem)",
   flexShrink: 0,
-}
+};
 
 const removeStyle: CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
   // 24px of hit area at the default font size. Below this the button fails
   // WCAG 2.5.8 Target Size (Minimum) on touch.
-  minWidth: 'var(--rx-file-remove-size, 1.5rem)',
-  minHeight: 'var(--rx-file-remove-size, 1.5rem)',
-  marginInlineStart: 'auto',
+  minWidth: "var(--rx-file-remove-size, 1.5rem)",
+  minHeight: "var(--rx-file-remove-size, 1.5rem)",
+  marginInlineStart: "auto",
   padding: 0,
-  font: 'inherit',
+  font: "inherit",
   lineHeight: 1,
-  background: 'none',
+  background: "none",
   border: 0,
-  color: 'inherit',
-  cursor: 'pointer',
-}
+  color: "inherit",
+  cursor: "pointer",
+};
 
 /**
  * The real `<input type="file">`, kept in the DOM but out of sight.
@@ -77,19 +77,19 @@ const removeStyle: CSSProperties = {
  * what carries `name`, `accept` and `required` into a native submit.
  */
 const hiddenInputStyle: CSSProperties = {
-  position: 'absolute',
+  position: "absolute",
   width: 1,
   height: 1,
   padding: 0,
   margin: -1,
-  overflow: 'hidden',
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  whiteSpace: 'nowrap',
+  overflow: "hidden",
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  whiteSpace: "nowrap",
   border: 0,
-}
+};
 
-const visuallyHidden = hiddenInputStyle
+const visuallyHidden = hiddenInputStyle;
 
 /**
  * `forwardRef` rather than reading `props.ref`.
@@ -121,11 +121,11 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
       invalid,
       previews = false,
       autoFocus,
-      'aria-label': ariaLabel,
-      'aria-describedby': describedBy,
-    } = props
+      "aria-label": ariaLabel,
+      "aria-describedby": describedBy,
+    } = props;
 
-    const field = useFileInput(props)
+    const field = useFileInput(props);
     const {
       entries,
       files,
@@ -147,29 +147,29 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
       handleDrop,
       handleBlur,
       handleFocus,
-    } = field
+    } = field;
 
     const defaultHint = multiple
-      ? 'Choose files or drop them here'
-      : 'Choose a file or drop it here'
+      ? "Choose files or drop them here"
+      : "Choose a file or drop it here";
 
-    const fieldName = ariaLabel ?? label
+    const fieldName = ariaLabel ?? label;
     // `aria-label` only takes a string, so the input points at the hidden name
     // span instead when `label` is a node.
     const labelledByNode =
-      ariaLabel === undefined && label !== undefined && typeof label !== 'string'
+      ariaLabel === undefined && label !== undefined && typeof label !== "string";
 
     return (
       <div
         className={className}
         style={{ ...rootStyle, ...style }}
         data-rx-file-root=""
-        data-dragging={dragging ? '' : undefined}
-        data-full={full ? '' : undefined}
+        data-dragging={dragging ? "" : undefined}
+        data-full={full ? "" : undefined}
         data-count={files.length}
-        data-disabled={disabled ? '' : undefined}
-        data-readonly={readOnly ? '' : undefined}
-        data-invalid={invalid ? '' : undefined}
+        data-disabled={disabled ? "" : undefined}
+        data-readonly={readOnly ? "" : undefined}
+        data-invalid={invalid ? "" : undefined}
         onBlur={handleBlur}
         onFocus={handleFocus}
       >
@@ -195,9 +195,9 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
         */}
         <input
           ref={(node) => {
-            inputRef.current = node
-            if (typeof ref === 'function') ref(node)
-            else if (ref) ref.current = node
+            inputRef.current = node;
+            if (typeof ref === "function") ref(node);
+            else if (ref) ref.current = node;
           }}
           id={ids.input}
           data-rx-file-input=""
@@ -212,7 +212,7 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
           // Still focusable from script, so the forwarded ref and a native
           // `required` check reach it.
           tabIndex={-1}
-          aria-label={ariaLabel ?? (typeof label === 'string' ? label : undefined)}
+          aria-label={ariaLabel ?? (typeof label === "string" ? label : undefined)}
           aria-labelledby={labelledByNode ? ids.label : undefined}
           aria-invalid={invalid ? true : undefined}
           aria-describedby={describedBy}
@@ -230,7 +230,7 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
         <button
           id={ids.zone}
           ref={(node) => {
-            zoneRef.current = node
+            zoneRef.current = node;
           }}
           type="button"
           // WebKit leaves buttons out of the tab order unless Full Keyboard
@@ -249,7 +249,7 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
           aria-labelledby={fieldName === undefined ? undefined : `${ids.label} ${ids.zone}`}
           aria-describedby={describedBy}
           data-rx-file-zone=""
-          data-dragging={dragging ? '' : undefined}
+          data-dragging={dragging ? "" : undefined}
           disabled={disabled || readOnly}
           style={zoneStyle}
           onClick={open}
@@ -272,7 +272,7 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
                 size: sizeOf(entry.file),
                 disabled,
                 readOnly,
-              }
+              };
               return (
                 <li key={entry.key} data-rx-file-file={index} style={rowStyle}>
                   {renderFile ? (
@@ -297,7 +297,7 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
                     <button
                       type="button"
                       ref={(node) => {
-                        removeRefs.current[index] = node
+                        removeRefs.current[index] = node;
                       }}
                       tabIndex={0}
                       data-rx-file-remove=""
@@ -310,14 +310,14 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
                       disabled={disabled}
                       style={removeStyle}
                       onClick={() => {
-                        removeAt(index)
+                        removeAt(index);
                       }}
                     >
                       <span aria-hidden="true">×</span>
                     </button>
                   )}
                 </li>
-              )
+              );
             })}
           </ul>
         )}
@@ -338,6 +338,6 @@ export const FileInput = /* @__PURE__ */ forwardRef<HTMLInputElement, FileInputP
           {announcement}
         </span>
       </div>
-    )
+    );
   },
-)
+);

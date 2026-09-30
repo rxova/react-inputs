@@ -1,32 +1,32 @@
-'use client'
+"use client";
 
-import { useId } from 'react'
-import { CurrencyInput, type CurrencyInputProps } from '@rxova/react-intl-currency-input'
+import { useId } from "react";
+import { CurrencyInput, type CurrencyInputProps } from "@rxova/react-intl-currency-input";
 
-import './currency-field.css'
+import "./currency-field.css";
 
 export interface CurrencyFieldProps extends Omit<
   CurrencyInputProps,
-  'aria-label' | 'aria-describedby' | 'invalid'
+  "aria-label" | "aria-describedby" | "invalid"
 > {
   /** Visible and accessible label. */
-  label: string
+  label: string;
   /** Helper text announced with the input. */
-  description?: string
+  description?: string;
   /** Error text; its presence marks the input invalid. */
-  error?: string
+  error?: string;
 }
 
 /** A labelled currency field copied into the consumer by the Rxova registry. */
 export function CurrencyField({ label, description, error, id, ...props }: CurrencyFieldProps) {
-  const generated = useId()
-  const fieldId = id ?? generated
+  const generated = useId();
+  const fieldId = id ?? generated;
   const describedBy = [description && `${fieldId}-description`, error && `${fieldId}-error`]
     .filter(Boolean)
-    .join(' ')
+    .join(" ");
 
   return (
-    <div className="rx-field" data-invalid={error ? '' : undefined}>
+    <div className="rx-field" data-invalid={error ? "" : undefined}>
       <label className="rx-field__label" htmlFor={fieldId}>
         {label}
       </label>
@@ -47,5 +47,5 @@ export function CurrencyField({ label, description, error, id, ...props }: Curre
         </p>
       ) : null}
     </div>
-  )
+  );
 }

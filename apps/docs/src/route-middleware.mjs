@@ -1,6 +1,6 @@
-import { defineRouteMiddleware } from '@astrojs/starlight/route-data'
+import { defineRouteMiddleware } from "@astrojs/starlight/route-data";
 
-import { withBase } from '@rxova/docs-kit'
+import { withBase } from "@rxova/docs-kit";
 
 /**
  * Applies `base` to the splash page's hero action links.
@@ -12,10 +12,10 @@ import { withBase } from '@rxova/docs-kit'
  * the only 404s on the aggregated site.
  */
 export const onRequest = defineRouteMiddleware((context) => {
-  const actions = context.locals.starlightRoute.entry.data.hero?.actions
-  if (!actions) return
+  const actions = context.locals.starlightRoute.entry.data.hero?.actions;
+  if (!actions) return;
 
   for (const action of actions) {
-    action.link = withBase(action.link, import.meta.env.BASE_URL)
+    action.link = withBase(action.link, import.meta.env.BASE_URL);
   }
-})
+});

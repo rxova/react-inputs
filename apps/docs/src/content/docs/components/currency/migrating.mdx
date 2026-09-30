@@ -1,8 +1,8 @@
 ---
-title: 'Currency input — Migrating'
-description: 'Move to @rxova/react-intl-currency-input from react-currency-input-field, or upgrade from 0.1.x, with a prop-by-prop mapping.'
+title: "Currency input — Migrating"
+description: "Move to @rxova/react-intl-currency-input from react-currency-input-field, or upgrade from 0.1.x, with a prop-by-prop mapping."
 sidebar:
-  label: 'Migrating'
+  label: "Migrating"
   order: 4
 ---
 
@@ -62,35 +62,35 @@ upgrading either package.
 ### Before
 
 ```tsx
-import { useState } from 'react'
-import CurrencyInput from 'react-currency-input-field'
+import { useState } from "react";
+import CurrencyInput from "react-currency-input-field";
 
 function BeforeMigration() {
-  const [value, setValue] = useState<string | undefined>()
+  const [value, setValue] = useState<string | undefined>();
 
   return (
     <CurrencyInput
-      intlConfig={{ locale: 'bg-BG', currency: 'EUR' }}
+      intlConfig={{ locale: "bg-BG", currency: "EUR" }}
       groupSeparator=" "
       decimalSeparator=","
       decimalScale={2}
       value={value}
       onValueChange={setValue}
     />
-  )
+  );
 }
 ```
 
 ### After
 
 ```tsx
-import { useState } from 'react'
-import { CurrencyInput } from '@rxova/react-intl-currency-input'
+import { useState } from "react";
+import { CurrencyInput } from "@rxova/react-intl-currency-input";
 
 function AfterMigration() {
-  const [value, setValue] = useState<number | null>(null)
+  const [value, setValue] = useState<number | null>(null);
 
-  return <CurrencyInput locale="bg-BG" currency="EUR" value={value} onChange={setValue} />
+  return <CurrencyInput locale="bg-BG" currency="EUR" value={value} onChange={setValue} />;
 }
 ```
 

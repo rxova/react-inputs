@@ -33,13 +33,13 @@ npm install @rxova/react-inputs
 ```
 
 ```tsx
-import { useState } from 'react'
-import { CurrencyInput, Rating, OtpInput } from '@rxova/react-inputs'
+import { useState } from "react";
+import { CurrencyInput, Rating, OtpInput } from "@rxova/react-inputs";
 
 function Checkout() {
-  const [price, setPrice] = useState<number | null>(null)
-  const [score, setScore] = useState(0)
-  const [code, setCode] = useState('')
+  const [price, setPrice] = useState<number | null>(null);
+  const [score, setScore] = useState(0);
+  const [code, setCode] = useState("");
 
   return (
     <>
@@ -47,7 +47,7 @@ function Checkout() {
       <Rating value={score} onChange={setScore} precision={0.5} label="Rate your meal" />
       <OtpInput length={6} value={code} onChange={setCode} label="One-time code" />
     </>
-  )
+  );
 }
 ```
 

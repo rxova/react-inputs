@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { PhoneField } from '@/components/rxova/phone-field'
+import { PhoneField } from "@/components/rxova/phone-field";
 
 export function ShadcnPhone() {
   return (
@@ -10,5 +10,5 @@ export function ShadcnPhone() {
       name="phone"
       defaultCountry="US"
     />
-  )
+  );
 }

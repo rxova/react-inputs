@@ -1,4 +1,4 @@
-import { baseKnipConfig } from '@rxova/repo-config/knip'
+import { baseKnipConfig } from "@rxova/repo-config/knip";
 
 /**
  * Unused files, exports and dependencies, as a gate rather than a report.
@@ -17,7 +17,7 @@ export default baseKnipConfig({
   // @rxova/brand, which the Starlight preset from @rxova/astro-ui reaches only
   // as a `customCss` string that Vite resolves from the site's root.
   workspaces: {
-    'apps/docs': {
+    "apps/docs": {
       entry: [
         // Six design-system recipes per component, loaded by
         // `import.meta.glob('../recipes/*/*.tsx', { query: '?raw' })` in
@@ -25,21 +25,21 @@ export default baseKnipConfig({
         // They are entry points precisely because nothing imports their
         // bindings — the file *is* the published artefact, and it stays a real
         // .tsx so the typecheck keeps it honest.
-        'src/recipes/*/*.tsx',
+        "src/recipes/*/*.tsx",
         // Named as a string in astro.config.mjs (`routeMiddleware:`), which
         // knip reads as config rather than as an import.
-        'src/route-middleware.mjs',
+        "src/route-middleware.mjs",
       ],
       ignore: [
         // Two one-shot Docusaurus-to-Starlight migrations, deliberately kept:
         // their own headers say they stay so "the transforms it applied are
         // auditable next to the diff they produced". Dead by design, not by
         // accident.
-        'scripts/migrate-content.mjs',
-        'scripts/restructure-components.mjs',
+        "scripts/migrate-content.mjs",
+        "scripts/restructure-components.mjs",
       ],
     },
-    'apps/playground': {
+    "apps/playground": {
       // The playground discovers its pages rather than listing them:
       // `import.meta.glob('../../packages/*/demo/Demos.tsx')` in App.tsx pulls
       // in every component package's own demo, and those demos import the
@@ -47,27 +47,27 @@ export default baseKnipConfig({
       // Vite resolves all of it at build time; knip does not follow a glob into
       // another workspace, so from here the dependencies look unreferenced.
       ignoreDependencies: [
-        '@rxova/react-date-input',
-        '@rxova/react-file-input',
-        '@rxova/react-intl-currency-input',
-        '@rxova/react-otp-input',
-        '@rxova/react-password-input',
-        '@rxova/react-phone-input',
-        '@rxova/react-rating-input',
-        '@rxova/react-tags-input',
-        '@rxova/react-time-input',
-        '@tanstack/react-form',
-        'formik',
-        'react-final-form',
+        "@rxova/react-date-input",
+        "@rxova/react-file-input",
+        "@rxova/react-intl-currency-input",
+        "@rxova/react-otp-input",
+        "@rxova/react-password-input",
+        "@rxova/react-phone-input",
+        "@rxova/react-rating-input",
+        "@rxova/react-tags-input",
+        "@rxova/react-time-input",
+        "@tanstack/react-form",
+        "formik",
+        "react-final-form",
         // react-final-form's peer, used through it rather than directly.
-        'final-form',
-        'react-hook-form',
+        "final-form",
+        "react-hook-form",
       ],
     },
-    '.': {
+    ".": {
       // The repository scripts under scripts/, run by path from package.json
       // and CI (`node --import tsx scripts/…`), never imported by a package.
-      entry: ['scripts/*.ts'],
+      entry: ["scripts/*.ts"],
     },
   },
-})
+});

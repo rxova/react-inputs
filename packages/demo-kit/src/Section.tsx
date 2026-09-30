@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from "react";
 
 export function Section({
   id,
@@ -6,10 +6,10 @@ export function Section({
   note,
   children,
 }: {
-  id: string
-  title: string
-  note?: string
-  children: ReactNode
+  id: string;
+  title: string;
+  note?: string;
+  children: ReactNode;
 }) {
   return (
     <section data-testid={id} className="card">
@@ -17,5 +17,5 @@ export function Section({
       {note ? <p className="note">{note}</p> : null}
       <div className="demo">{children}</div>
     </section>
-  )
+  );
 }

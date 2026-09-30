@@ -1,23 +1,23 @@
-import { existsSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
-import { defineConfig } from 'astro/config'
-import starlight from '@astrojs/starlight'
-import react from '@astrojs/react'
-import { createStarlightTypeDocPlugin } from 'starlight-typedoc'
-import starlightLinksValidator from 'starlight-links-validator'
-import sitemap from '@astrojs/sitemap'
-import { sharedStarlightConfig } from '@rxova/astro-ui/starlight'
-import remarkLiveCode from './src/plugins/remark-live-code.mjs'
-import remarkBaseLinks from './src/plugins/remark-base-links.mjs'
-import { withBase } from '@rxova/docs-kit'
-import { componentPackages } from '../../scripts/component-packages.mjs'
+import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { defineConfig } from "astro/config";
+import starlight from "@astrojs/starlight";
+import react from "@astrojs/react";
+import { createStarlightTypeDocPlugin } from "starlight-typedoc";
+import starlightLinksValidator from "starlight-links-validator";
+import sitemap from "@astrojs/sitemap";
+import { sharedStarlightConfig } from "@rxova/astro-ui/starlight";
+import remarkLiveCode from "./src/plugins/remark-live-code.mjs";
+import remarkBaseLinks from "./src/plugins/remark-base-links.mjs";
+import { withBase } from "@rxova/docs-kit";
+import { componentPackages } from "../../scripts/component-packages.mjs";
 
 /**
  * Defaults keep the standalone build working; the rxova.dev aggregator sets
  * DOCS_URL / DOCS_BASE_URL to mount these docs under /packages/react-inputs/.
  */
-const site = process.env.DOCS_URL ?? 'https://rxova.dev'
-const base = process.env.DOCS_BASE_URL ?? '/'
+const site = process.env.DOCS_URL ?? "https://rxova.dev";
+const base = process.env.DOCS_BASE_URL ?? "/";
 
 /**
  * The components, discovered from the packages that declare themselves (see
@@ -27,7 +27,7 @@ const base = process.env.DOCS_BASE_URL ?? '/'
  * `slug` is the content directory and the URL segment; `label` is the sidebar
  * entry, which is not always the slug capitalised (OTP).
  */
-const COMPONENTS = componentPackages()
+const COMPONENTS = componentPackages();
 
 /**
  * One TypeDoc instance per component, matching the Docusaurus setup. A single
@@ -39,13 +39,13 @@ const typeDocDefaults = {
     // Emit the entry page as index.md so each component's reference lives at
     // /components/<name>/api — which is what the prose already links to.
     // The default (README.md) would route to /api/readme and break 8 links.
-    entryFileName: 'index',
+    entryFileName: "index",
     useCodeBlocks: true,
     disableSources: true,
-    parametersFormat: 'table',
-    enumMembersFormat: 'table',
+    parametersFormat: "table",
+    enumMembersFormat: "table",
   },
-}
+};
 
 /**
  * One plugin instance per component, each with its OWN sidebar group.
@@ -60,15 +60,15 @@ const component = (name, pkg) => {
   // The generated pages land inside the component's own directory, so the
   // component's `autogenerate` entry already lists them — the pair's sidebar
   // group is deliberately unused.
-  const [plugin] = createStarlightTypeDocPlugin()
+  const [plugin] = createStarlightTypeDocPlugin();
   return plugin({
     ...typeDocDefaults,
     entryPoints: [`../../packages/${pkg}/src/index.ts`],
     tsconfig: `../../packages/${pkg}/tsconfig.json`,
     output: `components/${name}/api`,
-    sidebar: { label: 'API', collapsed: true },
-  })
-}
+    sidebar: { label: "API", collapsed: true },
+  });
+};
 
 /**
  * Regenerating every component's API reference costs more than `astro dev`
@@ -87,13 +87,13 @@ const component = (name, pkg) => {
  * `DOCS_API=1 pnpm dev` forces a full regeneration when a signature changed.
  */
 const apiIsCurrent = (slug) =>
-  existsSync(fileURLToPath(new URL(`./src/content/docs/components/${slug}/api`, import.meta.url)))
+  existsSync(fileURLToPath(new URL(`./src/content/docs/components/${slug}/api`, import.meta.url)));
 
-const regenerateApi = process.env.DOCS_API === '1' || process.env.npm_lifecycle_event === 'build'
+const regenerateApi = process.env.DOCS_API === "1" || process.env.npm_lifecycle_event === "build";
 
 const typeDocPlugins = COMPONENTS.filter(({ slug }) => regenerateApi || !apiIsCurrent(slug)).map(
   ({ slug, dir }) => component(slug, dir),
-)
+);
 
 /**
  * A component's landing page. Starlight only emits routes for files that exist,
@@ -107,8 +107,8 @@ const typeDocPlugins = COMPONENTS.filter(({ slug }) => regenerateApi || !apiIsCu
  * must stay unprefixed — build output paths are relative to dist/, which is
  * what gets mounted at base.
  */
-const introduction = (dir) => withBase(`/components/${dir}/introduction/`, base)
-const migrating = (dir) => withBase(`/components/${dir}/migrating/`, base)
+const introduction = (dir) => withBase(`/components/${dir}/introduction/`, base);
+const migrating = (dir) => withBase(`/components/${dir}/migrating/`, base);
 
 /**
  * The Docusaurus-era routes, which the restructure to per-component pages
@@ -121,17 +121,17 @@ const legacyRedirects = {
   // The cross-cutting guides were split into each component's About page,
   // so no single component is the honest successor. Overview links out to all
   // of them; an arbitrary component's About would be worse than a shelf.
-  '/guides/accessibility': withBase('/overview/', base),
-  '/guides/styling': withBase('/overview/', base),
-  '/guides/form-libraries': withBase('/overview/', base),
+  "/guides/accessibility": withBase("/overview/", base),
+  "/guides/styling": withBase("/overview/", base),
+  "/guides/form-libraries": withBase("/overview/", base),
   // Per-source migration pages, now sections of the component's Migrating page.
-  '/migrating/from-input-otp': migrating('otp'),
-  '/migrating/from-react-otp-input': migrating('otp'),
-  '/migrating/from-react-rating': migrating('rating'),
-  '/migrating/from-react-stars': migrating('rating'),
-  '/migrating/from-radio-buttons': migrating('rating'),
-  '/migrating/from-react-currency-input-field': migrating('currency'),
-}
+  "/migrating/from-input-otp": migrating("otp"),
+  "/migrating/from-react-otp-input": migrating("otp"),
+  "/migrating/from-react-rating": migrating("rating"),
+  "/migrating/from-react-stars": migrating("rating"),
+  "/migrating/from-radio-buttons": migrating("rating"),
+  "/migrating/from-react-currency-input-field": migrating("currency"),
+};
 
 /**
  * Advertise the agent index from every page.
@@ -151,16 +151,16 @@ const withLlmsLink = (config) => ({
   head: [
     ...(config.head ?? []),
     {
-      tag: 'link',
+      tag: "link",
       attrs: {
-        rel: 'alternate',
-        type: 'text/plain',
-        title: 'llms.txt',
-        href: withBase('/llms.txt', base),
+        rel: "alternate",
+        type: "text/plain",
+        title: "llms.txt",
+        href: withBase("/llms.txt", base),
       },
     },
   ],
-})
+});
 
 /**
  * Every redirect this build emits, as one object — named rather than inlined
@@ -175,7 +175,7 @@ const redirects = {
     ]),
   ),
   ...legacyRedirects,
-}
+};
 
 /**
  * The URL paths a sitemap must not offer, as a set the filter can test in O(1).
@@ -186,7 +186,7 @@ const redirects = {
  * that immediately sends it somewhere it has already been. `withBase` is applied
  * because the filter sees the built URL, which carries the mount prefix.
  */
-const REDIRECT_PATHS = new Set(Object.keys(redirects).map((path) => withBase(`${path}/`, base)))
+const REDIRECT_PATHS = new Set(Object.keys(redirects).map((path) => withBase(`${path}/`, base)));
 
 /**
  * Whether a built route belongs in the sitemap.
@@ -199,14 +199,14 @@ const REDIRECT_PATHS = new Set(Object.keys(redirects).map((path) => withBase(`${
  * construction or by a well-known path and never needed advertised.
  */
 const indexable = (url) => {
-  const { pathname } = new URL(url)
+  const { pathname } = new URL(url);
   return (
     !REDIRECT_PATHS.has(pathname) &&
-    !pathname.endsWith('.md') &&
+    !pathname.endsWith(".md") &&
     !/\/llms(?:-full)?\.txt$/.test(pathname) &&
     !/(^|\/)r\/[^/]*\.json$/.test(pathname)
-  )
-}
+  );
+};
 
 export default defineConfig({
   site,
@@ -257,25 +257,25 @@ export default defineConfig({
     starlight({
       ...withLlmsLink(
         sharedStarlightConfig({
-          project: 'react-inputs',
+          project: "react-inputs",
           customCss: [
-            './src/styles/live.css',
-            './src/styles/sidebar.css',
-            './src/styles/logos.css',
-            './src/styles/content.css',
+            "./src/styles/live.css",
+            "./src/styles/sidebar.css",
+            "./src/styles/logos.css",
+            "./src/styles/content.css",
             // The shared landing rules, then this site's own on top of them.
-            '@rxova/astro-ui/styles/landing.css',
-            './src/styles/home.css',
+            "@rxova/astro-ui/styles/landing.css",
+            "./src/styles/home.css",
           ],
           // Components sit LAST and are the destination, not a preamble:
           // getting-started is a one-time read, the component list is what you
           // come back to. Each component is one clickable entry whose five
           // sections are identical, so the shape is learned once.
           sidebar: [
-            { label: 'Overview', link: '/overview' },
+            { label: "Overview", link: "/overview" },
             {
-              label: 'Getting started',
-              items: [{ autogenerate: { directory: 'getting-started' } }],
+              label: "Getting started",
+              items: [{ autogenerate: { directory: "getting-started" } }],
             },
             // The components sit at the top level rather than inside a
             // "Components" group: wrapping them added an accordion you had to open
@@ -299,7 +299,7 @@ export default defineConfig({
                 `components/${name}/about`,
                 `components/${name}/migrating`,
                 {
-                  label: 'API',
+                  label: "API",
                   collapsed: true,
                   items: [{ autogenerate: { directory: `components/${name}/api` } }],
                 },
@@ -310,8 +310,8 @@ export default defineConfig({
       ),
       // Applies `base` to the hero action links, which live in frontmatter and
       // so never reach the remark pipeline. See the middleware for why.
-      routeMiddleware: './src/route-middleware.mjs',
+      routeMiddleware: "./src/route-middleware.mjs",
       plugins: [...typeDocPlugins, starlightLinksValidator({ errorOnRelativeLinks: false })],
     }),
   ],
-})
+});

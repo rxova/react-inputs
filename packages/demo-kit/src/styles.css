@@ -87,7 +87,7 @@ select {
   color: inherit;
   font-family: inherit;
 }
-input:not([data-rx-otp-input])[aria-invalid='true'],
+input:not([data-rx-otp-input])[aria-invalid="true"],
 input:not([data-rx-otp-input])[data-invalid] {
   border-color: #c0392b;
   outline-color: #c0392b;

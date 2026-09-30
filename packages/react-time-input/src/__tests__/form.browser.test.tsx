@@ -1,11 +1,11 @@
-import { describe, expect, it, vi } from 'vitest'
-import { page, userEvent } from 'vitest/browser'
-import { render } from 'vitest-browser-react'
-import { Controller, useForm } from 'react-hook-form'
-import { Form, Formik, useField } from 'formik'
-import { Field as FinalField, Form as FinalForm } from 'react-final-form'
-import { useForm as useTanstackForm } from '@tanstack/react-form'
-import { TimeInput } from '../TimeInput'
+import { describe, expect, it, vi } from "vitest";
+import { page, userEvent } from "vitest/browser";
+import { render } from "vitest-browser-react";
+import { Controller, useForm } from "react-hook-form";
+import { Form, Formik, useField } from "formik";
+import { Field as FinalField, Form as FinalForm } from "react-final-form";
+import { useForm as useTanstackForm } from "@tanstack/react-form";
+import { TimeInput } from "../TimeInput";
 
 /**
  * The whole loop for each integration: type → library state updates → submit
@@ -18,45 +18,45 @@ import { TimeInput } from '../TimeInput'
  * value it might validate.
  */
 function firstSegment(): HTMLElement {
-  return document.querySelector<HTMLElement>('[data-rx-time-segment]')!
+  return document.querySelector<HTMLElement>("[data-rx-time-segment]")!;
 }
 
 /** Type a full 24-hour time: hour then minute. */
-async function typeTime(digits = '0930') {
-  firstSegment().focus()
-  await userEvent.keyboard(digits)
+async function typeTime(digits = "0930") {
+  firstSegment().focus();
+  await userEvent.keyboard(digits);
 }
 
-describe('native form, no library', () => {
-  it('posts the 24-hour value under its name, whatever the field displays', async () => {
-    const onSubmit = vi.fn()
+describe("native form, no library", () => {
+  it("posts the 24-hour value under its name, whatever the field displays", async () => {
+    const onSubmit = vi.fn();
     await render(
       <form
         onSubmit={(event) => {
-          event.preventDefault()
-          onSubmit(Object.fromEntries(new FormData(event.currentTarget)))
+          event.preventDefault();
+          onSubmit(Object.fromEntries(new FormData(event.currentTarget)));
         }}
       >
         <TimeInput name="start" label="Start" locale="en-GB" />
         <button type="submit">Save</button>
       </form>,
-    )
-    await typeTime()
-    await page.getByRole('button', { name: 'Save' }).click()
+    );
+    await typeTime();
+    await page.getByRole("button", { name: "Save" }).click();
 
-    expect(onSubmit).toHaveBeenCalledWith({ start: '09:30' })
-  })
-})
+    expect(onSubmit).toHaveBeenCalledWith({ start: "09:30" });
+  });
+});
 
-describe('react-hook-form via Controller', () => {
+describe("react-hook-form via Controller", () => {
   function Harness({ onValid }: { onValid: (value: unknown) => void }) {
     const { control, handleSubmit } = useForm<{ start: string | null }>({
       defaultValues: { start: null },
-    })
+    });
     return (
       <form
         onSubmit={(event) => {
-          void handleSubmit(onValid)(event)
+          void handleSubmit(onValid)(event);
         }}
       >
         <Controller
@@ -75,24 +75,24 @@ describe('react-hook-form via Controller', () => {
         />
         <button type="submit">Save</button>
       </form>
-    )
+    );
   }
 
-  it('binds the 24-hour string and submits it', async () => {
-    const onValid = vi.fn()
-    await render(<Harness onValid={onValid} />)
-    await typeTime()
-    await page.getByRole('button', { name: 'Save' }).click()
+  it("binds the 24-hour string and submits it", async () => {
+    const onValid = vi.fn();
+    await render(<Harness onValid={onValid} />);
+    await typeTime();
+    await page.getByRole("button", { name: "Save" }).click();
 
     await vi.waitFor(() => {
-      expect(onValid).toHaveBeenCalledWith({ start: '09:30' }, expect.anything())
-    })
-  })
-})
+      expect(onValid).toHaveBeenCalledWith({ start: "09:30" }, expect.anything());
+    });
+  });
+});
 
-describe('formik via useField', () => {
+describe("formik via useField", () => {
   function Field() {
-    const [field, meta, helpers] = useField<string | null>('start')
+    const [field, meta, helpers] = useField<string | null>("start");
     return (
       <>
         <TimeInput
@@ -105,11 +105,11 @@ describe('formik via useField', () => {
         />
         <output data-testid="touched">{String(meta.touched)}</output>
       </>
-    )
+    );
   }
 
-  it('drives Formik state and submits the 24-hour string', async () => {
-    const onSubmit = vi.fn()
+  it("drives Formik state and submits the 24-hour string", async () => {
+    const onSubmit = vi.fn();
     await render(
       <Formik initialValues={{ start: null }} onSubmit={(values) => onSubmit(values)}>
         <Form>
@@ -117,16 +117,16 @@ describe('formik via useField', () => {
           <button type="submit">Save</button>
         </Form>
       </Formik>,
-    )
-    await typeTime()
-    await page.getByRole('button', { name: 'Save' }).click()
+    );
+    await typeTime();
+    await page.getByRole("button", { name: "Save" }).click();
 
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledWith({ start: '09:30' })
-    })
-  })
+      expect(onSubmit).toHaveBeenCalledWith({ start: "09:30" });
+    });
+  });
 
-  it('marks touched when focus leaves the field, not when it moves between segments', async () => {
+  it("marks touched when focus leaves the field, not when it moves between segments", async () => {
     // Two segments, one field. Marking it touched on the way from hour to
     // minute would show "required" while the user is still typing the time.
     await render(
@@ -136,30 +136,30 @@ describe('formik via useField', () => {
           <button type="submit">Save</button>
         </Form>
       </Formik>,
-    )
-    firstSegment().focus()
-    await userEvent.keyboard('09')
+    );
+    firstSegment().focus();
+    await userEvent.keyboard("09");
 
-    await expect.element(page.getByTestId('touched')).toMatchTextContent('false')
+    await expect.element(page.getByTestId("touched")).toMatchTextContent("false");
 
-    await page.getByRole('button', { name: 'Save' }).click()
+    await page.getByRole("button", { name: "Save" }).click();
 
-    await expect.element(page.getByTestId('touched')).toMatchTextContent('true')
-  })
-})
+    await expect.element(page.getByTestId("touched")).toMatchTextContent("true");
+  });
+});
 
-describe('react-final-form via Field', () => {
-  it('binds the field and submits the 24-hour string', async () => {
-    const onSubmit = vi.fn()
+describe("react-final-form via Field", () => {
+  it("binds the field and submits the 24-hour string", async () => {
+    const onSubmit = vi.fn();
     await render(
       <FinalForm
         onSubmit={(values) => {
-          onSubmit(values)
+          onSubmit(values);
         }}
         render={({ handleSubmit }) => (
           <form
             onSubmit={(event) => {
-              void handleSubmit(event)
+              void handleSubmit(event);
             }}
           >
             <FinalField name="start">
@@ -170,7 +170,7 @@ describe('react-final-form via Field', () => {
                   name={input.name}
                   // RFF starts a field as `''`; the component takes `null` for
                   // empty, and treats the two the same way on the way in.
-                  value={input.value === '' ? null : String(input.value)}
+                  value={input.value === "" ? null : String(input.value)}
                   onChange={input.onChange}
                   onBlur={input.onBlur}
                 />
@@ -180,29 +180,29 @@ describe('react-final-form via Field', () => {
           </form>
         )}
       />,
-    )
-    await typeTime()
-    await page.getByRole('button', { name: 'Save' }).click()
+    );
+    await typeTime();
+    await page.getByRole("button", { name: "Save" }).click();
 
     await vi.waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledWith({ start: '09:30' })
-    })
-  })
-})
+      expect(onSubmit).toHaveBeenCalledWith({ start: "09:30" });
+    });
+  });
+});
 
-describe('TanStack Form via form.Field', () => {
+describe("TanStack Form via form.Field", () => {
   function Harness({ onValid }: { onValid: (value: unknown) => void }) {
     const form = useTanstackForm({
       defaultValues: { start: null as string | null },
       onSubmit: ({ value }) => {
-        onValid(value)
+        onValid(value);
       },
-    })
+    });
     return (
       <form
         onSubmit={(event) => {
-          event.preventDefault()
-          void form.handleSubmit()
+          event.preventDefault();
+          void form.handleSubmit();
         }}
       >
         <form.Field name="start">
@@ -213,7 +213,7 @@ describe('TanStack Form via form.Field', () => {
               locale="en-GB"
               value={field.state.value}
               onChange={(value) => {
-                field.handleChange(value)
+                field.handleChange(value);
               }}
               onBlur={field.handleBlur}
             />
@@ -221,17 +221,17 @@ describe('TanStack Form via form.Field', () => {
         </form.Field>
         <button type="submit">Save</button>
       </form>
-    )
+    );
   }
 
-  it('binds the 24-hour string and submits it', async () => {
-    const onValid = vi.fn()
-    await render(<Harness onValid={onValid} />)
-    await typeTime()
-    await page.getByRole('button', { name: 'Save' }).click()
+  it("binds the 24-hour string and submits it", async () => {
+    const onValid = vi.fn();
+    await render(<Harness onValid={onValid} />);
+    await typeTime();
+    await page.getByRole("button", { name: "Save" }).click();
 
     await vi.waitFor(() => {
-      expect(onValid).toHaveBeenCalledWith({ start: '09:30' })
-    })
-  })
-})
+      expect(onValid).toHaveBeenCalledWith({ start: "09:30" });
+    });
+  });
+});

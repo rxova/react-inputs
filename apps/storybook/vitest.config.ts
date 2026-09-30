@@ -1,4 +1,4 @@
-import { baseVitestConfig } from '@rxova/repo-config/vitest'
+import { baseVitestConfig } from "@rxova/repo-config/vitest";
 
 /**
  * Covers the workshop's configuration, not its stories — the stories render the
@@ -21,10 +21,10 @@ import { baseVitestConfig } from '@rxova/repo-config/vitest'
  */
 export default baseVitestConfig({
   root: import.meta.dirname,
-  include: ['tests/**/*.test.ts'],
+  include: ["tests/**/*.test.ts"],
   coverage: false,
   // A real Vite server plus a TypeScript program over every package source:
   // slow to start, and slower still on a cold CI runner.
   testTimeout: 120_000,
   hookTimeout: 120_000,
-})
+});

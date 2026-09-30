@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { FileField } from '@/components/rxova/file-field'
+import { FileField } from "@/components/rxova/file-field";
 
 export function ShadcnFile() {
   return (
@@ -10,5 +10,5 @@ export function ShadcnFile() {
       name="attachments"
       multiple
     />
-  )
+  );
 }

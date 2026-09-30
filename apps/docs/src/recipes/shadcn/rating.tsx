@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { RatingField } from '@/components/rxova/rating-field'
+import { useState } from "react";
+import { RatingField } from "@/components/rxova/rating-field";
 
 export function ShadcnRating() {
-  const [value, setValue] = useState(4)
+  const [value, setValue] = useState(4);
 
   return (
     <RatingField
@@ -14,5 +14,5 @@ export function ShadcnRating() {
       value={value}
       onChange={setValue}
     />
-  )
+  );
 }

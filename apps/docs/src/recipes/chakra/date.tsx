@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { Field } from '@chakra-ui/react'
-import { DateInput } from '@rxova/react-date-input'
+import { Field } from "@chakra-ui/react";
+import { DateInput } from "@rxova/react-date-input";
 
 export function ChakraDate() {
   return (
@@ -10,5 +10,5 @@ export function ChakraDate() {
       <DateInput label="Start date" name="startDate" locale="en-US" />
       <Field.HelperText>Enter a calendar date.</Field.HelperText>
     </Field.Root>
-  )
+  );
 }

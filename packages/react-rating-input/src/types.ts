@@ -1,19 +1,19 @@
-import type { CSSProperties, FocusEvent, ReactNode } from 'react'
+import type { CSSProperties, FocusEvent, ReactNode } from "react";
 
 /** How a value snaps onto the `precision` grid. See the rounding table in the README. */
-export type RatingRounding = 'nearest' | 'down' | 'up' | 'none'
+export type RatingRounding = "nearest" | "down" | "up" | "none";
 
 /**
  * Stable machine code for a coerced input. Safe to `switch` on; the human
  * `message` on {@link RatingWarning} is for logs, this is for logic.
  */
 export type RatingWarningCode =
-  | 'value-non-finite'
-  | 'value-negative'
-  | 'value-above-max'
-  | 'max-non-finite'
-  | 'max-too-small'
-  | 'max-non-integer'
+  | "value-non-finite"
+  | "value-negative"
+  | "value-above-max"
+  | "max-non-finite"
+  | "max-too-small"
+  | "max-non-integer";
 
 /**
  * Emitted when the component keeps itself functional by coercing an
@@ -23,92 +23,92 @@ export type RatingWarningCode =
  * input was off, never an error.
  */
 export interface RatingWarning {
-  code: RatingWarningCode
+  code: RatingWarningCode;
   /** The prop that carried the offending value. */
-  prop: 'value' | 'defaultValue' | 'max'
+  prop: "value" | "defaultValue" | "max";
   /** The value as received, before coercion. */
-  received: number
+  received: number;
   /** The value actually used after coercion — what gets painted. */
-  used: number
+  used: number;
   /** Human-readable explanation, safe to log as-is. */
-  message: string
+  message: string;
 }
 
 /** Per-icon state handed to an `icon` / `emptyIcon` render function. */
 export interface RatingIconState {
   /** 0-based position in the row. */
-  index: number
+  index: number;
   /** Fill ratio for this icon, 0..1. */
-  fill: number
+  fill: number;
   /** `fill >= 1` */
-  filled: boolean
+  filled: boolean;
   /** `fill <= 0` */
-  empty: boolean
+  empty: boolean;
   /** `0 < fill < 1` */
-  partial: boolean
+  partial: boolean;
   /** A hover or keyboard preview currently covers this icon. */
-  active: boolean
+  active: boolean;
 }
 
-export type RatingIcon = ReactNode | ((state: RatingIconState) => ReactNode)
+export type RatingIcon = ReactNode | ((state: RatingIconState) => ReactNode);
 
 export interface RatingProps {
   // ---- Value ----------------------------------------------------------------
   /** Controlled score. Clamped to [0, max]; NaN/Infinity become 0. */
-  value?: number
+  value?: number;
   /** Uncontrolled initial score. Ignored when `value` is provided. */
-  defaultValue?: number
+  defaultValue?: number;
   /** Number of icons rendered. Positive integer. @default 5 */
-  max?: number
+  max?: number;
 
   // ---- Rounding -------------------------------------------------------------
   /** Quantization grid: 1 = whole icons, 0.5 = halves, 0 = continuous. @default 0 */
-  precision?: number
+  precision?: number;
   /** Direction of the snap onto the grid. @default 'nearest' */
-  rounding?: RatingRounding
+  rounding?: RatingRounding;
 
   // ---- Icons ----------------------------------------------------------------
   /** Filled icon. A function receives per-icon state. @default a built-in star */
-  icon?: RatingIcon
+  icon?: RatingIcon;
   /** Empty/track icon. @default same as `icon`, dimmed via `--rx-rating-empty-filter` */
-  emptyIcon?: RatingIcon
+  emptyIcon?: RatingIcon;
 
   // ---- Interaction ----------------------------------------------------------
   /** Providing this makes the component interactive. */
-  onChange?: (value: number) => void
+  onChange?: (value: number) => void;
   /** Hover/keyboard preview; `null` when the preview ends. */
-  onHoverChange?: (value: number | null) => void
+  onHoverChange?: (value: number | null) => void;
   /** Force read-only even when `onChange` is present. @default `!onChange` */
-  readOnly?: boolean
-  disabled?: boolean
+  readOnly?: boolean;
+  disabled?: boolean;
   /** Re-selecting the current value clears to 0. @default true when interactive */
-  allowClear?: boolean
+  allowClear?: boolean;
 
   // ---- Form integration -----------------------------------------------------
   /** Radio group name; also emits a value readable by a native `<form>`. */
-  name?: string
-  required?: boolean
+  name?: string;
+  required?: boolean;
   /** Fires when focus leaves the whole group, not when moving between icons. */
-  onBlur?: (event: FocusEvent<HTMLElement>) => void
+  onBlur?: (event: FocusEvent<HTMLElement>) => void;
   /** Sets `aria-invalid` and `data-invalid` on the group. */
-  invalid?: boolean
+  invalid?: boolean;
   /** ids of external error/help text. */
-  'aria-describedby'?: string
+  "aria-describedby"?: string;
   /** Base id; option inputs derive `${id}-1`, `${id}-2`, ... */
-  id?: string
+  id?: string;
 
   // ---- Presentation ---------------------------------------------------------
   /** Flips the fill origin. @default inherited from the DOM */
-  dir?: 'ltr' | 'rtl'
+  dir?: "ltr" | "rtl";
   /** Accessible name for the group. */
-  label?: string
+  label?: string;
   /** Formats the default accessible name. @default `${value} out of ${max}` */
-  formatLabel?: (value: number, max: number) => string
+  formatLabel?: (value: number, max: number) => string;
   /** Accessible name for one option, e.g. for `aria-label` on each radio. */
-  formatOptionLabel?: (value: number, max: number) => string
+  formatOptionLabel?: (value: number, max: number) => string;
 
-  className?: string
-  style?: CSSProperties
+  className?: string;
+  style?: CSSProperties;
 
   // ---- Diagnostics ----------------------------------------------------------
   /**
@@ -118,5 +118,5 @@ export interface RatingProps {
    * When omitted, the same warnings go to `console.warn`. The entire path is
    * stripped from production builds, so this is a no-op there.
    */
-  onWarn?: (warning: RatingWarning) => void
+  onWarn?: (warning: RatingWarning) => void;
 }

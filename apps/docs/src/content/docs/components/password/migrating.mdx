@@ -1,8 +1,8 @@
 ---
-title: 'Password input — Migrating'
+title: "Password input — Migrating"
 description: "Move to @rxova/react-password-input from react-password-strength-bar, a hand-rolled reveal toggle, or Enzoic's strength component."
 sidebar:
-  label: 'Migrating'
+  label: "Migrating"
   order: 4
 ---
 
@@ -27,34 +27,34 @@ almost certainly replacing _two_ things: the bar, and whatever input you paired 
 ### Before
 
 ```tsx
-import { useState } from 'react'
-import PasswordStrengthBar from 'react-password-strength-bar'
+import { useState } from "react";
+import PasswordStrengthBar from "react-password-strength-bar";
 
 function SignUp() {
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState("");
   return (
     <>
       <input
         type="password"
         value={password}
         onChange={(event) => {
-          setPassword(event.target.value)
+          setPassword(event.target.value);
         }}
       />
       <PasswordStrengthBar password={password} minLength={8} />
     </>
-  )
+  );
 }
 ```
 
 ### After
 
 ```tsx
-import { useState } from 'react'
-import { PasswordInput } from '@rxova/react-password-input'
+import { useState } from "react";
+import { PasswordInput } from "@rxova/react-password-input";
 
 function SignUp() {
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState("");
   return (
     <PasswordInput
       label="Password"
@@ -64,7 +64,7 @@ function SignUp() {
       showStrength
       minLength={8}
     />
-  )
+  );
 }
 ```
 
@@ -76,9 +76,9 @@ You also gain the reveal toggle, the Caps Lock warning and the requirement check
 If your scores are tuned against zxcvbn and you do not want them to move, keep it and pass it in:
 
 ```tsx
-import { zxcvbn } from '@zxcvbn-ts/core'
-import { PasswordInput } from '@rxova/react-password-input'
-import type { PasswordScore } from '@rxova/react-password-input'
+import { zxcvbn } from "@zxcvbn-ts/core";
+import { PasswordInput } from "@rxova/react-password-input";
+import type { PasswordScore } from "@rxova/react-password-input";
 
 function Field() {
   return (
@@ -86,16 +86,16 @@ function Field() {
       label="Password"
       showStrength
       estimate={(password) => {
-        const result = zxcvbn(password)
+        const result = zxcvbn(password);
         return {
           score: result.score as PasswordScore,
           entropy: Math.log2(result.guesses),
           penalties: [],
           effectiveLength: password.length,
-        }
+        };
       }}
     />
-  )
+  );
 }
 ```
 
@@ -106,32 +106,32 @@ The 0–4 scale is identical, so nothing else changes.
 The snippet almost everyone has:
 
 ```tsx
-import { useState } from 'react'
+import { useState } from "react";
 
 function Password() {
-  const [shown, setShown] = useState(false)
+  const [shown, setShown] = useState(false);
   return (
     <div>
-      <input type={shown ? 'text' : 'password'} />
+      <input type={shown ? "text" : "password"} />
       <button
         onClick={() => {
-          setShown(!shown)
+          setShown(!shown);
         }}
       >
-        {shown ? 'Hide' : 'Show'}
+        {shown ? "Hide" : "Show"}
       </button>
     </div>
-  )
+  );
 }
 ```
 
 Replace the whole thing:
 
 ```tsx
-import { PasswordInput } from '@rxova/react-password-input'
+import { PasswordInput } from "@rxova/react-password-input";
 
 function Password() {
-  return <PasswordInput label="Password" />
+  return <PasswordInput label="Password" />;
 }
 ```
 
@@ -151,7 +151,7 @@ Enzoic checks passwords against a hosted breach API. The equivalent here is `che
 except the request is yours — the plaintext never leaves the page unless you send it.
 
 ```tsx
-import { PasswordInput } from '@rxova/react-password-input'
+import { PasswordInput } from "@rxova/react-password-input";
 
 function Field() {
   return (
@@ -159,16 +159,16 @@ function Field() {
       label="Password"
       showStrength
       checkCompromised={async (password, signal) => {
-        const response = await fetch('/api/breach-check', {
-          method: 'POST',
+        const response = await fetch("/api/breach-check", {
+          method: "POST",
           body: JSON.stringify({ password }),
-          headers: { 'content-type': 'application/json' },
+          headers: { "content-type": "application/json" },
           signal,
-        })
-        return (await response.json()).compromised === true
+        });
+        return (await response.json()).compromised === true;
       }}
     />
-  )
+  );
 }
 ```
 

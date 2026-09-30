@@ -1,8 +1,8 @@
 ---
-title: 'File input — Usage'
-description: 'Use the file input in React: accept and size rules, drag and drop, dedupe, managed previews and native form submission.'
+title: "File input — Usage"
+description: "Use the file input in React: accept and size rules, drag and drop, dedupe, managed previews and native form submission."
 sidebar:
-  label: 'Usage'
+  label: "Usage"
   order: 2
 ---
 
@@ -13,13 +13,13 @@ network request at all. (`FileInput` and `useState` are already in scope.)
 
 ```tsx live
 function Demo() {
-  const [files, setFiles] = useState([])
+  const [files, setFiles] = useState([]);
   return (
     <>
       <FileInput label="Attachments" multiple maxFiles={4} value={files} onChange={setFiles} />
-      <p>{files.length === 0 ? 'Nothing attached' : `${files.length} attached`}</p>
+      <p>{files.length === 0 ? "Nothing attached" : `${files.length} attached`}</p>
     </>
-  )
+  );
 }
 ```
 
@@ -55,7 +55,7 @@ the other three.
 
 ```tsx live
 function Demo() {
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState("");
   return (
     <>
       <FileInput
@@ -63,14 +63,14 @@ function Demo() {
         multiple
         accept=".txt,text/plain"
         maxSize={1000}
-        validate={(file) => (file.name.startsWith('secret') ? 'that one stays home' : true)}
+        validate={(file) => (file.name.startsWith("secret") ? "that one stays home" : true)}
         onReject={(attempt) => {
-          setMessage(describeRejection(attempt, { accept: '.txt', maxSize: 1000 }))
+          setMessage(describeRejection(attempt, { accept: ".txt", maxSize: 1000 }));
         }}
       />
       <p role="status">{message}</p>
     </>
-  )
+  );
 }
 ```
 
@@ -114,7 +114,7 @@ accidentally drop the only way to detach a file.
 drag-depth counter, the URL revocation, the focus handoff after a removal — live in the hook.
 
 ```tsx
-const field = useFileInput({ multiple: true, previews: true, maxSize: 1_000_000 })
+const field = useFileInput({ multiple: true, previews: true, maxSize: 1_000_000 });
 ```
 
 | Returned            | What it is                                                                   |

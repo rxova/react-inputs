@@ -8,17 +8,17 @@
 
 export interface ComponentPackage {
   /** Directory under packages/, and the segment CI addresses it by. */
-  readonly dir: string
+  readonly dir: string;
   /** The npm package name. */
-  readonly name: string
+  readonly name: string;
   /** URL and content-directory segment. */
-  readonly slug: string
+  readonly slug: string;
   /** Sidebar entry — not always the slug capitalised (OTP). */
-  readonly label: string
+  readonly label: string;
   /** Human heading, e.g. "OTP input". */
-  readonly title: string
+  readonly title: string;
 }
 
-export declare const REPO_ROOT: string
+export declare const REPO_ROOT: string;
 
-export declare function componentPackages(repoRoot?: string): ComponentPackage[]
+export declare function componentPackages(repoRoot?: string): ComponentPackage[];

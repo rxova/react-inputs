@@ -37,12 +37,12 @@ npm install @rxova/react-date-input
 ## Basic use
 
 ```tsx
-import { useState } from 'react'
-import { DateInput } from '@rxova/react-date-input'
+import { useState } from "react";
+import { DateInput } from "@rxova/react-date-input";
 
 function Birthday() {
-  const [value, setValue] = useState<string | null>(null)
-  return <DateInput label="Date of birth" value={value} onChange={setValue} max="2026-07-29" />
+  const [value, setValue] = useState<string | null>(null);
+  return <DateInput label="Date of birth" value={value} onChange={setValue} max="2026-07-29" />;
 }
 ```
 
@@ -55,8 +55,8 @@ This is the design decision everything else follows from.
 
 ```js
 // Somewhere west of Greenwich:
-new Date('2026-03-01').getDate() // 28  — parsed as UTC midnight
-new Date(2026, 2, 1).getDate() // 1   — parsed as local midnight
+new Date("2026-03-01").getDate(); // 28  — parsed as UTC midnight
+new Date(2026, 2, 1).getDate(); // 1   — parsed as local midnight
 ```
 
 A calendar date is a year, a month and a day. It is **not** a point in time. The moment it becomes
@@ -74,7 +74,7 @@ Segment order, separators and month names all come from `Intl.DateTimeFormat`, s
 for every locale the platform knows and costs nothing:
 
 ```tsx
-import { DateInput } from '@rxova/react-date-input'
+import { DateInput } from "@rxova/react-date-input";
 
 function Examples() {
   return (
@@ -83,7 +83,7 @@ function Examples() {
       <DateInput label="UK" locale="en-GB" /> {/* dd / mm / yyyy */}
       <DateInput label="Japan" locale="ja-JP" /> {/* yyyy / mm / dd */}
     </>
-  )
+  );
 }
 ```
 
@@ -110,10 +110,10 @@ rejecting the keystroke.
 ## Range
 
 ```tsx
-import { DateInput } from '@rxova/react-date-input'
+import { DateInput } from "@rxova/react-date-input";
 
 function Booking() {
-  return <DateInput label="Check-in" min="2026-01-01" max="2026-12-31" />
+  return <DateInput label="Check-in" min="2026-01-01" max="2026-12-31" />;
 }
 ```
 
@@ -131,7 +131,7 @@ With a `name`, the component emits a hidden input carrying the ISO value, so a n
 with no wiring:
 
 ```tsx
-import { DateInput } from '@rxova/react-date-input'
+import { DateInput } from "@rxova/react-date-input";
 
 function Form() {
   return (
@@ -139,7 +139,7 @@ function Form() {
       <DateInput label="Due" name="due" />
       <button type="submit">Save</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -198,39 +198,39 @@ These are **public API**, covered by semver.
 auto-advance, day re-clamping, locale layout and focus management.
 
 ```tsx
-import { useDateInput } from '@rxova/react-date-input'
+import { useDateInput } from "@rxova/react-date-input";
 
 function CustomField() {
-  const field = useDateInput({ locale: 'en-GB' })
+  const field = useDateInput({ locale: "en-GB" });
 
   return (
     <div onBlur={field.handleBlur}>
       {field.pieces.map((piece, index) =>
-        piece.kind === 'literal' ? (
+        piece.kind === "literal" ? (
           <span key={index}>{piece.text}</span>
         ) : (
           <span
             key={piece.type}
             ref={(node) => {
-              field.segmentRefs.current[piece.type] = node
+              field.segmentRefs.current[piece.type] = node;
             }}
             role="spinbutton"
             tabIndex={0}
             onFocus={(event) => {
-              field.handleSegmentFocus(piece.type, event)
+              field.handleSegmentFocus(piece.type, event);
             }}
             onKeyDown={(event) => {
-              if (/^\d$/.test(event.key)) field.typeDigit(piece.type, event.key)
-              else if (event.key === 'ArrowUp') field.step(piece.type, 1)
-              else if (event.key === 'ArrowDown') field.step(piece.type, -1)
+              if (/^\d$/.test(event.key)) field.typeDigit(piece.type, event.key);
+              else if (event.key === "ArrowUp") field.step(piece.type, 1);
+              else if (event.key === "ArrowDown") field.step(piece.type, -1);
             }}
           >
-            {field.parts[piece.type] ?? '--'}
+            {field.parts[piece.type] ?? "--"}
           </span>
         ),
       )}
     </div>
-  )
+  );
 }
 ```
 
@@ -242,18 +242,18 @@ The calendar helpers are exported too — `toISO`, `fromISO`, `daysInMonth`, `is
 `onWarn` receives a `{ code, prop, received, message }` whenever a prop is rejected or coerced:
 
 ```tsx
-import * as Sentry from '@sentry/react'
-import { DateInput } from '@rxova/react-date-input'
+import * as Sentry from "@sentry/react";
+import { DateInput } from "@rxova/react-date-input";
 
 function Field() {
   return (
     <DateInput
       label="Due"
       onWarn={(warning) => {
-        Sentry.captureMessage(warning.message, { level: 'warning', extra: { ...warning } })
+        Sentry.captureMessage(warning.message, { level: "warning", extra: { ...warning } });
       }}
     />
-  )
+  );
 }
 ```
 

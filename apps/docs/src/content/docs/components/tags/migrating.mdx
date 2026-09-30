@@ -1,8 +1,8 @@
 ---
-title: 'Tags input — Migrating'
-description: 'Move to @rxova/react-tags-input from react-tagsinput, react-tag-input, Tagify or a creatable multi-value react-select.'
+title: "Tags input — Migrating"
+description: "Move to @rxova/react-tags-input from react-tagsinput, react-tag-input, Tagify or a creatable multi-value react-select."
 sidebar:
-  label: 'Migrating'
+  label: "Migrating"
   order: 4
 ---
 
@@ -34,24 +34,24 @@ against this package's 3.6 kB. Migrate for the keyboard and the announcements, n
 ### Before
 
 ```tsx
-import { useState } from 'react'
-import TagsInput from 'react-tagsinput'
+import { useState } from "react";
+import TagsInput from "react-tagsinput";
 
 function Topics() {
-  const [tags, setTags] = useState<string[]>([])
-  return <TagsInput value={tags} onChange={setTags} onlyUnique maxTags={5} />
+  const [tags, setTags] = useState<string[]>([]);
+  return <TagsInput value={tags} onChange={setTags} onlyUnique maxTags={5} />;
 }
 ```
 
 ### After
 
 ```tsx
-import { useState } from 'react'
-import { TagsInput } from '@rxova/react-tags-input'
+import { useState } from "react";
+import { TagsInput } from "@rxova/react-tags-input";
 
 function Topics() {
-  const [tags, setTags] = useState<string[]>([])
-  return <TagsInput label="Topics" value={tags} onChange={setTags} max={5} />
+  const [tags, setTags] = useState<string[]>([]);
+  return <TagsInput label="Topics" value={tags} onChange={setTags} max={5} />;
 }
 ```
 
@@ -61,15 +61,15 @@ old permissive behaviour.
 A regex validator becomes a function, which can say _why_:
 
 ```tsx
-import { TagsInput } from '@rxova/react-tags-input'
+import { TagsInput } from "@rxova/react-tags-input";
 
 function Slugs() {
   return (
     <TagsInput
       label="Slugs"
-      validate={(tag) => (/^[a-z0-9-]+$/.test(tag) ? true : 'lowercase, digits and dashes only')}
+      validate={(tag) => (/^[a-z0-9-]+$/.test(tag) ? true : "lowercase, digits and dashes only")}
     />
-  )
+  );
 }
 ```
 
@@ -91,10 +91,10 @@ drag-to-reorder.
 
 ```ts
 // { id, text }[] -> string[]
-const value = existing.map((tag) => tag.text)
+const value = existing.map((tag) => tag.text);
 
 // string[] -> { id, text }[], for whatever still needs it
-const asObjects = value.map((text) => ({ id: text, text }))
+const asObjects = value.map((text) => ({ id: text, text }));
 ```
 
 Two features have no equivalent, on purpose:
@@ -124,18 +124,18 @@ using any of it before switching.
 | `settings.templates`                    | `renderTag`                       |                                      |
 
 ```tsx
-import { TagsInput } from '@rxova/react-tags-input'
+import { TagsInput } from "@rxova/react-tags-input";
 
-const allowed = ['react', 'vue', 'svelte']
+const allowed = ["react", "vue", "svelte"];
 
 function FromWhitelist() {
   return (
     <TagsInput
       label="Frameworks"
       transform={(raw) => raw.toLowerCase()}
-      validate={(tag) => (allowed.includes(tag) ? true : `pick one of ${allowed.join(', ')}`)}
+      validate={(tag) => (allowed.includes(tag) ? true : `pick one of ${allowed.join(", ")}`)}
     />
-  )
+  );
 }
 ```
 
@@ -159,5 +159,5 @@ will not pretend to.
 
 ```ts
 // react-select value -> tags
-const tags = selected.map((option) => option.value)
+const tags = selected.map((option) => option.value);
 ```

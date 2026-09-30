@@ -1,5 +1,5 @@
-import { contains } from './tags'
-import type { TagsWarning } from './types'
+import { contains } from "./tags";
+import type { TagsWarning } from "./types";
 
 /**
  * Development-only diagnostics.
@@ -12,16 +12,16 @@ import type { TagsWarning } from './types'
 
 /** Describe a `value` that is not an array at all. */
 export function inspectValueShape(value: unknown, prop: string): TagsWarning | null {
-  if (Array.isArray(value)) return null
+  if (Array.isArray(value)) return null;
   // Only the type name: the value itself could be anything, and a log line is
   // not the place to stringify a caller's object.
-  const received = typeof value
+  const received = typeof value;
   return {
-    code: 'value-not-array',
+    code: "value-not-array",
     prop,
     received,
     message: `\`${prop}\` must be an array of strings; received ${received}. Rendering an empty list.`,
-  }
+  };
 }
 
 /**
@@ -37,63 +37,63 @@ export function inspectValueEntries(
   prop: string,
   options: { allowDuplicates: boolean; caseSensitive: boolean; max?: number },
 ): TagsWarning[] {
-  if (!Array.isArray(value)) return []
-  const warnings: TagsWarning[] = []
-  const entries = value as unknown[]
+  if (!Array.isArray(value)) return [];
+  const warnings: TagsWarning[] = [];
+  const entries = value as unknown[];
 
-  const nonStrings = entries.filter((entry) => typeof entry !== 'string')
+  const nonStrings = entries.filter((entry) => typeof entry !== "string");
   if (nonStrings.length > 0) {
     warnings.push({
-      code: 'value-had-non-strings',
+      code: "value-had-non-strings",
       prop,
-      received: `${String(nonStrings.length)} non-string entr${nonStrings.length === 1 ? 'y' : 'ies'}`,
+      received: `${String(nonStrings.length)} non-string entr${nonStrings.length === 1 ? "y" : "ies"}`,
       message: `\`${prop}\` contained ${String(nonStrings.length)} entry/entries that are not strings; they were dropped rather than stringified, because a tag reading "undefined" is worse than a missing one.`,
-    })
+    });
   }
 
   if (!options.allowDuplicates) {
-    const seen: string[] = []
-    let duplicates = 0
+    const seen: string[] = [];
+    let duplicates = 0;
     for (const entry of entries) {
-      if (typeof entry !== 'string') continue
-      const tag = entry.trim()
-      if (tag === '') continue
-      if (contains(seen, tag, options.caseSensitive)) duplicates++
-      else seen.push(tag)
+      if (typeof entry !== "string") continue;
+      const tag = entry.trim();
+      if (tag === "") continue;
+      if (contains(seen, tag, options.caseSensitive)) duplicates++;
+      else seen.push(tag);
     }
     if (duplicates > 0) {
       warnings.push({
-        code: 'value-had-duplicates',
+        code: "value-had-duplicates",
         prop,
         received: `${String(duplicates)} duplicate(s)`,
         message: `\`${prop}\` contained ${String(duplicates)} duplicate tag(s), which were dropped. Pass \`allowDuplicates\` if repeats are meaningful here.`,
-      })
+      });
     }
   }
 
-  const usable = entries.filter((entry) => typeof entry === 'string' && entry.trim() !== '').length
+  const usable = entries.filter((entry) => typeof entry === "string" && entry.trim() !== "").length;
   if (options.max !== undefined && usable > options.max) {
     warnings.push({
-      code: 'value-over-max',
+      code: "value-over-max",
       prop,
       received: `${String(usable)} tags`,
       message: `\`${prop}\` has ${String(usable)} tags but \`max\` is ${String(options.max)}; the extras were dropped.`,
-    })
+    });
   }
 
-  return warnings
+  return warnings;
 }
 
 /** Describe a `max` that cannot bound anything. */
 export function inspectMax(max: number | undefined): TagsWarning | null {
-  if (max === undefined) return null
-  if (Number.isInteger(max) && max >= 1) return null
+  if (max === undefined) return null;
+  if (Number.isInteger(max) && max >= 1) return null;
   return {
-    code: 'max-invalid',
-    prop: 'max',
+    code: "max-invalid",
+    prop: "max",
     received: String(max),
     message: `\`max\` must be a whole number of at least 1; received ${String(max)}. Ignoring it — a field that can hold no tags is not a field.`,
-  }
+  };
 }
 
 /** Describe a length range no tag could satisfy. */
@@ -101,14 +101,14 @@ export function inspectLengthRange(
   minLength: number | undefined,
   maxLength: number | undefined,
 ): TagsWarning | null {
-  if (minLength === undefined || maxLength === undefined) return null
-  if (minLength <= maxLength) return null
+  if (minLength === undefined || maxLength === undefined) return null;
+  if (minLength <= maxLength) return null;
   return {
-    code: 'length-range-invalid',
-    prop: 'minLength',
+    code: "length-range-invalid",
+    prop: "minLength",
     received: `${String(minLength)} > ${String(maxLength)}`,
     message: `\`minLength\` (${String(minLength)}) is greater than \`maxLength\` (${String(maxLength)}); no tag can satisfy both. Ignoring both.`,
-  }
+  };
 }
 
 /**
@@ -118,12 +118,12 @@ export function inspectLengthRange(
  * which looks exactly like a field that does not work.
  */
 export function inspectDelimiters(delimiters: string[]): TagsWarning | null {
-  if (delimiters.length > 0) return null
+  if (delimiters.length > 0) return null;
   return {
-    code: 'no-delimiters',
-    prop: 'delimiters',
-    received: '[]',
+    code: "no-delimiters",
+    prop: "delimiters",
+    received: "[]",
     message:
-      '`delimiters` is empty, so nothing commits a tag except blurring the field. Falling back to Enter.',
-  }
+      "`delimiters` is empty, so nothing commits a tag except blurring the field. Falling back to Enter.",
+  };
 }

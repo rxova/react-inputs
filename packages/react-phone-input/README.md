@@ -37,19 +37,19 @@ npm install @rxova/react-phone-input
 ## Basic use
 
 ```tsx
-import { useState } from 'react'
-import { PhoneInput } from '@rxova/react-phone-input'
+import { useState } from "react";
+import { PhoneInput } from "@rxova/react-phone-input";
 
 function Signup() {
-  const [phone, setPhone] = useState('')
-  return <PhoneInput label="Phone number" value={phone} onChange={setPhone} defaultCountry="GB" />
+  const [phone, setPhone] = useState("");
+  return <PhoneInput label="Phone number" value={phone} onChange={setPhone} defaultCountry="GB" />;
 }
 ```
 
 `onChange` also receives the details:
 
 ```tsx
-import { PhoneInput } from '@rxova/react-phone-input'
+import { PhoneInput } from "@rxova/react-phone-input";
 
 function Field() {
   return (
@@ -58,10 +58,10 @@ function Field() {
       onChange={(value, details) => {
         // value    '+442071234567'
         // details  { e164, country: 'GB', national: '2071234567', possible: true }
-        console.log(value, details)
+        console.log(value, details);
       }}
     />
-  )
+  );
 }
 ```
 
@@ -79,12 +79,12 @@ needs to stop a typo — and it costs 4 kB. If you need real validity, validate 
 the metadata is free and the answer can be trusted.
 
 ```ts
-import { isPossible, countryByISO2, parsePhone } from '@rxova/react-phone-input'
+import { isPossible, countryByISO2, parsePhone } from "@rxova/react-phone-input";
 
-parsePhone('+442071234567').possible // true  — 10 digits, which the UK uses
-parsePhone('+4420712').possible // false — no UK number is 5 digits
-parsePhone('+9912345678').possible // false — no such calling code
-isPossible(countryByISO2('US'), '4155552671') // true
+parsePhone("+442071234567").possible; // true  — 10 digits, which the UK uses
+parsePhone("+4420712").possible; // false — no UK number is 5 digits
+parsePhone("+9912345678").possible; // false — no such calling code
+isPossible(countryByISO2("US"), "4155552671"); // true
 ```
 
 ## Where the data comes from
@@ -99,11 +99,11 @@ That is the whole trick. Bundled locale JSON in this space is mostly _names_, an
 been giving those away since 2019.
 
 ```ts
-import { countryName, flagEmoji } from '@rxova/react-phone-input'
+import { countryName, flagEmoji } from "@rxova/react-phone-input";
 
-countryName('DE', 'en') // 'Germany'
-countryName('DE', 'fr') // 'Allemagne'
-flagEmoji('DE') // '🇩🇪'
+countryName("DE", "en"); // 'Germany'
+countryName("DE", "fr"); // 'Allemagne'
+flagEmoji("DE"); // '🇩🇪'
 ```
 
 On Windows the flag renders as the two letters instead of a flag. That is a legible fallback, not
@@ -158,10 +158,12 @@ had just formatted, so it is refused — the default is used instead and `onWarn
 ## Restricting the list
 
 ```tsx
-import { PhoneInput } from '@rxova/react-phone-input'
+import { PhoneInput } from "@rxova/react-phone-input";
 
 function Field() {
-  return <PhoneInput label="Phone" countries={['GB', 'IE', 'FR', 'DE', 'ES']} defaultCountry="GB" />
+  return (
+    <PhoneInput label="Phone" countries={["GB", "IE", "FR", "DE", "ES"]} defaultCountry="GB" />
+  );
 }
 ```
 
@@ -175,7 +177,7 @@ With a `name`, the component emits a hidden input carrying the E.164 value, so a
 the canonical number rather than the formatted display text:
 
 ```tsx
-import { PhoneInput } from '@rxova/react-phone-input'
+import { PhoneInput } from "@rxova/react-phone-input";
 
 function Form() {
   return (
@@ -183,7 +185,7 @@ function Form() {
       <PhoneInput label="Phone" name="phone" defaultCountry="US" />
       <button type="submit">Sign up</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -221,17 +223,17 @@ These are **public API**, covered by semver.
 which is the part worth not rewriting.
 
 ```tsx
-import { usePhoneInput } from '@rxova/react-phone-input'
+import { usePhoneInput } from "@rxova/react-phone-input";
 
 function CustomField() {
-  const field = usePhoneInput({ defaultCountry: 'GB' })
+  const field = usePhoneInput({ defaultCountry: "GB" });
 
   return (
     <div onBlur={field.handleBlur}>
       <select
         value={field.country?.iso2}
         onChange={(event) => {
-          field.selectCountry(event.target.value)
+          field.selectCountry(event.target.value);
         }}
       >
         {field.countries.map((country) => (
@@ -242,14 +244,14 @@ function CustomField() {
       </select>
       <input
         ref={(node) => {
-          field.inputRef.current = node
+          field.inputRef.current = node;
         }}
         type="tel"
         value={field.text}
         onChange={field.handleInputChange}
       />
     </div>
-  )
+  );
 }
 ```
 
@@ -261,18 +263,18 @@ The parsing helpers are exported too — `parsePhone`, `formatPhone`, `formatNat
 `onWarn` receives a `{ code, prop, received, message }` whenever a prop is rejected or coerced:
 
 ```tsx
-import * as Sentry from '@sentry/react'
-import { PhoneInput } from '@rxova/react-phone-input'
+import * as Sentry from "@sentry/react";
+import { PhoneInput } from "@rxova/react-phone-input";
 
 function Field() {
   return (
     <PhoneInput
       label="Phone"
       onWarn={(warning) => {
-        Sentry.captureMessage(warning.message, { level: 'warning', extra: { ...warning } })
+        Sentry.captureMessage(warning.message, { level: "warning", extra: { ...warning } });
       }}
     />
-  )
+  );
 }
 ```
 

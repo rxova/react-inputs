@@ -34,7 +34,7 @@ form recipes, theming, and migration from `react-rating` / `react-stars`.
 ## Display
 
 ```tsx
-import { Rating } from '@rxova/react-rating-input'
+import { Rating } from "@rxova/react-rating-input";
 
 function Scores() {
   return (
@@ -45,7 +45,7 @@ function Scores() {
       <Rating value={4.3} icon="⭐" /> {/* emoji */}
       <Rating value={3} max={10} icon={<Heart />} emptyIcon={<HeartOutline />} />
     </>
-  )
+  );
 }
 ```
 
@@ -76,12 +76,12 @@ throwing — a display component must never crash a page over a data value.
 Providing `onChange` makes it an input. Nothing else changes.
 
 ```tsx
-import { useState } from 'react'
-import { Rating } from '@rxova/react-rating-input'
+import { useState } from "react";
+import { Rating } from "@rxova/react-rating-input";
 
 function RateYourMeal() {
-  const [score, setScore] = useState(0)
-  return <Rating value={score} onChange={setScore} precision={0.5} label="Rate your meal" />
+  const [score, setScore] = useState(0);
+  return <Rating value={score} onChange={setScore} precision={0.5} label="Rate your meal" />;
 }
 ```
 
@@ -108,14 +108,14 @@ library below has a controlled adapter — that is the supported path, and it is
 <Controller
   name="rating"
   control={control}
-  rules={{ min: { value: 1, message: 'Please rate' } }}
+  rules={{ min: { value: 1, message: "Please rate" } }}
   render={({ field, fieldState }) => (
     <>
       <Rating
         {...field} // value, onChange, onBlur, name, ref all line up
         precision={0.5}
         invalid={fieldState.invalid}
-        aria-describedby={fieldState.error ? 'rating-err' : undefined}
+        aria-describedby={fieldState.error ? "rating-err" : undefined}
       />
       {fieldState.error && <p id="rating-err">{fieldState.error.message}</p>}
     </>
@@ -130,7 +130,7 @@ library below has a controlled adapter — that is the supported path, and it is
 
 ```tsx
 function RatingField() {
-  const [field, meta, helpers] = useField('rating')
+  const [field, meta, helpers] = useField("rating");
 
   return (
     <Rating
@@ -140,7 +140,7 @@ function RatingField() {
       onBlur={field.onBlur}
       invalid={meta.touched && !!meta.error}
     />
-  )
+  );
 }
 ```
 
@@ -153,7 +153,7 @@ function RatingField() {
 <Field name="rating">
   {({ input, meta }) => (
     <Rating
-      value={typeof input.value === 'number' ? input.value : 0} // RFF uses '' when empty
+      value={typeof input.value === "number" ? input.value : 0} // RFF uses '' when empty
       onChange={input.onChange}
       onBlur={input.onBlur}
       invalid={meta.touched && !!meta.error}
@@ -170,7 +170,7 @@ function RatingField() {
 ```tsx
 <form.Field
   name="rating"
-  validators={{ onChange: ({ value }) => (value < 1 ? 'Please rate' : undefined) }}
+  validators={{ onChange: ({ value }) => (value < 1 ? "Please rate" : undefined) }}
 >
   {(field) => (
     <Rating
@@ -271,7 +271,7 @@ your own logging, or leave it off for a `console.warn`:
   max={5}
   onWarn={(w) => {
     // w: { code, prop, received, used, message }
-    if (w.code === 'value-above-max') reportToTelemetry(w)
+    if (w.code === "value-above-max") reportToTelemetry(w);
   }}
 />
 ```

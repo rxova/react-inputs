@@ -8,24 +8,24 @@
  */
 export interface CodemodEntry {
   /** CLI name and the transform filename (without extension). */
-  name: string
+  name: string;
   /** One-liner shown by `--help`. */
-  description: string
+  description: string;
 }
 
 export const TRANSFORMS: CodemodEntry[] = [
   {
-    name: 'input-otp-to-otp',
-    description: 'Migrate `input-otp` imports and usage to @rxova/react-otp-input.',
+    name: "input-otp-to-otp",
+    description: "Migrate `input-otp` imports and usage to @rxova/react-otp-input.",
   },
   {
-    name: 'currency-on-change',
+    name: "currency-on-change",
     description:
-      'Swap the 1.0 currency handlers: `onValueChange` becomes `onChange`, and any native `onChange` becomes `onNativeChange`.',
+      "Swap the 1.0 currency handlers: `onValueChange` becomes `onChange`, and any native `onChange` becomes `onNativeChange`.",
   },
   {
-    name: 'rx-token-prefixes',
+    name: "rx-token-prefixes",
     description:
-      'Rename 1.0 styling hooks: --otp-* / --rfs-* and data-otp-* / data-rfs-* to --rx-<name>-*. Stylesheets need the sed line in the migration guide.',
+      "Rename 1.0 styling hooks: --otp-* / --rfs-* and data-otp-* / data-rfs-* to --rx-<name>-*. Stylesheets need the sed line in the migration guide.",
   },
-]
+];

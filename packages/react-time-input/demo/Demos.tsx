@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { Section } from '@rxova/demo-kit'
-import { TimeInput } from '@rxova/react-time-input'
-import type { TimeWarning } from '@rxova/react-time-input'
+import { useState } from "react";
+import { Section } from "@rxova/demo-kit";
+import { TimeInput } from "@rxova/react-time-input";
+import type { TimeWarning } from "@rxova/react-time-input";
 
 /**
  * The E2E target. Every section is something the Playwright suite drives, so
@@ -11,10 +11,10 @@ import type { TimeWarning } from '@rxova/react-time-input'
  * test.
  */
 export function TimeDemos() {
-  const [value, setValue] = useState<string | null>('09:30')
-  const [ranged, setRanged] = useState<string | null>(null)
-  const [warnings, setWarnings] = useState<TimeWarning[]>([])
-  const [submitted, setSubmitted] = useState<string | null>(null)
+  const [value, setValue] = useState<string | null>("09:30");
+  const [ranged, setRanged] = useState<string | null>(null);
+  const [warnings, setWarnings] = useState<TimeWarning[]>([]);
+  const [submitted, setSubmitted] = useState<string | null>(null);
 
   return (
     <>
@@ -40,11 +40,11 @@ export function TimeDemos() {
 
       <Section id="controlled" title="Controlled" note="The value is always 24-hour HH:mm.">
         <TimeInput label="Controlled time" locale="en-US" value={value} onChange={setValue} />
-        <p data-testid="value">{value ?? 'null'}</p>
+        <p data-testid="value">{value ?? "null"}</p>
         <button
           type="button"
           onClick={() => {
-            setValue('00:00')
+            setValue("00:00");
           }}
         >
           Midnight
@@ -52,7 +52,7 @@ export function TimeDemos() {
         <button
           type="button"
           onClick={() => {
-            setValue('12:00')
+            setValue("12:00");
           }}
         >
           Noon
@@ -60,7 +60,7 @@ export function TimeDemos() {
         <button
           type="button"
           onClick={() => {
-            setValue(null)
+            setValue(null);
           }}
         >
           Clear
@@ -96,7 +96,7 @@ export function TimeDemos() {
           onChange={setRanged}
           onWarn={() => undefined}
         />
-        <p data-testid="range-value">{ranged ?? 'null'}</p>
+        <p data-testid="range-value">{ranged ?? "null"}</p>
       </Section>
 
       <Section id="warnings" title="Diagnostics" note="onWarn receives every rejected prop.">
@@ -107,7 +107,7 @@ export function TimeDemos() {
           onWarn={(warning) => {
             setWarnings((previous) =>
               previous.some((w) => w.code === warning.code) ? previous : [...previous, warning],
-            )
+            );
           }}
         />
         <ul data-testid="warning-codes">
@@ -124,15 +124,15 @@ export function TimeDemos() {
       >
         <form
           onSubmit={(event) => {
-            event.preventDefault()
-            const entry = new FormData(event.currentTarget).get('at')
-            setSubmitted(typeof entry === 'string' ? entry : '')
+            event.preventDefault();
+            const entry = new FormData(event.currentTarget).get("at");
+            setSubmitted(typeof entry === "string" ? entry : "");
           }}
         >
           <TimeInput label="Starts at" locale="en-US" name="at" defaultValue="14:30" />
           <button type="submit">Save</button>
         </form>
-        <p data-testid="submitted">{submitted ?? ''}</p>
+        <p data-testid="submitted">{submitted ?? ""}</p>
       </Section>
 
       <Section id="states" title="States" note="Disabled and read-only.">
@@ -150,5 +150,5 @@ export function TimeDemos() {
         </p>
       </Section>
     </>
-  )
+  );
 }

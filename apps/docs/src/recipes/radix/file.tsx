@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { Box, Text } from '@radix-ui/themes'
-import { FileInput } from '@rxova/react-file-input'
+import { Box, Text } from "@radix-ui/themes";
+import { FileInput } from "@rxova/react-file-input";
 
 export function RadixFile() {
   return (
@@ -14,5 +14,5 @@ export function RadixFile() {
         Choose one or more files.
       </Text>
     </Box>
-  )
+  );
 }

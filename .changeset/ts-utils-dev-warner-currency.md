@@ -1,5 +1,5 @@
 ---
-'@rxova/react-intl-currency-input': patch
+"@rxova/react-intl-currency-input": patch
 ---
 
 Internal: development warnings now come from `@rxova/ts-utils`'s `createDevWarner`, inlined at build time
