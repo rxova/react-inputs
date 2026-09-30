@@ -225,6 +225,7 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
           id={ids.input}
           data-rx-tags-input=""
           // Opt-in, and the same prop `@rxova/react-otp-input` exposes.
+          // eslint-disable-next-line jsx-a11y/no-autofocus -- the consumer's own `autoFocus` prop, forwarded as a native input's would be; off unless they pass it
           autoFocus={autoFocus}
           type="text"
           value={text}

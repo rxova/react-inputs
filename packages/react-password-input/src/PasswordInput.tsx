@@ -216,6 +216,7 @@ export const PasswordInput = /* @__PURE__ */ forwardRef<HTMLInputElement, Passwo
             id={ids.input}
             data-rx-password-input=""
             // Opt-in, and the same prop `@rxova/react-otp-input` exposes.
+            // eslint-disable-next-line jsx-a11y/no-autofocus -- the consumer's own `autoFocus` prop, forwarded as a native input's would be; off unless they pass it
             autoFocus={autoFocus}
             // Driven by the hook so the headless and rendered paths can never
             // disagree about what "revealed" means.
