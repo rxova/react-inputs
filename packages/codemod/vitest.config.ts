@@ -1,8 +1,10 @@
-import { defineConfig } from 'vitest/config'
+import { baseVitestConfig } from '@rxova/repo-config/vitest'
 
-export default defineConfig({
-  test: {
-    environment: 'node',
-    include: ['src/**/__tests__/**/*.test.ts'],
-  },
+// The transforms' fixture tests. No coverage gate, as before: the codemod is
+// held by its fixtures and by the pack smoke test that runs a transform from the
+// installed tarball.
+export default baseVitestConfig({
+  root: import.meta.dirname,
+  include: ['src/**/__tests__/**/*.test.ts'],
+  coverage: false,
 })

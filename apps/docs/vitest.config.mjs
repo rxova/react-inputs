@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config'
+import { baseVitestConfig } from '@rxova/repo-config/vitest'
 
 /**
  * Covers the build scripts, and the one src module that is not verified by the
@@ -14,12 +14,11 @@ import { defineConfig } from 'vitest/config'
  * puts these tests in `pnpm run test:coverage`, which is the job CI actually
  * runs.
  */
-export default defineConfig({
-  test: {
-    include: ['scripts/**/*.test.mjs', 'src/**/*.test.mjs'],
-    environment: 'node',
-    // The CLI cases spawn a real process, which is slower than the 5s default
-    // on a cold runner.
-    testTimeout: 30_000,
-  },
+export default baseVitestConfig({
+  root: import.meta.dirname,
+  include: ['scripts/**/*.test.mjs', 'src/**/*.test.mjs'],
+  coverage: false,
+  // The CLI cases spawn a real process, which is slower than the 5s default
+  // on a cold runner.
+  testTimeout: 30_000,
 })
