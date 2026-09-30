@@ -1,29 +1,29 @@
-'use client'
+"use client";
 
-import { useId } from 'react'
-import { TimeInput, type TimeInputProps } from '@rxova/react-time-input'
+import { useId } from "react";
+import { TimeInput, type TimeInputProps } from "@rxova/react-time-input";
 
-import './time-field.css'
+import "./time-field.css";
 
 export interface TimeFieldProps extends Omit<
   TimeInputProps,
-  'label' | 'aria-describedby' | 'invalid'
+  "label" | "aria-describedby" | "invalid"
 > {
-  label: string
-  description?: string
-  error?: string
+  label: string;
+  description?: string;
+  error?: string;
 }
 
 /** A labelled segmented time field copied into the consumer by the Rxova registry. */
 export function TimeField({ label, description, error, id, ...props }: TimeFieldProps) {
-  const generated = useId()
-  const fieldId = id ?? generated
+  const generated = useId();
+  const fieldId = id ?? generated;
   const describedBy = [description && `${fieldId}-description`, error && `${fieldId}-error`]
     .filter(Boolean)
-    .join(' ')
+    .join(" ");
 
   return (
-    <div className="rx-field" data-invalid={error ? '' : undefined}>
+    <div className="rx-field" data-invalid={error ? "" : undefined}>
       <span className="rx-field__label">{label}</span>
       <TimeInput
         {...props}
@@ -43,5 +43,5 @@ export function TimeField({ label, description, error, id, ...props }: TimeField
         </p>
       ) : null}
     </div>
-  )
+  );
 }

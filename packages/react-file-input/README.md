@@ -35,11 +35,11 @@ npm install @rxova/react-file-input
 ## Basic use
 
 ```tsx
-import { useState } from 'react'
-import { FileInput, describeRejection } from '@rxova/react-file-input'
+import { useState } from "react";
+import { FileInput, describeRejection } from "@rxova/react-file-input";
 
 function Attachments() {
-  const [files, setFiles] = useState<File[]>([])
+  const [files, setFiles] = useState<File[]>([]);
   return (
     <FileInput
       label="Attachments"
@@ -52,10 +52,10 @@ function Attachments() {
       value={files}
       onChange={setFiles}
       onReject={(attempt) => {
-        toast(describeRejection(attempt, { maxSize: 5_000_000 }))
+        toast(describeRejection(attempt, { maxSize: 5_000_000 }));
       }}
     />
-  )
+  );
 }
 ```
 
@@ -135,10 +135,10 @@ These are **public API**, covered by semver.
 `useFileInput` gives you the state and the handlers with no markup at all:
 
 ```tsx
-import { useFileInput } from '@rxova/react-file-input'
+import { useFileInput } from "@rxova/react-file-input";
 
 function CustomDropZone() {
-  const field = useFileInput({ multiple: true, previews: true, maxSize: 1_000_000 })
+  const field = useFileInput({ multiple: true, previews: true, maxSize: 1_000_000 });
 
   return (
     <div
@@ -159,7 +159,7 @@ function CustomDropZone() {
           type="button"
           aria-label={`Remove ${entry.file.name}`}
           onClick={() => {
-            field.removeAt(index)
+            field.removeAt(index);
           }}
         >
           <img src={entry.preview} alt="" />
@@ -167,7 +167,7 @@ function CustomDropZone() {
         </button>
       ))}
     </div>
-  )
+  );
 }
 ```
 

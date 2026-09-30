@@ -8,43 +8,43 @@
 
 /** Why a candidate tag was refused. Stable codes, safe to `switch` on. */
 export type TagRejection =
-  'empty' | 'duplicate' | 'max-reached' | 'too-short' | 'too-long' | 'invalid'
+  "empty" | "duplicate" | "max-reached" | "too-short" | "too-long" | "invalid";
 
 /** The outcome of trying to add one candidate. */
 export interface TagAttempt {
   /** The normalised tag, present whether or not it was accepted. */
-  tag: string
-  accepted: boolean
-  reason?: TagRejection
+  tag: string;
+  accepted: boolean;
+  reason?: TagRejection;
   /** A human-readable reason, when `validate` supplied one. */
-  message?: string
+  message?: string;
 }
 
 export interface TagRules {
   /** Strip leading and trailing whitespace before anything else. @default true */
-  trim?: boolean
+  trim?: boolean;
   /** Allow the same tag twice. @default false */
-  allowDuplicates?: boolean
+  allowDuplicates?: boolean;
   /** Compare tags case-sensitively when deduplicating. @default false */
-  caseSensitive?: boolean
+  caseSensitive?: boolean;
   /** Maximum number of tags. */
-  max?: number
+  max?: number;
   /** Minimum length of one tag, in codepoints. */
-  minLength?: number
+  minLength?: number;
   /** Maximum length of one tag, in codepoints. */
-  maxLength?: number
+  maxLength?: number;
   /** Rewrite a raw entry before it is checked — lowercasing, prefixing, and so on. */
-  transform?: (raw: string) => string
+  transform?: (raw: string) => string;
   /**
    * Final say. Return `true` to accept, `false` to refuse, or a string to
    * refuse *and* explain — the string is passed to `onReject` and can be shown.
    */
-  validate?: (tag: string, existing: string[]) => boolean | string
+  validate?: (tag: string, existing: string[]) => boolean | string;
 }
 
 /** Count codepoints, not UTF-16 code units, so an emoji is one character. */
 export function length(value: string): number {
-  return Array.from(value).length
+  return Array.from(value).length;
 }
 
 /** The form a tag is compared in when deduplicating. */
@@ -52,7 +52,7 @@ export function comparable(tag: string, caseSensitive: boolean): string {
   // `toLocaleLowerCase` rather than `toLowerCase`: in Turkish, `I` lowercases
   // to a dotless `ı`, and a tag list is exactly the place a user would notice
   // "İstanbul" and "istanbul" being treated as different words.
-  return caseSensitive ? tag : tag.toLocaleLowerCase()
+  return caseSensitive ? tag : tag.toLocaleLowerCase();
 }
 
 /** Whether `tag` is already in `existing`, under the configured comparison. */
@@ -61,8 +61,8 @@ export function contains(
   tag: string,
   caseSensitive: boolean,
 ): boolean {
-  const needle = comparable(tag, caseSensitive)
-  return existing.some((entry) => comparable(entry, caseSensitive) === needle)
+  const needle = comparable(tag, caseSensitive);
+  return existing.some((entry) => comparable(entry, caseSensitive) === needle);
 }
 
 /**
@@ -74,24 +74,24 @@ export function contains(
  * rejections, since `a,,b` is one careless keystroke and not two mistakes.
  */
 export function splitPasted(text: string, delimiters: string[]): string[] {
-  const separators = new Set([...delimiters, '\n', '\r'])
+  const separators = new Set([...delimiters, "\n", "\r"]);
   // Single-character delimiters only; a multi-character one would need a real
   // parser and is not something a tag field should invite.
-  const single = [...separators].filter((entry) => entry.length === 1)
-  if (single.length === 0) return text === '' ? [] : [text]
+  const single = [...separators].filter((entry) => entry.length === 1);
+  if (single.length === 0) return text === "" ? [] : [text];
 
-  const parts: string[] = []
-  let current = ''
+  const parts: string[] = [];
+  let current = "";
   for (const char of text) {
     if (single.includes(char)) {
-      parts.push(current)
-      current = ''
+      parts.push(current);
+      current = "";
     } else {
-      current += char
+      current += char;
     }
   }
-  parts.push(current)
-  return parts.filter((part) => part.trim() !== '')
+  parts.push(current);
+  return parts.filter((part) => part.trim() !== "");
 }
 
 /**
@@ -102,7 +102,7 @@ export function splitPasted(text: string, delimiters: string[]): string[] {
  * than silently swallowing it.
  */
 export function attempt(existing: string[], raw: string, rules: TagRules = {}): TagAttempt {
-  return attemptWith(existing, raw, rules)
+  return attemptWith(existing, raw, rules);
 }
 
 /**
@@ -134,54 +134,54 @@ function attemptWith(
     maxLength,
     transform,
     validate,
-  } = rules
+  } = rules;
 
-  let tag = trim ? raw.trim() : raw
+  let tag = trim ? raw.trim() : raw;
   if (transform) {
     try {
-      tag = transform(tag)
+      tag = transform(tag);
     } catch {
       // `transform` is consumer code running on every entry. A throwing one
       // degrades to "no transform" rather than taking the field down.
-      tag = trim ? raw.trim() : raw
+      tag = trim ? raw.trim() : raw;
     }
   }
 
-  if (tag === '') return { tag, accepted: false, reason: 'empty' }
+  if (tag === "") return { tag, accepted: false, reason: "empty" };
   if (max !== undefined && existing.length >= max) {
-    return { tag, accepted: false, reason: 'max-reached' }
+    return { tag, accepted: false, reason: "max-reached" };
   }
   if (minLength !== undefined && length(tag) < minLength) {
-    return { tag, accepted: false, reason: 'too-short' }
+    return { tag, accepted: false, reason: "too-short" };
   }
   if (maxLength !== undefined && length(tag) > maxLength) {
-    return { tag, accepted: false, reason: 'too-long' }
+    return { tag, accepted: false, reason: "too-long" };
   }
   if (!allowDuplicates) {
-    const duplicate = isDuplicate ? isDuplicate(tag) : contains(existing, tag, caseSensitive)
-    if (duplicate) return { tag, accepted: false, reason: 'duplicate' }
+    const duplicate = isDuplicate ? isDuplicate(tag) : contains(existing, tag, caseSensitive);
+    if (duplicate) return { tag, accepted: false, reason: "duplicate" };
   }
 
   if (validate) {
-    let verdict: boolean | string
+    let verdict: boolean | string;
     try {
-      verdict = validate(tag, existing as string[])
+      verdict = validate(tag, existing as string[]);
     } catch {
       // Same reasoning as `transform`: a broken predicate refuses the tag
       // rather than unmounting the form.
-      verdict = false
+      verdict = false;
     }
     if (verdict !== true) {
       return {
         tag,
         accepted: false,
-        reason: 'invalid',
-        message: typeof verdict === 'string' ? verdict : undefined,
-      }
+        reason: "invalid",
+        message: typeof verdict === "string" ? verdict : undefined,
+      };
     }
   }
 
-  return { tag, accepted: true }
+  return { tag, accepted: true };
 }
 
 /**
@@ -205,12 +205,12 @@ function accumulate(
   initial: string[],
   caseSensitive: boolean,
 ): {
-  list: readonly string[]
-  has: (tag: string) => boolean
-  add: (tag: string) => void
+  list: readonly string[];
+  has: (tag: string) => boolean;
+  add: (tag: string) => void;
 } {
-  const list = [...initial]
-  const keys = new Set(list.map((tag) => comparable(tag, caseSensitive)))
+  const list = [...initial];
+  const keys = new Set(list.map((tag) => comparable(tag, caseSensitive)));
 
   return {
     /**
@@ -222,10 +222,10 @@ function accumulate(
     list,
     has: (tag: string) => keys.has(comparable(tag, caseSensitive)),
     add: (tag: string) => {
-      list.push(tag)
-      keys.add(comparable(tag, caseSensitive))
+      list.push(tag);
+      keys.add(comparable(tag, caseSensitive));
     },
-  }
+  };
 }
 
 /**
@@ -240,15 +240,15 @@ export function attemptAll(
   candidates: string[],
   rules: TagRules = {},
 ): { tags: string[]; results: TagAttempt[] } {
-  const accepted = accumulate(existing, rules.caseSensitive ?? false)
-  const results: TagAttempt[] = []
+  const accepted = accumulate(existing, rules.caseSensitive ?? false);
+  const results: TagAttempt[] = [];
 
   for (const candidate of candidates) {
-    const result = attemptWith(accepted.list, candidate, rules, accepted.has)
-    results.push(result)
-    if (result.accepted) accepted.add(result.tag)
+    const result = attemptWith(accepted.list, candidate, rules, accepted.has);
+    results.push(result);
+    if (result.accepted) accepted.add(result.tag);
   }
-  return { tags: [...accepted.list], results }
+  return { tags: [...accepted.list], results };
 }
 
 /**
@@ -259,16 +259,16 @@ export function attemptAll(
  * failure than a missing one.
  */
 export function sanitize(value: unknown, rules: TagRules = {}): string[] {
-  if (!Array.isArray(value)) return []
-  const { allowDuplicates = false, caseSensitive = false, trim = true, max } = rules
-  const out: string[] = []
+  if (!Array.isArray(value)) return [];
+  const { allowDuplicates = false, caseSensitive = false, trim = true, max } = rules;
+  const out: string[] = [];
   for (const entry of value as unknown[]) {
-    if (typeof entry !== 'string') continue
-    const tag = trim ? entry.trim() : entry
-    if (tag === '') continue
-    if (!allowDuplicates && contains(out, tag, caseSensitive)) continue
-    if (max !== undefined && out.length >= max) break
-    out.push(tag)
+    if (typeof entry !== "string") continue;
+    const tag = trim ? entry.trim() : entry;
+    if (tag === "") continue;
+    if (!allowDuplicates && contains(out, tag, caseSensitive)) continue;
+    if (max !== undefined && out.length >= max) break;
+    out.push(tag);
   }
-  return out
+  return out;
 }

@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { Field } from '@chakra-ui/react'
-import { OtpInput } from '@rxova/react-otp-input'
+import { Field } from "@chakra-ui/react";
+import { OtpInput } from "@rxova/react-otp-input";
 
 export function ChakraOtp() {
   return (
@@ -10,5 +10,5 @@ export function ChakraOtp() {
       <OtpInput label="Verification code" name="code" length={6} />
       <Field.HelperText>Enter the six-digit code.</Field.HelperText>
     </Field.Root>
-  )
+  );
 }

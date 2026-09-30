@@ -1,5 +1,5 @@
-import type { Config } from '@react-router/dev/config'
+import type { Config } from "@react-router/dev/config";
 
 export default {
-  buildDirectory: 'dist',
-} satisfies Config
+  buildDirectory: "dist",
+} satisfies Config;

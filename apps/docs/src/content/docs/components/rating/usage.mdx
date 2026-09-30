@@ -1,8 +1,8 @@
 ---
-title: 'Rating input — Usage'
-description: 'Use the rating input in React: precision, custom icons, read-only display mode, labels and native form submission.'
+title: "Rating input — Usage"
+description: "Use the rating input in React: precision, custom icons, read-only display mode, labels and native form submission."
 sidebar:
-  label: 'Usage'
+  label: "Usage"
   order: 2
 ---
 
@@ -13,24 +13,24 @@ right here (`Rating` and `useState` are already in scope).
 
 ```tsx live
 function TryIt() {
-  const [value, setValue] = useState(3.5)
-  const [precision, setPrecision] = useState(0.5)
-  const [icon, setIcon] = useState('★')
-  const [interactive, setInteractive] = useState(true)
+  const [value, setValue] = useState(3.5);
+  const [precision, setPrecision] = useState(0.5);
+  const [icon, setIcon] = useState("★");
+  const [interactive, setInteractive] = useState(true);
 
   const chip = (on) => ({
-    padding: '3px 11px',
+    padding: "3px 11px",
     marginRight: 6,
     borderRadius: 999,
-    cursor: 'pointer',
-    border: '1px solid var(--rx-rule)',
-    background: on ? 'var(--rx-primary)' : 'transparent',
-    color: on ? '#fff' : 'inherit',
-  })
+    cursor: "pointer",
+    border: "1px solid var(--rx-rule)",
+    background: on ? "var(--rx-primary)" : "transparent",
+    color: on ? "#fff" : "inherit",
+  });
 
   return (
     <div>
-      <div style={{ fontSize: '2.75rem', lineHeight: 1, minHeight: '3rem' }}>
+      <div style={{ fontSize: "2.75rem", lineHeight: 1, minHeight: "3rem" }}>
         <Rating
           value={value}
           onChange={interactive ? setValue : undefined}
@@ -39,14 +39,14 @@ function TryIt() {
           label="Try @rxova/react-rating-input"
         />
       </div>
-      <p style={{ margin: '0.5rem 0 1rem', color: 'var(--rx-muted)' }}>
+      <p style={{ margin: "0.5rem 0 1rem", color: "var(--rx-muted)" }}>
         value = <b>{value}</b>
-        {interactive ? ' — click or use the arrow keys' : ' — read-only display'}
+        {interactive ? " — click or use the arrow keys" : " — read-only display"}
       </p>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'center' }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 14, alignItems: "center" }}>
         <span>
-          precision{' '}
+          precision{" "}
           <button style={chip(precision === 0)} onClick={() => setPrecision(0)}>
             continuous
           </button>
@@ -58,28 +58,28 @@ function TryIt() {
           </button>
         </span>
         <span>
-          icon{' '}
-          <button style={chip(icon === '★')} onClick={() => setIcon('★')}>
+          icon{" "}
+          <button style={chip(icon === "★")} onClick={() => setIcon("★")}>
             ★
           </button>
-          <button style={chip(icon === '⭐')} onClick={() => setIcon('⭐')}>
+          <button style={chip(icon === "⭐")} onClick={() => setIcon("⭐")}>
             ⭐
           </button>
-          <button style={chip(icon === '❤️')} onClick={() => setIcon('❤️')}>
+          <button style={chip(icon === "❤️")} onClick={() => setIcon("❤️")}>
             ❤️
           </button>
         </span>
-        <label style={{ cursor: 'pointer' }}>
+        <label style={{ cursor: "pointer" }}>
           <input
             type="checkbox"
             checked={interactive}
             onChange={(e) => setInteractive(e.target.checked)}
-          />{' '}
+          />{" "}
           interactive
         </label>
       </div>
     </div>
-  )
+  );
 }
 ```
 
@@ -152,7 +152,7 @@ What each renders:
 The first four, rendered live — **edit any value**:
 
 ```tsx live
-<div style={{ display: 'grid', gap: '0.75rem', fontSize: '1.75rem' }}>
+<div style={{ display: "grid", gap: "0.75rem", fontSize: "1.75rem" }}>
   <Rating value={4.3} />
   <Rating value={4.3} precision={1} />
   <Rating value={4.3} precision={0.5} />
@@ -214,8 +214,8 @@ node — useful for conditional rendering per position:
 ```tsx live
 <Rating
   value={2.5}
-  style={{ fontSize: '1.75rem' }}
-  icon={(s) => <span>{s.partial ? '◐' : s.filled ? '●' : '○'}</span>}
+  style={{ fontSize: "1.75rem" }}
+  icon={(s) => <span>{s.partial ? "◐" : s.filled ? "●" : "○"}</span>}
 />
 ```
 
@@ -227,7 +227,7 @@ The state object is `{ index, fill, filled, empty, partial, active }`. See
 Size is a single custom property, in any unit, set wherever is convenient:
 
 ```tsx
-<Rating value={3.7} style={{ ['--rx-rating-size' as string]: '2.5rem' }} />
+<Rating value={3.7} style={{ ["--rx-rating-size" as string]: "2.5rem" }} />
 ```
 
 More visual knobs — colors, gap, the empty-layer filter — are in [Styling](/components/rating/about).
@@ -239,13 +239,13 @@ Providing `onChange` makes the component interactive. Nothing else changes about
 
 ```tsx live
 function Feedback() {
-  const [score, setScore] = useState(0)
+  const [score, setScore] = useState(0);
   return (
-    <div style={{ fontSize: '2rem' }}>
+    <div style={{ fontSize: "2rem" }}>
       <Rating value={score} onChange={setScore} precision={0.5} label="Rate your meal" />
-      <p style={{ fontSize: '1rem' }}>Selected: {score}</p>
+      <p style={{ fontSize: "1rem" }}>Selected: {score}</p>
     </div>
-  )
+  );
 }
 ```
 

@@ -1,8 +1,8 @@
 ---
-title: 'OTP input — Usage'
-description: 'Use the OTP input in React: slot count, paste handling, autofill, form submission and styling — with a live editable example.'
+title: "OTP input — Usage"
+description: "Use the OTP input in React: slot count, paste handling, autofill, form submission and styling — with a live editable example."
 sidebar:
-  label: 'Usage'
+  label: "Usage"
   order: 2
 ---
 
@@ -13,11 +13,11 @@ Type a code, paste `123-456`, or click a middle slot to edit it. It renders and 
 
 ```tsx live
 function TryIt() {
-  const [code, setCode] = useState('')
-  const [done, setDone] = useState(null)
+  const [code, setCode] = useState("");
+  const [done, setDone] = useState(null);
   return (
     <div>
-      <div style={{ fontSize: '1.25rem' }}>
+      <div style={{ fontSize: "1.25rem" }}>
         <OtpInput
           length={6}
           value={code}
@@ -26,12 +26,12 @@ function TryIt() {
           label="Try @rxova/react-otp-input"
         />
       </div>
-      <p style={{ margin: '0.75rem 0 0', color: 'var(--rx-muted)' }}>
-        value = <b>{code || 'empty'}</b>
-        {done ? ` — completed: ${done}` : ' — type, paste “123-456”, or tap a middle slot'}
+      <p style={{ margin: "0.75rem 0 0", color: "var(--rx-muted)" }}>
+        value = <b>{code || "empty"}</b>
+        {done ? ` — completed: ${done}` : " — type, paste “123-456”, or tap a middle slot"}
       </p>
     </div>
-  )
+  );
 }
 ```
 
@@ -100,8 +100,8 @@ Try it — type a code, then click the third box and retype it:
 
 ```tsx live
 function Spatial() {
-  const [code, setCode] = useState('482913')
-  return <OtpInput length={6} value={code} onChange={setCode} label="Editable code" />
+  const [code, setCode] = useState("482913");
+  return <OtpInput length={6} value={code} onChange={setCode} label="Editable code" />;
 }
 ```
 
@@ -156,15 +156,15 @@ and any selection replaced:
 
 ```tsx live
 function Paste() {
-  const [code, setCode] = useState('')
+  const [code, setCode] = useState("");
   return (
     <div>
       <OtpInput length={6} value={code} onChange={setCode} label="Paste 123-456" />
-      <p style={{ fontSize: '0.9rem' }}>
-        value = <b>{code || 'empty'}</b>
+      <p style={{ fontSize: "0.9rem" }}>
+        value = <b>{code || "empty"}</b>
       </p>
     </div>
-  )
+  );
 }
 ```
 
@@ -175,7 +175,7 @@ By default `- . _` and whitespace are stripped. Override `pasteTransform` for an
   length={6}
   value={code}
   onChange={setCode}
-  pasteTransform={(text) => text.replace(/[^0-9]/g, '')} // keep digits only
+  pasteTransform={(text) => text.replace(/[^0-9]/g, "")} // keep digits only
   label="Code"
 />
 ```
@@ -208,8 +208,8 @@ Render a mask instead of the value for sensitive codes:
 
 ```tsx live
 function Masked() {
-  const [code, setCode] = useState('1234')
-  return <OtpInput length={4} value={code} onChange={setCode} mask label="PIN" />
+  const [code, setCode] = useState("1234");
+  return <OtpInput length={4} value={code} onChange={setCode} mask label="PIN" />;
 }
 ```
 

@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-export { CurrencyInput } from './CurrencyInput'
-export { useCurrencyInput } from './useCurrencyInput'
-export { currencyForCountry } from './currencyForCountry'
+export { CurrencyInput } from "./CurrencyInput";
+export { useCurrencyInput } from "./useCurrencyInput";
+export { currencyForCountry } from "./currencyForCountry";
 export type {
   CurrencyInputProps,
   UseCurrencyInputOptions,
@@ -12,4 +12,4 @@ export type {
   CurrencyValueChangeHandler,
   CurrencyInputElementProps,
   CurrencyDisplay,
-} from './types'
+} from "./types";

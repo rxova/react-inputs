@@ -1,15 +1,15 @@
-import type { CSSProperties, FocusEvent, ReactNode } from 'react'
-import type { TagAttempt } from './tags'
+import type { CSSProperties, FocusEvent, ReactNode } from "react";
+import type { TagAttempt } from "./tags";
 
 /** Stable machine code for a coerced or misconfigured input. Safe to `switch` on. */
 export type TagsWarningCode =
-  | 'value-not-array'
-  | 'value-had-non-strings'
-  | 'value-had-duplicates'
-  | 'value-over-max'
-  | 'max-invalid'
-  | 'length-range-invalid'
-  | 'no-delimiters'
+  | "value-not-array"
+  | "value-had-non-strings"
+  | "value-had-duplicates"
+  | "value-over-max"
+  | "max-invalid"
+  | "length-range-invalid"
+  | "no-delimiters";
 
 /**
  * Emitted when the component keeps itself functional despite a prop it cannot
@@ -18,73 +18,73 @@ export type TagsWarningCode =
  * development-only heads-up, never an error.
  */
 export interface TagsWarning {
-  code: TagsWarningCode
+  code: TagsWarningCode;
   /** The prop that carried the offending value. */
-  prop: string
+  prop: string;
   /** The value as received, summarised. */
-  received: string
+  received: string;
   /** Human-readable explanation, safe to log as-is. */
-  message: string
+  message: string;
 }
 
 /** State handed to the `renderTag` render prop. */
 export interface TagState {
-  tag: string
-  index: number
+  tag: string;
+  index: number;
   /** This tag currently holds focus in the roving tab order. */
-  focused: boolean
-  disabled: boolean
-  readOnly: boolean
+  focused: boolean;
+  disabled: boolean;
+  readOnly: boolean;
 }
 
 export interface TagsInputProps {
   // ---- Value ----------------------------------------------------------------
   /** Controlled list of tags. */
-  value?: string[]
+  value?: string[];
   /** Uncontrolled initial list. Ignored when `value` is provided. */
-  defaultValue?: string[]
-  onChange?: (tags: string[]) => void
+  defaultValue?: string[];
+  onChange?: (tags: string[]) => void;
   /** Fires for each tag actually added, after it passed every rule. */
-  onAdd?: (tag: string, tags: string[]) => void
+  onAdd?: (tag: string, tags: string[]) => void;
   /** Fires for each tag removed, with the index it occupied. */
-  onRemove?: (tag: string, index: number, tags: string[]) => void
+  onRemove?: (tag: string, index: number, tags: string[]) => void;
   /**
    * Fires for a candidate that was refused, with a machine-readable reason and
    * the message `validate` supplied, if any. The text stays in the box so the
    * user can fix it.
    */
-  onReject?: (attempt: TagAttempt) => void
+  onReject?: (attempt: TagAttempt) => void;
 
   // ---- Entry ----------------------------------------------------------------
   /**
    * Keys and characters that commit the current text. `'Enter'` and `','` by
    * default; `'Tab'` is accepted but changes what Tab means, so it is opt-in.
    */
-  delimiters?: string[]
+  delimiters?: string[];
   /** Split a paste on the delimiters (and on newlines regardless). @default true */
-  splitPaste?: boolean
+  splitPaste?: boolean;
   /** Commit whatever is in the box when focus leaves the field. @default true */
-  addOnBlur?: boolean
+  addOnBlur?: boolean;
   /** Text in the entry box. */
-  placeholder?: string
+  placeholder?: string;
 
   // ---- Rules ----------------------------------------------------------------
   /** Strip leading and trailing whitespace. @default true */
-  trim?: boolean
+  trim?: boolean;
   /** Allow the same tag twice. @default false */
-  allowDuplicates?: boolean
+  allowDuplicates?: boolean;
   /** Compare case-sensitively when deduplicating. @default false */
-  caseSensitive?: boolean
+  caseSensitive?: boolean;
   /** Maximum number of tags. */
-  max?: number
+  max?: number;
   /** Minimum length of one tag, in codepoints. */
-  minLength?: number
+  minLength?: number;
   /** Maximum length of one tag, in codepoints. */
-  maxLength?: number
+  maxLength?: number;
   /** Rewrite an entry before it is checked. */
-  transform?: (raw: string) => string
+  transform?: (raw: string) => string;
   /** Final say: `true`, `false`, or a string explaining the refusal. */
-  validate?: (tag: string, existing: string[]) => boolean | string
+  validate?: (tag: string, existing: string[]) => boolean | string;
 
   // ---- Presentation ---------------------------------------------------------
   /**
@@ -93,43 +93,43 @@ export interface TagsInputProps {
    * every other input in the suite expects. A node is exposed through a hidden
    * element, since `aria-label` only takes a string.
    */
-  label?: ReactNode
+  label?: ReactNode;
   /** Accessible name for one tag's remove button. @default ``Remove ${tag}`` */
-  removeLabel?: (tag: string) => string
+  removeLabel?: (tag: string) => string;
   /** Custom rendering for one tag's contents. */
-  renderTag?: (state: TagState) => ReactNode
+  renderTag?: (state: TagState) => ReactNode;
   /**
    * Announcement text for the live region. Return `''` to say nothing.
    * @default `Added ${tag}, 3 tags` / `Removed ${tag}, 2 tags`
    */
-  announce?: (event: { type: 'add' | 'remove' | 'reject'; tag: string; tags: string[] }) => string
+  announce?: (event: { type: "add" | "remove" | "reject"; tag: string; tags: string[] }) => string;
   /** Writing direction for the field. Inherited from the document when unset. */
-  dir?: 'ltr' | 'rtl'
-  className?: string
-  style?: CSSProperties
+  dir?: "ltr" | "rtl";
+  className?: string;
+  style?: CSSProperties;
 
   // ---- Form integration -----------------------------------------------------
   /** Emits one hidden input per tag, so a native `<form>` posts an array. */
-  name?: string
-  required?: boolean
-  disabled?: boolean
-  readOnly?: boolean
+  name?: string;
+  required?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
   /** Focus the field on mount. @default false */
-  autoFocus?: boolean
+  autoFocus?: boolean;
   /**
    * Accessible name, when there is no visible text to point `label` at. Wins
    * over `label` if both are given.
    */
-  'aria-label'?: string
+  "aria-label"?: string;
   /** Sets `aria-invalid` and `data-invalid`. */
-  invalid?: boolean
+  invalid?: boolean;
   /** ids of external error/help text. */
-  'aria-describedby'?: string
+  "aria-describedby"?: string;
   /** Base id; the list, the entry box and the live region derive ids from it. */
-  id?: string
+  id?: string;
   /** Fires when focus leaves the whole field, not when moving between its parts. */
-  onBlur?: (event: FocusEvent<HTMLElement>) => void
-  onFocus?: (event: FocusEvent<HTMLElement>) => void
+  onBlur?: (event: FocusEvent<HTMLElement>) => void;
+  onFocus?: (event: FocusEvent<HTMLElement>) => void;
 
   // ---- Diagnostics ----------------------------------------------------------
   /**
@@ -137,5 +137,5 @@ export interface TagsInputProps {
    * {@link TagsWarning}. When omitted, the same warnings go to `console.warn`.
    * The entire path is stripped from production builds.
    */
-  onWarn?: (warning: TagsWarning) => void
+  onWarn?: (warning: TagsWarning) => void;
 }

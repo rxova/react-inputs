@@ -1,29 +1,29 @@
-import { forwardRef } from 'react'
-import type { CSSProperties } from 'react'
-import { usePhoneInput } from './usePhoneInput'
-import type { PhoneCountryState, PhoneInputProps } from './types'
+import { forwardRef } from "react";
+import type { CSSProperties } from "react";
+import { usePhoneInput } from "./usePhoneInput";
+import type { PhoneCountryState, PhoneInputProps } from "./types";
 
 // Only layout-critical declarations are inlined. Everything visual is a CSS
 // custom property or a `data-*` hook, so there is no stylesheet to import.
 const rootStyle: CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 'var(--rx-phone-gap, 0.375rem)',
-  font: 'inherit',
-}
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "var(--rx-phone-gap, 0.375rem)",
+  font: "inherit",
+};
 
 const selectStyle: CSSProperties = {
-  font: 'inherit',
+  font: "inherit",
   // The flag is an emoji, so it sizes by font-size like the rest of the field.
-  maxWidth: 'var(--rx-phone-select-width, 9rem)',
+  maxWidth: "var(--rx-phone-select-width, 9rem)",
   flexShrink: 0,
-}
+};
 
 const inputStyle: CSSProperties = {
-  font: 'inherit',
-  flex: '1 1 auto',
+  font: "inherit",
+  flex: "1 1 auto",
   minWidth: 0,
-}
+};
 
 /**
  * `forwardRef` rather than reading `props.ref`.
@@ -43,7 +43,7 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
   function PhoneInput(props, ref) {
     const {
       hideCountrySelect = false,
-      countryLabel = 'Country',
+      countryLabel = "Country",
       renderCountry,
       label,
       placeholder,
@@ -58,11 +58,11 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
       validityLabel,
       dir,
       autoFocus,
-      'aria-label': ariaLabel,
-      'aria-describedby': describedBy,
-    } = props
+      "aria-label": ariaLabel,
+      "aria-describedby": describedBy,
+    } = props;
 
-    const field = usePhoneInput(props)
+    const field = usePhoneInput(props);
     const {
       text,
       value,
@@ -79,7 +79,7 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
       handleBlur,
       handleFocus,
       touched,
-    } = field
+    } = field;
 
     /*
      * Feedback is withheld until focus has left the field once: every number is
@@ -87,16 +87,16 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
      * on the first keystroke trains people to ignore it. An empty field says
      * nothing either — that is `required`'s job, not this one's.
      */
-    const showFeedback = showValidity && touched && text.trim().length > 0
+    const showFeedback = showValidity && touched && text.trim().length > 0;
     const feedback = !showFeedback
       ? null
       : validityLabel
         ? validityLabel({ possible: details.possible, country, details })
         : details.possible
-          ? `Looks like a ${country ? nameFor(country.iso2) : 'valid'} number.`
+          ? `Looks like a ${country ? nameFor(country.iso2) : "valid"} number.`
           : country
             ? `That is not a length used by ${nameFor(country.iso2)} numbers.`
-            : 'That does not match a known calling code.'
+            : "That does not match a known calling code.";
 
     return (
       <div
@@ -105,10 +105,10 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
         dir={dir}
         data-rx-phone-root=""
         data-country={country?.iso2}
-        data-possible={details.possible ? '' : undefined}
-        data-invalid={invalid ? '' : undefined}
-        data-disabled={disabled ? '' : undefined}
-        data-readonly={readOnly ? '' : undefined}
+        data-possible={details.possible ? "" : undefined}
+        data-invalid={invalid ? "" : undefined}
+        data-disabled={disabled ? "" : undefined}
+        data-readonly={readOnly ? "" : undefined}
         onBlur={handleBlur}
         onFocus={handleFocus}
       >
@@ -119,8 +119,8 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
           cannot compose against. A node goes into a hidden span the control
           points at, because `aria-label` only takes a string.
         */}
-        {label !== undefined && typeof label !== 'string' ? (
-          <span id={ids.label} style={{ display: 'none' }}>
+        {label !== undefined && typeof label !== "string" ? (
+          <span id={ids.label} style={{ display: "none" }}>
             {label}
           </span>
         ) : null}
@@ -134,11 +134,11 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
             id={ids.select}
             data-rx-phone-country=""
             aria-label={countryLabel}
-            value={country?.iso2 ?? ''}
+            value={country?.iso2 ?? ""}
             disabled={disabled || readOnly}
             style={selectStyle}
             onChange={(event) => {
-              selectCountry(event.target.value)
+              selectCountry(event.target.value);
             }}
           >
             {countries.map((entry) => {
@@ -147,7 +147,7 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
                 name: nameFor(entry.iso2),
                 flag: flagFor(entry.iso2),
                 selected: entry.iso2 === country?.iso2,
-              }
+              };
               return (
                 <option key={entry.iso2} value={entry.iso2}>
                   {/*
@@ -162,16 +162,16 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
                     ? renderCountry(state)
                     : `${state.name} ${state.flag} +${entry.dial}`}
                 </option>
-              )
+              );
             })}
           </select>
         )}
 
         <input
           ref={(node) => {
-            inputRef.current = node
-            if (typeof ref === 'function') ref(node)
-            else if (ref) ref.current = node
+            inputRef.current = node;
+            if (typeof ref === "function") ref(node);
+            else if (ref) ref.current = node;
           }}
           id={ids.input}
           data-rx-phone-input=""
@@ -194,15 +194,15 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
           required={required}
           disabled={disabled}
           readOnly={readOnly}
-          aria-label={ariaLabel ?? (typeof label === 'string' ? label : undefined)}
+          aria-label={ariaLabel ?? (typeof label === "string" ? label : undefined)}
           aria-labelledby={
-            ariaLabel === undefined && label !== undefined && typeof label !== 'string'
+            ariaLabel === undefined && label !== undefined && typeof label !== "string"
               ? ids.label
               : undefined
           }
           aria-invalid={(invalid ?? (showFeedback && !details.possible)) ? true : undefined}
           aria-describedby={
-            [describedBy, showFeedback ? ids.validity : undefined].filter(Boolean).join(' ') ||
+            [describedBy, showFeedback ? ids.validity : undefined].filter(Boolean).join(" ") ||
             undefined
           }
           style={inputStyle}
@@ -216,7 +216,7 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
           <p
             id={ids.validity}
             data-rx-phone-validity=""
-            data-possible={details.possible ? '' : undefined}
+            data-possible={details.possible ? "" : undefined}
             role="status"
             aria-live="polite"
           >
@@ -231,6 +231,6 @@ export const PhoneInput = /* @__PURE__ */ forwardRef<HTMLInputElement, PhoneInpu
           <input type="hidden" id={ids.hidden} data-rx-phone-value="" name={name} value={value} />
         )}
       </div>
-    )
+    );
   },
-)
+);

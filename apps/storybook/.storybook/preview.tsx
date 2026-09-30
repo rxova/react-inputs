@@ -1,12 +1,12 @@
-import type { Preview } from '@storybook/react-vite'
-import './preview.css'
+import type { Preview } from "@storybook/react-vite";
+import "./preview.css";
 
 const preview: Preview = {
   parameters: {
-    layout: 'padded',
+    layout: "padded",
     controls: {
       expanded: true,
-      sort: 'requiredFirst',
+      sort: "requiredFirst",
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/,
@@ -17,7 +17,7 @@ const preview: Preview = {
     },
     options: {
       storySort: {
-        order: ['Introduction', 'Components', ['OTP input', 'Rating input', 'Currency input']],
+        order: ["Introduction", "Components", ["OTP input", "Rating input", "Currency input"]],
       },
     },
   },
@@ -26,29 +26,29 @@ const preview: Preview = {
   // control — the same idea as the playground's page-wide RTL checkbox.
   globalTypes: {
     direction: {
-      description: 'Text direction',
+      description: "Text direction",
       toolbar: {
-        title: 'Direction',
-        icon: 'transfer',
+        title: "Direction",
+        icon: "transfer",
         items: [
-          { value: 'ltr', title: 'LTR', right: 'left to right' },
-          { value: 'rtl', title: 'RTL', right: 'right to left' },
+          { value: "ltr", title: "LTR", right: "left to right" },
+          { value: "rtl", title: "RTL", right: "right to left" },
         ],
         dynamicTitle: true,
       },
     },
   },
   initialGlobals: {
-    direction: 'ltr',
+    direction: "ltr",
   },
   decorators: [
     (Story, context) => (
-      <div dir={context.globals.direction === 'rtl' ? 'rtl' : 'ltr'}>
+      <div dir={context.globals.direction === "rtl" ? "rtl" : "ltr"}>
         <Story />
       </div>
     ),
   ],
-  tags: ['autodocs'],
-}
+  tags: ["autodocs"],
+};
 
-export default preview
+export default preview;

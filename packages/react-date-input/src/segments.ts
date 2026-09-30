@@ -1,4 +1,4 @@
-import type { DateSegment } from './date'
+import type { DateSegment } from "./date";
 
 /**
  * Segment order and separators, taken from the platform.
@@ -11,16 +11,16 @@ import type { DateSegment } from './date'
  */
 
 /** One rendered piece: an editable segment, or the text between two of them. */
-export type DatePiece = { kind: 'segment'; type: DateSegment } | { kind: 'literal'; text: string }
+export type DatePiece = { kind: "segment"; type: DateSegment } | { kind: "literal"; text: string };
 
 /** ISO order, used when `Intl` is unavailable or gives us nothing usable. */
 const FALLBACK: DatePiece[] = [
-  { kind: 'segment', type: 'year' },
-  { kind: 'literal', text: '-' },
-  { kind: 'segment', type: 'month' },
-  { kind: 'literal', text: '-' },
-  { kind: 'segment', type: 'day' },
-]
+  { kind: "segment", type: "year" },
+  { kind: "literal", text: "-" },
+  { kind: "segment", type: "month" },
+  { kind: "literal", text: "-" },
+  { kind: "segment", type: "day" },
+];
 
 /**
  * A fixed, unambiguous reference date: 22 November 3333.
@@ -34,7 +34,7 @@ const FALLBACK: DatePiece[] = [
  * Constructed from a UTC timestamp rather than `new Date(3333, 10, 22)` so the
  * machine's timezone cannot shift it across a day boundary.
  */
-const REFERENCE = new Date(Date.UTC(3333, 10, 22))
+const REFERENCE = new Date(Date.UTC(3333, 10, 22));
 
 /**
  * The pieces of a date field for a locale, in display order.
@@ -44,34 +44,34 @@ const REFERENCE = new Date(Date.UTC(3333, 10, 22))
  * three numbers and cannot edit those.
  */
 export function datePieces(locale?: string): DatePiece[] {
-  let parts: Intl.DateTimeFormatPart[]
+  let parts: Intl.DateTimeFormatPart[];
   try {
     parts = new Intl.DateTimeFormat(locale, {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      timeZone: 'UTC',
-    }).formatToParts(REFERENCE)
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone: "UTC",
+    }).formatToParts(REFERENCE);
   } catch {
     // An invalid locale tag throws RangeError. A date field that throws because
     // someone passed "en_US" instead of "en-US" is a worse outcome than one
     // that quietly falls back to ISO order.
-    return FALLBACK
+    return FALLBACK;
   }
 
-  const pieces: DatePiece[] = []
-  let seen = 0
-  let first = -1
-  let last = -1
+  const pieces: DatePiece[] = [];
+  let seen = 0;
+  let first = -1;
+  let last = -1;
 
   for (const part of parts) {
-    if (part.type === 'day' || part.type === 'month' || part.type === 'year') {
-      pieces.push({ kind: 'segment', type: part.type })
-      if (first < 0) first = pieces.length - 1
-      last = pieces.length - 1
-      seen++
+    if (part.type === "day" || part.type === "month" || part.type === "year") {
+      pieces.push({ kind: "segment", type: part.type });
+      if (first < 0) first = pieces.length - 1;
+      last = pieces.length - 1;
+      seen++;
     } else {
-      pieces.push({ kind: 'literal', text: part.value })
+      pieces.push({ kind: "literal", text: part.value });
     }
   }
 
@@ -79,19 +79,19 @@ export function datePieces(locale?: string): DatePiece[] {
   // returned fewer would be broken. Excluded from coverage rather than faked
   // with a mock of `Intl`.
   /* v8 ignore next */
-  if (seen < 3) return FALLBACK
+  if (seen < 3) return FALLBACK;
 
   // Everything outside the first and last segment is trimmed. `ko-KR` and
   // `hu-HU` end with a trailing "." and `ja-JP` with a "日" — correct for
   // display, but a dangling character after an editable field. Slicing by the
   // segment positions handles a leading affix the same way without needing a
   // separate branch for a case no current locale exercises.
-  return pieces.slice(first, last + 1)
+  return pieces.slice(first, last + 1);
 }
 
 /** Just the segments, in display order. */
 export function segmentOrder(locale?: string): DateSegment[] {
-  return datePieces(locale).flatMap((piece) => (piece.kind === 'segment' ? [piece.type] : []))
+  return datePieces(locale).flatMap((piece) => (piece.kind === "segment" ? [piece.type] : []));
 }
 
 /**
@@ -103,24 +103,24 @@ export function segmentOrder(locale?: string): DateSegment[] {
  */
 export function monthNames(locale?: string): string[] {
   try {
-    const format = new Intl.DateTimeFormat(locale, { month: 'long', timeZone: 'UTC' })
+    const format = new Intl.DateTimeFormat(locale, { month: "long", timeZone: "UTC" });
     return Array.from({ length: 12 }, (_unused, index) =>
       format.format(new Date(Date.UTC(2001, index, 15))),
-    )
+    );
   } catch {
     return [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ]
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
   }
 }

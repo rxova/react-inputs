@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { Box, Text } from '@radix-ui/themes'
-import { OtpInput } from '@rxova/react-otp-input'
+import { Box, Text } from "@radix-ui/themes";
+import { OtpInput } from "@rxova/react-otp-input";
 
 export function RadixOtp() {
   return (
@@ -14,5 +14,5 @@ export function RadixOtp() {
         Enter the six-digit code.
       </Text>
     </Box>
-  )
+  );
 }

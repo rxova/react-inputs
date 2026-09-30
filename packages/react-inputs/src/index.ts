@@ -1,12 +1,12 @@
-'use client'
+"use client";
 
 // Meta-package: re-exports every rxova input component so consumers can
 // `npm i @rxova/react-inputs` and import the whole suite from one entry point.
-export * from '@rxova/react-intl-currency-input'
-export * from '@rxova/react-rating-input'
-export * from '@rxova/react-otp-input'
-export * from '@rxova/react-phone-input'
-export * from '@rxova/react-password-input'
+export * from "@rxova/react-intl-currency-input";
+export * from "@rxova/react-rating-input";
+export * from "@rxova/react-otp-input";
+export * from "@rxova/react-phone-input";
+export * from "@rxova/react-password-input";
 
 /*
  * The remaining four export by name rather than with a star, because exactly six
@@ -38,7 +38,7 @@ export {
   isLeapYear,
   monthNames,
   segmentOrder,
-} from '@rxova/react-date-input'
+} from "@rxova/react-date-input";
 export type {
   DateInputProps,
   DateParts,
@@ -51,7 +51,7 @@ export type {
   DateWarningCode,
   UseDateInputOptions,
   UseDateInputResult,
-} from '@rxova/react-date-input'
+} from "@rxova/react-date-input";
 
 export {
   TimeInput,
@@ -64,7 +64,7 @@ export {
   toDayPeriod,
   toDisplayHour,
   usesHour12,
-} from '@rxova/react-time-input'
+} from "@rxova/react-time-input";
 export type {
   TimeInputProps,
   TimeParts,
@@ -77,7 +77,7 @@ export type {
   TimeWarningCode,
   UseTimeInputOptions,
   UseTimeInputResult,
-} from '@rxova/react-time-input'
+} from "@rxova/react-time-input";
 
 export {
   TagsInput,
@@ -86,7 +86,7 @@ export {
   contains,
   sanitize,
   splitPasted,
-} from '@rxova/react-tags-input'
+} from "@rxova/react-tags-input";
 export type {
   TagAttempt,
   TagRejection,
@@ -97,7 +97,7 @@ export type {
   TagsWarningCode,
   UseTagsInputOptions,
   UseTagsInputResult,
-} from '@rxova/react-tags-input'
+} from "@rxova/react-tags-input";
 
 export {
   FileInput,
@@ -108,7 +108,7 @@ export {
   formatBytes,
   isPreviewable,
   matchesAccept,
-} from '@rxova/react-file-input'
+} from "@rxova/react-file-input";
 export type {
   FileAccepted,
   FileAttempt,
@@ -122,4 +122,4 @@ export type {
   FileWarningCode,
   UseFileInputOptions,
   UseFileInputResult,
-} from '@rxova/react-file-input'
+} from "@rxova/react-file-input";

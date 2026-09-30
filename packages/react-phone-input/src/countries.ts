@@ -24,16 +24,16 @@
 /** One entry, after parsing. */
 export interface Country {
   /** ISO 3166-1 alpha-2, uppercase. */
-  iso2: string
+  iso2: string;
   /** Calling code without the `+`. */
-  dial: string
+  dial: string;
   /**
    * Accepted national-number lengths. Empty means "unknown here", and the
    * generic E.164 bounds apply instead.
    */
-  lengths: number[]
+  lengths: number[];
   /** Conventional digit grouping, e.g. `[3, 3, 4]`. Empty means no convention known. */
-  groups: number[]
+  groups: number[];
 }
 
 /**
@@ -81,42 +81,42 @@ NF 672|PG 675|TO 676|SB 677|VU 678|FJ 679|PW 680|WF 681|CK 682|NU 683|WS 685|KI 
 NC 687|TV 688|PF 689|TK 690|FM 691|MH 692|NR 674|TL 670|BN 673
 KP 850|TM 993
 AQ 672|CX 61|CC 61
-`
+`;
 
 /** Generic E.164 bounds for a national number when the table has no lengths. */
-export const MIN_NATIONAL_DIGITS = 4
-export const MAX_NATIONAL_DIGITS = 15
+export const MIN_NATIONAL_DIGITS = 4;
+export const MAX_NATIONAL_DIGITS = 15;
 
 function parseTable(): Country[] {
-  const seen = new Set<string>()
-  const countries: Country[] = []
+  const seen = new Set<string>();
+  const countries: Country[] = [];
   for (const entry of TABLE.split(/[|\n]/)) {
-    const fields = entry.trim().split(/\s+/)
-    const [iso2, dial, lengths, groups] = fields
-    if (iso2 === undefined || dial === undefined || iso2 === '') continue
+    const fields = entry.trim().split(/\s+/);
+    const [iso2, dial, lengths, groups] = fields;
+    if (iso2 === undefined || dial === undefined || iso2 === "") continue;
     // First entry wins. The table lists a few territories twice (Christmas and
     // Cocos islands both sit on +61, Antarctica shares +672 with Norfolk); a
     // duplicate ISO code would otherwise make lookups order-dependent.
-    if (seen.has(iso2)) continue
-    seen.add(iso2)
+    if (seen.has(iso2)) continue;
+    seen.add(iso2);
     countries.push({
       iso2,
       dial,
-      lengths: lengths === undefined ? [] : lengths.split(',').map(Number),
-      groups: groups === undefined ? [] : groups.split('-').map(Number),
-    })
+      lengths: lengths === undefined ? [] : lengths.split(",").map(Number),
+      groups: groups === undefined ? [] : groups.split("-").map(Number),
+    });
   }
-  return countries
+  return countries;
 }
 
 /** Every known country, in table order. */
-export const COUNTRIES: Country[] = parseTable()
+export const COUNTRIES: Country[] = parseTable();
 
-const BY_ISO2 = new Map(COUNTRIES.map((country) => [country.iso2, country]))
+const BY_ISO2 = new Map(COUNTRIES.map((country) => [country.iso2, country]));
 
 /** Look up a country by ISO 3166-1 alpha-2 code, case-insensitively. */
 export function countryByISO2(iso2: string): Country | undefined {
-  return BY_ISO2.get(iso2.toUpperCase())
+  return BY_ISO2.get(iso2.toUpperCase());
 }
 
 /**
@@ -128,7 +128,7 @@ export function countryByISO2(iso2: string): Country | undefined {
  */
 const DIALS_BY_LENGTH = [...new Set(COUNTRIES.map((country) => country.dial))].sort(
   (a, b) => b.length - a.length,
-)
+);
 
 /**
  * The country a `+`-prefixed number belongs to.
@@ -141,14 +141,14 @@ const DIALS_BY_LENGTH = [...new Set(COUNTRIES.map((country) => country.dial))].s
 export function countryForDial(digits: string): Country | undefined {
   for (const dial of DIALS_BY_LENGTH) {
     if (digits.startsWith(dial)) {
-      return COUNTRIES.find((country) => country.dial === dial)
+      return COUNTRIES.find((country) => country.dial === dial);
     }
   }
-  return undefined
+  return undefined;
 }
 
 /** Offset from an ASCII letter to its regional-indicator symbol. */
-const REGIONAL_INDICATOR_OFFSET = 127397
+const REGIONAL_INDICATOR_OFFSET = 127397;
 
 /**
  * The flag emoji for an ISO 3166-1 alpha-2 code.
@@ -161,11 +161,11 @@ const REGIONAL_INDICATOR_OFFSET = 127397
  * which is a legible fallback rather than a broken image.
  */
 export function flagEmoji(iso2: string): string {
-  const upper = iso2.toUpperCase()
-  if (!/^[A-Z]{2}$/.test(upper)) return ''
+  const upper = iso2.toUpperCase();
+  if (!/^[A-Z]{2}$/.test(upper)) return "";
   return String.fromCodePoint(
     ...Array.from(upper, (letter) => letter.charCodeAt(0) + REGIONAL_INDICATOR_OFFSET),
-  )
+  );
 }
 
 /**
@@ -178,14 +178,14 @@ export function flagEmoji(iso2: string): string {
 export function countryName(iso2: string, locale?: string): string {
   try {
     const names = new Intl.DisplayNames(locale === undefined ? undefined : [locale], {
-      type: 'region',
-    })
+      type: "region",
+    });
     // `?? iso2` is unreachable with the default `fallback: 'code'`, which makes
     // `of` return the code itself rather than undefined. Kept because the DOM
     // types allow undefined, and excluded from coverage rather than faked.
     /* v8 ignore next */
-    return names.of(iso2.toUpperCase()) ?? iso2.toUpperCase()
+    return names.of(iso2.toUpperCase()) ?? iso2.toUpperCase();
   } catch {
-    return iso2.toUpperCase()
+    return iso2.toUpperCase();
   }
 }

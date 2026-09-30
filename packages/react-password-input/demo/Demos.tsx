@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { Section } from '@rxova/demo-kit'
-import { PasswordInput, commonRules } from '@rxova/react-password-input'
-import type { PasswordWarning } from '@rxova/react-password-input'
+import { useState } from "react";
+import { Section } from "@rxova/demo-kit";
+import { PasswordInput, commonRules } from "@rxova/react-password-input";
+import type { PasswordWarning } from "@rxova/react-password-input";
 
 /**
  * The E2E target. Every section is something the Playwright suite drives, so
@@ -11,10 +11,10 @@ import type { PasswordWarning } from '@rxova/react-password-input'
  * test.
  */
 export function PasswordDemos() {
-  const [controlled, setControlled] = useState('')
-  const [valid, setValid] = useState(false)
-  const [warnings, setWarnings] = useState<PasswordWarning[]>([])
-  const [submitted, setSubmitted] = useState<string | null>(null)
+  const [controlled, setControlled] = useState("");
+  const [valid, setValid] = useState(false);
+  const [warnings, setWarnings] = useState<PasswordWarning[]>([]);
+  const [submitted, setSubmitted] = useState<string | null>(null);
 
   return (
     <>
@@ -33,12 +33,12 @@ export function PasswordDemos() {
           autoComplete="new-password"
           showStrength
           minScore={2}
-          userInputs={['ada@example.com', 'Ada Lovelace']}
-          blocklist={['rxova']}
+          userInputs={["ada@example.com", "Ada Lovelace"]}
+          blocklist={["rxova"]}
           rules={[
             {
-              id: 'length',
-              label: 'At least 10 characters',
+              id: "length",
+              label: "At least 10 characters",
               test: (p) => Array.from(p).length >= 10,
             },
             commonRules.digit,
@@ -48,7 +48,7 @@ export function PasswordDemos() {
           onChange={setControlled}
           onValidityChange={setValid}
         />
-        <p data-testid="validity">{valid ? 'Ready to submit' : 'Not yet'}</p>
+        <p data-testid="validity">{valid ? "Ready to submit" : "Not yet"}</p>
       </Section>
 
       <Section
@@ -71,7 +71,7 @@ export function PasswordDemos() {
           // Deliberately local: the point of the callback shape is that the
           // plaintext never leaves the page unless the app sends it.
           checkCompromised={(password) =>
-            Promise.resolve(['hunter2', 'password', 'letmein'].includes(password))
+            Promise.resolve(["hunter2", "password", "letmein"].includes(password))
           }
         />
       </Section>
@@ -84,7 +84,7 @@ export function PasswordDemos() {
           onWarn={(warning) => {
             setWarnings((previous) =>
               previous.some((w) => w.code === warning.code) ? previous : [...previous, warning],
-            )
+            );
           }}
         />
         <ul data-testid="warning-codes">
@@ -97,15 +97,15 @@ export function PasswordDemos() {
       <Section id="native-form" title="Native form" note="Posts as an ordinary field.">
         <form
           onSubmit={(event) => {
-            event.preventDefault()
-            const entry = new FormData(event.currentTarget).get('secret')
-            setSubmitted(typeof entry === 'string' ? entry : '')
+            event.preventDefault();
+            const entry = new FormData(event.currentTarget).get("secret");
+            setSubmitted(typeof entry === "string" ? entry : "");
           }}
         >
           <PasswordInput label="Secret" name="secret" defaultValue="hunter2" />
           <button type="submit">Sign in</button>
         </form>
-        <p data-testid="submitted">{submitted ?? ''}</p>
+        <p data-testid="submitted">{submitted ?? ""}</p>
       </Section>
 
       <Section id="states" title="States" note="Disabled and read-only.">
@@ -119,5 +119,5 @@ export function PasswordDemos() {
         />
       </Section>
     </>
-  )
+  );
 }

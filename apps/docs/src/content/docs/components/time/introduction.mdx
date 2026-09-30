@@ -1,8 +1,8 @@
 ---
-title: 'Time input'
-description: 'A segmented React time field with no clock popup, no date library and no timezone bugs — 12/24-hour from Intl, canonical 24-hour value.'
+title: "Time input"
+description: "A segmented React time field with no clock popup, no date library and no timezone bugs — 12/24-hour from Intl, canonical 24-hour value."
 sidebar:
-  label: 'Introduction'
+  label: "Introduction"
   order: 1
 ---
 
@@ -31,19 +31,19 @@ or 24-hour, where the day period sits, and what the AM/PM words are in every lan
 supports:
 
 ```ts
-import { usesHour12, dayPeriodNames } from '@rxova/react-time-input'
+import { usesHour12, dayPeriodNames } from "@rxova/react-time-input";
 
-usesHour12('en-US') // true
-usesHour12('de-DE') // false
-dayPeriodNames('ja-JP') // ['午前', '午後']
+usesHour12("en-US"); // true
+usesHour12("de-DE"); // false
+dayPeriodNames("ja-JP"); // ['午前', '午後']
 ```
 
 **They model a time of day as an instant.** `Date` and `moment` objects across the API boundary are
 the source of the classic off-by-one-day and off-by-one-hour bugs:
 
 ```js
-new Date('14:30') // Invalid Date
-new Date('2026-01-01T14:30') // a moment that moves with the timezone and with DST
+new Date("14:30"); // Invalid Date
+new Date("2026-01-01T14:30"); // a moment that moves with the timezone and with DST
 ```
 
 "Half past two" does not move. So this package never constructs one — the value is an `HH:mm`
@@ -61,12 +61,12 @@ npm install @rxova/react-time-input
 ```
 
 ```tsx
-import { useState } from 'react'
-import { TimeInput } from '@rxova/react-time-input'
+import { useState } from "react";
+import { TimeInput } from "@rxova/react-time-input";
 
 function Booking() {
-  const [value, setValue] = useState<string | null>(null)
-  return <TimeInput label="Start time" value={value} onChange={setValue} min="09:00" max="17:00" />
+  const [value, setValue] = useState<string | null>(null);
+  return <TimeInput label="Start time" value={value} onChange={setValue} min="09:00" max="17:00" />;
 }
 ```
 

@@ -1,17 +1,17 @@
-import type { OtpMode, OtpSlotState } from './types'
+import type { OtpMode, OtpSlotState } from "./types";
 
 /** One-character allowed-set testers per mode. Anchored, single-char. */
 const MODE_PATTERN: Record<OtpMode, RegExp> = {
   numeric: /^[0-9]$/,
   alphanumeric: /^[a-zA-Z0-9]$/,
   alpha: /^[a-zA-Z]$/,
-}
+};
 
 /** Positive integer, else fall back to 6 — a length of 0 or NaN is garbage config, not a crash. */
 export function normalizeLength(length: number | undefined): number {
-  if (length === undefined || !Number.isFinite(length)) return 6
-  const n = Math.floor(length)
-  return n >= 1 ? n : 6
+  if (length === undefined || !Number.isFinite(length)) return 6;
+  const n = Math.floor(length);
+  return n >= 1 ? n : 6;
 }
 
 /**
@@ -28,23 +28,23 @@ export function resolveIsAllowed(
   pattern: RegExp | string | undefined,
 ): (char: string) => boolean {
   if (pattern === undefined) {
-    const re = MODE_PATTERN[mode]
-    return (char) => re.test(char)
+    const re = MODE_PATTERN[mode];
+    return (char) => re.test(char);
   }
-  const source = typeof pattern === 'string' ? pattern : pattern.source
-  const flags = typeof pattern === 'string' ? '' : pattern.flags.replace(/[gy]/g, '')
-  let re: RegExp
+  const source = typeof pattern === "string" ? pattern : pattern.source;
+  const flags = typeof pattern === "string" ? "" : pattern.flags.replace(/[gy]/g, "");
+  let re: RegExp;
   try {
-    re = new RegExp(source, flags)
+    re = new RegExp(source, flags);
   } catch {
     // A malformed custom pattern must not throw during render. Fall back to the
     // mode's built-in set — a broken filter that still accepts sane characters
     // beats a blank screen.
-    re = MODE_PATTERN[mode]
+    re = MODE_PATTERN[mode];
   }
   // Reject genuine multi-character fragments, but count by code point so an
   // astral character (a length-2 surrogate pair) still passes as one slot.
-  return (char) => Array.from(char).length === 1 && re.test(char)
+  return (char) => Array.from(char).length === 1 && re.test(char);
 }
 
 /**
@@ -65,25 +65,25 @@ export function sanitize(
   // garbage config, not a code — coerce it to empty rather than to
   // "[object Object]" and then filtering that down to noise.
   const str =
-    typeof raw === 'string'
+    typeof raw === "string"
       ? raw
-      : typeof raw === 'number' && Number.isFinite(raw)
+      : typeof raw === "number" && Number.isFinite(raw)
         ? String(raw)
-        : ''
-  let out = ''
+        : "";
+  let out = "";
   // Iterate by code point so an astral character counts as one slot, not two.
   for (const char of str) {
-    if (isAllowed(char)) out += char
+    if (isAllowed(char)) out += char;
   }
-  if (transform) out = transform(out)
+  if (transform) out = transform(out);
   // Clamp by code point, not UTF-16 unit, so the count matches buildSlots' chars.
-  const points = Array.from(out)
-  return points.length > length ? points.slice(0, length).join('') : out
+  const points = Array.from(out);
+  return points.length > length ? points.slice(0, length).join("") : out;
 }
 
 /** Default paste cleaner: strip whitespace and the `- . _` separators formatted codes carry. */
 export function defaultPasteTransform(pasted: string): string {
-  return pasted.replace(/[\s._-]/g, '')
+  return pasted.replace(/[\s._-]/g, "");
 }
 
 /**
@@ -98,21 +98,21 @@ export function spliceValue(
   insert: string,
   length: number,
 ): { value: string; caret: number } {
-  const lo = Math.max(0, Math.min(start, end, value.length))
-  const hi = Math.max(0, Math.max(start, end))
-  const next = (value.slice(0, lo) + insert + value.slice(hi)).slice(0, length)
-  const caret = Math.min(lo + insert.length, length)
-  return { value: next, caret }
+  const lo = Math.max(0, Math.min(start, end, value.length));
+  const hi = Math.max(0, Math.max(start, end));
+  const next = (value.slice(0, lo) + insert + value.slice(hi)).slice(0, length);
+  const caret = Math.min(lo + insert.length, length);
+  return { value: next, caret };
 }
 
 /** `value.length === length`, and `length > 0` so an empty field is never "complete". */
 export function isComplete(value: string, length: number): boolean {
-  return length > 0 && value.length === length
+  return length > 0 && value.length === length;
 }
 
 export interface SelectionRange {
-  start: number
-  end: number
+  start: number;
+  end: number;
 }
 
 /**
@@ -138,24 +138,24 @@ export function expandOverwriteRange(
   prev: SelectionRange | null,
   clampEnd: boolean,
 ): SelectionRange | null {
-  if (start !== end || valueLength < length) return null
-  if (start >= length && !clampEnd) return null
-  const caret = Math.min(start, length - 1)
-  const movedBack = prev !== null && prev.start !== prev.end && caret === prev.start && caret > 0
-  const slot = movedBack ? caret - 1 : caret
-  return { start: slot, end: slot + 1 }
+  if (start !== end || valueLength < length) return null;
+  if (start >= length && !clampEnd) return null;
+  const caret = Math.min(start, length - 1);
+  const movedBack = prev !== null && prev.start !== prev.end && caret === prev.start && caret > 0;
+  const slot = movedBack ? caret - 1 : caret;
+  return { start: slot, end: slot + 1 };
 }
 
 interface BuildSlotsInput {
-  value: string
-  length: number
-  selectionStart: number
-  selectionEnd: number
-  isFocused: boolean
-  isDisabled: boolean
-  isReadOnly: boolean
-  placeholder: string | null
-  maskChar: string | null
+  value: string;
+  length: number;
+  selectionStart: number;
+  selectionEnd: number;
+  isFocused: boolean;
+  isDisabled: boolean;
+  isReadOnly: boolean;
+  placeholder: string | null;
+  maskChar: string | null;
 }
 
 /**
@@ -179,16 +179,16 @@ export function buildSlots({
   placeholder,
   maskChar,
 }: BuildSlotsInput): OtpSlotState[] {
-  const chars = Array.from(value)
-  const collapsed = selectionStart === selectionEnd
-  const caretSlot = collapsed ? Math.min(selectionStart, length - 1) : -1
+  const chars = Array.from(value);
+  const collapsed = selectionStart === selectionEnd;
+  const caretSlot = collapsed ? Math.min(selectionStart, length - 1) : -1;
 
-  const slots: OtpSlotState[] = new Array<OtpSlotState>(length)
+  const slots: OtpSlotState[] = new Array<OtpSlotState>(length);
   for (let i = 0; i < length; i++) {
-    const raw = chars[i] ?? null
-    const char = raw !== null && maskChar !== null ? maskChar : raw
-    const hasFakeCaret = isFocused && collapsed && caretSlot === i
-    const inRange = !collapsed && i >= selectionStart && i < selectionEnd
+    const raw = chars[i] ?? null;
+    const char = raw !== null && maskChar !== null ? maskChar : raw;
+    const hasFakeCaret = isFocused && collapsed && caretSlot === i;
+    const inRange = !collapsed && i >= selectionStart && i < selectionEnd;
     slots[i] = {
       index: i,
       char,
@@ -198,27 +198,27 @@ export function buildSlots({
       placeholder: raw === null ? placeholder : null,
       isDisabled,
       isReadOnly,
-    }
+    };
   }
-  return slots
+  return slots;
 }
 
 /** Resolve the `mask` prop to the character to paint, or `null` for no masking. */
 export function resolveMaskChar(mask: boolean | string | undefined): string | null {
-  if (!mask) return null
-  return typeof mask === 'string' && mask.length > 0 ? mask : '•'
+  if (!mask) return null;
+  return typeof mask === "string" && mask.length > 0 ? mask : "•";
 }
 
 /** `inputMode` for the soft keyboard. Only `numeric` gets the digit pad. */
-export function inputModeFor(mode: OtpMode): 'numeric' | 'text' {
-  return mode === 'numeric' ? 'numeric' : 'text'
+export function inputModeFor(mode: OtpMode): "numeric" | "text" {
+  return mode === "numeric" ? "numeric" : "text";
 }
 
 export interface SpatialLayout {
   /** Extra tracking so each glyph advances by one slot pitch. */
-  letterSpacing: number
+  letterSpacing: number;
   /** Left inset so the first glyph centres in the first slot; the rest follow by pitch. */
-  textIndent: number
+  textIndent: number;
 }
 
 /**
@@ -233,6 +233,6 @@ export function spatialLayout(
   gap: number,
   charWidth: number,
 ): SpatialLayout | null {
-  if (!(charWidth > 0) || !(slotWidth > 0)) return null
-  return { letterSpacing: slotWidth + gap - charWidth, textIndent: (slotWidth - charWidth) / 2 }
+  if (!(charWidth > 0) || !(slotWidth > 0)) return null;
+  return { letterSpacing: slotWidth + gap - charWidth, textIndent: (slotWidth - charWidth) / 2 };
 }

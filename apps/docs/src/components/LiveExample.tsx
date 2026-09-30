@@ -1,6 +1,6 @@
-import { LiveProvider, LiveEditor, LivePreview, LiveError } from 'react-live'
-import { themes } from 'prism-react-renderer'
-import scope from './live-scope'
+import { LiveProvider, LiveEditor, LivePreview, LiveError } from "react-live";
+import { themes } from "prism-react-renderer";
+import scope from "./live-scope";
 
 /**
  * Editable, running examples — the thing this docs site exists for.
@@ -29,5 +29,5 @@ export default function LiveExample({ code }: { code: string }) {
         </div>
       </LiveProvider>
     </div>
-  )
+  );
 }

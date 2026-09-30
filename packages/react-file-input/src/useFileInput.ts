@@ -1,92 +1,92 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
-import type { ChangeEvent, DragEvent, FocusEvent } from 'react'
-import { attemptAll, fileKey, formatBytes, isPreviewable } from './files'
-import type { FileRejected, FileRules } from './files'
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import type { ChangeEvent, DragEvent, FocusEvent } from "react";
+import { attemptAll, fileKey, formatBytes, isPreviewable } from "./files";
+import type { FileRejected, FileRules } from "./files";
 import {
   inspectAccept,
   inspectMaxFiles,
   inspectSingleWithMax,
   inspectSize,
   inspectSizeRange,
-} from './warn'
-import type { FileEntry, FileWarning } from './types'
+} from "./warn";
+import type { FileEntry, FileWarning } from "./types";
 
 export interface UseFileInputOptions extends FileRules {
-  value?: File[]
-  defaultValue?: File[]
-  onChange?: (files: File[]) => void
-  onAdd?: (file: File, files: File[]) => void
-  onRemove?: (file: File, index: number, files: File[]) => void
-  onReject?: (attempt: FileRejected) => void
-  multiple?: boolean
-  previews?: boolean
+  value?: File[];
+  defaultValue?: File[];
+  onChange?: (files: File[]) => void;
+  onAdd?: (file: File, files: File[]) => void;
+  onRemove?: (file: File, index: number, files: File[]) => void;
+  onReject?: (attempt: FileRejected) => void;
+  multiple?: boolean;
+  previews?: boolean;
   announce?: (event: {
-    type: 'add' | 'remove' | 'reject'
-    files: File[]
-    added?: number
-    rejected?: FileRejected[]
-  }) => string
-  disabled?: boolean
-  readOnly?: boolean
-  onBlur?: (event: FocusEvent<HTMLElement>) => void
-  onFocus?: (event: FocusEvent<HTMLElement>) => void
-  onWarn?: (warning: FileWarning) => void
-  id?: string
+    type: "add" | "remove" | "reject";
+    files: File[];
+    added?: number;
+    rejected?: FileRejected[];
+  }) => string;
+  disabled?: boolean;
+  readOnly?: boolean;
+  onBlur?: (event: FocusEvent<HTMLElement>) => void;
+  onFocus?: (event: FocusEvent<HTMLElement>) => void;
+  onWarn?: (warning: FileWarning) => void;
+  id?: string;
 }
 
 export interface UseFileInputResult {
   /** The selected files. */
-  files: File[]
+  files: File[];
   /** One entry per file, with a stable key and an optional preview URL. */
-  entries: FileEntry[]
+  entries: FileEntry[];
   /** A drag carrying files is currently over the drop zone. */
-  dragging: boolean
+  dragging: boolean;
   /** `maxFiles` reached, or a single-file field that already has one. */
-  full: boolean
+  full: boolean;
   /** Text for the polite live region. Changes only when there is something to say. */
-  announcement: string
-  disabled: boolean
-  readOnly: boolean
-  multiple: boolean
+  announcement: string;
+  disabled: boolean;
+  readOnly: boolean;
+  multiple: boolean;
   ids: {
-    root: string
-    input: string
+    root: string;
+    input: string;
     /** Only referenced when `label` is a node rather than a string. */
-    label: string
-    zone: string
-    list: string
-    announcement: string
-  }
+    label: string;
+    zone: string;
+    list: string;
+    announcement: string;
+  };
   /**
    * Structural rather than `RefObject`: in @types/react 18 `RefObject.current`
    * is readonly, in 19 it is mutable. Declaring the shape keeps this assignable
    * under both, which matters because `react >= 18` is a peer.
    */
-  inputRef: { current: HTMLInputElement | null }
+  inputRef: { current: HTMLInputElement | null };
   /** The drop zone, so focus can return to it when the last file goes. */
-  zoneRef: { current: HTMLElement | null }
+  zoneRef: { current: HTMLElement | null };
   /** One slot per rendered remove button, indexed like `entries`. */
-  removeRefs: { current: (HTMLElement | null)[] }
+  removeRefs: { current: (HTMLElement | null)[] };
   /** Open the native picker. The drop zone calls this on click and on Enter/Space. */
-  open: () => void
+  open: () => void;
   /** Add several candidates, applying every rule. */
-  addFiles: (candidates: File[]) => void
-  removeAt: (index: number) => void
+  addFiles: (candidates: File[]) => void;
+  removeAt: (index: number) => void;
   /** Remove every file. */
-  clear: () => void
+  clear: () => void;
   /** A human-readable size for one file. */
-  sizeOf: (file: File) => string
-  handleInputChange: (event: ChangeEvent<HTMLInputElement>) => void
+  sizeOf: (file: File) => string;
+  handleInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
   /**
    * Bind to `onDragEnter`. This is the handler that counts the drag depth, so
    * binding `onDragOver` to it as well makes the highlight stick.
    */
-  handleDragEnter: (event: DragEvent<HTMLElement>) => void
-  handleDragOver: (event: DragEvent<HTMLElement>) => void
-  handleDragLeave: (event: DragEvent<HTMLElement>) => void
-  handleDrop: (event: DragEvent<HTMLElement>) => void
-  handleBlur: (event: FocusEvent<HTMLElement>) => void
-  handleFocus: (event: FocusEvent<HTMLElement>) => void
+  handleDragEnter: (event: DragEvent<HTMLElement>) => void;
+  handleDragOver: (event: DragEvent<HTMLElement>) => void;
+  handleDragLeave: (event: DragEvent<HTMLElement>) => void;
+  handleDrop: (event: DragEvent<HTMLElement>) => void;
+  handleBlur: (event: FocusEvent<HTMLElement>) => void;
+  handleFocus: (event: FocusEvent<HTMLElement>) => void;
 }
 
 /**
@@ -118,40 +118,40 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
     onFocus,
     onWarn,
     id: idProp,
-  } = options
+  } = options;
 
-  const reactId = useId()
-  const baseId = idProp ?? `rx-file-${reactId}`
+  const reactId = useId();
+  const baseId = idProp ?? `rx-file-${reactId}`;
 
   // A bound that cannot bound anything is dropped rather than enforced.
   const usableMax =
     maxFilesProp !== undefined && Number.isInteger(maxFilesProp) && maxFilesProp >= 1
       ? maxFilesProp
-      : undefined
+      : undefined;
   // A single-file field is capped at one whatever `maxFiles` says.
-  const maxFiles = multiple ? usableMax : 1
+  const maxFiles = multiple ? usableMax : 1;
 
   const sizesUsable =
-    minSizeProp === undefined || maxSizeProp === undefined || minSizeProp <= maxSizeProp
+    minSizeProp === undefined || maxSizeProp === undefined || minSizeProp <= maxSizeProp;
   const validSize = (size: number | undefined) =>
-    size !== undefined && Number.isFinite(size) && size >= 0 ? size : undefined
-  const minSize = sizesUsable ? validSize(minSizeProp) : undefined
-  const maxSize = sizesUsable ? validSize(maxSizeProp) : undefined
+    size !== undefined && Number.isFinite(size) && size >= 0 ? size : undefined;
+  const minSize = sizesUsable ? validSize(minSizeProp) : undefined;
+  const maxSize = sizesUsable ? validSize(maxSizeProp) : undefined;
 
   const rules: FileRules = useMemo(
     () => ({ accept, maxSize, minSize, maxFiles, dedupe, validate }),
     [accept, maxSize, minSize, maxFiles, dedupe, validate],
-  )
+  );
 
-  const isControlled = valueProp !== undefined
-  const [uncontrolled, setUncontrolled] = useState<File[]>(() => defaultValue ?? [])
-  const files = isControlled ? valueProp : uncontrolled
+  const isControlled = valueProp !== undefined;
+  const [uncontrolled, setUncontrolled] = useState<File[]>(() => defaultValue ?? []);
+  const files = isControlled ? valueProp : uncontrolled;
 
-  const [dragging, setDragging] = useState(false)
-  const [announcement, setAnnouncement] = useState('')
-  const inputRef = useRef<HTMLInputElement | null>(null)
-  const zoneRef = useRef<HTMLElement | null>(null)
-  const removeRefs = useRef<(HTMLElement | null)[]>([])
+  const [dragging, setDragging] = useState(false);
+  const [announcement, setAnnouncement] = useState("");
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const zoneRef = useRef<HTMLElement | null>(null);
+  const removeRefs = useRef<(HTMLElement | null)[]>([]);
   /**
    * Set when a removal should move focus, applied after the list re-renders.
    *
@@ -163,7 +163,7 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
    * the stash survives until the parent's *next* unrelated render, so the yank
    * arrives several interactions later.
    */
-  const pendingFocus = useRef<{ target: number | 'zone'; expect: number } | null>(null)
+  const pendingFocus = useRef<{ target: number | "zone"; expect: number } | null>(null);
 
   /**
    * Depth counter for the drag state.
@@ -180,9 +180,9 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
    * stayed lit for the life of the page after a drag that left without
    * dropping.
    */
-  const dragDepth = useRef(0)
+  const dragDepth = useRef(0);
 
-  const full = maxFiles !== undefined && files.length >= maxFiles
+  const full = maxFiles !== undefined && files.length >= maxFiles;
 
   const ids = useMemo(
     () => ({
@@ -194,7 +194,7 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
       announcement: `${baseId}-announcement`,
     }),
     [baseId],
-  )
+  );
 
   /**
    * Object URLs, keyed by file, minted after commit and revoked when the file
@@ -210,7 +210,7 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
   // would be the reflexive choice, but a lazily-initialised state value is
   // stable for the life of the component without the refs rules to reason
   // about. Only the effects below touch it.
-  const [urls] = useState(() => new Map<string, string>())
+  const [urls] = useState(() => new Map<string, string>());
   /**
    * A snapshot of the map above, which is what render reads.
    *
@@ -219,7 +219,7 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
    * can never be the state that triggers a re-render. The snapshot is replaced
    * on every mint or revoke, so it can.
    */
-  const [previewUrls, setPreviewUrls] = useState<ReadonlyMap<string, string>>(() => new Map())
+  const [previewUrls, setPreviewUrls] = useState<ReadonlyMap<string, string>>(() => new Map());
 
   /**
    * Mint and revoke, in an effect rather than while deriving the rendered list.
@@ -236,19 +236,19 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
    * markup carries no URL that could never be revoked.
    */
   useEffect(() => {
-    const live = new Set<string>()
-    let changed = false
+    const live = new Set<string>();
+    let changed = false;
 
     if (previews) {
       for (const file of files) {
-        if (!isPreviewable(file)) continue
-        const key = fileKey(file)
-        live.add(key)
+        if (!isPreviewable(file)) continue;
+        const key = fileKey(file);
+        live.add(key);
         // Existing URLs are kept, so a file that survives a change keeps its
         // `src`. Re-minting on every list change would reload every thumbnail.
-        if (urls.has(key)) continue
-        urls.set(key, URL.createObjectURL(file))
-        changed = true
+        if (urls.has(key)) continue;
+        urls.set(key, URL.createObjectURL(file));
+        changed = true;
       }
     }
 
@@ -256,10 +256,10 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
     // for unmount, which is what makes add-then-remove cycles safe. Deleting
     // while iterating a Map is well-defined.
     for (const [key, url] of urls) {
-      if (live.has(key)) continue
-      URL.revokeObjectURL(url)
-      urls.delete(key)
-      changed = true
+      if (live.has(key)) continue;
+      URL.revokeObjectURL(url);
+      urls.delete(key);
+      changed = true;
     }
 
     // The one case the rule is written to allow: an external system — the
@@ -268,8 +268,8 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
     // is only set when a URL was actually minted or revoked, and this effect's
     // own dependencies do not include it.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (changed) setPreviewUrls(new Map(urls))
-  }, [files, previews, urls])
+    if (changed) setPreviewUrls(new Map(urls));
+  }, [files, previews, urls]);
 
   useEffect(() => {
     // Safe to close over because the effect above mutates this same Map rather
@@ -280,86 +280,86 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
     // first and the effect above re-mints into it — the order the other way
     // round would revoke what had just been minted.
     return () => {
-      for (const url of urls.values()) URL.revokeObjectURL(url)
-      urls.clear()
-    }
-  }, [urls])
+      for (const url of urls.values()) URL.revokeObjectURL(url);
+      urls.clear();
+    };
+  }, [urls]);
 
   const entries = useMemo<FileEntry[]>(
     () =>
       files.map((file) => {
-        const key = fileKey(file)
-        const preview = previewUrls.get(key)
-        return preview === undefined ? { file, key } : { file, key, preview }
+        const key = fileKey(file);
+        const preview = previewUrls.get(key);
+        return preview === undefined ? { file, key } : { file, key, preview };
       }),
     [files, previewUrls],
-  )
+  );
 
   // Development-only configuration diagnostics. Guarded so a production bundler
   // drops the branch — and with it `warn.ts` entirely. Deduped per instance so
   // a re-rendering parent warns once, not once per selection.
-  const warned = useRef<Set<string> | null>(null)
+  const warned = useRef<Set<string> | null>(null);
   useEffect(() => {
     // A bundler folds this to a constant and drops the whole effect body in a
     // production build, so the branch is unreachable once compiled and cannot
     // be exercised by the (always-development) test build.
     /* v8 ignore next */
-    if (process.env.NODE_ENV === 'production') return
-    const seen = (warned.current ??= new Set<string>())
+    if (process.env.NODE_ENV === "production") return;
+    const seen = (warned.current ??= new Set<string>());
     const emit = (warning: FileWarning | null) => {
-      if (!warning) return
-      const key = `${warning.code}:${warning.received}`
-      if (seen.has(key)) return
-      seen.add(key)
-      if (onWarn) onWarn(warning)
+      if (!warning) return;
+      const key = `${warning.code}:${warning.received}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      if (onWarn) onWarn(warning);
       // The library ships no console noise in production; this line is only
       // reached in development and is dropped from production builds.
       // eslint-disable-next-line no-console
-      else console.warn(`[react-file-input] ${warning.message}`)
-    }
-    emit(inspectMaxFiles(maxFilesProp))
-    emit(inspectSizeRange(minSizeProp, maxSizeProp))
-    emit(inspectSize(minSizeProp, 'minSize'))
-    emit(inspectSize(maxSizeProp, 'maxSize'))
-    emit(inspectAccept(accept))
-    emit(inspectSingleWithMax(multiple, maxFilesProp))
-  }, [maxFilesProp, minSizeProp, maxSizeProp, accept, multiple, onWarn])
+      else console.warn(`[react-file-input] ${warning.message}`);
+    };
+    emit(inspectMaxFiles(maxFilesProp));
+    emit(inspectSizeRange(minSizeProp, maxSizeProp));
+    emit(inspectSize(minSizeProp, "minSize"));
+    emit(inspectSize(maxSizeProp, "maxSize"));
+    emit(inspectAccept(accept));
+    emit(inspectSingleWithMax(multiple, maxFilesProp));
+  }, [maxFilesProp, minSizeProp, maxSizeProp, accept, multiple, onWarn]);
 
   const commitFiles = useCallback(
     (next: File[]) => {
-      if (!isControlled) setUncontrolled(next)
-      onChange?.(next)
+      if (!isControlled) setUncontrolled(next);
+      onChange?.(next);
     },
     [isControlled, onChange],
-  )
+  );
 
-  const sizeOf = useCallback((file: File) => formatBytes(file.size), [])
+  const sizeOf = useCallback((file: File) => formatBytes(file.size), []);
 
   const addFiles = useCallback(
     (candidates: File[]) => {
-      if (disabled || readOnly || candidates.length === 0) return
+      if (disabled || readOnly || candidates.length === 0) return;
 
       // A single-file field replaces rather than appends: the native input does
       // the same, and appending would silently ignore the user's second pick.
-      const base = multiple ? files : []
-      const { files: next, results } = attemptAll(base, candidates, rules)
-      const added = results.filter((result) => result.accepted)
-      const rejected = results.filter((result) => !result.accepted)
+      const base = multiple ? files : [];
+      const { files: next, results } = attemptAll(base, candidates, rules);
+      const added = results.filter((result) => result.accepted);
+      const rejected = results.filter((result) => !result.accepted);
 
-      for (const result of rejected) onReject?.(result)
+      for (const result of rejected) onReject?.(result);
       if (added.length === 0) {
-        if (announce) setAnnouncement(announce({ type: 'reject', files, rejected }))
+        if (announce) setAnnouncement(announce({ type: "reject", files, rejected }));
         // Rejections are otherwise not announced by default — the caller shows
         // them, and interrupting the user to say "nothing happened" is noise.
-        return
+        return;
       }
 
-      commitFiles(next)
-      for (const result of added) onAdd?.(result.file, next)
+      commitFiles(next);
+      for (const result of added) onAdd?.(result.file, next);
 
       if (announce) {
-        setAnnouncement(announce({ type: 'add', files: next, added: added.length, rejected }))
-        return
+        setAnnouncement(announce({ type: "add", files: next, added: added.length, rejected }));
+        return;
       }
       // One announcement for the batch, whatever the count.
       const what =
@@ -367,27 +367,27 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
           ? // The `?? 'file'` cannot fire: the length check guarantees the
             // element exists. `noUncheckedIndexedAccess` demands it anyway.
             /* v8 ignore next */
-            (added[0]?.file.name ?? 'file')
-          : `${String(added.length)} files`
-      const refused = rejected.length === 0 ? '' : ` ${String(rejected.length)} refused.`
-      setAnnouncement(`Added ${what}.${refused} ${String(next.length)} selected.`)
+            (added[0]?.file.name ?? "file")
+          : `${String(added.length)} files`;
+      const refused = rejected.length === 0 ? "" : ` ${String(rejected.length)} refused.`;
+      setAnnouncement(`Added ${what}.${refused} ${String(next.length)} selected.`);
     },
     [disabled, readOnly, multiple, files, rules, onReject, commitFiles, onAdd, announce],
-  )
+  );
 
   const removeAt = useCallback(
     (index: number) => {
-      if (disabled || readOnly) return
-      const file = files[index]
-      if (file === undefined) return
-      const next = files.filter((_entry, position) => position !== index)
-      commitFiles(next)
-      onRemove?.(file, index, next)
+      if (disabled || readOnly) return;
+      const file = files[index];
+      if (file === undefined) return;
+      const next = files.filter((_entry, position) => position !== index);
+      commitFiles(next);
+      onRemove?.(file, index, next);
       setAnnouncement(
         announce
-          ? announce({ type: 'remove', files: next })
+          ? announce({ type: "remove", files: next })
           : `Removed ${file.name}. ${String(next.length)} selected.`,
-      )
+      );
       /*
        * The button that was just clicked is about to leave the DOM, and focus
        * goes with it — straight to <body>, which is the single most common
@@ -396,41 +396,41 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
        * is now empty.
        */
       pendingFocus.current = {
-        target: next.length === 0 ? 'zone' : Math.min(index, next.length - 1),
+        target: next.length === 0 ? "zone" : Math.min(index, next.length - 1),
         expect: next.length,
-      }
+      };
     },
     [disabled, readOnly, files, commitFiles, onRemove, announce],
-  )
+  );
 
   useEffect(() => {
-    const pending = pendingFocus.current
-    if (pending === null) return
+    const pending = pendingFocus.current;
+    if (pending === null) return;
     // Dropped, not deferred, when the list that arrived is not the one the
     // removal asked for: a controlled parent refused it, and the button the
     // user is on is still there.
     if (files.length !== pending.expect) {
-      pendingFocus.current = null
-      return
+      pendingFocus.current = null;
+      return;
     }
-    pendingFocus.current = null
-    if (pending.target === 'zone') {
-      zoneRef.current?.focus()
-      return
+    pendingFocus.current = null;
+    if (pending.target === "zone") {
+      zoneRef.current?.focus();
+      return;
     }
-    removeRefs.current[pending.target]?.focus()
-  }, [files])
+    removeRefs.current[pending.target]?.focus();
+  }, [files]);
 
   const clear = useCallback(() => {
-    if (disabled || readOnly || files.length === 0) return
-    commitFiles([])
-    setAnnouncement(announce ? announce({ type: 'remove', files: [] }) : 'Removed all files.')
-  }, [disabled, readOnly, files.length, commitFiles, announce])
+    if (disabled || readOnly || files.length === 0) return;
+    commitFiles([]);
+    setAnnouncement(announce ? announce({ type: "remove", files: [] }) : "Removed all files.");
+  }, [disabled, readOnly, files.length, commitFiles, announce]);
 
   const open = useCallback(() => {
-    if (disabled || readOnly) return
-    inputRef.current?.click()
-  }, [disabled, readOnly])
+    if (disabled || readOnly) return;
+    inputRef.current?.click();
+  }, [disabled, readOnly]);
 
   /**
    * Bumped by every pick, so the effect below runs even when nothing else
@@ -438,7 +438,7 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
    * into a controlled `value={[]}` that repeats the first announcement word for
    * word.
    */
-  const [picks, setPicks] = useState(0)
+  const [picks, setPicks] = useState(0);
 
   /**
    * The native control holds only files the field is showing.
@@ -459,91 +459,91 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
    * the list is, and its answer arrives as `files`.
    */
   useEffect(() => {
-    const input = inputRef.current
-    if (!input?.files) return
-    const shown = new Set(files.map(fileKey))
-    const held = Array.from(input.files)
-    const kept = held.filter((file) => shown.has(fileKey(file)))
-    if (kept.length === held.length) return
+    const input = inputRef.current;
+    if (!input?.files) return;
+    const shown = new Set(files.map(fileKey));
+    const held = Array.from(input.files);
+    const kept = held.filter((file) => shown.has(fileKey(file)));
+    if (kept.length === held.length) return;
     if (kept.length === 0) {
-      input.value = ''
-      return
+      input.value = "";
+      return;
     }
-    const data = new DataTransfer()
-    for (const file of kept) data.items.add(file)
-    input.files = data.files
-  }, [files, picks])
+    const data = new DataTransfer();
+    for (const file of kept) data.items.add(file);
+    input.files = data.files;
+  }, [files, picks]);
 
   const handleInputChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      addFiles(Array.from(event.target.files ?? []))
-      setPicks((count) => count + 1)
+      addFiles(Array.from(event.target.files ?? []));
+      setPicks((count) => count + 1);
     },
     [addFiles],
-  )
+  );
 
   const handleDragEnter = useCallback(
     (event: DragEvent<HTMLElement>) => {
-      if (disabled || readOnly) return
+      if (disabled || readOnly) return;
       // Only react to a drag that actually carries files — dragging selected
       // text over the zone should not light it up.
-      if (!Array.from(event.dataTransfer.types).includes('Files')) return
-      event.preventDefault()
-      dragDepth.current += 1
-      setDragging(true)
+      if (!Array.from(event.dataTransfer.types).includes("Files")) return;
+      event.preventDefault();
+      dragDepth.current += 1;
+      setDragging(true);
     },
     [disabled, readOnly],
-  )
+  );
 
   const handleDragOver = useCallback(
     (event: DragEvent<HTMLElement>) => {
-      if (disabled || readOnly) return
-      if (!Array.from(event.dataTransfer.types).includes('Files')) return
+      if (disabled || readOnly) return;
+      if (!Array.from(event.dataTransfer.types).includes("Files")) return;
       // Preventing `dragover` on every tick is what makes the browser fire
       // `drop` at all, so this cannot be skipped. It deliberately does not
       // touch the depth counter — see the counter's own comment.
-      event.preventDefault()
+      event.preventDefault();
       // Still lights the zone, without counting: dragging in from outside the
       // viewport does not always produce a `dragenter` the zone sees, and the
       // depth reaching zero on the matching `dragleave` turns it off again.
-      setDragging(true)
+      setDragging(true);
     },
     [disabled, readOnly],
-  )
+  );
 
   const handleDragLeave = useCallback(
     (event: DragEvent<HTMLElement>) => {
-      if (disabled || readOnly) return
-      if (!Array.from(event.dataTransfer.types).includes('Files')) return
-      dragDepth.current = Math.max(0, dragDepth.current - 1)
-      if (dragDepth.current === 0) setDragging(false)
+      if (disabled || readOnly) return;
+      if (!Array.from(event.dataTransfer.types).includes("Files")) return;
+      dragDepth.current = Math.max(0, dragDepth.current - 1);
+      if (dragDepth.current === 0) setDragging(false);
     },
     [disabled, readOnly],
-  )
+  );
 
   const handleDrop = useCallback(
     (event: DragEvent<HTMLElement>) => {
-      if (disabled || readOnly) return
+      if (disabled || readOnly) return;
       // Whatever was dropped, the drag is over: clear the highlight even for a
       // payload this field will not take.
-      dragDepth.current = 0
-      setDragging(false)
+      dragDepth.current = 0;
+      setDragging(false);
       // Symmetry with the drag handlers, which both refuse a drag carrying no
       // files. Consuming the drop anyway would swallow the browser's own
       // default for a dragged link or text selection.
-      if (!Array.from(event.dataTransfer.types).includes('Files')) return
-      event.preventDefault()
-      addFiles(Array.from(event.dataTransfer.files))
+      if (!Array.from(event.dataTransfer.types).includes("Files")) return;
+      event.preventDefault();
+      addFiles(Array.from(event.dataTransfer.files));
     },
     [disabled, readOnly, addFiles],
-  )
+  );
 
   const handleFocus = useCallback(
     (event: FocusEvent<HTMLElement>) => {
-      onFocus?.(event)
+      onFocus?.(event);
     },
     [onFocus],
-  )
+  );
 
   /**
    * Only emit blur when focus genuinely leaves the field. Moving between the
@@ -552,12 +552,12 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
    */
   const handleBlur = useCallback(
     (event: FocusEvent<HTMLElement>) => {
-      const next = event.relatedTarget
-      if (next instanceof Node && event.currentTarget.contains(next)) return
-      onBlur?.(event)
+      const next = event.relatedTarget;
+      if (next instanceof Node && event.currentTarget.contains(next)) return;
+      onBlur?.(event);
     },
     [onBlur],
-  )
+  );
 
   return {
     files,
@@ -584,5 +584,5 @@ export function useFileInput(options: UseFileInputOptions): UseFileInputResult {
     handleDrop,
     handleBlur,
     handleFocus,
-  }
+  };
 }

@@ -1,5 +1,5 @@
 ---
-'@rxova/react-phone-input': patch
+"@rxova/react-phone-input": patch
 ---
 
 Internal: the isomorphic layout effect now comes from `@rxova/ts-utils`, inlined at build time

@@ -75,9 +75,9 @@ means your bundler drops whatever you don't import.
 ## Usage
 
 ```ts
-import { CurrencyInput, Rating, OtpInput } from '@rxova/react-inputs'
+import { CurrencyInput, Rating, OtpInput } from "@rxova/react-inputs";
 // or
-import { OtpInput } from '@rxova/react-otp-input'
+import { OtpInput } from "@rxova/react-otp-input";
 ```
 
 Requires React 18 or 19. React is the shared peer dependency; the currency package also lists React
@@ -90,13 +90,13 @@ Components from Rxova React Inputs use controlled values: provide a value and a 
 they fit naturally alongside your other form fields.
 
 ```tsx
-import { useState } from 'react'
-import { CurrencyInput, Rating, OtpInput } from '@rxova/react-inputs'
+import { useState } from "react";
+import { CurrencyInput, Rating, OtpInput } from "@rxova/react-inputs";
 
 function Checkout() {
-  const [price, setPrice] = useState<number | null>(null)
-  const [score, setScore] = useState(0)
-  const [code, setCode] = useState('')
+  const [price, setPrice] = useState<number | null>(null);
+  const [score, setScore] = useState(0);
+  const [code, setCode] = useState("");
 
   return (
     <>
@@ -104,7 +104,7 @@ function Checkout() {
       <Rating value={score} onChange={setScore} precision={0.5} label="Rate your meal" />
       <OtpInput length={6} value={code} onChange={setCode} label="One-time code" />
     </>
-  )
+  );
 }
 ```
 

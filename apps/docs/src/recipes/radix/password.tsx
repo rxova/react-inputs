@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { Box, Text } from '@radix-ui/themes'
-import { PasswordInput } from '@rxova/react-password-input'
+import { Box, Text } from "@radix-ui/themes";
+import { PasswordInput } from "@rxova/react-password-input";
 
 export function RadixPassword() {
   return (
@@ -14,5 +14,5 @@ export function RadixPassword() {
         Use at least eight characters.
       </Text>
     </Box>
-  )
+  );
 }

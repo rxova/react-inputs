@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { Section } from '@rxova/demo-kit'
-import { FileInput } from '@rxova/react-file-input'
-import type { FileRejected, FileWarning } from '@rxova/react-file-input'
+import { useState } from "react";
+import { Section } from "@rxova/demo-kit";
+import { FileInput } from "@rxova/react-file-input";
+import type { FileRejected, FileWarning } from "@rxova/react-file-input";
 
 /**
  * The E2E target. Every section is something the Playwright suite drives, so
@@ -11,16 +11,16 @@ import type { FileRejected, FileWarning } from '@rxova/react-file-input'
  * test.
  */
 /** A stand-in for a file that arrived from the server, for the read-only state. */
-const FIXED = new File([new Uint8Array(2048)], 'contract.pdf', {
-  type: 'application/pdf',
+const FIXED = new File([new Uint8Array(2048)], "contract.pdf", {
+  type: "application/pdf",
   lastModified: 0,
-})
+});
 
 export function FileDemos() {
-  const [files, setFiles] = useState<File[]>([])
-  const [rejection, setRejection] = useState<FileRejected | null>(null)
-  const [warnings, setWarnings] = useState<FileWarning[]>([])
-  const [submitted, setSubmitted] = useState<string | null>(null)
+  const [files, setFiles] = useState<File[]>([]);
+  const [rejection, setRejection] = useState<FileRejected | null>(null);
+  const [warnings, setWarnings] = useState<FileWarning[]>([]);
+  const [submitted, setSubmitted] = useState<string | null>(null);
 
   return (
     <>
@@ -34,11 +34,11 @@ export function FileDemos() {
 
       <Section id="controlled" title="Controlled" note="The value is a File array.">
         <FileInput label="Controlled attachments" multiple value={files} onChange={setFiles} />
-        <p data-testid="value">{files.map((file) => file.name).join('|') || 'empty'}</p>
+        <p data-testid="value">{files.map((file) => file.name).join("|") || "empty"}</p>
         <button
           type="button"
           onClick={() => {
-            setFiles([])
+            setFiles([]);
           }}
         >
           Clear
@@ -56,13 +56,13 @@ export function FileDemos() {
           accept=".txt,text/plain"
           maxFiles={3}
           maxSize={1000}
-          validate={(file) => (file.name.startsWith('secret') ? 'that one stays home' : true)}
+          validate={(file) => (file.name.startsWith("secret") ? "that one stays home" : true)}
           onReject={setRejection}
         />
         <p data-testid="rejection">
-          {rejection ? `${rejection.reason}:${rejection.file.name}` : ''}
+          {rejection ? `${rejection.reason}:${rejection.file.name}` : ""}
         </p>
-        <p data-testid="rejection-message">{rejection?.message ?? ''}</p>
+        <p data-testid="rejection-message">{rejection?.message ?? ""}</p>
       </Section>
 
       <Section id="previews" title="Previews" note="Object URLs, revoked on removal and unmount.">
@@ -79,7 +79,7 @@ export function FileDemos() {
           onWarn={(warning) => {
             setWarnings((previous) =>
               previous.some((w) => w.code === warning.code) ? previous : [...previous, warning],
-            )
+            );
           }}
         />
         <ul data-testid="warning-codes">
@@ -92,15 +92,15 @@ export function FileDemos() {
       <Section id="native-form" title="Native form" note="Posts through the real file input.">
         <form
           onSubmit={(event) => {
-            event.preventDefault()
-            const entry = new FormData(event.currentTarget).get('resume')
-            setSubmitted(entry instanceof File ? entry.name : '')
+            event.preventDefault();
+            const entry = new FormData(event.currentTarget).get("resume");
+            setSubmitted(entry instanceof File ? entry.name : "");
           }}
         >
           <FileInput label="Résumé" name="resume" />
           <button type="submit">Save</button>
         </form>
-        <p data-testid="submitted">{submitted ?? ''}</p>
+        <p data-testid="submitted">{submitted ?? ""}</p>
       </Section>
 
       <Section id="states" title="States" note="Disabled and read-only.">
@@ -112,5 +112,5 @@ export function FileDemos() {
         </div>
       </Section>
     </>
-  )
+  );
 }

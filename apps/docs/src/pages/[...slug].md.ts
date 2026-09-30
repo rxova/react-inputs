@@ -13,26 +13,26 @@
 // collides — `components/otp/api/` is a directory and `components/otp/api.md` is a
 // sibling file.
 
-import type { APIRoute, GetStaticPaths } from 'astro'
+import type { APIRoute, GetStaticPaths } from "astro";
 
-import { renderMarkdown, type DocsPage } from '@rxova/docs-kit'
+import { renderMarkdown, type DocsPage } from "@rxova/docs-kit";
 
-import { docsPages } from '../lib/docs-md.mjs'
+import { docsPages } from "../lib/docs-md.mjs";
 
-export const prerender = true
+export const prerender = true;
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const pages = await docsPages({
     origin: import.meta.env.SITE,
     base: import.meta.env.BASE_URL,
-  })
+  });
 
   // The route param carries no extension: the filename does. `[...slug].md.ts`
   // means slug `components/otp/usage` is written to `components/otp/usage.md`.
-  return pages.map((page) => ({ params: { slug: page.id }, props: { page } }))
-}
+  return pages.map((page) => ({ params: { slug: page.id }, props: { page } }));
+};
 
 export const GET: APIRoute = ({ props }) =>
   new Response(renderMarkdown((props as { page: DocsPage }).page), {
-    headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
-  })
+    headers: { "Content-Type": "text/markdown; charset=utf-8" },
+  });

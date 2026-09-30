@@ -1,13 +1,13 @@
 ---
-title: 'Time input — About'
-description: 'Why the time input returns a canonical 24-hour string, how segments and locale ordering work, and how accessibility is handled.'
+title: "Time input — About"
+description: "Why the time input returns a canonical 24-hour string, how segments and locale ordering work, and how accessibility is handled."
 sidebar:
-  label: 'About'
+  label: "About"
   order: 3
 ---
 
-import CodeRecipes from '@rxova/astro-ui/components/CodeRecipes.astro'
-import { recipesFor } from '../../../../lib/recipe-sources.mjs'
+import CodeRecipes from "@rxova/astro-ui/components/CodeRecipes.astro";
+import { recipesFor } from "../../../../lib/recipe-sources.mjs";
 
 The decisions behind the component, and the ones you should disagree with deliberately rather than
 by accident.
@@ -15,8 +15,8 @@ by accident.
 ## Why a string and not a `Date`
 
 ```js
-new Date('14:30') // Invalid Date
-new Date('2026-01-01T14:30') // a moment that moves with the timezone and with DST
+new Date("14:30"); // Invalid Date
+new Date("2026-01-01T14:30"); // a moment that moves with the timezone and with DST
 ```
 
 A time of day is not an instant. It has no date and no zone, and the moment it acquires either it
@@ -28,10 +28,10 @@ So no `Date` is ever constructed. The component stores three numbers, formats th
 big-endian, including across precisions:
 
 ```ts
-import { compareISO } from '@rxova/react-time-input'
+import { compareISO } from "@rxova/react-time-input";
 
-compareISO('09:00', '14:30') // -1
-compareISO('14:30:00', '14:30') //  0  — compared on the shared prefix
+compareISO("09:00", "14:30"); // -1
+compareISO("14:30:00", "14:30"); //  0  — compared on the shared prefix
 ```
 
 There is deliberately **no `toDate()` helper**. It cannot be written without inventing a date and a
@@ -67,7 +67,7 @@ adversarial suite round-trips all 24 hours rather than sampling:
 
 ```ts
 for (let hour = 0; hour <= 23; hour++) {
-  expect(fromDisplayHour(toDisplayHour(hour, true), toDayPeriod(hour))).toBe(hour)
+  expect(fromDisplayHour(toDisplayHour(hour, true), toDayPeriod(hour))).toBe(hour);
 }
 ```
 
@@ -85,12 +85,12 @@ Every engine ships ICU already, so this costs nothing and is correct for locales
 heard of.
 
 ```ts
-import { usesHour12, dayPeriodNames, timePieces } from '@rxova/react-time-input'
+import { usesHour12, dayPeriodNames, timePieces } from "@rxova/react-time-input";
 
-usesHour12('en-US') // true
-usesHour12('de-DE') // false
-dayPeriodNames('es-ES') // ['a. m.', 'p. m.']
-dayPeriodNames('ja-JP') // ['午前', '午後']
+usesHour12("en-US"); // true
+usesHour12("de-DE"); // false
+dayPeriodNames("es-ES"); // ['a. m.', 'p. m.']
+dayPeriodNames("ja-JP"); // ['午前', '午後']
 ```
 
 Hard-coding "AM"/"PM" would be wrong in most of the world. The day period also accepts the
@@ -245,7 +245,7 @@ With a `name`, the component emits a hidden input carrying the 24-hour value:
 
 ```tsx
 function Field() {
-  const [field, , helpers] = useField<string | null>('start')
+  const [field, , helpers] = useField<string | null>("start");
   return (
     <TimeInput
       label="Time"
@@ -254,7 +254,7 @@ function Field() {
       onChange={(value) => helpers.setValue(value)}
       onBlur={() => helpers.setTouched(true)}
     />
-  )
+  );
 }
 ```
 
@@ -268,7 +268,7 @@ function Field() {
     <TimeInput
       label="Time"
       name={input.name}
-      value={input.value === '' ? null : String(input.value)}
+      value={input.value === "" ? null : String(input.value)}
       onChange={input.onChange}
       onBlur={input.onBlur}
     />
@@ -300,4 +300,4 @@ the component takes `null` for empty.
 Keep the segmented spinbuttons and localized day period intact; use the design system for the
 field's visible label, helper text, validation, and layout.
 
-<CodeRecipes idPrefix="integration" recipes={recipesFor('time')} />
+<CodeRecipes idPrefix="integration" recipes={recipesFor("time")} />

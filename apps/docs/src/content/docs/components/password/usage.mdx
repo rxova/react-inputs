@@ -1,8 +1,8 @@
 ---
-title: 'Password input — Usage'
-description: 'Use the password input in React: reveal toggle, Caps Lock warning, strength meter and native form submission.'
+title: "Password input — Usage"
+description: "Use the password input in React: reveal toggle, Caps Lock warning, strength meter and native form submission."
 sidebar:
-  label: 'Usage'
+  label: "Usage"
   order: 2
 ---
 
@@ -13,25 +13,25 @@ where you left it. (`PasswordInput`, `commonRules` and `useState` are already in
 
 ```tsx live
 function TryIt() {
-  const [value, setValue] = useState('')
-  const [valid, setValid] = useState(false)
+  const [value, setValue] = useState("");
+  const [valid, setValid] = useState(false);
   return (
-    <div style={{ display: 'grid', gap: '0.75rem', maxWidth: '22rem' }}>
+    <div style={{ display: "grid", gap: "0.75rem", maxWidth: "22rem" }}>
       <PasswordInput
         label="Choose a password"
         autoComplete="new-password"
         showStrength
         minScore={2}
         minLength={10}
-        userInputs={['ada@example.com', 'Ada Lovelace']}
+        userInputs={["ada@example.com", "Ada Lovelace"]}
         rules={[commonRules.digit, { ...commonRules.symbol, optional: true }]}
         value={value}
         onChange={setValue}
         onValidityChange={setValid}
       />
-      <small>{valid ? 'Ready to submit' : 'Not yet'}</small>
+      <small>{valid ? "Ready to submit" : "Not yet"}</small>
     </div>
-  )
+  );
 }
 ```
 
@@ -43,10 +43,10 @@ Try `password`, `P4ssw0rd`, `qwertyuiop`, `ada@example.com` and
 The minimum useful field. Masked, with a reveal toggle and a Caps Lock warning.
 
 ```tsx
-import { PasswordInput } from '@rxova/react-password-input'
+import { PasswordInput } from "@rxova/react-password-input";
 
 function SignIn() {
-  return <PasswordInput label="Password" name="password" autoComplete="current-password" />
+  return <PasswordInput label="Password" name="password" autoComplete="current-password" />;
 }
 ```
 
@@ -82,12 +82,12 @@ The full surface is `PasswordInputProps` in the published types; the
 Both the value and the reveal state can be controlled independently.
 
 ```tsx
-import { useState } from 'react'
-import { PasswordInput } from '@rxova/react-password-input'
+import { useState } from "react";
+import { PasswordInput } from "@rxova/react-password-input";
 
 function Controlled() {
-  const [value, setValue] = useState('')
-  const [revealed, setRevealed] = useState(false)
+  const [value, setValue] = useState("");
+  const [revealed, setRevealed] = useState(false);
 
   return (
     <PasswordInput
@@ -97,7 +97,7 @@ function Controlled() {
       revealed={revealed}
       onRevealChange={setRevealed}
     />
-  )
+  );
 }
 ```
 
@@ -109,19 +109,19 @@ The default rule set is **one rule, about length**. See [About](/components/pass
 anything more.
 
 ```tsx
-import { PasswordInput, commonRules } from '@rxova/react-password-input'
+import { PasswordInput, commonRules } from "@rxova/react-password-input";
 
 function Field() {
   return (
     <PasswordInput
       label="Password"
       rules={[
-        { id: 'length', label: 'At least 12 characters', test: (p) => Array.from(p).length >= 12 },
+        { id: "length", label: "At least 12 characters", test: (p) => Array.from(p).length >= 12 },
         commonRules.digit,
         { ...commonRules.symbol, optional: true },
       ]}
     />
-  )
+  );
 }
 ```
 
@@ -140,14 +140,14 @@ generate rather than autofill.
 
 ```tsx live
 function SignUp() {
-  const [password, setPassword] = useState('')
-  const [confirm, setConfirm] = useState('')
-  const [touched, setTouched] = useState(false)
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [touched, setTouched] = useState(false);
 
-  const mismatch = touched && confirm.length > 0 && confirm !== password
+  const mismatch = touched && confirm.length > 0 && confirm !== password;
 
   return (
-    <div style={{ display: 'grid', gap: '1rem', maxWidth: '22rem' }}>
+    <div style={{ display: "grid", gap: "1rem", maxWidth: "22rem" }}>
       <PasswordInput
         label="Password"
         autoComplete="new-password"
@@ -163,13 +163,13 @@ function SignUp() {
           value={confirm}
           onChange={setConfirm}
           onBlur={() => {
-            setTouched(true)
+            setTouched(true);
           }}
           invalid={mismatch}
-          aria-describedby={mismatch ? 'confirm-error' : undefined}
+          aria-describedby={mismatch ? "confirm-error" : undefined}
         />
         {mismatch ? (
-          <p id="confirm-error" style={{ color: 'crimson', margin: '0.25rem 0 0' }}>
+          <p id="confirm-error" style={{ color: "crimson", margin: "0.25rem 0 0" }}>
             Both passwords must match.
           </p>
         ) : null}
@@ -177,13 +177,13 @@ function SignUp() {
 
       <p>
         {password.length === 0
-          ? 'Enter a password.'
+          ? "Enter a password."
           : confirm === password
-            ? 'Passwords match.'
-            : 'Passwords do not match yet.'}
+            ? "Passwords match."
+            : "Passwords do not match yet."}
       </p>
     </div>
-  )
+  );
 }
 ```
 
@@ -229,12 +229,12 @@ The rendered element is an ordinary `<input>`, so every form library works witho
 the `ref` lands on the input itself.
 
 ```tsx
-import { useForm } from 'react-hook-form'
-import { PasswordInput } from '@rxova/react-password-input'
+import { useForm } from "react-hook-form";
+import { PasswordInput } from "@rxova/react-password-input";
 
 function SignIn() {
-  const { register, handleSubmit } = useForm<{ password: string }>()
-  const { ref, onChange, ...field } = register('password', { required: true })
+  const { register, handleSubmit } = useForm<{ password: string }>();
+  const { ref, onChange, ...field } = register("password", { required: true });
 
   return (
     <form onSubmit={handleSubmit(() => undefined)}>
@@ -246,7 +246,7 @@ function SignIn() {
       />
       <button type="submit">Sign in</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -283,22 +283,22 @@ are genuinely hard: caret restoration across the `type` swap, and the abortable,
 check.
 
 ```tsx
-import { usePasswordInput } from '@rxova/react-password-input'
+import { usePasswordInput } from "@rxova/react-password-input";
 
 function CustomField() {
-  const field = usePasswordInput({ minLength: 10 })
+  const field = usePasswordInput({ minLength: 10 });
 
   return (
     <div>
       <input
         ref={(node) => {
-          field.inputRef.current = node
+          field.inputRef.current = node;
         }}
         id={field.ids.input}
         type={field.type}
         value={field.value}
         onChange={(event) => {
-          field.setValue(event.target.value)
+          field.setValue(event.target.value);
         }}
         onKeyDown={field.handleModifierEvent}
         onKeyUp={field.handleModifierEvent}
@@ -308,16 +308,16 @@ function CustomField() {
         type="button"
         aria-pressed={field.revealed}
         onMouseDown={(event) => {
-          field.captureSelection()
-          event.preventDefault()
+          field.captureSelection();
+          event.preventDefault();
         }}
         onClick={field.toggleReveal}
       >
-        {field.revealed ? 'Hide' : 'Show'}
+        {field.revealed ? "Hide" : "Show"}
       </button>
       {field.capsLock ? <p role="status">Caps Lock is on</p> : null}
     </div>
-  )
+  );
 }
 ```
 

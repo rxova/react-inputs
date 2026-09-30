@@ -1,9 +1,9 @@
-import { describe, expect, it, vi } from 'vitest'
-import { userEvent } from 'vitest/browser'
-import { render } from 'vitest-browser-react'
-import { PhoneInput } from '../PhoneInput'
-import { COUNTRIES, countryByISO2 } from '../countries'
-import { digitsOnly, formatPhone, isPossible, parsePhone } from '../phone'
+import { describe, expect, it, vi } from "vitest";
+import { userEvent } from "vitest/browser";
+import { render } from "vitest-browser-react";
+import { PhoneInput } from "../PhoneInput";
+import { COUNTRIES, countryByISO2 } from "../countries";
+import { digitsOnly, formatPhone, isPossible, parsePhone } from "../phone";
 
 /**
  * Adversarial suite.
@@ -14,125 +14,125 @@ import { digitsOnly, formatPhone, isPossible, parsePhone } from '../phone'
  * comments say which.
  */
 function input(container: HTMLElement) {
-  return container.querySelector<HTMLInputElement>('[data-rx-phone-input]')!
+  return container.querySelector<HTMLInputElement>("[data-rx-phone-input]")!;
 }
 
 function select(container: HTMLElement) {
-  return container.querySelector<HTMLSelectElement>('[data-rx-phone-country]')!
+  return container.querySelector<HTMLSelectElement>("[data-rx-phone-country]")!;
 }
 
-describe('hostile props', () => {
-  it('falls back rather than rendering an empty picker for an empty country list', async () => {
+describe("hostile props", () => {
+  it("falls back rather than rendering an empty picker for an empty country list", async () => {
     // A picker with nothing in it is not a usable field, so the prop is ignored.
-    const onWarn = vi.fn()
-    const { container } = await render(<PhoneInput label="Phone" countries={[]} onWarn={onWarn} />)
-    expect(select(container).options.length).toBeGreaterThan(200)
-    expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: 'empty-country-list' }))
-  })
+    const onWarn = vi.fn();
+    const { container } = await render(<PhoneInput label="Phone" countries={[]} onWarn={onWarn} />);
+    expect(select(container).options.length).toBeGreaterThan(200);
+    expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: "empty-country-list" }));
+  });
 
-  it('drops unknown codes from a country list instead of rendering blanks', async () => {
-    const onWarn = vi.fn()
+  it("drops unknown codes from a country list instead of rendering blanks", async () => {
+    const onWarn = vi.fn();
     const { container } = await render(
       <PhoneInput
         label="Phone"
-        countries={['GB', 'ZZ', 'FR']}
+        countries={["GB", "ZZ", "FR"]}
         defaultCountry="GB"
         onWarn={onWarn}
       />,
-    )
+    );
     expect(Array.from(select(container).options).map((option) => option.value)).toEqual([
-      'GB',
-      'FR',
-    ])
-    expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: 'unknown-country' }))
-  })
+      "GB",
+      "FR",
+    ]);
+    expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: "unknown-country" }));
+  });
 
-  it('falls back to the full list when every supplied code is unknown', async () => {
+  it("falls back to the full list when every supplied code is unknown", async () => {
     const { container } = await render(
-      <PhoneInput label="Phone" countries={['ZZ', 'QQ']} onWarn={() => undefined} />,
-    )
-    expect(select(container).options.length).toBeGreaterThan(200)
-  })
+      <PhoneInput label="Phone" countries={["ZZ", "QQ"]} onWarn={() => undefined} />,
+    );
+    expect(select(container).options.length).toBeGreaterThan(200);
+  });
 
-  it('survives a country name or calling code passed where an ISO code belongs', async () => {
+  it("survives a country name or calling code passed where an ISO code belongs", async () => {
     // The most likely mistake, and the message says exactly what was expected.
-    const onWarn = vi.fn()
-    await render(<PhoneInput label="Phone" defaultCountry="United Kingdom" onWarn={onWarn} />)
+    const onWarn = vi.fn();
+    await render(<PhoneInput label="Phone" defaultCountry="United Kingdom" onWarn={onWarn} />);
     const warning = onWarn.mock.calls
       .map(([w]) => w)
-      .find((w) => w.code === 'unknown-default-country')
-    expect(warning).toBeDefined()
-    expect(String(warning.message)).toContain('ISO 3166-1')
-  })
+      .find((w) => w.code === "unknown-default-country");
+    expect(warning).toBeDefined();
+    expect(String(warning.message)).toContain("ISO 3166-1");
+  });
 
-  it('reports a value that is not E.164 rather than silently misreading it', async () => {
-    const onWarn = vi.fn()
+  it("reports a value that is not E.164 rather than silently misreading it", async () => {
+    const onWarn = vi.fn();
     await render(
       <PhoneInput label="Phone" defaultCountry="GB" defaultValue="020 7123 4567" onWarn={onWarn} />,
-    )
-    expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: 'value-not-e164' }))
-  })
+    );
+    expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: "value-not-e164" }));
+  });
 
-  it('reports a value whose calling code is unknown', async () => {
-    const onWarn = vi.fn()
-    await render(<PhoneInput label="Phone" defaultValue="+9912345678" onWarn={onWarn} />)
-    expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: 'value-country-unknown' }))
-  })
+  it("reports a value whose calling code is unknown", async () => {
+    const onWarn = vi.fn();
+    await render(<PhoneInput label="Phone" defaultValue="+9912345678" onWarn={onWarn} />);
+    expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: "value-country-unknown" }));
+  });
 
-  it('survives a malformed locale tag rather than crashing on RangeError', async () => {
+  it("survives a malformed locale tag rather than crashing on RangeError", async () => {
     // `Intl.DisplayNames` throws on "en_US". The country list falls back to ISO
     // codes instead of propagating the RangeError.
-    const onWarn = vi.fn()
+    const onWarn = vi.fn();
     const { container } = await render(
       <PhoneInput
         label="Phone"
-        countries={['DE']}
+        countries={["DE"]}
         defaultCountry="DE"
         locale="en_US"
         onWarn={onWarn}
       />,
-    )
-    expect(select(container).options[0]?.textContent).toContain('DE')
-    expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: 'locale-invalid' }))
-  })
-})
+    );
+    expect(select(container).options[0]?.textContent).toContain("DE");
+    expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: "locale-invalid" }));
+  });
+});
 
-describe('hostile input', () => {
-  it('never reports a value that is not E.164', async () => {
+describe("hostile input", () => {
+  it("never reports a value that is not E.164", async () => {
     // Whatever is typed, `onChange` gets either '' or a string matching E.164.
-    const seen: string[] = []
+    const seen: string[] = [];
     const { container } = await render(
       <PhoneInput
         label="Phone"
         defaultCountry="US"
         onChange={(value) => {
-          seen.push(value)
+          seen.push(value);
         }}
       />,
-    )
+    );
     for (const text of [
-      'abc',
-      '+++',
-      '4155552671',
-      '+44(0)20 7123 4567',
-      '00 33 6 12 34 56 78',
-      '0',
+      "abc",
+      "+++",
+      "4155552671",
+      "+44(0)20 7123 4567",
+      "00 33 6 12 34 56 78",
+      "0",
     ]) {
-      await userEvent.fill(input(container), text)
+      await userEvent.fill(input(container), text);
     }
     for (const value of seen) {
-      if (value === '') continue
-      expect(value).toMatch(/^\+\d{1,15}$/)
+      if (value === "") continue;
+      expect(value).toMatch(/^\+\d{1,15}$/);
     }
-  })
+  });
 
-  it('accepts a paste of pure letters without breaking', async () => {
-    const { container } = await render(<PhoneInput label="Phone" defaultCountry="US" />)
-    await userEvent.fill(input(container), 'not a phone number')
-    expect(input(container).value).toBe('')
-  })
+  it("accepts a paste of pure letters without breaking", async () => {
+    const { container } = await render(<PhoneInput label="Phone" defaultCountry="US" />);
+    await userEvent.fill(input(container), "not a phone number");
+    expect(input(container).value).toBe("");
+  });
 
-  it('stops an absurdly long paste at the cap instead of parsing it', async () => {
+  it("stops an absurdly long paste at the cap instead of parsing it", async () => {
     // Someone pastes a file into the number box.
     //
     // This used to assert a *ratio* of two wall-clock measurements — 50k digits
@@ -142,170 +142,170 @@ describe('hostile input', () => {
     // suites drifts wherever the scheduler puts it (26x on the run that
     // prompted this). The cap is the stronger claim anyway, and a deterministic
     // one: 50k characters never reach the parser at all.
-    const onChange = vi.fn()
+    const onChange = vi.fn();
     const { container } = await render(
       <PhoneInput label="Phone" defaultCountry="US" onChange={onChange} />,
-    )
-    await userEvent.fill(input(container), '9'.repeat(50_000))
+    );
+    await userEvent.fill(input(container), "9".repeat(50_000));
 
-    expect(input(container).value.length).toBeLessThanOrEqual(32)
+    expect(input(container).value.length).toBeLessThanOrEqual(32);
     expect(onChange).toHaveBeenLastCalledWith(
       expect.stringMatching(/^\+\d{1,32}$/),
       expect.anything(),
-    )
+    );
     // And whatever survived is emphatically not a possible number.
-    expect(onChange.mock.lastCall?.[1].possible).toBe(false)
-  })
+    expect(onChange.mock.lastCall?.[1].possible).toBe(false);
+  });
 
-  it('caps a paste that only formatting pushes over the limit', async () => {
+  it("caps a paste that only formatting pushes over the limit", async () => {
     // 32 digits fit under a 32-character cap until grouping puts ten spaces
     // between them. The formatted text is what the box shows and what the next
     // keystroke re-parses, so the cap has to hold after formatting, not before.
-    const { container } = await render(<PhoneInput label="Phone" defaultCountry="US" />)
-    await userEvent.fill(input(container), '9'.repeat(32))
-    expect(input(container).value.length).toBeLessThanOrEqual(32)
+    const { container } = await render(<PhoneInput label="Phone" defaultCountry="US" />);
+    await userEvent.fill(input(container), "9".repeat(32));
+    expect(input(container).value.length).toBeLessThanOrEqual(32);
     // Not left with a dangling separator, either.
-    expect(input(container).value).not.toMatch(/\s$/)
-  })
+    expect(input(container).value).not.toMatch(/\s$/);
+  });
 
-  it('refuses a cap too short to hold a number it would itself format', async () => {
-    const onWarn = vi.fn()
+  it("refuses a cap too short to hold a number it would itself format", async () => {
+    const onWarn = vi.fn();
     const { container } = await render(
       <PhoneInput label="Phone" defaultCountry="US" maxLength={4} onWarn={onWarn} />,
-    )
-    expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: 'max-length-too-small' }))
+    );
+    expect(onWarn).toHaveBeenCalledWith(expect.objectContaining({ code: "max-length-too-small" }));
     // Fell back to the default rather than leaving the field unbounded.
-    expect(input(container).maxLength).toBe(32)
-  })
+    expect(input(container).maxLength).toBe(32);
+  });
 
-  it('keeps a longer cap when one is asked for', async () => {
-    const { container } = await render(<PhoneInput label="Phone" maxLength={64} />)
-    expect(input(container).maxLength).toBe(64)
-  })
+  it("keeps a longer cap when one is asked for", async () => {
+    const { container } = await render(<PhoneInput label="Phone" maxLength={64} />);
+    expect(input(container).maxLength).toBe(64);
+  });
 
-  it('does not let a lone plus produce a bogus value', async () => {
-    const onChange = vi.fn()
+  it("does not let a lone plus produce a bogus value", async () => {
+    const onChange = vi.fn();
     const { container } = await render(
       <PhoneInput label="Phone" defaultCountry="US" onChange={onChange} />,
-    )
-    await userEvent.fill(input(container), '+')
-    expect(onChange).toHaveBeenLastCalledWith('', expect.objectContaining({ possible: false }))
-  })
+    );
+    await userEvent.fill(input(container), "+");
+    expect(onChange).toHaveBeenLastCalledWith("", expect.objectContaining({ possible: false }));
+  });
 
-  it('keeps the calling code visible when the number is deleted back to it', async () => {
+  it("keeps the calling code visible when the number is deleted back to it", async () => {
     // If `+44` vanished the moment the last national digit went, there would be
     // no way to correct a mistyped calling code.
-    const { container } = await render(<PhoneInput label="Phone" defaultValue="+442071234567" />)
-    await userEvent.fill(input(container), '+44')
-    expect(input(container).value).toBe('+44')
-  })
+    const { container } = await render(<PhoneInput label="Phone" defaultValue="+442071234567" />);
+    await userEvent.fill(input(container), "+44");
+    expect(input(container).value).toBe("+44");
+  });
 
-  it('normalises non-Latin numerals typed from a localised keyboard', async () => {
-    const onChange = vi.fn()
+  it("normalises non-Latin numerals typed from a localised keyboard", async () => {
+    const onChange = vi.fn();
     const { container } = await render(
       <PhoneInput label="Phone" defaultCountry="US" onChange={onChange} />,
-    )
-    await userEvent.fill(input(container), '٤١٥٥٥٥٢٦٧١')
-    expect(onChange).toHaveBeenLastCalledWith('+14155552671', expect.anything())
-  })
-})
+    );
+    await userEvent.fill(input(container), "٤١٥٥٥٥٢٦٧١");
+    expect(onChange).toHaveBeenLastCalledWith("+14155552671", expect.anything());
+  });
+});
 
-describe('invariants', () => {
-  it('reports possible only for lengths the country actually uses', async () => {
+describe("invariants", () => {
+  it("reports possible only for lengths the country actually uses", async () => {
     // The claim the README makes is *possibility*, and it must hold for every
     // country in the table, not just the ones with tests.
     for (const country of COUNTRIES) {
-      if (country.lengths.length === 0) continue
+      if (country.lengths.length === 0) continue;
       for (const length of country.lengths) {
-        expect(isPossible(country, '9'.repeat(length))).toBe(true)
+        expect(isPossible(country, "9".repeat(length))).toBe(true);
       }
-      expect(isPossible(country, '9'.repeat(Math.min(...country.lengths) - 1))).toBe(false)
+      expect(isPossible(country, "9".repeat(Math.min(...country.lengths) - 1))).toBe(false);
     }
-  })
+  });
 
-  it('never claims an unknown calling code is possible', async () => {
+  it("never claims an unknown calling code is possible", async () => {
     // The `+` says the user meant this to be international, so the generic
     // 4–15 bounds must not rescue a code nobody uses.
-    expect(parsePhone('+99123456789').possible).toBe(false)
-    expect(parsePhone('+00000').possible).toBe(false)
-  })
+    expect(parsePhone("+99123456789").possible).toBe(false);
+    expect(parsePhone("+00000").possible).toBe(false);
+  });
 
-  it('can format every country inside the floor the cap refuses to go under', async () => {
+  it("can format every country inside the floor the cap refuses to go under", async () => {
     // `usePhoneInput` refuses a `maxLength` below 21 because 21 is the longest
     // text the field can produce. That number is asserted here against the
     // table itself rather than trusted: a country added with a long calling
     // code or a one-digit grouping would move it, and the cap would start
     // truncating numbers the component had just formatted.
     for (const country of COUNTRIES) {
-      const longest = country.lengths.length === 0 ? 15 : Math.max(...country.lengths)
+      const longest = country.lengths.length === 0 ? 15 : Math.max(...country.lengths);
       // E.164 allows 15 digits in total, calling code included.
-      const national = '9'.repeat(Math.min(longest, 15 - country.dial.length))
-      const formatted = formatPhone(parsePhone(`+${country.dial}${national}`), true)
-      expect(formatted.length).toBeLessThanOrEqual(21)
+      const national = "9".repeat(Math.min(longest, 15 - country.dial.length));
+      const formatted = formatPhone(parsePhone(`+${country.dial}${national}`), true);
+      expect(formatted.length).toBeLessThanOrEqual(21);
     }
-  })
+  });
 
-  it('round-trips every country through parse and format', async () => {
+  it("round-trips every country through parse and format", async () => {
     for (const country of COUNTRIES) {
-      const national = '9'.repeat(country.lengths[0] ?? 8)
-      const e164 = `+${country.dial}${national}`
-      const parsed = parsePhone(e164)
+      const national = "9".repeat(country.lengths[0] ?? 8);
+      const e164 = `+${country.dial}${national}`;
+      const parsed = parsePhone(e164);
       // The calling code must be consumed exactly, leaving the national part.
-      expect(parsed.e164).toBe(e164)
+      expect(parsed.e164).toBe(e164);
       // And the formatted text must contain every digit, in order.
-      expect(digitsOnly(formatPhone(parsed, true))).toBe(`${country.dial}${national}`)
+      expect(digitsOnly(formatPhone(parsed, true))).toBe(`${country.dial}${national}`);
     }
-  })
+  });
 
-  it('keeps the visible text and the posted value in agreement', async () => {
+  it("keeps the visible text and the posted value in agreement", async () => {
     const { container } = await render(
       <PhoneInput label="Phone" name="phone" defaultCountry="GB" />,
-    )
-    await userEvent.fill(input(container), '02071234567')
-    const hidden = container.querySelector<HTMLInputElement>('[data-rx-phone-value]')!
+    );
+    await userEvent.fill(input(container), "02071234567");
+    const hidden = container.querySelector<HTMLInputElement>("[data-rx-phone-value]")!;
     // The box shows grouped national digits, the form posts E.164 — but they
     // must describe the same number, or the user submits something else.
-    expect(hidden.value).toBe('+442071234567')
-    expect(digitsOnly(input(container).value)).toBe('2071234567')
-  })
+    expect(hidden.value).toBe("+442071234567");
+    expect(digitsOnly(input(container).value)).toBe("2071234567");
+  });
 
-  it('never lets the select and the text disagree about the country', async () => {
-    const { container } = await render(<PhoneInput label="Phone" defaultCountry="US" />)
+  it("never lets the select and the text disagree about the country", async () => {
+    const { container } = await render(<PhoneInput label="Phone" defaultCountry="US" />);
     for (const [text, iso2] of [
-      ['+442071234567', 'GB'],
-      ['+33612345678', 'FR'],
-      ['+14155552671', 'US'],
+      ["+442071234567", "GB"],
+      ["+33612345678", "FR"],
+      ["+14155552671", "US"],
     ]) {
-      await userEvent.fill(input(container), text!)
-      expect(select(container).value).toBe(iso2)
+      await userEvent.fill(input(container), text!);
+      expect(select(container).value).toBe(iso2);
     }
-  })
+  });
 
-  it('does not leak state between two fields on the same page', async () => {
+  it("does not leak state between two fields on the same page", async () => {
     const { container } = await render(
       <>
         <PhoneInput label="Home" defaultCountry="GB" defaultValue="+442071234567" />
         <PhoneInput label="Work" defaultCountry="US" defaultValue="+14155552671" />
       </>,
-    )
-    const boxes = container.querySelectorAll<HTMLInputElement>('[data-rx-phone-input]')
-    expect(boxes[0]!.value).toContain('+44')
-    expect(boxes[1]!.value).toContain('+1')
+    );
+    const boxes = container.querySelectorAll<HTMLInputElement>("[data-rx-phone-input]");
+    expect(boxes[0]!.value).toContain("+44");
+    expect(boxes[1]!.value).toContain("+1");
 
-    await userEvent.fill(boxes[0]!, '+33612345678')
-    expect(boxes[1]!.value).toContain('+1')
+    await userEvent.fill(boxes[0]!, "+33612345678");
+    expect(boxes[1]!.value).toContain("+1");
 
     // And their ids do not collide, or the labels would cross-wire.
-    const ids = Array.from(container.querySelectorAll('[id]')).map((element) => element.id)
-    expect(new Set(ids).size).toBe(ids.length)
-  })
+    const ids = Array.from(container.querySelectorAll("[id]")).map((element) => element.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
 
-  it('resolves a shared calling code consistently rather than at random', async () => {
+  it("resolves a shared calling code consistently rather than at random", async () => {
     // +1 covers 25 entries. Whatever the answer is, it must be the same every
     // time, or the same input produces different countries across renders.
-    expect(countryByISO2('US')?.dial).toBe(countryByISO2('CA')?.dial)
+    expect(countryByISO2("US")?.dial).toBe(countryByISO2("CA")?.dial);
     for (let attempt = 0; attempt < 5; attempt++) {
-      expect(parsePhone('+14155552671').country?.iso2).toBe('US')
+      expect(parsePhone("+14155552671").country?.iso2).toBe("US");
     }
-  })
-})
+  });
+});

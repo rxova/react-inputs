@@ -1,29 +1,29 @@
-'use client'
+"use client";
 
-import { useId } from 'react'
-import { DateInput, type DateInputProps } from '@rxova/react-date-input'
+import { useId } from "react";
+import { DateInput, type DateInputProps } from "@rxova/react-date-input";
 
-import './date-field.css'
+import "./date-field.css";
 
 export interface DateFieldProps extends Omit<
   DateInputProps,
-  'label' | 'aria-describedby' | 'invalid'
+  "label" | "aria-describedby" | "invalid"
 > {
-  label: string
-  description?: string
-  error?: string
+  label: string;
+  description?: string;
+  error?: string;
 }
 
 /** A labelled segmented date field copied into the consumer by the Rxova registry. */
 export function DateField({ label, description, error, id, ...props }: DateFieldProps) {
-  const generated = useId()
-  const fieldId = id ?? generated
+  const generated = useId();
+  const fieldId = id ?? generated;
   const describedBy = [description && `${fieldId}-description`, error && `${fieldId}-error`]
     .filter(Boolean)
-    .join(' ')
+    .join(" ");
 
   return (
-    <div className="rx-field" data-invalid={error ? '' : undefined}>
+    <div className="rx-field" data-invalid={error ? "" : undefined}>
       <span className="rx-field__label">{label}</span>
       <DateInput
         {...props}
@@ -43,5 +43,5 @@ export function DateField({ label, description, error, id, ...props }: DateField
         </p>
       ) : null}
     </div>
-  )
+  );
 }

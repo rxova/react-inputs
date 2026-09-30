@@ -1,4 +1,4 @@
-import type { FileInfo } from 'jscodeshift'
+import type { FileInfo } from "jscodeshift";
 
 /**
  * jscodeshift transform: move the 1.0 styling hooks into their namespaces.
@@ -32,11 +32,11 @@ import type { FileInfo } from 'jscodeshift'
 
 /** Old prefix → new prefix. Longest first so no rule can eat another's match. */
 const PREFIXES: readonly (readonly [string, string])[] = [
-  ['data-otp-', 'data-rx-otp-'],
-  ['data-rfs-', 'data-rx-rating-'],
-  ['--otp-', '--rx-otp-'],
-  ['--rfs-', '--rx-rating-'],
-]
+  ["data-otp-", "data-rx-otp-"],
+  ["data-rfs-", "data-rx-rating-"],
+  ["--otp-", "--rx-otp-"],
+  ["--rfs-", "--rx-rating-"],
+];
 
 /**
  * The rewritten text, or `null` when nothing in it was a renamed hook.
@@ -46,13 +46,13 @@ const PREFIXES: readonly (readonly [string, string])[] = [
  * makes the bundler warn about how consumers would have to reach `.default`.
  */
 function rewrite(text: string): string | null {
-  let next = text
-  for (const [from, to] of PREFIXES) next = next.split(from).join(to)
-  return next === text ? null : next
+  let next = text;
+  for (const [from, to] of PREFIXES) next = next.split(from).join(to);
+  return next === text ? null : next;
 }
 
 export default function transform(file: FileInfo): string | undefined {
   // `undefined` tells the Runner the file was left alone, which keeps it out of
   // the "changed" count and off a `--dry` report.
-  return rewrite(file.source) ?? undefined
+  return rewrite(file.source) ?? undefined;
 }

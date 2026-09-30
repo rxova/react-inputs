@@ -1,13 +1,13 @@
-import type { CSSProperties, FocusEvent, ReactNode } from 'react'
-import type { FileRejected } from './files'
+import type { CSSProperties, FocusEvent, ReactNode } from "react";
+import type { FileRejected } from "./files";
 
 /** Stable machine code for a coerced or misconfigured input. Safe to `switch` on. */
 export type FileWarningCode =
-  | 'max-files-invalid'
-  | 'size-range-invalid'
-  | 'negative-size'
-  | 'accept-suspicious'
-  | 'single-with-max'
+  | "max-files-invalid"
+  | "size-range-invalid"
+  | "negative-size"
+  | "accept-suspicious"
+  | "single-with-max";
 
 /**
  * Emitted when the component keeps itself functional despite a prop it cannot
@@ -16,68 +16,68 @@ export type FileWarningCode =
  * so this is a development-only heads-up, never an error.
  */
 export interface FileWarning {
-  code: FileWarningCode
+  code: FileWarningCode;
   /** The prop that carried the offending value. */
-  prop: string
+  prop: string;
   /** The value as received. */
-  received: string
+  received: string;
   /** Human-readable explanation, safe to log as-is. */
-  message: string
+  message: string;
 }
 
 /** One selected file, with everything the renderer needs. */
 export interface FileEntry {
-  file: File
+  file: File;
   /** Stable across renders for the same file — safe as a React key. */
-  key: string
+  key: string;
   /**
    * An object URL for an image, or `undefined`. Created lazily and revoked
    * automatically when the file is removed or the component unmounts.
    */
-  preview?: string
+  preview?: string;
 }
 
 /** State handed to the `renderFile` render prop. */
 export interface FileEntryState extends FileEntry {
-  index: number
+  index: number;
   /** Human-readable size, e.g. `1.2 MB`. */
-  size: string
-  disabled: boolean
-  readOnly: boolean
+  size: string;
+  disabled: boolean;
+  readOnly: boolean;
 }
 
 export interface FileInputProps {
   // ---- Value ----------------------------------------------------------------
   /** Controlled list of files. */
-  value?: File[]
+  value?: File[];
   /** Uncontrolled initial list. Ignored when `value` is provided. */
-  defaultValue?: File[]
-  onChange?: (files: File[]) => void
+  defaultValue?: File[];
+  onChange?: (files: File[]) => void;
   /** Fires for each file actually added, after it passed every rule. */
-  onAdd?: (file: File, files: File[]) => void
+  onAdd?: (file: File, files: File[]) => void;
   /** Fires for each file removed, with the index it occupied. */
-  onRemove?: (file: File, index: number, files: File[]) => void
+  onRemove?: (file: File, index: number, files: File[]) => void;
   /**
    * Fires for each file refused. `reason` is always set: `type`, `too-large`,
    * `too-small`, `duplicate`, `max-files`, or `invalid` from `validate`.
    */
-  onReject?: (attempt: FileRejected) => void
+  onReject?: (attempt: FileRejected) => void;
 
   // ---- Rules ----------------------------------------------------------------
   /** `accept` string, exactly as `<input accept>` takes it. */
-  accept?: string
+  accept?: string;
   /** Largest allowed file, in bytes. */
-  maxSize?: number
+  maxSize?: number;
   /** Smallest allowed file, in bytes. */
-  minSize?: number
+  minSize?: number;
   /** Maximum number of files. Ignored when `multiple` is false. */
-  maxFiles?: number
+  maxFiles?: number;
   /** Accept more than one file. @default false, like the native input */
-  multiple?: boolean
+  multiple?: boolean;
   /** Treat same name + size + timestamp as the same file. @default true */
-  dedupe?: boolean
+  dedupe?: boolean;
   /** Final say: `true`, `false`, or a string explaining the refusal. */
-  validate?: (file: File, existing: File[]) => boolean | string
+  validate?: (file: File, existing: File[]) => boolean | string;
 
   // ---- Previews -------------------------------------------------------------
   /**
@@ -86,7 +86,7 @@ export interface FileInputProps {
    * the caller should opt into the lifecycle deliberately.
    * @default false
    */
-  previews?: boolean
+  previews?: boolean;
 
   // ---- Presentation ---------------------------------------------------------
   /**
@@ -99,45 +99,45 @@ export interface FileInputProps {
    * field's one tab stop, which a `<label htmlFor>` cannot reach. Without it the
    * zone is announced by its hint alone.
    */
-  label?: ReactNode
+  label?: ReactNode;
   /** Text inside the drop zone. @default a stock sentence */
-  hint?: ReactNode
+  hint?: ReactNode;
   /** Accessible name for one file's remove button. @default ``Remove ${name}`` */
-  removeLabel?: (file: File) => string
+  removeLabel?: (file: File) => string;
   /** Custom rendering for one file row. */
-  renderFile?: (state: FileEntryState) => ReactNode
+  renderFile?: (state: FileEntryState) => ReactNode;
   /** Announcement text for the live region. Return `''` to say nothing. */
   announce?: (event: {
-    type: 'add' | 'remove' | 'reject'
-    files: File[]
-    added?: number
-    rejected?: FileRejected[]
-  }) => string
-  className?: string
-  style?: CSSProperties
+    type: "add" | "remove" | "reject";
+    files: File[];
+    added?: number;
+    rejected?: FileRejected[];
+  }) => string;
+  className?: string;
+  style?: CSSProperties;
 
   // ---- Form integration -----------------------------------------------------
   /** Name for the underlying `<input type="file">`. */
-  name?: string
-  required?: boolean
-  disabled?: boolean
+  name?: string;
+  required?: boolean;
+  disabled?: boolean;
   /** Show the selection but refuse changes. */
-  readOnly?: boolean
+  readOnly?: boolean;
   /** Focus the field on mount. @default false */
-  autoFocus?: boolean
+  autoFocus?: boolean;
   /**
    * Accessible name, when there is no visible text to point `label` at. Wins
    * over `label` if both are given.
    */
-  'aria-label'?: string
+  "aria-label"?: string;
   /** Sets `aria-invalid` and `data-invalid`. */
-  invalid?: boolean
+  invalid?: boolean;
   /** ids of external error/help text. */
-  'aria-describedby'?: string
+  "aria-describedby"?: string;
   /** Base id; the input, drop zone, list and live region derive ids from it. */
-  id?: string
-  onBlur?: (event: FocusEvent<HTMLElement>) => void
-  onFocus?: (event: FocusEvent<HTMLElement>) => void
+  id?: string;
+  onBlur?: (event: FocusEvent<HTMLElement>) => void;
+  onFocus?: (event: FocusEvent<HTMLElement>) => void;
 
   // ---- Diagnostics ----------------------------------------------------------
   /**
@@ -145,5 +145,5 @@ export interface FileInputProps {
    * {@link FileWarning}. When omitted, the same warnings go to `console.warn`.
    * The entire path is stripped from production builds.
    */
-  onWarn?: (warning: FileWarning) => void
+  onWarn?: (warning: FileWarning) => void;
 }

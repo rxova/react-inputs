@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { CurrencyField } from '@/components/rxova/currency-field'
+import { CurrencyField } from "@/components/rxova/currency-field";
 
 export function ShadcnCurrency() {
   return (
@@ -12,5 +12,5 @@ export function ShadcnCurrency() {
       currency="USD"
       defaultValue={1250}
     />
-  )
+  );
 }

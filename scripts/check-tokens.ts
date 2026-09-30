@@ -29,12 +29,12 @@
  *
  * Usage: `node --import tsx ./scripts/check-tokens.ts [repoRoot]`.
  */
-import { existsSync, readdirSync, readFileSync } from 'node:fs'
-import { join, relative, resolve } from 'node:path'
-import process from 'node:process'
-import { pathToFileURL } from 'node:url'
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { join, relative, resolve } from "node:path";
+import process from "node:process";
+import { pathToFileURL } from "node:url";
 
-import { componentPackages } from './component-packages.mjs'
+import { componentPackages } from "./component-packages.mjs";
 
 /**
  * Hooks that describe a state rather than a part, and so are shared.
@@ -44,29 +44,29 @@ import { componentPackages } from './component-packages.mjs'
  * `data-invalid` on a date field and on a rating mean the same thing.
  */
 export const SHARED_STATE_HOOKS: ReadonlySet<string> = new Set([
-  'data-active',
-  'data-complete',
-  'data-count',
-  'data-country',
-  'data-disabled',
-  'data-dragging',
-  'data-filled',
-  'data-fill',
-  'data-focused',
-  'data-full',
-  'data-idx',
-  'data-invalid',
-  'data-met',
-  'data-out-of-range',
-  'data-placeholder',
-  'data-possible',
-  'data-readonly',
-  'data-revealed',
-  'data-rule',
-  'data-score',
-  'data-state',
-  'data-valid',
-])
+  "data-active",
+  "data-complete",
+  "data-count",
+  "data-country",
+  "data-disabled",
+  "data-dragging",
+  "data-filled",
+  "data-fill",
+  "data-focused",
+  "data-full",
+  "data-idx",
+  "data-invalid",
+  "data-met",
+  "data-out-of-range",
+  "data-placeholder",
+  "data-possible",
+  "data-readonly",
+  "data-revealed",
+  "data-rule",
+  "data-score",
+  "data-state",
+  "data-valid",
+]);
 
 /**
  * `data-*` names that are not styling hooks at all.
@@ -74,22 +74,22 @@ export const SHARED_STATE_HOOKS: ReadonlySet<string> = new Set([
  * `data-testid` belongs to the demos and the e2e specs; React's own
  * `data-reactroot` and the like are not ours to name.
  */
-const IGNORED_DATA_ATTRIBUTES = /^data-(testid|react|nosnippet$)/
+const IGNORED_DATA_ATTRIBUTES = /^data-(testid|react|nosnippet$)/;
 
 export interface Failure {
-  readonly package: string
-  readonly reason: string
+  readonly package: string;
+  readonly reason: string;
 }
 
 /** Every `.ts`/`.tsx` file a package ships, recursively, excluding its tests. */
 function sourceFiles(dir: string): string[] {
-  if (!existsSync(dir)) return []
+  if (!existsSync(dir)) return [];
 
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-    const child = join(dir, entry.name)
-    if (entry.isDirectory()) return entry.name === '__tests__' ? [] : sourceFiles(child)
-    return /\.tsx?$/.test(entry.name) ? [child] : []
-  })
+    const child = join(dir, entry.name);
+    if (entry.isDirectory()) return entry.name === "__tests__" ? [] : sourceFiles(child);
+    return /\.tsx?$/.test(entry.name) ? [child] : [];
+  });
 }
 
 /**
@@ -103,7 +103,7 @@ function sourceFiles(dir: string): string[] {
 export function customProperties(source: string): string[] {
   return [...source.matchAll(/var\(\s*(--[a-z][\w-]*)/g)]
     .map((match) => match[1])
-    .filter((name): name is string => name !== undefined)
+    .filter((name): name is string => name !== undefined);
 }
 
 /**
@@ -116,63 +116,63 @@ export function customProperties(source: string): string[] {
  * describing the `data-rx-<slug>-*` convention is not an attribute.
  */
 export function dataAttributes(source: string): string[] {
-  return [...source.matchAll(/\bdata-[a-z][\w-]*(?=[=\]'"])/g)].map((match) => match[0])
+  return [...source.matchAll(/\bdata-[a-z][\w-]*(?=[=\]'"])/g)].map((match) => match[0]);
 }
 
 export function checkTokens(repoRoot: string = process.cwd()): Failure[] {
-  const failures: Failure[] = []
+  const failures: Failure[] = [];
 
   for (const pkg of componentPackages(repoRoot)) {
-    const namespace = `rx-${pkg.slug}-`
-    const seen = new Set<string>()
+    const namespace = `rx-${pkg.slug}-`;
+    const seen = new Set<string>();
 
-    for (const file of sourceFiles(join(repoRoot, 'packages', pkg.dir, 'src'))) {
-      const source = readFileSync(file, 'utf8')
-      const where = relative(repoRoot, file)
+    for (const file of sourceFiles(join(repoRoot, "packages", pkg.dir, "src"))) {
+      const source = readFileSync(file, "utf8");
+      const where = relative(repoRoot, file);
 
       for (const property of customProperties(source)) {
-        if (property.startsWith(`--${namespace}`)) continue
-        if (seen.has(`${property} ${where}`)) continue
-        seen.add(`${property} ${where}`)
+        if (property.startsWith(`--${namespace}`)) continue;
+        if (seen.has(`${property} ${where}`)) continue;
+        seen.add(`${property} ${where}`);
         failures.push({
           package: pkg.name,
           reason: `${where} names \`${property}\`, which is not \`--${namespace}*\``,
-        })
+        });
       }
 
       for (const attribute of dataAttributes(source)) {
-        if (attribute.startsWith(`data-${namespace}`)) continue
-        if (SHARED_STATE_HOOKS.has(attribute)) continue
-        if (IGNORED_DATA_ATTRIBUTES.test(attribute)) continue
-        if (seen.has(`${attribute} ${where}`)) continue
-        seen.add(`${attribute} ${where}`)
+        if (attribute.startsWith(`data-${namespace}`)) continue;
+        if (SHARED_STATE_HOOKS.has(attribute)) continue;
+        if (IGNORED_DATA_ATTRIBUTES.test(attribute)) continue;
+        if (seen.has(`${attribute} ${where}`)) continue;
+        seen.add(`${attribute} ${where}`);
         failures.push({
           package: pkg.name,
           reason: `${where} names \`${attribute}\`, which is neither \`data-${namespace}*\` nor a shared state hook`,
-        })
+        });
       }
     }
   }
 
-  return failures
+  return failures;
 }
 
 export function formatFailures(failures: Failure[]): string {
-  const details = failures.map(({ package: name, reason }) => `  ✗ ${name} ${reason}`)
-  return `${String(failures.length)} styling-token problem(s):\n${details.join('\n')}`
+  const details = failures.map(({ package: name, reason }) => `  ✗ ${name} ${reason}`);
+  return `${String(failures.length)} styling-token problem(s):\n${details.join("\n")}`;
 }
 
 const isEntrypoint =
-  process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href
+  process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
 
 if (isEntrypoint) {
-  const [repoRoot = process.cwd()] = process.argv.slice(2)
-  const failures = checkTokens(resolve(repoRoot))
+  const [repoRoot = process.cwd()] = process.argv.slice(2);
+  const failures = checkTokens(resolve(repoRoot));
 
   if (failures.length > 0) {
-    console.error(formatFailures(failures))
-    process.exit(1)
+    console.error(formatFailures(failures));
+    process.exit(1);
   }
 
-  console.log('✔ Every styling hook is namespaced to the component that paints it')
+  console.log("✔ Every styling hook is namespaced to the component that paints it");
 }

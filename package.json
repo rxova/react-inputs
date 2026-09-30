@@ -68,7 +68,6 @@
     "lint-staged": "^17.5.1",
     "playwright": "1.63.0",
     "prettier": "^3.9.8",
-    "prettier-plugin-astro": "^1.0.1",
     "sherif": "^1.13.0",
     "tsx": "^4.23.13",
     "turbo": "^2.10.13",

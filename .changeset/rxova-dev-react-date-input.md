@@ -1,5 +1,5 @@
 ---
-'@rxova/react-date-input': patch
+"@rxova/react-date-input": patch
 ---
 
 Point links at rxova.dev

@@ -1,13 +1,13 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import FormControl from '@mui/material/FormControl'
-import FormHelperText from '@mui/material/FormHelperText'
-import FormLabel from '@mui/material/FormLabel'
-import { Rating } from '@rxova/react-rating-input'
+import { useState } from "react";
+import FormControl from "@mui/material/FormControl";
+import FormHelperText from "@mui/material/FormHelperText";
+import FormLabel from "@mui/material/FormLabel";
+import { Rating } from "@rxova/react-rating-input";
 
 export function MuiRating() {
-  const [value, setValue] = useState(4)
+  const [value, setValue] = useState(4);
 
   return (
     <FormControl>
@@ -15,5 +15,5 @@ export function MuiRating() {
       <Rating label="Rating" name="rating" value={value} onChange={setValue} />
       <FormHelperText>Choose a score from one to five.</FormHelperText>
     </FormControl>
-  )
+  );
 }

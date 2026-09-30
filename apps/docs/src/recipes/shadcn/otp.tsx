@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { OtpField } from '@/components/rxova/otp-field'
+import { OtpField } from "@/components/rxova/otp-field";
 
 export function ShadcnOtp() {
   return (
@@ -10,5 +10,5 @@ export function ShadcnOtp() {
       name="code"
       length={6}
     />
-  )
+  );
 }

@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest'
-import { renderToStaticMarkup } from 'react-dom/server'
-import { TimeInput } from '../TimeInput'
+import { describe, expect, it } from "vitest";
+import { renderToStaticMarkup } from "react-dom/server";
+import { TimeInput } from "../TimeInput";
 
 /**
  * Runs in the node project, where `window` genuinely does not exist. The README
@@ -9,55 +9,55 @@ import { TimeInput } from '../TimeInput'
  * from `Intl`, which Node and the browser both ship but from different ICU
  * builds. An explicit `locale` makes the two agree.
  */
-describe('server rendering', () => {
-  it('renders the segments without a DOM', () => {
-    const html = renderToStaticMarkup(<TimeInput label="Time" locale="en-GB" />)
-    expect(html).toContain('data-rx-time-root')
-    expect(html).toContain('role="group"')
-    expect(html).toContain('data-rx-time-segment="hour"')
-    expect(html).toContain('data-rx-time-segment="minute"')
-  })
+describe("server rendering", () => {
+  it("renders the segments without a DOM", () => {
+    const html = renderToStaticMarkup(<TimeInput label="Time" locale="en-GB" />);
+    expect(html).toContain("data-rx-time-root");
+    expect(html).toContain('role="group"');
+    expect(html).toContain('data-rx-time-segment="hour"');
+    expect(html).toContain('data-rx-time-segment="minute"');
+  });
 
-  it('emits the locale clock server-side, so hydration has nothing to correct', () => {
+  it("emits the locale clock server-side, so hydration has nothing to correct", () => {
     expect(renderToStaticMarkup(<TimeInput label="T" locale="en-US" />)).toContain(
       'data-rx-time-segment="dayPeriod"',
-    )
+    );
     expect(renderToStaticMarkup(<TimeInput label="T" locale="en-GB" />)).not.toContain(
       'data-rx-time-segment="dayPeriod"',
-    )
-  })
+    );
+  });
 
-  it('paints a value on the first frame, on the right clock', () => {
+  it("paints a value on the first frame, on the right clock", () => {
     const html = renderToStaticMarkup(
       <TimeInput label="T" locale="en-US" value="14:30" onChange={() => undefined} />,
-    )
-    expect(html).toContain('aria-valuenow="2"')
-    expect(html).toContain('aria-valuetext="PM"')
-  })
+    );
+    expect(html).toContain('aria-valuenow="2"');
+    expect(html).toContain('aria-valuetext="PM"');
+  });
 
-  it('shows placeholders and no value when empty', () => {
-    const html = renderToStaticMarkup(<TimeInput label="T" locale="en-GB" />)
-    expect(html).toContain('data-placeholder')
-    expect(html).toContain('aria-valuetext="hh"')
-    expect(html).not.toContain('aria-valuenow')
-  })
+  it("shows placeholders and no value when empty", () => {
+    const html = renderToStaticMarkup(<TimeInput label="T" locale="en-GB" />);
+    expect(html).toContain("data-placeholder");
+    expect(html).toContain('aria-valuetext="hh"');
+    expect(html).not.toContain("aria-valuenow");
+  });
 
-  it('emits the hidden 24-hour field a native form posts', () => {
+  it("emits the hidden 24-hour field a native form posts", () => {
     const html = renderToStaticMarkup(
       <TimeInput label="T" locale="en-US" name="at" defaultValue="14:30" />,
-    )
-    expect(html).toContain('name="at"')
-    expect(html).toContain('value="14:30"')
-    expect(html).toContain('type="hidden"')
-  })
+    );
+    expect(html).toContain('name="at"');
+    expect(html).toContain('value="14:30"');
+    expect(html).toContain('type="hidden"');
+  });
 
-  it('omits the hidden field without a name', () => {
+  it("omits the hidden field without a name", () => {
     expect(renderToStaticMarkup(<TimeInput label="T" locale="en-GB" />)).not.toContain(
-      'data-rx-time-value',
-    )
-  })
+      "data-rx-time-value",
+    );
+  });
 
-  it('marks an out-of-range value on the server too', () => {
+  it("marks an out-of-range value on the server too", () => {
     const html = renderToStaticMarkup(
       <TimeInput
         label="T"
@@ -66,7 +66,7 @@ describe('server rendering', () => {
         defaultValue="07:30"
         onWarn={() => undefined}
       />,
-    )
-    expect(html).toContain('data-out-of-range')
-  })
-})
+    );
+    expect(html).toContain("data-out-of-range");
+  });
+});

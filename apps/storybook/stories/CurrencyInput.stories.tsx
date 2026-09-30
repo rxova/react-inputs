@@ -1,36 +1,36 @@
-import { useState } from 'react'
-import type { Meta, StoryObj } from '@storybook/react-vite'
-import { useArgs } from 'storybook/preview-api'
-import { fn } from 'storybook/test'
-import { CurrencyInput, useCurrencyInput } from '@rxova/react-intl-currency-input'
+import { useState } from "react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { useArgs } from "storybook/preview-api";
+import { fn } from "storybook/test";
+import { CurrencyInput, useCurrencyInput } from "@rxova/react-intl-currency-input";
 
 const meta = {
-  title: 'Components/Currency input',
+  title: "Components/Currency input",
   component: CurrencyInput,
   args: {
-    currency: 'EUR',
-    locale: 'de-DE',
-    formatMode: 'live',
-    currencyDisplay: 'symbol',
+    currency: "EUR",
+    locale: "de-DE",
+    formatMode: "live",
+    currencyDisplay: "symbol",
     allowNegative: false,
     invalid: false,
     disabled: false,
-    placeholder: 'Amount',
-    'aria-label': 'Amount',
+    placeholder: "Amount",
+    "aria-label": "Amount",
     onChange: fn(),
   },
   argTypes: {
-    currency: { control: 'select', options: ['EUR', 'USD', 'BGN', 'JPY', 'KWD', 'CHF'] },
+    currency: { control: "select", options: ["EUR", "USD", "BGN", "JPY", "KWD", "CHF"] },
     locale: {
-      control: 'select',
-      options: ['de-DE', 'en-US', 'bg-BG', 'ja-JP', 'ar-EG', 'de-CH', 'en-IN'],
+      control: "select",
+      options: ["de-DE", "en-US", "bg-BG", "ja-JP", "ar-EG", "de-CH", "en-IN"],
     },
-    formatMode: { control: 'inline-radio', options: ['live', 'blur'] },
+    formatMode: { control: "inline-radio", options: ["live", "blur"] },
     currencyDisplay: {
-      control: 'select',
-      options: ['symbol', 'narrowSymbol', 'code', 'name'],
+      control: "select",
+      options: ["symbol", "narrowSymbol", "code", "name"],
     },
-    step: { control: { type: 'number', step: 0.5 } },
+    step: { control: { type: "number", step: 0.5 } },
     value: { control: false },
     // Functions have no useful control representation.
     transformRawValue: { control: false },
@@ -45,10 +45,10 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof CurrencyInput>
+} satisfies Meta<typeof CurrencyInput>;
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 /**
  * Type into the field and watch the parsed number in the Actions panel; switch
@@ -56,18 +56,18 @@ type Story = StoryObj<typeof meta>
  */
 export const Playground: Story = {
   render: function Playground(args) {
-    const [, updateArgs] = useArgs()
+    const [, updateArgs] = useArgs();
     return (
       <CurrencyInput
         {...args}
         onChange={(value, change) => {
-          args.onChange?.(value, change)
-          updateArgs({ value })
+          args.onChange?.(value, change);
+          updateArgs({ value });
         }}
       />
-    )
+    );
   },
-}
+};
 
 /** One amount, formatted per locale/currency pair — all `Intl`, no locale data shipped. */
 export const AroundTheWorld: Story = {
@@ -76,13 +76,13 @@ export const AroundTheWorld: Story = {
     <div className="story">
       {(
         [
-          ['en-US', 'USD'],
-          ['de-DE', 'EUR'],
-          ['de-CH', 'CHF'],
-          ['bg-BG', 'BGN'],
-          ['ja-JP', 'JPY'],
-          ['en-IN', 'INR'],
-          ['ar-EG', 'EGP'],
+          ["en-US", "USD"],
+          ["de-DE", "EUR"],
+          ["de-CH", "CHF"],
+          ["bg-BG", "BGN"],
+          ["ja-JP", "JPY"],
+          ["en-IN", "INR"],
+          ["ar-EG", "EGP"],
         ] as const
       ).map(([locale, currency]) => (
         <div key={locale} className="field">
@@ -99,20 +99,20 @@ export const AroundTheWorld: Story = {
       ))}
     </div>
   ),
-}
+};
 
 /**
  * `formatMode="blur"` shows a plain editable number while focused and only
  * formats when the field loses focus — no caret management at all.
  */
 export const FormatOnBlur: Story = {
-  args: { formatMode: 'blur', defaultValue: 1299.99, 'aria-label': 'Price' },
-}
+  args: { formatMode: "blur", defaultValue: 1299.99, "aria-label": "Price" },
+};
 
 /** JPY has zero fraction digits; the field simply refuses a decimal separator. */
 export const ZeroDecimalCurrency: Story = {
-  args: { currency: 'JPY', locale: 'ja-JP', defaultValue: 5000, 'aria-label': 'Amount in yen' },
-}
+  args: { currency: "JPY", locale: "ja-JP", defaultValue: 5000, "aria-label": "Amount in yen" },
+};
 
 /**
  * Refund-style field: negative amounts allowed, and ArrowUp/ArrowDown step the
@@ -120,14 +120,14 @@ export const ZeroDecimalCurrency: Story = {
  */
 export const NegativeAndStepped: Story = {
   args: {
-    currency: 'USD',
-    locale: 'en-US',
+    currency: "USD",
+    locale: "en-US",
     allowNegative: true,
     step: 0.5,
     defaultValue: -12.5,
-    'aria-label': 'Adjustment',
+    "aria-label": "Adjustment",
   },
-}
+};
 
 /** `invalid` sets `aria-invalid` and `data-invalid`; the border is consumer CSS. */
 export const Invalid: Story = {
@@ -139,7 +139,7 @@ export const Invalid: Story = {
       </p>
     </>
   ),
-}
+};
 
 /**
  * The headless layer. `useCurrencyInput` owns parsing, formatting and the
@@ -148,13 +148,13 @@ export const Invalid: Story = {
 export const HeadlessHook: Story = {
   parameters: { controls: { disable: true } },
   render: function HeadlessHook() {
-    const [value, setValue] = useState<number | null>(49.99)
+    const [value, setValue] = useState<number | null>(49.99);
     const { inputProps, ref, format, decimalSeparator, currencySymbol } = useCurrencyInput({
-      locale: 'de-DE',
-      currency: 'EUR',
+      locale: "de-DE",
+      currency: "EUR",
       value,
       onChange: setValue,
-    })
+    });
     return (
       <div className="story">
         <div className="field">
@@ -163,19 +163,19 @@ export const HeadlessHook: Story = {
             id="headless-price"
             {...inputProps}
             ref={(el) => {
-              ref.current = el
+              ref.current = el;
             }}
           />
         </div>
         <dl className="readout">
           <dt>parsed</dt>
-          <dd>{value ?? 'null'}</dd>
+          <dd>{value ?? "null"}</dd>
           <dt>formatted</dt>
           <dd>{format(value)}</dd>
           <dt>decimal separator</dt>
           <dd>{decimalSeparator}</dd>
         </dl>
       </div>
-    )
+    );
   },
-}
+};

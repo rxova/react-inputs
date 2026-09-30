@@ -1,6 +1,6 @@
-import { visit } from 'unist-util-visit'
+import { visit } from "unist-util-visit";
 
-import { withBase } from '@rxova/docs-kit'
+import { withBase } from "@rxova/docs-kit";
 
 /**
  * Prefixes the site-root-relative links in page content with the configured `base`.
@@ -23,37 +23,37 @@ import { withBase } from '@rxova/docs-kit'
  * only so the link validator, which reads the remark frontmatter, checks the URL
  * that actually ships.
  */
-export default function remarkBaseLinks({ base = '/' } = {}) {
+export default function remarkBaseLinks({ base = "/" } = {}) {
   // Standalone build: nothing to prefix.
-  if (base.replace(/\/+$/, '') === '') return () => {}
+  if (base.replace(/\/+$/, "") === "") return () => {};
 
   // Only strings: a JSX attribute written as an expression (`src={…}`) carries
   // an estree node here, which is the author's own code and left alone.
-  const rewrite = (url) => (typeof url === 'string' ? withBase(url, base) : url)
+  const rewrite = (url) => (typeof url === "string" ? withBase(url, base) : url);
 
   return (tree, file) => {
     for (const action of file.data?.astro?.frontmatter?.hero?.actions ?? []) {
-      action.link = rewrite(action.link)
+      action.link = rewrite(action.link);
     }
 
     visit(tree, (node) => {
       // Markdown links and images, plus the reference-style definitions they
       // point at.
-      if (node.type === 'link' || node.type === 'image' || node.type === 'definition') {
-        node.url = rewrite(node.url)
-        return
+      if (node.type === "link" || node.type === "image" || node.type === "definition") {
+        node.url = rewrite(node.url);
+        return;
       }
 
       // JSX in .mdx — `<a href="/...">`, `<img src="/...">`. Only plain string
       // attributes: an expression value is the author's own code, and the pages
       // that need one already use `import.meta.env.BASE_URL`.
-      if (node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement') {
+      if (node.type === "mdxJsxFlowElement" || node.type === "mdxJsxTextElement") {
         for (const attribute of node.attributes ?? []) {
-          if (attribute.type !== 'mdxJsxAttribute') continue
-          if (attribute.name !== 'href' && attribute.name !== 'src') continue
-          attribute.value = rewrite(attribute.value)
+          if (attribute.type !== "mdxJsxAttribute") continue;
+          if (attribute.name !== "href" && attribute.name !== "src") continue;
+          attribute.value = rewrite(attribute.value);
         }
       }
-    })
-  }
+    });
+  };
 }

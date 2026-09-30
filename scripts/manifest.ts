@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { readFileSync } from "node:fs";
 
 /**
  * `JSON.parse` returns `any`, and this repo lints with `strictTypeChecked` — so
@@ -10,15 +10,15 @@ import { readFileSync } from 'node:fs'
  * index signature keeps it usable for anything else without widening to `any`.
  */
 export interface PackageManifest {
-  readonly name: string
-  readonly version?: string
-  readonly private?: boolean
-  readonly scripts?: Readonly<Record<string, string>>
-  readonly dependencies?: Readonly<Record<string, string>>
-  readonly devDependencies?: Readonly<Record<string, string>>
-  readonly exports?: unknown
-  readonly [key: string]: unknown
+  readonly name: string;
+  readonly version?: string;
+  readonly private?: boolean;
+  readonly scripts?: Readonly<Record<string, string>>;
+  readonly dependencies?: Readonly<Record<string, string>>;
+  readonly devDependencies?: Readonly<Record<string, string>>;
+  readonly exports?: unknown;
+  readonly [key: string]: unknown;
 }
 
 export const readManifest = (path: string): PackageManifest =>
-  JSON.parse(readFileSync(path, 'utf8')) as PackageManifest
+  JSON.parse(readFileSync(path, "utf8")) as PackageManifest;

@@ -1,12 +1,12 @@
 ---
-title: 'Framework compatibility'
+title: "Framework compatibility"
 description: Production-build and browser evidence for using all nine Rxova inputs with Vite, Next.js and Remix.
 sidebar:
   order: 5
 ---
 
-import DataTable from '@rxova/astro-ui/components/DataTable.astro'
-import { frameworkCompatibility } from '../../../lib/framework-proof.mjs'
+import DataTable from "@rxova/astro-ui/components/DataTable.astro";
+import { frameworkCompatibility } from "../../../lib/framework-proof.mjs";
 
 The meta-package is continuously exercised through three real application fixtures. Each fixture
 imports all nine inputs from `@rxova/react-inputs`, builds in production mode, starts the production
@@ -15,7 +15,7 @@ and fails on browser console errors.
 
 <DataTable
   label="Framework compatibility"
-  columns={['Framework', 'Tested dependency range', 'Rendering path', 'Browser proof']}
+  columns={["Framework", "Tested dependency range", "Rendering path", "Browser proof"]}
   rows={frameworkCompatibility.map((row) => ({
     label: row.label,
     cells: [{ code: row.version }, row.rendering, row.coverage],

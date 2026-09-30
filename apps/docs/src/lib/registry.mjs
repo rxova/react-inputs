@@ -28,11 +28,11 @@
 // suite whose whole claim is "no stylesheet to import" should not ship a registry
 // that requires a CSS framework.
 
-const SCHEMA = 'https://ui.shadcn.com/schema/registry-item.json'
-const REGISTRY_SCHEMA = 'https://ui.shadcn.com/schema/registry.json'
+const SCHEMA = "https://ui.shadcn.com/schema/registry-item.json";
+const REGISTRY_SCHEMA = "https://ui.shadcn.com/schema/registry.json";
 
 /** Where `shadcn add` writes a file, relative to the consumer's project. */
-const target = (name, ext) => `components/rxova/${name}.${ext}`
+const target = (name, ext) => `components/rxova/${name}.${ext}`;
 
 /**
  * One registry item.
@@ -45,29 +45,29 @@ export function registryItem({ name, title, description, dependency, tsx, css })
   return {
     $schema: SCHEMA,
     name,
-    type: 'registry:component',
+    type: "registry:component",
     title,
     description,
     // The component stays an npm dependency. This is the line that keeps the
     // copied code a wrapper rather than a fork.
     dependencies: [dependency],
     files: [
-      { path: target(name, 'tsx'), type: 'registry:component', content: tsx },
+      { path: target(name, "tsx"), type: "registry:component", content: tsx },
       {
-        path: target(name, 'css'),
-        type: 'registry:file',
-        target: target(name, 'css'),
+        path: target(name, "css"),
+        type: "registry:file",
+        target: target(name, "css"),
         content: css,
       },
     ],
-  }
+  };
 }
 
 /** The index `shadcn` reads to list what this registry offers. */
 export function registryIndex(items, origin) {
   return {
     $schema: REGISTRY_SCHEMA,
-    name: 'rxova',
+    name: "rxova",
     homepage: origin,
     items: items.map(({ name, type, title, description, dependencies }) => ({
       name,
@@ -76,5 +76,5 @@ export function registryIndex(items, origin) {
       description,
       dependencies,
     })),
-  }
+  };
 }

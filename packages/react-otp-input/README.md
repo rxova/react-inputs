@@ -40,11 +40,11 @@ recipes, theming, WebOTP, and migration guides from other OTP libraries.
 ## Basic usage
 
 ```tsx
-import { useState } from 'react'
-import { OtpInput } from '@rxova/react-otp-input'
+import { useState } from "react";
+import { OtpInput } from "@rxova/react-otp-input";
 
 function Verify() {
-  const [code, setCode] = useState('')
+  const [code, setCode] = useState("");
   return (
     <OtpInput
       length={6}
@@ -53,7 +53,7 @@ function Verify() {
       onComplete={submit}
       label="One-time code"
     />
-  )
+  );
 }
 ```
 
@@ -109,7 +109,7 @@ One primitive, four levels of control. Simple stays a one-liner; complex stays p
 **Tier 4** — the headless hook, to own the markup entirely:
 
 ```tsx
-const otp = useOtpInput({ length: 6, value: code, onChange: setCode })
+const otp = useOtpInput({ length: 6, value: code, onChange: setCode });
 ```
 
 ## Forms

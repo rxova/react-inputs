@@ -1,7 +1,7 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { PasswordDemos } from './Demos'
-import '@rxova/demo-kit/styles.css'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { PasswordDemos } from "./Demos";
+import "@rxova/demo-kit/styles.css";
 
 /** Standalone demo harness — the E2E target for this package. */
 function Harness() {
@@ -12,11 +12,11 @@ function Harness() {
       </header>
       <PasswordDemos />
     </>
-  )
+  );
 }
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Harness />
   </StrictMode>,
-)
+);

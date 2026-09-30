@@ -1,8 +1,8 @@
 ---
-title: 'Phone input'
-description: 'An international React phone input with no metadata blob — country names from Intl, flags from Unicode, ~4 kB of dial codes, E.164 in and out.'
+title: "Phone input"
+description: "An international React phone input with no metadata blob — country names from Intl, flags from Unicode, ~4 kB of dial codes, E.164 in and out."
 sidebar:
-  label: 'Introduction'
+  label: "Introduction"
   order: 1
 ---
 
@@ -30,11 +30,11 @@ A large share of every metadata blob and locale JSON in this space is **country 
 runtime supports:
 
 ```ts
-import { countryName, flagEmoji } from '@rxova/react-phone-input'
+import { countryName, flagEmoji } from "@rxova/react-phone-input";
 
-countryName('DE', 'en') // 'Germany'
-countryName('DE', 'fr') // 'Allemagne'
-countryName('DE', 'ja') // 'ドイツ'
+countryName("DE", "en"); // 'Germany'
+countryName("DE", "fr"); // 'Allemagne'
+countryName("DE", "ja"); // 'ドイツ'
 ```
 
 And a flag is not an image. It is the two ISO 3166-1 letters shifted into the Unicode
@@ -42,7 +42,7 @@ regional-indicator block — six bytes of arithmetic, rendered by the platform, 
 own `font-size`:
 
 ```ts
-flagEmoji('DE') // '🇩🇪'
+flagEmoji("DE"); // '🇩🇪'
 ```
 
 `country-flag-icons`, one of the five dependencies above, is 250 SVGs doing that job.
@@ -70,12 +70,12 @@ npm install @rxova/react-phone-input
 ```
 
 ```tsx
-import { useState } from 'react'
-import { PhoneInput } from '@rxova/react-phone-input'
+import { useState } from "react";
+import { PhoneInput } from "@rxova/react-phone-input";
 
 function Signup() {
-  const [phone, setPhone] = useState('')
-  return <PhoneInput label="Phone number" value={phone} onChange={setPhone} defaultCountry="GB" />
+  const [phone, setPhone] = useState("");
+  return <PhoneInput label="Phone number" value={phone} onChange={setPhone} defaultCountry="GB" />;
 }
 ```
 

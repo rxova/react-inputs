@@ -1,29 +1,29 @@
-'use client'
+"use client";
 
-import { useId } from 'react'
-import { OtpInput, type OtpInputProps } from '@rxova/react-otp-input'
+import { useId } from "react";
+import { OtpInput, type OtpInputProps } from "@rxova/react-otp-input";
 
-import './otp-field.css'
+import "./otp-field.css";
 
 export interface OtpFieldProps extends Omit<
   OtpInputProps,
-  'label' | 'aria-label' | 'aria-describedby' | 'invalid'
+  "label" | "aria-label" | "aria-describedby" | "invalid"
 > {
-  label: string
-  description?: string
-  error?: string
+  label: string;
+  description?: string;
+  error?: string;
 }
 
 /** A labelled one-time-code field copied into the consumer by the Rxova registry. */
 export function OtpField({ label, description, error, id, ...props }: OtpFieldProps) {
-  const generated = useId()
-  const fieldId = id ?? generated
+  const generated = useId();
+  const fieldId = id ?? generated;
   const describedBy = [description && `${fieldId}-description`, error && `${fieldId}-error`]
     .filter(Boolean)
-    .join(' ')
+    .join(" ");
 
   return (
-    <div className="rx-field" data-invalid={error ? '' : undefined}>
+    <div className="rx-field" data-invalid={error ? "" : undefined}>
       <span className="rx-field__label">{label}</span>
       <OtpInput
         {...props}
@@ -43,5 +43,5 @@ export function OtpField({ label, description, error, id, ...props }: OtpFieldPr
         </p>
       ) : null}
     </div>
-  )
+  );
 }

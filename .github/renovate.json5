@@ -1,9 +1,9 @@
 {
-  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
 
   // The rxova org preset (rxova/shared renovate/default.json5): weekly grouped
   // non-majors that merge themselves on a green `all checks`, majors held for
   // approval, a release-age hold, `pnpm dedupe` after every update, the
   // TypeScript 7 hold, and the `skip-changeset` label. Local rules go here.
-  extends: ['github>rxova/shared//renovate/default.json5'],
+  extends: ["github>rxova/shared//renovate/default.json5"],
 }

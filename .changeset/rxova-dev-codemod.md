@@ -1,5 +1,5 @@
 ---
-'@rxova/codemod': patch
+"@rxova/codemod": patch
 ---
 
 Point links at rxova.dev

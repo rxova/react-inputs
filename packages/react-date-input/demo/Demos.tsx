@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { Section } from '@rxova/demo-kit'
-import { DateInput } from '@rxova/react-date-input'
-import type { DateWarning } from '@rxova/react-date-input'
+import { useState } from "react";
+import { Section } from "@rxova/demo-kit";
+import { DateInput } from "@rxova/react-date-input";
+import type { DateWarning } from "@rxova/react-date-input";
 
 /**
  * The E2E target. Every section is something the Playwright suite drives, so
@@ -11,10 +11,10 @@ import type { DateWarning } from '@rxova/react-date-input'
  * test.
  */
 export function DateDemos() {
-  const [value, setValue] = useState<string | null>('2026-03-15')
-  const [ranged, setRanged] = useState<string | null>(null)
-  const [warnings, setWarnings] = useState<DateWarning[]>([])
-  const [submitted, setSubmitted] = useState<string | null>(null)
+  const [value, setValue] = useState<string | null>("2026-03-15");
+  const [ranged, setRanged] = useState<string | null>(null);
+  const [warnings, setWarnings] = useState<DateWarning[]>([]);
+  const [submitted, setSubmitted] = useState<string | null>(null);
 
   return (
     <>
@@ -43,11 +43,11 @@ export function DateDemos() {
 
       <Section id="controlled" title="Controlled" note="The value is always a YYYY-MM-DD string.">
         <DateInput label="Controlled date" locale="en-GB" value={value} onChange={setValue} />
-        <p data-testid="value">{value ?? 'null'}</p>
+        <p data-testid="value">{value ?? "null"}</p>
         <button
           type="button"
           onClick={() => {
-            setValue('2024-02-29')
+            setValue("2024-02-29");
           }}
         >
           Set leap day
@@ -55,7 +55,7 @@ export function DateDemos() {
         <button
           type="button"
           onClick={() => {
-            setValue(null)
+            setValue(null);
           }}
         >
           Clear
@@ -76,7 +76,7 @@ export function DateDemos() {
           onChange={setRanged}
           onWarn={() => undefined}
         />
-        <p data-testid="range-value">{ranged ?? 'null'}</p>
+        <p data-testid="range-value">{ranged ?? "null"}</p>
       </Section>
 
       <Section id="warnings" title="Diagnostics" note="onWarn receives every rejected prop.">
@@ -87,7 +87,7 @@ export function DateDemos() {
           onWarn={(warning) => {
             setWarnings((previous) =>
               previous.some((w) => w.code === warning.code) ? previous : [...previous, warning],
-            )
+            );
           }}
         />
         <ul data-testid="warning-codes">
@@ -100,15 +100,15 @@ export function DateDemos() {
       <Section id="native-form" title="Native form" note="Posts the ISO value as a hidden field.">
         <form
           onSubmit={(event) => {
-            event.preventDefault()
-            const entry = new FormData(event.currentTarget).get('due')
-            setSubmitted(typeof entry === 'string' ? entry : '')
+            event.preventDefault();
+            const entry = new FormData(event.currentTarget).get("due");
+            setSubmitted(typeof entry === "string" ? entry : "");
           }}
         >
           <DateInput label="Due" locale="en-GB" name="due" defaultValue="2026-03-15" />
           <button type="submit">Save</button>
         </form>
-        <p data-testid="submitted">{submitted ?? ''}</p>
+        <p data-testid="submitted">{submitted ?? ""}</p>
       </Section>
 
       <Section id="states" title="States" note="Disabled and read-only.">
@@ -126,5 +126,5 @@ export function DateDemos() {
         </p>
       </Section>
     </>
-  )
+  );
 }

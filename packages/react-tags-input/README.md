@@ -40,12 +40,12 @@ each of which has a test in this repo.
 ## Basic use
 
 ```tsx
-import { useState } from 'react'
-import { TagsInput } from '@rxova/react-tags-input'
+import { useState } from "react";
+import { TagsInput } from "@rxova/react-tags-input";
 
 function Topics() {
-  const [tags, setTags] = useState<string[]>([])
-  return <TagsInput label="Topics" value={tags} onChange={setTags} placeholder="Add a topic" />
+  const [tags, setTags] = useState<string[]>([]);
+  return <TagsInput label="Topics" value={tags} onChange={setTags} placeholder="Add a topic" />;
 }
 ```
 
@@ -69,7 +69,7 @@ three tags.
 ## Rules
 
 ```tsx
-import { TagsInput, type TagAttempt } from '@rxova/react-tags-input'
+import { TagsInput, type TagAttempt } from "@rxova/react-tags-input";
 
 function Constrained() {
   return (
@@ -80,13 +80,13 @@ function Constrained() {
       maxLength={20}
       transform={(raw) => raw.toLowerCase()}
       validate={(tag, existing) =>
-        existing.length > 0 && tag === 'other' ? 'pick something specific' : true
+        existing.length > 0 && tag === "other" ? "pick something specific" : true
       }
       onReject={(attempt: TagAttempt) => {
-        console.log(attempt.reason, attempt.message)
+        console.log(attempt.reason, attempt.message);
       }}
     />
-  )
+  );
 }
 ```
 
@@ -109,15 +109,15 @@ With a `name`, the component emits **one hidden input per tag**, so a native for
 array:
 
 ```tsx
-import { TagsInput } from '@rxova/react-tags-input'
+import { TagsInput } from "@rxova/react-tags-input";
 
 function Form() {
   return (
     <form action="/profile" method="post">
-      <TagsInput label="Skills" name="skills" defaultValue={['react', 'a11y']} />
+      <TagsInput label="Skills" name="skills" defaultValue={["react", "a11y"]} />
       <button type="submit">Save</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -169,10 +169,10 @@ These are **public API**, covered by semver.
 and the focus bookkeeping after a removal, which are the parts worth not rewriting.
 
 ```tsx
-import { useTagsInput } from '@rxova/react-tags-input'
+import { useTagsInput } from "@rxova/react-tags-input";
 
 function CustomTags() {
-  const field = useTagsInput({ max: 5 })
+  const field = useTagsInput({ max: 5 });
 
   return (
     <div onBlur={field.handleBlur}>
@@ -182,19 +182,19 @@ function CustomTags() {
             {tag}
             <button
               ref={(node) => {
-                field.tagRefs.current[index] = node
+                field.tagRefs.current[index] = node;
               }}
               type="button"
               tabIndex={index === field.activeIndex ? 0 : -1}
               aria-label={`Remove ${tag}`}
               onClick={() => {
-                field.removeAt(index)
+                field.removeAt(index);
               }}
               onKeyDown={(event) => {
-                field.handleTagKeyDown(event, index)
+                field.handleTagKeyDown(event, index);
               }}
               onFocus={() => {
-                field.setFocusedIndex(index)
+                field.setFocusedIndex(index);
               }}
             >
               ×
@@ -204,18 +204,18 @@ function CustomTags() {
       </ul>
       <input
         ref={(node) => {
-          field.inputRef.current = node
+          field.inputRef.current = node;
         }}
         value={field.text}
         onChange={(event) => {
-          field.setText(event.target.value)
+          field.setText(event.target.value);
         }}
         onKeyDown={field.handleInputKeyDown}
         onPaste={field.handlePaste}
       />
       <span aria-live="polite">{field.announcement}</span>
     </div>
-  )
+  );
 }
 ```
 

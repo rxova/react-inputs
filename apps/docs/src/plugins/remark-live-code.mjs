@@ -1,4 +1,4 @@
-import { visit } from 'unist-util-visit'
+import { visit } from "unist-util-visit";
 
 /**
  * Rewrites ```tsx live fences into <LiveExample code="..." /> at build time.
@@ -14,49 +14,49 @@ import { visit } from 'unist-util-visit'
  */
 export default function remarkLiveCode() {
   return (tree, file) => {
-    let used = false
+    let used = false;
 
-    visit(tree, 'code', (node, index, parent) => {
+    visit(tree, "code", (node, index, parent) => {
       // Docusaurus marked these as ```tsx live / ```jsx live.
-      if (!node.meta?.split(/\s+/).includes('live')) return
-      if (!parent || index === null) return
+      if (!node.meta?.split(/\s+/).includes("live")) return;
+      if (!parent || index === null) return;
 
-      used = true
+      used = true;
       parent.children[index] = {
-        type: 'mdxJsxFlowElement',
-        name: 'LiveExample',
-        attributes: [{ type: 'mdxJsxAttribute', name: 'code', value: node.value }],
+        type: "mdxJsxFlowElement",
+        name: "LiveExample",
+        attributes: [{ type: "mdxJsxAttribute", name: "code", value: node.value }],
         children: [],
-      }
-    })
+      };
+    });
 
-    if (!used) return
+    if (!used) return;
 
     // Only import the component on pages that actually use it, so the island's
     // JavaScript is not shipped to every page in the site.
     tree.children.unshift({
-      type: 'mdxjsEsm',
+      type: "mdxjsEsm",
       value: "import LiveExample from '@components/LiveExample.astro'",
       data: {
         estree: {
-          type: 'Program',
-          sourceType: 'module',
+          type: "Program",
+          sourceType: "module",
           body: [
             {
-              type: 'ImportDeclaration',
+              type: "ImportDeclaration",
               specifiers: [
                 {
-                  type: 'ImportDefaultSpecifier',
-                  local: { type: 'Identifier', name: 'LiveExample' },
+                  type: "ImportDefaultSpecifier",
+                  local: { type: "Identifier", name: "LiveExample" },
                 },
               ],
-              source: { type: 'Literal', value: '@components/LiveExample.astro' },
+              source: { type: "Literal", value: "@components/LiveExample.astro" },
             },
           ],
         },
       },
-    })
+    });
 
-    file.data.astro ??= {}
-  }
+    file.data.astro ??= {};
+  };
 }

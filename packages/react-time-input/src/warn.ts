@@ -1,5 +1,5 @@
-import { compareISO, fromISO } from './time'
-import type { TimeWarning } from './types'
+import { compareISO, fromISO } from "./time";
+import type { TimeWarning } from "./types";
 
 /**
  * Development-only diagnostics.
@@ -18,40 +18,40 @@ import type { TimeWarning } from './types'
  * from looking at a blank input.
  */
 export function inspectValue(raw: string, prop: string): TimeWarning | null {
-  if (fromISO(raw) !== null) return null
-  const looksLikeDisplay = /am|pm|\u5348/i.test(raw) || /^\d:/.test(raw)
+  if (fromISO(raw) !== null) return null;
+  const looksLikeDisplay = /am|pm|\u5348/i.test(raw) || /^\d:/.test(raw);
   return {
-    code: 'value-unparseable',
+    code: "value-unparseable",
     prop,
     received: raw,
     message: looksLikeDisplay
       ? `\`${prop}\` is "${raw}", which is a display format. It must be a zero-padded 24-hour "HH:mm" or "HH:mm:ss" string — "14:30", not "2:30 PM". Rendering an empty field.`
       : `\`${prop}\` must be a zero-padded 24-hour "HH:mm" or "HH:mm:ss" string; received "${raw}". Rendering an empty field.`,
-  }
+  };
 }
 
 /** Describe a `min` or `max` that is not a real time. */
-export function inspectBound(raw: string, prop: 'min' | 'max'): TimeWarning | null {
-  if (fromISO(raw) !== null) return null
+export function inspectBound(raw: string, prop: "min" | "max"): TimeWarning | null {
+  if (fromISO(raw) !== null) return null;
   return {
-    code: prop === 'min' ? 'min-unparseable' : 'max-unparseable',
+    code: prop === "min" ? "min-unparseable" : "max-unparseable",
     prop,
     received: raw,
     message: `\`${prop}\` must be a 24-hour "HH:mm" or "HH:mm:ss" string; received "${raw}". Ignoring it.`,
-  }
+  };
 }
 
 /** Describe a range no time can satisfy. */
 export function inspectRange(min: string | undefined, max: string | undefined): TimeWarning | null {
-  if (min === undefined || max === undefined) return null
-  if (fromISO(min) === null || fromISO(max) === null) return null
-  if (compareISO(min, max) <= 0) return null
+  if (min === undefined || max === undefined) return null;
+  if (fromISO(min) === null || fromISO(max) === null) return null;
+  if (compareISO(min, max) <= 0) return null;
   return {
-    code: 'min-after-max',
-    prop: 'min',
+    code: "min-after-max",
+    prop: "min",
     received: min,
     message: `\`min\` (${min}) is after \`max\` (${max}); no time can satisfy both. Ignoring both bounds. Note that this component does not model a range that wraps past midnight.`,
-  }
+  };
 }
 
 /** Describe a completed time that falls outside the allowed range. */
@@ -60,17 +60,17 @@ export function inspectOutOfRange(
   min: string | undefined,
   max: string | undefined,
 ): TimeWarning | null {
-  const tooEarly = min !== undefined && compareISO(value, min) < 0
-  const tooLate = max !== undefined && compareISO(value, max) > 0
-  if (!tooEarly && !tooLate) return null
+  const tooEarly = min !== undefined && compareISO(value, min) < 0;
+  const tooLate = max !== undefined && compareISO(value, max) > 0;
+  if (!tooEarly && !tooLate) return null;
   // The `?? ''` arm is unreachable: reaching the second branch means `tooLate`
   // is true, which already required `max` to be defined. It exists because the
   // parameter is optional.
   /* v8 ignore next 3 */
   const message = tooEarly
     ? `\`value\` (${value}) is before \`min\` (${min}). The field is marked invalid.`
-    : `\`value\` (${value}) is after \`max\` (${max ?? ''}). The field is marked invalid.`
-  return { code: 'value-out-of-range', prop: 'value', received: value, message }
+    : `\`value\` (${value}) is after \`max\` (${max ?? ""}). The field is marked invalid.`;
+  return { code: "value-out-of-range", prop: "value", received: value, message };
 }
 
 /**
@@ -81,26 +81,26 @@ export function inspectOutOfRange(
  * back to 1 is more predictable than an uneven final bucket.
  */
 export function inspectStep(step: number, prop: string): TimeWarning | null {
-  if (Number.isInteger(step) && step >= 1 && step <= 60 && 60 % step === 0) return null
+  if (Number.isInteger(step) && step >= 1 && step <= 60 && 60 % step === 0) return null;
   return {
-    code: 'step-invalid',
+    code: "step-invalid",
     prop,
     received: String(step),
     message: `\`${prop}\` must be a whole number between 1 and 60 that divides 60 evenly; received ${String(step)}. Using 1.`,
-  }
+  };
 }
 
 /** Describe a locale tag `Intl` refused. */
 export function inspectLocale(locale: string): TimeWarning | null {
   try {
-    new Intl.DateTimeFormat(locale)
-    return null
+    new Intl.DateTimeFormat(locale);
+    return null;
   } catch {
     return {
-      code: 'locale-invalid',
-      prop: 'locale',
+      code: "locale-invalid",
+      prop: "locale",
       received: locale,
       message: `\`locale\` "${locale}" is not a valid BCP 47 tag (note the hyphen: "en-US", not "en_US"). Falling back to a 24-hour clock.`,
-    }
+    };
   }
 }

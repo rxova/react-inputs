@@ -1,14 +1,14 @@
-import { useState } from 'react'
-import type { Meta, StoryObj } from '@storybook/react-vite'
-import { fn } from 'storybook/test'
-import { PasswordInput, commonRules, usePasswordInput } from '@rxova/react-password-input'
+import { useState } from "react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { fn } from "storybook/test";
+import { PasswordInput, commonRules, usePasswordInput } from "@rxova/react-password-input";
 
 const meta = {
-  title: 'Components/Password input',
+  title: "Components/Password input",
   component: PasswordInput,
   args: {
-    label: 'Password',
-    placeholder: 'Your password',
+    label: "Password",
+    placeholder: "Your password",
     showStrength: false,
     hideRevealToggle: false,
     hideOnBlur: true,
@@ -23,11 +23,11 @@ const meta = {
     onValidityChange: fn(),
   },
   argTypes: {
-    minScore: { control: 'select', options: [null, 0, 1, 2, 3, 4] },
-    minLength: { control: { type: 'number', min: 1, max: 64, step: 1 } },
+    minScore: { control: "select", options: [null, 0, 1, 2, 3, 4] },
+    minLength: { control: { type: "number", min: 1, max: 64, step: 1 } },
     autoComplete: {
-      control: 'inline-radio',
-      options: ['current-password', 'new-password'],
+      control: "inline-radio",
+      options: ["current-password", "new-password"],
     },
     value: { control: false },
     revealed: { control: false },
@@ -48,21 +48,21 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof PasswordInput>
+} satisfies Meta<typeof PasswordInput>;
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 /** Every prop is live in the Controls panel; the spies log to Actions. */
-export const Playground: Story = {}
+export const Playground: Story = {};
 
 /**
  * The strength meter. The built-in estimator is a ~1 kB entropy model with
  * penalties — no wordlist, no network, nothing leaves the browser.
  */
 export const WithStrengthMeter: Story = {
-  args: { showStrength: true, defaultValue: 'correct horse battery' },
-}
+  args: { showStrength: true, defaultValue: "correct horse battery" },
+};
 
 /**
  * NIST SP 800-63B leads with length and advises against composition rules, so
@@ -74,10 +74,10 @@ export const WithRuleChecklist: Story = {
     showStrength: true,
     showRules: true,
     rules: Object.values(commonRules),
-    autoComplete: 'new-password',
-    label: 'Choose a password',
+    autoComplete: "new-password",
+    label: "Choose a password",
   },
-}
+};
 
 /**
  * `userInputs` penalises a password containing anything the user already typed
@@ -86,49 +86,49 @@ export const WithRuleChecklist: Story = {
 export const PenalisedAgainstUserInput: Story = {
   args: {
     showStrength: true,
-    label: 'New password',
-    autoComplete: 'new-password',
-    userInputs: ['ada@example.com', 'Ada Lovelace'],
-    blocklist: ['rxova'],
-    defaultValue: 'ada@example.com1',
+    label: "New password",
+    autoComplete: "new-password",
+    userInputs: ["ada@example.com", "Ada Lovelace"],
+    blocklist: ["rxova"],
+    defaultValue: "ada@example.com1",
   },
-}
+};
 
 /** `minScore` gates validity on the meter, not just on the rules. */
 export const GatedOnScore: Story = {
   args: {
     showStrength: true,
     minScore: 3,
-    autoComplete: 'new-password',
-    label: 'Password (must reach Good)',
+    autoComplete: "new-password",
+    label: "Password (must reach Good)",
   },
-}
+};
 
 /** Controlled reveal: the toggle is owned by the consumer, not the component. */
 export const ControlledReveal: Story = {
   render: function ControlledReveal(args) {
-    const [revealed, setRevealed] = useState(true)
+    const [revealed, setRevealed] = useState(true);
     return (
       <>
         <PasswordInput {...args} revealed={revealed} onRevealChange={setRevealed} />
         <button
           type="button"
           onClick={() => {
-            setRevealed((r) => !r)
+            setRevealed((r) => !r);
           }}
         >
-          {revealed ? 'Hide' : 'Show'} from outside
+          {revealed ? "Hide" : "Show"} from outside
         </button>
       </>
-    )
+    );
   },
-  args: { defaultValue: 'hunter2' },
-}
+  args: { defaultValue: "hunter2" },
+};
 
 /** No reveal button at all, for flows where showing the value is unacceptable. */
 export const WithoutRevealToggle: Story = {
-  args: { hideRevealToggle: true, defaultValue: 'hunter2' },
-}
+  args: { hideRevealToggle: true, defaultValue: "hunter2" },
+};
 
 /**
  * `checkCompromised` is the breach-check hook. The library never makes a
@@ -138,15 +138,15 @@ export const WithoutRevealToggle: Story = {
  */
 export const CompromisedCheck: Story = {
   args: {
-    label: 'New password',
-    autoComplete: 'new-password',
+    label: "New password",
+    autoComplete: "new-password",
     showStrength: true,
-    defaultValue: 'password123',
+    defaultValue: "password123",
     checkCompromised: (password: string) =>
-      Promise.resolve(password.toLowerCase().includes('password')),
+      Promise.resolve(password.toLowerCase().includes("password")),
     checkCompromisedDelay: 200,
   },
-}
+};
 
 /** `invalid` sets `aria-invalid` and `data-invalid`; the ring is a consumer token. */
 export const Invalid: Story = {
@@ -158,18 +158,18 @@ export const Invalid: Story = {
       </p>
     </>
   ),
-  args: { defaultValue: 'wrong' },
-}
+  args: { defaultValue: "wrong" },
+};
 
 /** Disabled: exposed to assistive tech, not editable. */
 export const Disabled: Story = {
-  args: { disabled: true, defaultValue: 'hunter2' },
-}
+  args: { disabled: true, defaultValue: "hunter2" },
+};
 
 /** Read-only: the value is shown and focusable, but not editable. */
 export const ReadOnly: Story = {
-  args: { readOnly: true, defaultValue: 'hunter2' },
-}
+  args: { readOnly: true, defaultValue: "hunter2" },
+};
 
 /**
  * A confirm-password pair. Both fields are plain `PasswordInput`s; the match
@@ -177,9 +177,9 @@ export const ReadOnly: Story = {
  */
 export const ConfirmPassword: Story = {
   render: function ConfirmPassword(args) {
-    const [password, setPassword] = useState('')
-    const [confirm, setConfirm] = useState('')
-    const mismatch = confirm.length > 0 && confirm !== password
+    const [password, setPassword] = useState("");
+    const [confirm, setConfirm] = useState("");
+    const mismatch = confirm.length > 0 && confirm !== password;
 
     return (
       <>
@@ -199,7 +199,7 @@ export const ConfirmPassword: Story = {
           value={confirm}
           onChange={setConfirm}
           invalid={mismatch}
-          aria-describedby={mismatch ? 'pw-confirm-help' : undefined}
+          aria-describedby={mismatch ? "pw-confirm-help" : undefined}
         />
         {mismatch && (
           <p id="pw-confirm-help" className="error">
@@ -207,9 +207,9 @@ export const ConfirmPassword: Story = {
           </p>
         )}
       </>
-    )
+    );
   },
-}
+};
 
 /**
  * With `name` set the value posts through native form submission — no form
@@ -217,22 +217,22 @@ export const ConfirmPassword: Story = {
  */
 export const InAForm: Story = {
   render: function InAForm(args) {
-    const [submitted, setSubmitted] = useState<string | null>(null)
+    const [submitted, setSubmitted] = useState<string | null>(null);
     return (
       <form
         className="story"
         onSubmit={(e) => {
-          e.preventDefault()
-          setSubmitted(JSON.stringify(Object.fromEntries(new FormData(e.currentTarget))))
+          e.preventDefault();
+          setSubmitted(JSON.stringify(Object.fromEntries(new FormData(e.currentTarget))));
         }}
       >
         <PasswordInput {...args} name="password" />
         <button type="submit">Submit</button>
-        <output>{submitted ?? 'not submitted'}</output>
+        <output>{submitted ?? "not submitted"}</output>
       </form>
-    )
+    );
   },
-}
+};
 
 /**
  * Tier 4: the raw hook. `usePasswordInput` owns the value, the reveal state,
@@ -241,7 +241,7 @@ export const InAForm: Story = {
  */
 export const HeadlessHook: Story = {
   render: function HeadlessHook() {
-    const password = usePasswordInput({ minLength: 8 })
+    const password = usePasswordInput({ minLength: 8 });
     return (
       <div>
         <label htmlFor={password.ids.input}>Password (hand-rolled)</label>
@@ -251,7 +251,7 @@ export const HeadlessHook: Story = {
           type={password.type}
           value={password.value}
           onChange={(e) => {
-            password.setValue(e.target.value)
+            password.setValue(e.target.value);
           }}
           onKeyDown={password.handleModifierEvent}
           onKeyUp={password.handleModifierEvent}
@@ -262,14 +262,14 @@ export const HeadlessHook: Story = {
           onMouseDown={password.captureSelection}
           onClick={password.toggleReveal}
         >
-          {password.revealed ? 'Hide' : 'Show'}
+          {password.revealed ? "Hide" : "Show"}
         </button>
         <p id={password.ids.strength}>
-          score {password.strength.score} · {password.strength.entropy.toFixed(0)} bits ·{' '}
-          {password.valid ? 'valid' : 'not yet valid'}
+          score {password.strength.score} · {password.strength.entropy.toFixed(0)} bits ·{" "}
+          {password.valid ? "valid" : "not yet valid"}
         </p>
         {password.capsLock && <p className="error">Caps Lock is on</p>}
       </div>
-    )
+    );
   },
-}
+};

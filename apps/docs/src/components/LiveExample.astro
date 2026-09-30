@@ -6,12 +6,12 @@
  * dozen examples, and hydrating all of them on first paint would cost more than
  * the page is worth. They come alive as they scroll into view.
  */
-import LiveExample from './LiveExample.tsx'
+import LiveExample from "./LiveExample.tsx";
 
 interface Props {
-  code: string
+  code: string;
 }
-const { code } = Astro.props
+const { code } = Astro.props;
 ---
 
 <LiveExample client:visible code={code} />

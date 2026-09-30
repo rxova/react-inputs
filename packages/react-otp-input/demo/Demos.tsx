@@ -1,10 +1,10 @@
-import { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { Formik, Form as FormikForm, useField } from 'formik'
-import { Field as FinalField, Form as FinalForm } from 'react-final-form'
-import { useForm as useTanstackForm } from '@tanstack/react-form'
-import { OtpInput, OtpGroup, OtpSlot, OtpSeparator } from '@rxova/react-otp-input'
-import { Section } from '@rxova/demo-kit'
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { Formik, Form as FormikForm, useField } from "formik";
+import { Field as FinalField, Form as FinalForm } from "react-final-form";
+import { useForm as useTanstackForm } from "@tanstack/react-form";
+import { OtpInput, OtpGroup, OtpSlot, OtpSeparator } from "@rxova/react-otp-input";
+import { Section } from "@rxova/demo-kit";
 
 /**
  * Every scenario the E2E suite drives, and the manual QA surface.
@@ -16,8 +16,8 @@ import { Section } from '@rxova/demo-kit'
  */
 
 function DefaultDemo() {
-  const [code, setCode] = useState('')
-  const [completed, setCompleted] = useState<string | null>(null)
+  const [code, setCode] = useState("");
+  const [completed, setCompleted] = useState<string | null>(null);
   return (
     <>
       <OtpInput
@@ -28,15 +28,15 @@ function DefaultDemo() {
         label="One-time code"
       />
       <p>
-        value: <output data-testid="default-value">{code || 'empty'}</output> · complete:{' '}
-        <output data-testid="default-complete">{completed ?? 'no'}</output>
+        value: <output data-testid="default-value">{code || "empty"}</output> · complete:{" "}
+        <output data-testid="default-complete">{completed ?? "no"}</output>
       </p>
     </>
-  )
+  );
 }
 
 function GroupedDemo() {
-  const [code, setCode] = useState('')
+  const [code, setCode] = useState("");
   return (
     <OtpInput length={6} value={code} onChange={setCode} label="Grouped code">
       <OtpGroup>
@@ -51,11 +51,11 @@ function GroupedDemo() {
         <OtpSlot index={5} />
       </OtpGroup>
     </OtpInput>
-  )
+  );
 }
 
 function AlphanumericDemo() {
-  const [code, setCode] = useState('')
+  const [code, setCode] = useState("");
   return (
     <>
       <OtpInput
@@ -67,14 +67,14 @@ function AlphanumericDemo() {
         label="Alphanumeric code"
       />
       <p>
-        value: <output data-testid="alphanumeric-value">{code || 'empty'}</output>
+        value: <output data-testid="alphanumeric-value">{code || "empty"}</output>
       </p>
     </>
-  )
+  );
 }
 
 function RenderPropDemo() {
-  const [code, setCode] = useState('')
+  const [code, setCode] = useState("");
   return (
     <OtpInput
       length={4}
@@ -82,58 +82,58 @@ function RenderPropDemo() {
       onChange={setCode}
       label="Custom render"
       render={({ slots }) => (
-        <div style={{ display: 'inline-flex', gap: '0.5rem' }}>
+        <div style={{ display: "inline-flex", gap: "0.5rem" }}>
           {slots.map((slot) => (
             <span
               key={slot.index}
               data-cell={slot.index}
               style={{
-                fontFamily: 'ui-monospace, monospace',
-                borderBottom: '2px solid currentColor',
-                minWidth: '1.5rem',
-                textAlign: 'center',
+                fontFamily: "ui-monospace, monospace",
+                borderBottom: "2px solid currentColor",
+                minWidth: "1.5rem",
+                textAlign: "center",
               }}
             >
-              {slot.char ?? '·'}
+              {slot.char ?? "·"}
             </span>
           ))}
         </div>
       )}
     />
-  )
+  );
 }
 
 function NativeFormDemo() {
-  const [submitted, setSubmitted] = useState<string | null>(null)
+  const [submitted, setSubmitted] = useState<string | null>(null);
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault()
-        setSubmitted(JSON.stringify(Object.fromEntries(new FormData(e.currentTarget))))
+        e.preventDefault();
+        setSubmitted(JSON.stringify(Object.fromEntries(new FormData(e.currentTarget))));
       }}
     >
       <OtpInput name="code" length={6} label="Code" />
       <button type="submit">Submit</button>
-      <output data-testid="native-form-result">{submitted ?? 'not submitted'}</output>
+      <output data-testid="native-form-result">{submitted ?? "not submitted"}</output>
     </form>
-  )
+  );
 }
 
 function HookFormDemo() {
-  const { control, handleSubmit } = useForm<{ code: string }>({ defaultValues: { code: '' } })
-  const [result, setResult] = useState<string | null>(null)
+  const { control, handleSubmit } = useForm<{ code: string }>({ defaultValues: { code: "" } });
+  const [result, setResult] = useState<string | null>(null);
   return (
     <form
       onSubmit={(e) => {
         void handleSubmit((values) => {
-          setResult(JSON.stringify(values))
-        })(e)
+          setResult(JSON.stringify(values));
+        })(e);
       }}
     >
       <Controller
         name="code"
         control={control}
-        rules={{ minLength: { value: 6, message: 'Enter all six digits' } }}
+        rules={{ minLength: { value: 6, message: "Enter all six digits" } }}
         render={({ field, fieldState }) => (
           <>
             <OtpInput
@@ -145,7 +145,7 @@ function HookFormDemo() {
               name={field.name}
               inputRef={field.ref}
               invalid={fieldState.invalid}
-              aria-describedby={fieldState.error ? 'rhf-error' : undefined}
+              aria-describedby={fieldState.error ? "rhf-error" : undefined}
             />
             {fieldState.error && (
               <p id="rhf-error" role="alert" className="error">
@@ -156,13 +156,13 @@ function HookFormDemo() {
         )}
       />
       <button type="submit">Verify</button>
-      <output data-testid="rhf-result">{result ?? 'not submitted'}</output>
+      <output data-testid="rhf-result">{result ?? "not submitted"}</output>
     </form>
-  )
+  );
 }
 
 function FormikField() {
-  const [field, meta, helpers] = useField<string>('code')
+  const [field, meta, helpers] = useField<string>("code");
   return (
     <>
       <OtpInput
@@ -173,7 +173,7 @@ function FormikField() {
         onChange={(value) => void helpers.setValue(value)}
         onBlur={() => void helpers.setTouched(true)}
         invalid={Boolean(meta.touched && meta.error)}
-        aria-describedby={meta.touched && meta.error ? 'formik-error' : undefined}
+        aria-describedby={meta.touched && meta.error ? "formik-error" : undefined}
       />
       {meta.touched && meta.error && (
         <p id="formik-error" role="alert" className="error">
@@ -181,42 +181,42 @@ function FormikField() {
         </p>
       )}
     </>
-  )
+  );
 }
 
 function FormikDemo() {
-  const [result, setResult] = useState<string | null>(null)
+  const [result, setResult] = useState<string | null>(null);
   return (
     <Formik
-      initialValues={{ code: '' }}
-      validate={(v) => (v.code.length === 6 ? {} : { code: 'Enter all six digits' })}
+      initialValues={{ code: "" }}
+      validate={(v) => (v.code.length === 6 ? {} : { code: "Enter all six digits" })}
       onSubmit={(values) => {
-        setResult(JSON.stringify(values))
+        setResult(JSON.stringify(values));
       }}
     >
       <FormikForm>
         <FormikField />
         <button type="submit">Verify</button>
-        <output data-testid="formik-result">{result ?? 'not submitted'}</output>
+        <output data-testid="formik-result">{result ?? "not submitted"}</output>
       </FormikForm>
     </Formik>
-  )
+  );
 }
 
 function FinalFormDemo() {
-  const [result, setResult] = useState<string | null>(null)
+  const [result, setResult] = useState<string | null>(null);
   return (
     <FinalForm
       onSubmit={(values: { code?: string }) => {
-        setResult(JSON.stringify(values))
+        setResult(JSON.stringify(values));
       }}
       validate={(v: { code?: string }) =>
-        (v.code ?? '').length === 6 ? {} : { code: 'Enter all six digits' }
+        (v.code ?? "").length === 6 ? {} : { code: "Enter all six digits" }
       }
       render={({ handleSubmit }) => (
         <form
           onSubmit={(e) => {
-            void handleSubmit(e)
+            void handleSubmit(e);
           }}
         >
           <FinalField name="code">
@@ -230,37 +230,37 @@ function FinalFormDemo() {
                 onChange={field.onChange}
                 onBlur={field.onBlur}
                 invalid={Boolean(meta.touched && meta.error)}
-                aria-describedby={meta.touched && meta.error ? 'rff-error' : undefined}
+                aria-describedby={meta.touched && meta.error ? "rff-error" : undefined}
               />
             )}
           </FinalField>
           <button type="submit">Verify</button>
-          <output data-testid="rff-result">{result ?? 'not submitted'}</output>
+          <output data-testid="rff-result">{result ?? "not submitted"}</output>
         </form>
       )}
     />
-  )
+  );
 }
 
 function TanstackFormDemo() {
-  const [result, setResult] = useState<string | null>(null)
+  const [result, setResult] = useState<string | null>(null);
   const form = useTanstackForm({
-    defaultValues: { code: '' },
+    defaultValues: { code: "" },
     onSubmit: ({ value }) => {
-      setResult(JSON.stringify(value))
+      setResult(JSON.stringify(value));
     },
-  })
+  });
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault()
-        void form.handleSubmit()
+        e.preventDefault();
+        void form.handleSubmit();
       }}
     >
       <form.Field
         name="code"
         validators={{
-          onChange: ({ value }) => (value.length === 6 ? undefined : 'Enter all six digits'),
+          onChange: ({ value }) => (value.length === 6 ? undefined : "Enter all six digits"),
         }}
       >
         {(field) => (
@@ -271,27 +271,27 @@ function TanstackFormDemo() {
               name="code"
               value={field.state.value}
               onChange={(value) => {
-                field.handleChange(value)
+                field.handleChange(value);
               }}
               onBlur={field.handleBlur}
               invalid={!field.state.meta.isValid}
-              aria-describedby={field.state.meta.isValid ? undefined : 'tanstack-error'}
+              aria-describedby={field.state.meta.isValid ? undefined : "tanstack-error"}
             />
             {!field.state.meta.isValid && (
               <p id="tanstack-error" role="alert" className="error">
-                {field.state.meta.errors.join(', ')}
+                {field.state.meta.errors.join(", ")}
               </p>
             )}
           </>
         )}
       </form.Field>
       <button type="submit">Verify</button>
-      <output data-testid="tanstack-result">{result ?? 'not submitted'}</output>
+      <output data-testid="tanstack-result">{result ?? "not submitted"}</output>
     </form>
-  )
+  );
 }
 
-export function OtpDemos({ dir = 'ltr' }: { dir?: 'ltr' | 'rtl' }) {
+export function OtpDemos({ dir = "ltr" }: { dir?: "ltr" | "rtl" }) {
   return (
     <main dir={dir}>
       <div className="grid">
@@ -359,8 +359,8 @@ export function OtpDemos({ dir = 'ltr' }: { dir?: 'ltr' | 'rtl' }) {
         </Section>
       </div>
     </main>
-  )
+  );
 }
 
 // See the note in the currency demo: the playground resolves the default.
-export default OtpDemos
+export default OtpDemos;

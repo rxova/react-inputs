@@ -38,12 +38,12 @@ npm install @rxova/react-time-input
 ## Basic use
 
 ```tsx
-import { useState } from 'react'
-import { TimeInput } from '@rxova/react-time-input'
+import { useState } from "react";
+import { TimeInput } from "@rxova/react-time-input";
 
 function Booking() {
-  const [value, setValue] = useState<string | null>(null)
-  return <TimeInput label="Start time" value={value} onChange={setValue} min="09:00" max="17:00" />
+  const [value, setValue] = useState<string | null>(null);
+  return <TimeInput label="Start time" value={value} onChange={setValue} min="09:00" max="17:00" />;
 }
 ```
 
@@ -63,8 +63,8 @@ of `09:00:30`.
 And it is a **string, never a `Date`**:
 
 ```js
-new Date('14:30') // Invalid Date
-new Date('2026-01-01T14:30') // a moment that moves with the timezone and with DST
+new Date("14:30"); // Invalid Date
+new Date("2026-01-01T14:30"); // a moment that moves with the timezone and with DST
 ```
 
 A time of day is not an instant. There is deliberately no `toDate()` helper, because it cannot be
@@ -75,7 +75,7 @@ written without inventing a date and a timezone you did not supply.
 12- or 24-hour comes from the locale, and so do the AM/PM words:
 
 ```tsx
-import { TimeInput } from '@rxova/react-time-input'
+import { TimeInput } from "@rxova/react-time-input";
 
 function Examples() {
   return (
@@ -84,7 +84,7 @@ function Examples() {
       <TimeInput label="UK" locale="en-GB" /> {/* HH:mm    */}
       <TimeInput label="Japan" locale="ja-JP" hour12 /> {/* 午前 hh:mm */}
     </>
-  )
+  );
 }
 ```
 
@@ -107,10 +107,10 @@ Omit `locale` to use the runtime's own; pass `hour12` to force either clock. A m
 ## Seconds and steps
 
 ```tsx
-import { TimeInput } from '@rxova/react-time-input'
+import { TimeInput } from "@rxova/react-time-input";
 
 function Precise() {
-  return <TimeInput label="Duration start" showSeconds minuteStep={15} secondStep={30} />
+  return <TimeInput label="Duration start" showSeconds minuteStep={15} secondStep={30} />;
 }
 ```
 
@@ -133,7 +133,7 @@ component does not model a range that wraps past midnight.
 With a `name`, the component emits a hidden input carrying the 24-hour value:
 
 ```tsx
-import { TimeInput } from '@rxova/react-time-input'
+import { TimeInput } from "@rxova/react-time-input";
 
 function Form() {
   return (
@@ -141,7 +141,7 @@ function Form() {
       <TimeInput label="Starts at" name="at" locale="en-US" defaultValue="14:30" />
       <button type="submit">Save</button>
     </form>
-  )
+  );
 }
 ```
 
@@ -188,40 +188,40 @@ These are **public API**, covered by semver.
 translation and the digit buffer, which are the parts worth not rewriting.
 
 ```tsx
-import { useTimeInput } from '@rxova/react-time-input'
+import { useTimeInput } from "@rxova/react-time-input";
 
 function CustomField() {
-  const field = useTimeInput({ locale: 'en-US' })
+  const field = useTimeInput({ locale: "en-US" });
 
   return (
     <div onBlur={field.handleBlur}>
       {field.pieces.map((piece, index) =>
-        piece.kind === 'literal' ? (
+        piece.kind === "literal" ? (
           <span key={index}>{piece.text}</span>
         ) : (
           <span
             key={piece.type}
             ref={(node) => {
-              field.segmentRefs.current[piece.type] = node
+              field.segmentRefs.current[piece.type] = node;
             }}
             role="spinbutton"
             tabIndex={0}
             onFocus={(event) => {
-              field.handleSegmentFocus(piece.type, event)
+              field.handleSegmentFocus(piece.type, event);
             }}
             onKeyDown={(event) => {
-              if (/^\d$/.test(event.key)) field.typeDigit(piece.type, event.key)
-              else if (event.key === 'ArrowUp') field.step(piece.type, 1)
-              else if (event.key === 'ArrowDown') field.step(piece.type, -1)
-              else field.typeLetter(piece.type, event.key)
+              if (/^\d$/.test(event.key)) field.typeDigit(piece.type, event.key);
+              else if (event.key === "ArrowUp") field.step(piece.type, 1);
+              else if (event.key === "ArrowDown") field.step(piece.type, -1);
+              else field.typeLetter(piece.type, event.key);
             }}
           >
-            {field.displayValue(piece.type) ?? '--'}
+            {field.displayValue(piece.type) ?? "--"}
           </span>
         ),
       )}
     </div>
-  )
+  );
 }
 ```
 

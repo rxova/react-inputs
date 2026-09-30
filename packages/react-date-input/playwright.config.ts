@@ -1,4 +1,4 @@
-import { basePlaywrightConfig } from '@rxova/repo-config/playwright'
+import { basePlaywrightConfig } from "@rxova/repo-config/playwright";
 
 /**
  * E2E runs against this package's own `demo/` — built and previewed on its own
@@ -12,14 +12,14 @@ import { basePlaywrightConfig } from '@rxova/repo-config/playwright'
  * is a question only a real run in each engine can answer.
  */
 export default basePlaywrightConfig({
-  command: 'pnpm run demo:preview',
+  command: "pnpm run demo:preview",
   port: 4178,
-  browsers: ['chromium', 'firefox', 'webkit'],
+  browsers: ["chromium", "firefox", "webkit"],
   // The specs in a file are independent, so they may run in any order — but on
   // one worker (the preset's default), so the three packages Turbo runs at
   // once stay bounded.
   fullyParallel: true,
-  trace: 'on-first-retry',
+  trace: "on-first-retry",
   // An HTML report on CI, uploaded as an artifact when the job fails.
-  reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : [['list']],
-})
+  reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : [["list"]],
+});

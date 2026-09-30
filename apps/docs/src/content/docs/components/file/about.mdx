@@ -1,13 +1,13 @@
 ---
-title: 'File input — About'
-description: 'How the file input validates and deduplicates selections, manages object URLs, and stays accessible as both a picker and a drop zone.'
+title: "File input — About"
+description: "How the file input validates and deduplicates selections, manages object URLs, and stays accessible as both a picker and a drop zone."
 sidebar:
-  label: 'About'
+  label: "About"
   order: 3
 ---
 
-import CodeRecipes from '@rxova/astro-ui/components/CodeRecipes.astro'
-import { recipesFor } from '../../../../lib/recipe-sources.mjs'
+import CodeRecipes from "@rxova/astro-ui/components/CodeRecipes.astro";
+import { recipesFor } from "../../../../lib/recipe-sources.mjs";
 
 ## The object-URL lifecycle
 
@@ -158,7 +158,7 @@ this is never an error, and the whole path is stripped from production builds.
   accept="png"
   onWarn={(warning) => {
     // { code: 'accept-suspicious', prop: 'accept', received: 'png', message: '…' }
-    console.warn(warning.code, warning.received)
+    console.warn(warning.code, warning.received);
   }}
 />
 ```
@@ -261,7 +261,7 @@ rather than absent:
 
 ```tsx
 function Field() {
-  const [field, , helpers] = useField<File[]>('docs')
+  const [field, , helpers] = useField<File[]>("docs");
   return (
     <FileInput
       label="File"
@@ -270,7 +270,7 @@ function Field() {
       onChange={(files) => helpers.setValue(files)}
       onBlur={() => helpers.setTouched(true)}
     />
-  )
+  );
 }
 ```
 
@@ -316,4 +316,4 @@ job, not the component's.
 Keep the real file input, drop-zone button, selection list, and live announcements together. The
 design system supplies field chrome; upload transport remains outside this package.
 
-<CodeRecipes idPrefix="integration" recipes={recipesFor('file')} />
+<CodeRecipes idPrefix="integration" recipes={recipesFor("file")} />

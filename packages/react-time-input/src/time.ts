@@ -13,29 +13,29 @@
  */
 
 /** The four editable parts. `dayPeriod` only exists in a 12-hour field. */
-export type TimeSegment = 'hour' | 'minute' | 'second' | 'dayPeriod'
+export type TimeSegment = "hour" | "minute" | "second" | "dayPeriod";
 
 /** A partially-entered time. `null` means "that segment is still empty". */
 export interface TimeParts {
   /** Always 0–23 internally, even when the field displays 12-hour. */
-  hour: number | null
-  minute: number | null
-  second: number | null
+  hour: number | null;
+  minute: number | null;
+  second: number | null;
 }
 
-export const EMPTY_PARTS: TimeParts = { hour: null, minute: null, second: null }
+export const EMPTY_PARTS: TimeParts = { hour: null, minute: null, second: null };
 
 /** `AM` is 0, `PM` is 1 — an index, so it can be stepped and wrapped like a number. */
-export const AM = 0
-export const PM = 1
+export const AM = 0;
+export const PM = 1;
 
 /** Zero-pad to `width` digits. */
 export function pad(value: number, width: number): string {
-  return String(value).padStart(width, '0')
+  return String(value).padStart(width, "0");
 }
 
 /** Digits in a segment. Every time segment is two. */
-export const SEGMENT_WIDTH = 2
+export const SEGMENT_WIDTH = 2;
 
 /**
  * Inclusive bounds for a segment.
@@ -45,21 +45,21 @@ export const SEGMENT_WIDTH = 2
  * the accepted keystrokes differ.
  */
 export function segmentRange(segment: TimeSegment, hour12: boolean): { min: number; max: number } {
-  if (segment === 'hour') return hour12 ? { min: 1, max: 12 } : { min: 0, max: 23 }
-  if (segment === 'dayPeriod') return { min: AM, max: PM }
-  return { min: 0, max: 59 }
+  if (segment === "hour") return hour12 ? { min: 1, max: 12 } : { min: 0, max: 23 };
+  if (segment === "dayPeriod") return { min: AM, max: PM };
+  return { min: 0, max: 59 };
 }
 
 /** The 1–12 hour a 12-hour field displays for a 0–23 hour. */
 export function toDisplayHour(hour: number, hour12: boolean): number {
-  if (!hour12) return hour
-  const twelve = hour % 12
-  return twelve === 0 ? 12 : twelve
+  if (!hour12) return hour;
+  const twelve = hour % 12;
+  return twelve === 0 ? 12 : twelve;
 }
 
 /** The AM/PM half a 0–23 hour falls in. */
 export function toDayPeriod(hour: number): number {
-  return hour < 12 ? AM : PM
+  return hour < 12 ? AM : PM;
 }
 
 /**
@@ -70,14 +70,14 @@ export function toDayPeriod(hour: number): number {
  * offset is added rather than after.
  */
 export function fromDisplayHour(displayHour: number, dayPeriod: number): number {
-  const folded = displayHour % 12
-  return dayPeriod === PM ? folded + 12 : folded
+  const folded = displayHour % 12;
+  return dayPeriod === PM ? folded + 12 : folded;
 }
 
 /** Every segment the field needs is filled in. */
 export function isComplete(parts: TimeParts, showSeconds: boolean): boolean {
-  if (parts.hour === null || parts.minute === null) return false
-  return !showSeconds || parts.second !== null
+  if (parts.hour === null || parts.minute === null) return false;
+  return !showSeconds || parts.second !== null;
 }
 
 /**
@@ -88,12 +88,12 @@ export function isComplete(parts: TimeParts, showSeconds: boolean): boolean {
  * knowing which locale produced it.
  */
 export function toISO(parts: TimeParts, showSeconds: boolean): string | null {
-  const { hour, minute, second } = parts
-  if (hour === null || minute === null) return null
-  if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null
-  if (!showSeconds) return `${pad(hour, 2)}:${pad(minute, 2)}`
-  if (second === null || second < 0 || second > 59) return null
-  return `${pad(hour, 2)}:${pad(minute, 2)}:${pad(second, 2)}`
+  const { hour, minute, second } = parts;
+  if (hour === null || minute === null) return null;
+  if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null;
+  if (!showSeconds) return `${pad(hour, 2)}:${pad(minute, 2)}`;
+  if (second === null || second < 0 || second > 59) return null;
+  return `${pad(hour, 2)}:${pad(minute, 2)}:${pad(second, 2)}`;
 }
 
 /**
@@ -103,13 +103,13 @@ export function toISO(parts: TimeParts, showSeconds: boolean): string | null {
  * Accepting it would make the prop's meaning depend on the locale.
  */
 export function fromISO(value: string): TimeParts | null {
-  const match = /^(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(value)
-  if (!match) return null
-  const hour = Number(match[1])
-  const minute = Number(match[2])
-  const second = match[3] === undefined ? null : Number(match[3])
-  if (hour > 23 || minute > 59 || (second !== null && second > 59)) return null
-  return { hour, minute, second }
+  const match = /^(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(value);
+  if (!match) return null;
+  const hour = Number(match[1]);
+  const minute = Number(match[2]);
+  const second = match[3] === undefined ? null : Number(match[3]);
+  if (hour > 23 || minute > 59 || (second !== null && second > 59)) return null;
+  return { hour, minute, second };
 }
 
 /**
@@ -120,23 +120,23 @@ export function fromISO(value: string): TimeParts | null {
  * seconds still orders correctly against a value that has them.
  */
 export function compareISO(a: string, b: string): number {
-  const length = Math.min(a.length, b.length)
-  const left = a.slice(0, length)
-  const right = b.slice(0, length)
-  return left < right ? -1 : left > right ? 1 : 0
+  const length = Math.min(a.length, b.length);
+  const left = a.slice(0, length);
+  const right = b.slice(0, length);
+  return left < right ? -1 : left > right ? 1 : 0;
 }
 
 /** Whether a time sits within an optional inclusive range. */
 export function withinRange(value: string, min?: string, max?: string): boolean {
-  if (min !== undefined && compareISO(value, min) < 0) return false
-  if (max !== undefined && compareISO(value, max) > 0) return false
-  return true
+  if (min !== undefined && compareISO(value, min) < 0) return false;
+  if (max !== undefined && compareISO(value, max) > 0) return false;
+  return true;
 }
 
 /** Wrap `value` around an inclusive range — what the arrow keys do at the ends. */
 export function wrap(value: number, min: number, max: number): number {
-  const span = max - min + 1
-  return ((((value - min) % span) + span) % span) + min
+  const span = max - min + 1;
+  return ((((value - min) % span) + span) % span) + min;
 }
 
 /*

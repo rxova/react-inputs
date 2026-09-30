@@ -1,5 +1,5 @@
 ---
-'@rxova/react-otp-input': patch
+"@rxova/react-otp-input": patch
 ---
 
 Point links at rxova.dev

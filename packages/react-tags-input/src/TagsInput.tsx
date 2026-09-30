@@ -1,64 +1,64 @@
-import { forwardRef } from 'react'
-import type { CSSProperties } from 'react'
-import { useTagsInput } from './useTagsInput'
-import type { TagsInputProps, TagState } from './types'
+import { forwardRef } from "react";
+import type { CSSProperties } from "react";
+import { useTagsInput } from "./useTagsInput";
+import type { TagsInputProps, TagState } from "./types";
 
 // Only layout-critical declarations are inlined. Everything visual is a CSS
 // custom property or a `data-*` hook, so there is no stylesheet to import.
 const rootStyle: CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  alignItems: 'center',
-  gap: 'var(--rx-tags-gap, 0.25rem)',
-  font: 'inherit',
-}
+  display: "flex",
+  flexWrap: "wrap",
+  alignItems: "center",
+  gap: "var(--rx-tags-gap, 0.25rem)",
+  font: "inherit",
+};
 
 const listStyle: CSSProperties = {
-  display: 'contents',
+  display: "contents",
   margin: 0,
   padding: 0,
-  listStyle: 'none',
-}
+  listStyle: "none",
+};
 
 const tagStyle: CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 'var(--rx-tags-tag-gap, 0.25rem)',
-  padding: 'var(--rx-tags-tag-padding, 0.125rem 0.375rem)',
-  borderRadius: 'var(--rx-tags-tag-radius, 0.25rem)',
-  background: 'var(--rx-tags-tag-background, rgba(0 0 0 / 0.08))',
-  maxWidth: '100%',
-}
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "var(--rx-tags-tag-gap, 0.25rem)",
+  padding: "var(--rx-tags-tag-padding, 0.125rem 0.375rem)",
+  borderRadius: "var(--rx-tags-tag-radius, 0.25rem)",
+  background: "var(--rx-tags-tag-background, rgba(0 0 0 / 0.08))",
+  maxWidth: "100%",
+};
 
 const removeStyle: CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
   // 24px of hit area at the default font size. Below this the button fails
   // WCAG 2.5.8 Target Size (Minimum) on touch.
-  minWidth: 'var(--rx-tags-remove-size, 1.5rem)',
-  minHeight: 'var(--rx-tags-remove-size, 1.5rem)',
+  minWidth: "var(--rx-tags-remove-size, 1.5rem)",
+  minHeight: "var(--rx-tags-remove-size, 1.5rem)",
   padding: 0,
-  font: 'inherit',
+  font: "inherit",
   lineHeight: 1,
-  background: 'none',
+  background: "none",
   border: 0,
-  color: 'inherit',
-  cursor: 'pointer',
-}
+  color: "inherit",
+  cursor: "pointer",
+};
 
 const inputStyle: CSSProperties = {
-  font: 'inherit',
-  flex: '1 1 6rem',
-  minWidth: '4rem',
+  font: "inherit",
+  flex: "1 1 6rem",
+  minWidth: "4rem",
   border: 0,
   // No `outline: none`. The entry box is the field's only text tab stop, and
   // suppressing the UA ring here left a keyboard user with no indication of
   // where they were — WCAG 2.4.7 Focus Visible, with nothing shipped in its
   // place. A theme that wants a ring around the whole field can still draw one
   // from `[data-rx-tags-root]:focus-within` and suppress this one.
-  background: 'transparent',
-}
+  background: "transparent",
+};
 
 /**
  * Off-screen but still in the accessibility tree. `display: none` and
@@ -66,17 +66,17 @@ const inputStyle: CSSProperties = {
  * thing this element exists to stay in.
  */
 const visuallyHidden: CSSProperties = {
-  position: 'absolute',
+  position: "absolute",
   width: 1,
   height: 1,
   padding: 0,
   margin: -1,
-  overflow: 'hidden',
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  whiteSpace: 'nowrap',
+  overflow: "hidden",
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  whiteSpace: "nowrap",
   border: 0,
-}
+};
 
 /**
  * `forwardRef` rather than reading `props.ref`.
@@ -108,11 +108,11 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
       invalid,
       dir,
       autoFocus,
-      'aria-label': ariaLabel,
-      'aria-describedby': describedBy,
-    } = props
+      "aria-label": ariaLabel,
+      "aria-describedby": describedBy,
+    } = props;
 
-    const field = useTagsInput(props)
+    const field = useTagsInput(props);
     const {
       tags,
       text,
@@ -131,7 +131,7 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
       handlePaste,
       handleBlur,
       handleFocus,
-    } = field
+    } = field;
 
     return (
       <div
@@ -139,10 +139,10 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
         style={{ ...rootStyle, ...style }}
         dir={dir}
         data-rx-tags-root=""
-        data-disabled={disabled ? '' : undefined}
-        data-readonly={readOnly ? '' : undefined}
-        data-invalid={invalid ? '' : undefined}
-        data-full={full ? '' : undefined}
+        data-disabled={disabled ? "" : undefined}
+        data-readonly={readOnly ? "" : undefined}
+        data-invalid={invalid ? "" : undefined}
+        data-full={full ? "" : undefined}
         data-count={tags.length}
         onBlur={handleBlur}
         onFocus={handleFocus}
@@ -154,8 +154,8 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
           cannot compose against. A node goes into a hidden span the control
           points at, because `aria-label` only takes a string.
         */}
-        {label !== undefined && typeof label !== 'string' ? (
-          <span id={ids.label} style={{ display: 'none' }}>
+        {label !== undefined && typeof label !== "string" ? (
+          <span id={ids.label} style={{ display: "none" }}>
             {label}
           </span>
         ) : null}
@@ -173,18 +173,18 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
               focused: focusedIndex === index,
               disabled,
               readOnly,
-            }
+            };
             return (
               <li key={`${tag}-${String(index)}`} data-rx-tags-tag={index} style={tagStyle}>
                 <span data-rx-tags-label="">{renderTag ? renderTag(state) : tag}</span>
                 {readOnly ? null : (
                   <button
                     ref={(node) => {
-                      tagRefs.current[index] = node
+                      tagRefs.current[index] = node;
                     }}
                     type="button"
                     data-rx-tags-remove=""
-                    data-focused={focusedIndex === index ? '' : undefined}
+                    data-focused={focusedIndex === index ? "" : undefined}
                     // Roving tabindex: the list is one tab stop, not one per
                     // tag. Twenty tags would otherwise cost a keyboard user
                     // twenty presses to get past the field.
@@ -196,31 +196,31 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
                     disabled={disabled}
                     style={removeStyle}
                     onClick={() => {
-                      removeAt(index)
+                      removeAt(index);
                     }}
                     onKeyDown={(event) => {
-                      handleTagKeyDown(event, index)
+                      handleTagKeyDown(event, index);
                     }}
                     onFocus={() => {
-                      setFocusedIndex(index)
+                      setFocusedIndex(index);
                     }}
                     onBlur={() => {
-                      setFocusedIndex(null)
+                      setFocusedIndex(null);
                     }}
                   >
                     <span aria-hidden="true">×</span>
                   </button>
                 )}
               </li>
-            )
+            );
           })}
         </ul>
 
         <input
           ref={(node) => {
-            inputRef.current = node
-            if (typeof ref === 'function') ref(node)
-            else if (ref) ref.current = node
+            inputRef.current = node;
+            if (typeof ref === "function") ref(node);
+            else if (ref) ref.current = node;
           }}
           id={ids.input}
           data-rx-tags-input=""
@@ -236,9 +236,9 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
           // A tag field is a text box, not a combobox: there is no popup and
           // nothing to expand. Claiming `role="combobox"` without one is a
           // promise to assistive technology that this component cannot keep.
-          aria-label={ariaLabel ?? (typeof label === 'string' ? label : undefined)}
+          aria-label={ariaLabel ?? (typeof label === "string" ? label : undefined)}
           aria-labelledby={
-            ariaLabel === undefined && label !== undefined && typeof label !== 'string'
+            ariaLabel === undefined && label !== undefined && typeof label !== "string"
               ? ids.label
               : undefined
           }
@@ -249,7 +249,7 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
           spellCheck={false}
           style={inputStyle}
           onChange={(event) => {
-            setText(event.target.value)
+            setText(event.target.value);
           }}
           onKeyDown={handleInputKeyDown}
           onPaste={handlePaste}
@@ -288,6 +288,6 @@ export const TagsInput = /* @__PURE__ */ forwardRef<HTMLInputElement, TagsInputP
           {announcement}
         </span>
       </div>
-    )
+    );
   },
-)
+);

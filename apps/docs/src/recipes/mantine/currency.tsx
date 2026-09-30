@@ -1,17 +1,17 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { TextInput } from '@mantine/core'
-import { useCurrencyInput } from '@rxova/react-intl-currency-input'
+import { useState } from "react";
+import { TextInput } from "@mantine/core";
+import { useCurrencyInput } from "@rxova/react-intl-currency-input";
 
 export function MantineCurrency() {
-  const [value, setValue] = useState<number | null>(null)
+  const [value, setValue] = useState<number | null>(null);
   const { inputProps, ref } = useCurrencyInput({
-    locale: 'en-US',
-    currency: 'USD',
+    locale: "en-US",
+    currency: "USD",
     value,
     onChange: setValue,
-  })
+  });
 
   return (
     <TextInput
@@ -21,5 +21,5 @@ export function MantineCurrency() {
       label="Price"
       description="Enter the price before tax."
     />
-  )
+  );
 }

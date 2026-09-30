@@ -33,7 +33,7 @@ jobs:
       # browsers (it trusts CI's already-green run rather than re-verifying), so
       # the hook cannot launch chromium, coverage collapses below threshold, and
       # the release dies. Skipping the hook restores the "trust CI" design.
-      HUSKY: '0'
+      HUSKY: "0"
     permissions:
       contents: write # version commit and tags
       pull-requests: write # the version PR
@@ -49,7 +49,7 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-pnpm
         with:
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
       - name: Upgrade npm for trusted publishing
         run: npm install -g npm@^11.5.1
       - run: pnpm install --frozen-lockfile
@@ -72,10 +72,10 @@ jobs:
           # changed package is built in dependency order before publishing.
           version-script: pnpm exec changeset version
           publish-script: pnpm run release
-          commit-message: 'chore: version packages'
-          pr-title: 'chore: version packages'
+          commit-message: "chore: version packages"
+          pr-title: "chore: version packages"
         env:
-          NPM_CONFIG_PROVENANCE: 'true'
+          NPM_CONFIG_PROVENANCE: "true"
 
       # v2 renamed the outputs to kebab-case: `publishedPackages` is now
       # `published-packages` (`published` itself is unchanged). An unset output

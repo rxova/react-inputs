@@ -1,12 +1,12 @@
-import { describe, expect, it, vi } from 'vitest'
-import { page } from 'vitest/browser'
-import { render } from 'vitest-browser-react'
-import { Controller, useForm } from 'react-hook-form'
-import { Form, Formik, useField } from 'formik'
-import { Field as FinalField, Form as FinalForm } from 'react-final-form'
-import { useForm as useTanstackForm } from '@tanstack/react-form'
-import { useState } from 'react'
-import { FileInput } from '../FileInput'
+import { describe, expect, it, vi } from "vitest";
+import { page } from "vitest/browser";
+import { render } from "vitest-browser-react";
+import { Controller, useForm } from "react-hook-form";
+import { Form, Formik, useField } from "formik";
+import { Field as FinalField, Form as FinalForm } from "react-final-form";
+import { useForm as useTanstackForm } from "@tanstack/react-form";
+import { useState } from "react";
+import { FileInput } from "../FileInput";
 
 /**
  * The whole loop for each integration: pick → library state updates → submit
@@ -17,45 +17,45 @@ import { FileInput } from '../FileInput'
  * instead of absent. Nothing here uploads: the component hands over `File`
  * objects and the transport stays the caller's.
  */
-function makeFile(name: string, type = 'text/plain') {
-  return new File([new Uint8Array(8)], name, { type, lastModified: 1_700_000_000_000 })
+function makeFile(name: string, type = "text/plain") {
+  return new File([new Uint8Array(8)], name, { type, lastModified: 1_700_000_000_000 });
 }
 
 function input(): HTMLInputElement {
-  return document.querySelector<HTMLInputElement>('[data-rx-file-input]')!
+  return document.querySelector<HTMLInputElement>("[data-rx-file-input]")!;
 }
 
 /** Drive the hidden input the way the native picker does. */
 function pick(...files: File[]) {
-  const data = new DataTransfer()
-  for (const file of files) data.items.add(file)
-  const element = input()
-  element.files = data.files
-  element.dispatchEvent(new Event('change', { bubbles: true }))
+  const data = new DataTransfer();
+  for (const file of files) data.items.add(file);
+  const element = input();
+  element.files = data.files;
+  element.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
-describe('native form, no library', () => {
-  it('posts the real files, not a stand-in for them', async () => {
-    const onSubmit = vi.fn<(files: File[]) => void>()
+describe("native form, no library", () => {
+  it("posts the real files, not a stand-in for them", async () => {
+    const onSubmit = vi.fn<(files: File[]) => void>();
     await render(
       <form
         onSubmit={(event) => {
-          event.preventDefault()
-          onSubmit(new FormData(event.currentTarget).getAll('docs') as File[])
+          event.preventDefault();
+          onSubmit(new FormData(event.currentTarget).getAll("docs") as File[]);
         }}
       >
         <FileInput name="docs" label="Documents" multiple />
         <button type="submit">Upload</button>
       </form>,
-    )
-    pick(makeFile('a.txt'), makeFile('b.txt'))
-    await page.getByRole('button', { name: 'Upload' }).click()
+    );
+    pick(makeFile("a.txt"), makeFile("b.txt"));
+    await page.getByRole("button", { name: "Upload" }).click();
 
-    const posted = onSubmit.mock.calls[0]?.[0] ?? []
-    expect(posted.map((file) => file.name)).toEqual(['a.txt', 'b.txt'])
-    expect(posted[0]).toBeInstanceOf(File)
-  })
-})
+    const posted = onSubmit.mock.calls[0]?.[0] ?? [];
+    expect(posted.map((file) => file.name)).toEqual(["a.txt", "b.txt"]);
+    expect(posted[0]).toBeInstanceOf(File);
+  });
+});
 
 /**
  * A browser fires `change` only when the new selection differs from what the
@@ -66,115 +66,115 @@ describe('native form, no library', () => {
  * `pick` sets `files` and dispatches `change` itself, so it cannot reproduce the
  * missing event. What these assert is the state that decides it.
  */
-describe('the native control holds only what the field shows', () => {
-  it('lets go of a refused file, so picking it again reaches onReject', async () => {
-    const onReject = vi.fn()
-    await render(<FileInput label="Import" maxSize={4} onReject={onReject} />)
-    pick(makeFile('big.txt'))
+describe("the native control holds only what the field shows", () => {
+  it("lets go of a refused file, so picking it again reaches onReject", async () => {
+    const onReject = vi.fn();
+    await render(<FileInput label="Import" maxSize={4} onReject={onReject} />);
+    pick(makeFile("big.txt"));
     await vi.waitFor(() => {
-      expect(onReject).toHaveBeenCalledTimes(1)
-    })
+      expect(onReject).toHaveBeenCalledTimes(1);
+    });
     await vi.waitFor(() => {
-      expect(input().files).toHaveLength(0)
-    })
-  })
+      expect(input().files).toHaveLength(0);
+    });
+  });
 
-  it('lets go of a file a controlled parent does not keep, on every pick', async () => {
-    const onAdd = vi.fn()
-    await render(<FileInput label="Import" value={[]} onAdd={onAdd} />)
+  it("lets go of a file a controlled parent does not keep, on every pick", async () => {
+    const onAdd = vi.fn();
+    await render(<FileInput label="Import" value={[]} onAdd={onAdd} />);
     // Twice: the second pick repeats the first announcement, so the field has
     // no state of its own that changes, and nothing would re-render.
     for (const time of [1, 2]) {
-      pick(makeFile('a.csv'))
+      pick(makeFile("a.csv"));
       await vi.waitFor(() => {
-        expect(onAdd).toHaveBeenCalledTimes(time)
-      })
+        expect(onAdd).toHaveBeenCalledTimes(time);
+      });
       await vi.waitFor(() => {
-        expect(input().files).toHaveLength(0)
-      })
+        expect(input().files).toHaveLength(0);
+      });
     }
-  })
+  });
 
-  it('lets go of a file the parent removes from value itself', async () => {
+  it("lets go of a file the parent removes from value itself", async () => {
     function Harness() {
-      const [files, setFiles] = useState<File[]>([])
+      const [files, setFiles] = useState<File[]>([]);
       return (
         <>
           <FileInput label="Import" value={files} onChange={setFiles} />
           <button
             type="button"
             onClick={() => {
-              setFiles([])
+              setFiles([]);
             }}
           >
             Reset
           </button>
         </>
-      )
+      );
     }
-    await render(<Harness />)
-    pick(makeFile('a.csv'))
+    await render(<Harness />);
+    pick(makeFile("a.csv"));
     await vi.waitFor(() => {
-      expect(document.querySelector('[data-rx-file-name]')).toMatchTextContent('a.csv')
-    })
-    expect(input().files).toHaveLength(1)
+      expect(document.querySelector("[data-rx-file-name]")).toMatchTextContent("a.csv");
+    });
+    expect(input().files).toHaveLength(1);
 
-    await page.getByRole('button', { name: 'Reset' }).click()
+    await page.getByRole("button", { name: "Reset" }).click();
     await vi.waitFor(() => {
-      expect(input().files).toHaveLength(0)
-    })
-  })
+      expect(input().files).toHaveLength(0);
+    });
+  });
 
-  it('posts the files a pick added and not the ones it refused', async () => {
-    const onSubmit = vi.fn<(files: File[]) => void>()
+  it("posts the files a pick added and not the ones it refused", async () => {
+    const onSubmit = vi.fn<(files: File[]) => void>();
     await render(
       <form
         onSubmit={(event) => {
-          event.preventDefault()
-          onSubmit(new FormData(event.currentTarget).getAll('docs') as File[])
+          event.preventDefault();
+          onSubmit(new FormData(event.currentTarget).getAll("docs") as File[]);
         }}
       >
         <FileInput name="docs" label="Documents" multiple maxSize={8} />
         <button type="submit">Upload</button>
       </form>,
-    )
-    pick(makeFile('a.txt'), new File([new Uint8Array(20)], 'big.txt', { type: 'text/plain' }))
+    );
+    pick(makeFile("a.txt"), new File([new Uint8Array(20)], "big.txt", { type: "text/plain" }));
     await vi.waitFor(() => {
-      expect(input().files).toHaveLength(1)
-    })
-    await page.getByRole('button', { name: 'Upload' }).click()
+      expect(input().files).toHaveLength(1);
+    });
+    await page.getByRole("button", { name: "Upload" }).click();
 
-    expect(onSubmit.mock.calls[0]?.[0].map((file) => file.name)).toEqual(['a.txt'])
-  })
+    expect(onSubmit.mock.calls[0]?.[0].map((file) => file.name)).toEqual(["a.txt"]);
+  });
 
-  it('keeps the last pick when a different file is removed', async () => {
+  it("keeps the last pick when a different file is removed", async () => {
     // In `multiple` mode the control only ever holds the latest pick. Removing
     // an earlier file used to blank it, so a native submit posted nothing.
-    await render(<FileInput name="docs" label="Documents" multiple />)
-    pick(makeFile('a.txt'))
+    await render(<FileInput name="docs" label="Documents" multiple />);
+    pick(makeFile("a.txt"));
     await vi.waitFor(() => {
-      expect(document.querySelectorAll('[data-rx-file-name]')).toHaveLength(1)
-    })
-    pick(makeFile('b.txt'))
+      expect(document.querySelectorAll("[data-rx-file-name]")).toHaveLength(1);
+    });
+    pick(makeFile("b.txt"));
     await vi.waitFor(() => {
-      expect(document.querySelectorAll('[data-rx-file-name]')).toHaveLength(2)
-    })
+      expect(document.querySelectorAll("[data-rx-file-name]")).toHaveLength(2);
+    });
 
-    await page.getByRole('button', { name: 'Remove a.txt' }).click()
+    await page.getByRole("button", { name: "Remove a.txt" }).click();
     await vi.waitFor(() => {
-      expect(document.querySelectorAll('[data-rx-file-name]')).toHaveLength(1)
-    })
-    expect(Array.from(input().files ?? []).map((file) => file.name)).toEqual(['b.txt'])
-  })
-})
+      expect(document.querySelectorAll("[data-rx-file-name]")).toHaveLength(1);
+    });
+    expect(Array.from(input().files ?? []).map((file) => file.name)).toEqual(["b.txt"]);
+  });
+});
 
-describe('react-hook-form via Controller', () => {
+describe("react-hook-form via Controller", () => {
   function Harness({ onValid }: { onValid: (value: unknown) => void }) {
-    const { control, handleSubmit } = useForm<{ docs: File[] }>({ defaultValues: { docs: [] } })
+    const { control, handleSubmit } = useForm<{ docs: File[] }>({ defaultValues: { docs: [] } });
     return (
       <form
         onSubmit={(event) => {
-          void handleSubmit(onValid)(event)
+          void handleSubmit(onValid)(event);
         }}
       >
         <Controller
@@ -194,27 +194,27 @@ describe('react-hook-form via Controller', () => {
         />
         <button type="submit">Upload</button>
       </form>
-    )
+    );
   }
 
-  it('binds the File array and submits it', async () => {
-    const onValid = vi.fn()
-    await render(<Harness onValid={onValid} />)
-    pick(makeFile('report.pdf', 'application/pdf'))
-    await page.getByRole('button', { name: 'Upload' }).click()
+  it("binds the File array and submits it", async () => {
+    const onValid = vi.fn();
+    await render(<Harness onValid={onValid} />);
+    pick(makeFile("report.pdf", "application/pdf"));
+    await page.getByRole("button", { name: "Upload" }).click();
 
     await vi.waitFor(() => {
       expect(onValid).toHaveBeenCalledWith(
-        { docs: [expect.objectContaining({ name: 'report.pdf' })] },
+        { docs: [expect.objectContaining({ name: "report.pdf" })] },
         expect.anything(),
-      )
-    })
-  })
-})
+      );
+    });
+  });
+});
 
-describe('formik via useField', () => {
+describe("formik via useField", () => {
   function Field() {
-    const [field, meta, helpers] = useField<File[]>('docs')
+    const [field, meta, helpers] = useField<File[]>("docs");
     return (
       <>
         <FileInput
@@ -227,11 +227,11 @@ describe('formik via useField', () => {
         />
         <output data-testid="touched">{String(meta.touched)}</output>
       </>
-    )
+    );
   }
 
-  it('drives Formik state and submits the files', async () => {
-    const onSubmit = vi.fn<(values: { docs: File[] }) => void>()
+  it("drives Formik state and submits the files", async () => {
+    const onSubmit = vi.fn<(values: { docs: File[] }) => void>();
     await render(
       <Formik initialValues={{ docs: [] as File[] }} onSubmit={(values) => onSubmit(values)}>
         <Form>
@@ -239,16 +239,16 @@ describe('formik via useField', () => {
           <button type="submit">Upload</button>
         </Form>
       </Formik>,
-    )
-    pick(makeFile('notes.txt'))
-    await page.getByRole('button', { name: 'Upload' }).click()
+    );
+    pick(makeFile("notes.txt"));
+    await page.getByRole("button", { name: "Upload" }).click();
 
     await vi.waitFor(() => {
-      expect(onSubmit.mock.calls[0]?.[0].docs.map((file) => file.name)).toEqual(['notes.txt'])
-    })
-  })
+      expect(onSubmit.mock.calls[0]?.[0].docs.map((file) => file.name)).toEqual(["notes.txt"]);
+    });
+  });
 
-  it('marks touched when focus leaves the field, not when it moves to a remove button', async () => {
+  it("marks touched when focus leaves the field, not when it moves to a remove button", async () => {
     // The drop zone and every remove button are inside the field. Marking it
     // touched when focus lands on one would show an error while the user is
     // still curating the selection.
@@ -259,31 +259,31 @@ describe('formik via useField', () => {
           <button type="submit">Upload</button>
         </Form>
       </Formik>,
-    )
-    pick(makeFile('notes.txt'))
-    document.querySelector<HTMLButtonElement>('[data-rx-file-zone]')!.focus()
-    document.querySelector<HTMLButtonElement>('[data-rx-file-remove]')!.focus()
+    );
+    pick(makeFile("notes.txt"));
+    document.querySelector<HTMLButtonElement>("[data-rx-file-zone]")!.focus();
+    document.querySelector<HTMLButtonElement>("[data-rx-file-remove]")!.focus();
 
-    await expect.element(page.getByTestId('touched')).toMatchTextContent('false')
+    await expect.element(page.getByTestId("touched")).toMatchTextContent("false");
 
-    await page.getByRole('button', { name: 'Upload' }).click()
+    await page.getByRole("button", { name: "Upload" }).click();
 
-    await expect.element(page.getByTestId('touched')).toMatchTextContent('true')
-  })
-})
+    await expect.element(page.getByTestId("touched")).toMatchTextContent("true");
+  });
+});
 
-describe('react-final-form via Field', () => {
-  it('binds the field and submits the files', async () => {
-    const onSubmit = vi.fn<(values: { docs: File[] }) => void>()
+describe("react-final-form via Field", () => {
+  it("binds the field and submits the files", async () => {
+    const onSubmit = vi.fn<(values: { docs: File[] }) => void>();
     await render(
       <FinalForm
         onSubmit={(values) => {
-          onSubmit(values as { docs: File[] })
+          onSubmit(values as { docs: File[] });
         }}
         render={({ handleSubmit }) => (
           <form
             onSubmit={(event) => {
-              void handleSubmit(event)
+              void handleSubmit(event);
             }}
           >
             <FinalField name="docs">
@@ -304,29 +304,29 @@ describe('react-final-form via Field', () => {
           </form>
         )}
       />,
-    )
-    pick(makeFile('scan.png', 'image/png'))
-    await page.getByRole('button', { name: 'Upload' }).click()
+    );
+    pick(makeFile("scan.png", "image/png"));
+    await page.getByRole("button", { name: "Upload" }).click();
 
     await vi.waitFor(() => {
-      expect(onSubmit.mock.calls[0]?.[0].docs.map((file) => file.name)).toEqual(['scan.png'])
-    })
-  })
-})
+      expect(onSubmit.mock.calls[0]?.[0].docs.map((file) => file.name)).toEqual(["scan.png"]);
+    });
+  });
+});
 
-describe('TanStack Form via form.Field', () => {
+describe("TanStack Form via form.Field", () => {
   function Harness({ onValid }: { onValid: (value: { docs: File[] }) => void }) {
     const form = useTanstackForm({
       defaultValues: { docs: [] as File[] },
       onSubmit: ({ value }) => {
-        onValid(value)
+        onValid(value);
       },
-    })
+    });
     return (
       <form
         onSubmit={(event) => {
-          event.preventDefault()
-          void form.handleSubmit()
+          event.preventDefault();
+          void form.handleSubmit();
         }}
       >
         <form.Field name="docs">
@@ -337,7 +337,7 @@ describe('TanStack Form via form.Field', () => {
               multiple
               value={field.state.value}
               onChange={(files) => {
-                field.handleChange(files)
+                field.handleChange(files);
               }}
               onBlur={field.handleBlur}
             />
@@ -345,17 +345,17 @@ describe('TanStack Form via form.Field', () => {
         </form.Field>
         <button type="submit">Upload</button>
       </form>
-    )
+    );
   }
 
-  it('binds the File array and submits it', async () => {
-    const onValid = vi.fn<(value: { docs: File[] }) => void>()
-    await render(<Harness onValid={onValid} />)
-    pick(makeFile('a.txt'), makeFile('b.txt'))
-    await page.getByRole('button', { name: 'Upload' }).click()
+  it("binds the File array and submits it", async () => {
+    const onValid = vi.fn<(value: { docs: File[] }) => void>();
+    await render(<Harness onValid={onValid} />);
+    pick(makeFile("a.txt"), makeFile("b.txt"));
+    await page.getByRole("button", { name: "Upload" }).click();
 
     await vi.waitFor(() => {
-      expect(onValid.mock.calls[0]?.[0].docs.map((file) => file.name)).toEqual(['a.txt', 'b.txt'])
-    })
-  })
-})
+      expect(onValid.mock.calls[0]?.[0].docs.map((file) => file.name)).toEqual(["a.txt", "b.txt"]);
+    });
+  });
+});

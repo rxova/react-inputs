@@ -1,13 +1,13 @@
 ---
-title: 'Tags input — About'
-description: 'How the roving tab order works, what gets announced on add and remove, and how to style tokens with the component data hooks.'
+title: "Tags input — About"
+description: "How the roving tab order works, what gets announced on add and remove, and how to style tokens with the component data hooks."
 sidebar:
-  label: 'About'
+  label: "About"
   order: 3
 ---
 
-import CodeRecipes from '@rxova/astro-ui/components/CodeRecipes.astro'
-import { recipesFor } from '../../../../lib/recipe-sources.mjs'
+import CodeRecipes from "@rxova/astro-ui/components/CodeRecipes.astro";
+import { recipesFor } from "../../../../lib/recipe-sources.mjs";
 
 The decisions behind the component, and the ones you should disagree with deliberately rather than
 by accident.
@@ -96,10 +96,10 @@ Neither takes the form down. They run on every entry, and a typo in someone's pr
 degrade one widget rather than unmount a page.
 
 ```ts
-import { attempt } from '@rxova/react-tags-input'
+import { attempt } from "@rxova/react-tags-input";
 
-attempt(['react'], 'React') // { tag: 'React', accepted: false, reason: 'duplicate' }
-attempt([], '  ') // { tag: '', accepted: false, reason: 'empty' }
+attempt(["react"], "React"); // { tag: 'React', accepted: false, reason: 'duplicate' }
+attempt([], "  "); // { tag: '', accepted: false, reason: 'empty' }
 ```
 
 These helpers are exported and pure, so the same rules can run on the server against whatever the
@@ -205,7 +205,7 @@ With a `name`, the component emits one hidden input per tag:
 
 ```tsx
 <form action="/profile" method="post">
-  <TagsInput name="skills" label="Skills" defaultValue={['react', 'a11y']} />
+  <TagsInput name="skills" label="Skills" defaultValue={["react", "a11y"]} />
   <button type="submit">Save</button>
 </form>
 ```
@@ -237,7 +237,7 @@ the list is empty.
 
 ```tsx
 function Field() {
-  const [field, , helpers] = useField<string[]>('skills')
+  const [field, , helpers] = useField<string[]>("skills");
   return (
     <TagsInput
       label="Tags"
@@ -246,7 +246,7 @@ function Field() {
       onChange={(tags) => helpers.setValue(tags)}
       onBlur={() => helpers.setTouched(true)}
     />
-  )
+  );
 }
 ```
 
@@ -292,4 +292,4 @@ job, not the component's.
 The tag list, roving focus, entry box, and live region stay together. These recipes add design-system
 field chrome without claiming combobox semantics or replacing keyboard behavior.
 
-<CodeRecipes idPrefix="integration" recipes={recipesFor('tags')} />
+<CodeRecipes idPrefix="integration" recipes={recipesFor("tags")} />
