@@ -12,7 +12,7 @@ afterEach(() => {
   for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true })
 })
 
-function fixture(config = "workers: 1, projects: [{ name: 'chromium' }]") {
+function fixture(config = "basePlaywrightConfig({ port: 1, browsers: ['chromium'] })") {
   const root = mkdtempSync(join(tmpdir(), 'rxova-browsers-'))
   roots.push(root)
   mkdirSync(join(root, 'packages', 'component'), { recursive: true })
@@ -35,16 +35,31 @@ describe('checkBrowserConfigs', () => {
     expect(checkBrowserConfigs(fixture()).failures).toEqual([])
   })
 
-  it('rejects Playwright default worker fan-out', () => {
+  it('accepts the preset default of Chromium alone', () => {
+    expect(checkBrowserConfigs(fixture('basePlaywrightConfig({ port: 1 })')).failures).toEqual([])
+  })
+
+  it('rejects a config that is not built on the shared preset', () => {
     const failures = checkBrowserConfigs(
-      fixture("workers: process.env.CI ? 1 : undefined, projects: [{ name: 'chromium' }]"),
+      fixture("defineConfig({ projects: [{ name: 'chromium' }] })"),
     ).failures
-    expect(failures).toContain('packages/component/playwright.config.ts must set `workers: 1`')
+    expect(failures).toContain(
+      'packages/component/playwright.config.ts is not built on basePlaywrightConfig',
+    )
+  })
+
+  it('rejects worker fan-out', () => {
+    const failures = checkBrowserConfigs(
+      fixture('basePlaywrightConfig({ port: 1, workers: process.env.CI ? 1 : undefined })'),
+    ).failures
+    expect(failures).toContain(
+      'packages/component/playwright.config.ts must leave `workers` at 1, found `process.env.CI ? 1 : undefined`',
+    )
   })
 
   it('rejects a browser missing from the installer', () => {
     const failures = checkBrowserConfigs(
-      fixture("workers: 1, projects: [{ name: 'chromium' }, { name: 'safari' }]"),
+      fixture("basePlaywrightConfig({ port: 1, browsers: ['chromium', 'safari'] })"),
     ).failures
     expect(failures.join('\n')).toContain('e2e:install omits safari')
   })

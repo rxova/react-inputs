@@ -113,12 +113,25 @@ export function packageBudgets() {
 }
 
 /**
+ * The per-file coverage bar the shared preset applies when a package names no
+ * axis of its own: `baseVitestConfig` from @rxova/repo-config/vitest measures
+ * every file per file at 95 on each axis.
+ */
+const PRESET_THRESHOLD = 95
+
+/**
  * The enforced coverage floor, as the weakest threshold across the suite.
  *
  * Read as text rather than by importing the config: these configs pull in
  * @vitejs/plugin-react and the Playwright browser provider at module scope,
  * which is a lot of machinery to boot inside a docs build just to read four
  * integers.
+ *
+ * Each config is a `baseVitestConfig({ … })` call. The preset holds every file
+ * to {@link PRESET_THRESHOLD} per file on each axis, and a package overrides
+ * only the axes it names in `thresholds: { … }`. So the reader starts from the
+ * preset's bar and applies the overrides; a config that stops using the preset,
+ * or turns thresholds off, is a restructure worth failing on.
  *
  * The floor is reported as a minimum across packages, not a single package's
  * number, because the page makes one claim about the whole suite. Today that is
@@ -133,17 +146,20 @@ export function coverageFloor() {
   for (const { dir } of components()) {
     const where = `packages/${dir}/vitest.config.ts`
     const source = read('packages', dir, 'vitest.config.ts')
-    const block = /thresholds:\s*\{([\s\S]*?)\n\s*\},/.exec(source)
-    if (!block) throw new Error(`${where}: no coverage thresholds block found`)
-
-    if (!/perFile:\s*true/.test(block[1])) {
-      throw new Error(`${where}: coverage thresholds are no longer perFile`)
+    if (!/\bbaseVitestConfig\(/.test(source)) {
+      throw new Error(`${where}: no longer built on baseVitestConfig from @rxova/repo-config`)
+    }
+    if (/\bthresholds:\s*false\b/.test(source)) {
+      throw new Error(`${where}: coverage thresholds are switched off`)
+    }
+    if (/\bcoverage:\s*false\b/.test(source)) {
+      throw new Error(`${where}: coverage is switched off`)
     }
 
+    const overrides = /\bthresholds:\s*\{([^}]*)\}/.exec(source)?.[1] ?? ''
     for (const metric of metrics) {
-      const found = new RegExp(`\\b${metric}:\\s*(\\d+)`).exec(block[1])
-      if (!found) throw new Error(`${where}: no ${metric} threshold found`)
-      const value = Number(found[1])
+      const found = new RegExp(`\\b${metric}:\\s*(\\d+)`).exec(overrides)
+      const value = found ? Number(found[1]) : PRESET_THRESHOLD
       floor[metric] = floor[metric] === undefined ? value : Math.min(floor[metric], value)
     }
   }
@@ -151,13 +167,20 @@ export function coverageFloor() {
   return { ...floor, perFile: true }
 }
 
-/** The browsers every component's E2E suite runs against. */
+/**
+ * The browsers every component's E2E suite runs against: the `browsers` each
+ * package passes to `basePlaywrightConfig`, which runs every spec in each.
+ */
 export function e2eBrowsers() {
   const perPackage = components().map(({ dir }) => {
     const where = `packages/${dir}/playwright.config.ts`
     const source = read('packages', dir, 'playwright.config.ts')
-    const names = [...source.matchAll(/name:\s*'([^']+)'/g)].map((match) => match[1])
-    if (names.length === 0) throw new Error(`${where}: no Playwright projects found`)
+    if (!/\bbasePlaywrightConfig\(/.test(source)) {
+      throw new Error(`${where}: no longer built on basePlaywrightConfig from @rxova/repo-config`)
+    }
+    const list = /\bbrowsers:\s*\[([^\]]*)\]/.exec(source)?.[1]
+    const names = list ? [...list.matchAll(/['"]([^'"]+)['"]/g)].map((match) => match[1]) : []
+    if (names.length === 0) throw new Error(`${where}: no \`browsers\` list found`)
     return names
   })
 
@@ -193,7 +216,7 @@ export function axeTags() {
     const source = read('packages', dir, 'e2e', 'a11y.spec.ts')
     const call = /withTags\(\[([^\]]+)\]\)/.exec(source)
     if (!call) throw new Error(`${where}: no AxeBuilder .withTags([...]) call found`)
-    return [...call[1].matchAll(/'([^']+)'/g)].map((match) => match[1])
+    return [...call[1].matchAll(/['"]([^'"]+)['"]/g)].map((match) => match[1])
   })
 
   return perPackage.reduce((shared, tags) => shared.filter((tag) => tags.includes(tag)))

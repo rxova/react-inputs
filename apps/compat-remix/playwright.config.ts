@@ -1,13 +1,11 @@
-import { defineConfig, devices } from '@playwright/test'
+import { basePlaywrightConfig } from '@rxova/repo-config/playwright'
 
-export default defineConfig({
-  testDir: './e2e',
-  workers: 1,
-  use: { baseURL: 'http://localhost:4303' },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
-  webServer: {
-    command: 'pnpm run start',
-    url: 'http://localhost:4303/',
-    reuseExistingServer: !process.env.CI,
-  },
+export default basePlaywrightConfig({
+  command: 'pnpm run start',
+  port: 4303,
+  // As these ran before the preset: no CI retries, no forbidOnly, the list
+  // reporter.
+  retries: 0,
+  forbidOnly: false,
+  reporter: [['list']],
 })

@@ -2,9 +2,15 @@
  * Keeps the installed browser list and bounded local concurrency in step with
  * every component package's Playwright config.
  *
+ * Every config is a `basePlaywrightConfig({ … })` call from
+ * @rxova/repo-config/playwright, which runs each spec in every entry of
+ * `browsers` (Chromium alone when the key is absent) on one worker unless
+ * `workers` says otherwise. So the check reads those two keys: the browsers
+ * must all be installed by `e2e:install`, and `workers` must stay 1.
+ *
  * The checks are pure over a supplied repository root so tests can exercise
  * broken fixtures without mutating this checkout. The CLI adapter is guarded at
- * the bottom, matching the other release-gate scripts in this package.
+ * the bottom, matching the other scripts in this directory.
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
@@ -17,6 +23,18 @@ export interface BrowserCheckResult {
   readonly configs: number
   readonly projects: readonly string[]
   readonly failures: readonly string[]
+}
+
+/** The preset's default when a config names no `browsers`. */
+const DEFAULT_BROWSERS = ['chromium']
+
+/** The `browsers: [...]` a config passes to basePlaywrightConfig, else the preset default. */
+export function browsersOf(config: string): string[] {
+  const list = /\bbrowsers:\s*\[([^\]]*)\]/.exec(config)?.[1]
+  if (list === undefined) return DEFAULT_BROWSERS
+  return [...list.matchAll(/['"]([a-z]+)['"]/g)]
+    .map((match) => match[1])
+    .filter((name): name is string => name !== undefined)
 }
 
 export function checkBrowserConfigs(repoRoot: string = process.cwd()): BrowserCheckResult {
@@ -52,17 +70,16 @@ export function checkBrowserConfigs(repoRoot: string = process.cwd()): BrowserCh
   const allProjects = new Set<string>()
   for (const configPath of configs) {
     const config = readFileSync(configPath, 'utf8')
-    const projects = [...config.matchAll(/name:\s*'([a-z]+)'/g)]
-      .map((match) => match[1])
-      .filter((name): name is string => name !== undefined)
     const relative = configPath.slice(repoRoot.length + 1)
 
-    if (projects.length === 0) {
-      failures.push(`${relative} declares no Playwright projects`)
+    if (!/\bbasePlaywrightConfig\(/.test(config)) {
+      failures.push(`${relative} is not built on basePlaywrightConfig`)
       continue
     }
-    if (!/\bworkers:\s*1\s*,/.test(config)) {
-      failures.push(`${relative} must set \`workers: 1\``)
+    const projects = browsersOf(config)
+    const workers = /\bworkers:\s*([^,\n}]+)/.exec(config)?.[1]?.trim()
+    if (workers !== undefined && workers !== '1') {
+      failures.push(`${relative} must leave \`workers\` at 1, found \`${workers}\``)
     }
 
     if (install) {

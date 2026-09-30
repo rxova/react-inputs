@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test'
+import { basePlaywrightConfig } from '@rxova/repo-config/playwright'
 
 /**
  * E2E runs against this package's own `demo/` — built and previewed on its own
@@ -13,27 +13,15 @@ import { defineConfig, devices } from '@playwright/test'
  * passed to a synthesised `ClipboardEvent`, so the paste-splitting path behaves
  * differently there than the browser suite can show.
  */
-export default defineConfig({
-  testDir: './e2e',
+export default basePlaywrightConfig({
+  command: 'pnpm run demo:preview',
+  port: 4182,
+  browsers: ['chromium', 'firefox', 'webkit'],
+  // The specs in a file are independent, so they may run in any order — but on
+  // one worker (the preset's default), so the three packages Turbo runs at
+  // once stay bounded.
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: 1,
+  trace: 'on-first-retry',
+  // An HTML report on CI, uploaded as an artifact when the job fails.
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : [['list']],
-  use: {
-    baseURL: 'http://localhost:4182',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-  },
-  projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
-  ],
-  webServer: {
-    command: 'pnpm run demo:preview',
-    url: 'http://localhost:4182/',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
 })
