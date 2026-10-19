@@ -45,36 +45,36 @@
     "test:unit": "turbo run test:unit //#test:scripts"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.13.0",
+    "@axe-core/playwright": "^4.14.0",
     "@changesets/changelog-github": "^1.0.1",
     "@changesets/cli": "^3.0.3",
-    "@commitlint/cli": "^21.2.2",
-    "@commitlint/config-conventional": "^21.2.2",
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
     "@eslint/js": "^10.0.1",
-    "@playwright/test": "1.63.0",
+    "@playwright/test": "1.64.1",
     "@rxova/docs-kit": "^0.1.1",
-    "@rxova/repo-config": "^0.5.0",
+    "@rxova/repo-config": "^0.9.0",
     "@rxova/ts-utils": "^0.2.1",
-    "@types/node": "^26.6.1",
-    "@vitest/coverage-v8": "^5.0.1",
-    "axe-core": "^4.13.0",
-    "eslint": "^10.10.0",
+    "@types/node": "^26.6.5",
+    "@vitest/coverage-v8": "^5.0.5",
+    "axe-core": "^4.14.0",
+    "eslint": "^10.12.0",
     "eslint-plugin-astro": "^3.2.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "globals": "^17.12.0",
+    "globals": "^17.13.0",
     "husky": "^9.1.7",
-    "knip": "^6.37.0",
-    "lint-staged": "^17.5.1",
-    "playwright": "1.63.0",
-    "prettier": "^3.9.8",
+    "knip": "^6.41.0",
+    "lint-staged": "^17.6.0",
+    "playwright": "1.64.1",
+    "prettier": "^3.9.10",
     "sherif": "^1.13.0",
-    "tsx": "^4.23.13",
-    "turbo": "^2.10.13",
+    "tsx": "^4.23.15",
+    "turbo": "^2.11.8",
     "typescript": "6.0.3",
-    "typescript-eslint": "^8.70.0",
-    "vitest": "^5.0.1"
+    "typescript-eslint": "^8.71.2",
+    "vitest": "^5.0.5"
   },
   "repoConfig": {
     "verify": {
@@ -152,9 +152,9 @@
     }
   },
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=20.20.2"
   },
-  "packageManager": "pnpm@12.5.1",
+  "packageManager": "pnpm@12.14.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rxova/react-inputs.git"
