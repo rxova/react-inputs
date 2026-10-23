@@ -83,6 +83,7 @@ const hiddenInputStyle: CSSProperties = {
   padding: 0,
   margin: -1,
   overflow: "hidden",
+  // eslint-disable-next-line @typescript-eslint/no-deprecated -- the legacy fallback of the visually-hidden pattern; `clipPath` below is the modern one
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
   whiteSpace: "nowrap",
