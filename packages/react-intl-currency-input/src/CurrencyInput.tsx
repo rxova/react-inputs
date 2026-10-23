@@ -55,6 +55,8 @@ export const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(
       value,
       defaultValue,
       onChange,
+      // Forwarding the prop is how it keeps firing for callers still passing it.
+      // eslint-disable-next-line @typescript-eslint/no-deprecated -- deliberate back-compat until it is removed
       onValueChange,
       maximumFractionDigits,
       minimumFractionDigits,

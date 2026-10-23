@@ -93,6 +93,50 @@ overrides:
   #
   # Upper bound load-bearing as above.
   devalue@5: ">=5.9.2 <6"
+
+  # GHSA-gfr2-rv44-r23c (high) and its low companion: a single multi-line link
+  # reference definition renders in quadratic time (DoS on untrusted Markdown).
+  # 14.3.3 is the first patched release. Reached only through the docs site's
+  # typedoc — directly, and again under typedoc-plugin-markdown and
+  # starlight-typedoc — which declares `^14.1.0`, so no bump here reaches it.
+  # Dev-only, never shipped, and the only Markdown it renders is this
+  # repository's own doc comments. Scoped to 14.x, the only line that resolves
+  # here. Upper bound load-bearing as described for fast-uri above.
+  markdown-it@14: ">=14.3.3 <15"
+  # GHSA-q8gj-x3r6-9xjr: `quote()` lets a line terminator in a token after a
+  # `{ comment }` token inject a second shell command. 1.11.0 is the first
+  # patched release. Reached only through @changesets/cli > launch-editor, which
+  # declares `^1.8.4`, so no bump here reaches it. Dev-only: it runs when
+  # changesets opens an editor, on this repository's own input. Scoped to 1.x,
+  # the only line that resolves here. Upper bound load-bearing as above.
+  shell-quote@1: ">=1.11.0 <2"
+  # GHSA-8mjh-66w6-rj3q and companions: the `fs.existsSync()` guard before the
+  # editor spawn can be bypassed on Windows. 2.14.2 is the first patched
+  # release. The same @changesets/cli path as shell-quote above, and the same
+  # reasoning: dev-only, never shipped. @changesets/cli declares `^2.6.1` and
+  # has no release that raises it, so a bump could not fix this. Scoped to 2.x,
+  # the only line that resolves here. Upper bound load-bearing as above.
+  launch-editor@2: ">=2.14.2 <3"
+  # GHSA-w02v-q2wq-9vqm: an attacker-controlled selector string drives the
+  # parser into quadratic backtracking (DoS). 7.1.6 is the first patched
+  # release. Reached only through the docs site, under Starlight's
+  # expressive-code chain > postcss-nested, which declares `^7.0.0`; the
+  # selectors it parses are expressive-code's own. Dev-only, never shipped.
+  # Scoped to 7.x, the only line that resolves here. Upper bound load-bearing
+  # as above.
+  postcss-selector-parser@7: ">=7.1.6 <8"
+  # Not an advisory. @rxova/ts-utils 0.3.0 split its exports and the new
+  # `./react` subpath gave it a `react` peer. The root workspace declares
+  # ts-utils (the scripts use it) but no react of its own, so pnpm satisfied
+  # that peer with a 19.3.0 copy nothing else asks for, while every package
+  # resolves 19.3.1. Two copies of React in one tree, and the SSR suites of
+  # react-tags-input and react-password-input render through both and fail with
+  # "Invalid hook call".
+  #
+  # Scoped to the 19 line, so the React 18 trees that `test:react-min` installs
+  # are untouched — that matrix is the reason this cannot be a bare pin.
+  react@19: ">=19.3.1 <20"
+  react-dom@19: ">=19.3.1 <20"
 #
 # No `auditConfig.ignoreGhsas`. The single entry that lived here suppressed
 # GHSA-mh99-v99m-4gvg for one unfixable copy reached through

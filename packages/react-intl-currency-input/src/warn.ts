@@ -1,4 +1,4 @@
-import { createDevWarner } from "@rxova/ts-utils";
+import { createDevWarner } from "@rxova/ts-utils/env";
 
 /**
  * Development-only diagnostics, from the shared rxova dev warner.
