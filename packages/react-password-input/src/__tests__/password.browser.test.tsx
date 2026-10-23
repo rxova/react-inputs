@@ -514,7 +514,10 @@ describe("breach check", () => {
     );
     await userEvent.fill(container.querySelector("[data-rx-password-input]")!, "hunter2");
     await expect.element(page.getByRole("alert")).toBeInTheDocument();
-    expect(onValidityChange).toHaveBeenLastCalledWith(false);
+    // The alert renders from the verdict; the validity callback for it is a
+    // separate flush, so on a slow machine the last call is still the one
+    // minLength made. Poll rather than sample once.
+    await expect.poll(() => onValidityChange.mock.lastCall?.[0]).toBe(false);
   });
 
   it("clears the verdict when the field is emptied", async () => {
