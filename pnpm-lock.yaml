@@ -174,6 +174,8 @@ overrides:
   svgo@4: '>=4.1.0 <5'
   morgan@1: '>=1.12.0 <2'
   qs@6: '>=6.16.0 <7'
+  undici@8: '>=8.12.2 <9'
+  body-parser@2: '>=2.4.0 <3'
   devalue@5: '>=5.9.2 <6'
   markdown-it@14: '>=14.3.3 <15'
   shell-quote@1: '>=1.11.0 <2'
@@ -426,11 +428,11 @@ importers:
         specifier: ^3.3.0
         version: 3.3.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@rxova/astro-ui':
-        specifier: ^0.7.0
-        version: 0.7.0(@astrojs/starlight@0.42.6(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(astro@7.4.2(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.15)(yaml@2.9.1))(supports-color@10.2.2)(typescript@6.0.3))(astro@7.4.2(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.15)(yaml@2.9.1))
+        specifier: ^0.8.0
+        version: 0.8.0(@astrojs/starlight@0.42.6(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(astro@7.4.2(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.15)(yaml@2.9.1))(supports-color@10.2.2)(typescript@6.0.3))(astro@7.4.2(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.15)(yaml@2.9.1))
       '@rxova/brand':
-        specifier: ^1.4.0
-        version: 1.4.0
+        specifier: ^1.7.0
+        version: 1.7.0
       '@rxova/react-date-input':
         specifier: workspace:*
         version: link:../../packages/react-date-input
@@ -5131,8 +5133,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@rxova/astro-ui@0.7.0':
-    resolution: {integrity: sha512-o4/w3RPH19SJMakGbr7c7Zj8ZZamohSTDgEMBlJo3VCk6WftMS3Bjicu1cKOGYUqP27CAsmPBcwDTBhO3F54ig==}
+  '@rxova/astro-ui@0.8.0':
+    resolution: {integrity: sha512-wduLfia8/DU7ZTWVal1p9SG7Obtgc+EpfbvncODiUGvKCq8eWLCiQ4ccLGjxnbEBEKQbt66jonbqoBERPejuwQ==}
     engines: {node: '>=24.0.0'}
     peerDependencies:
       '@astrojs/starlight': '>=0.36.0'
@@ -5141,8 +5143,8 @@ packages:
       '@astrojs/starlight':
         optional: true
 
-  '@rxova/brand@1.4.0':
-    resolution: {integrity: sha512-0h744WyoTAg2T+Zx2AynsbAM1HBtZ/tLgMbPf0kxn/Q3DJyCsr3ZO8PAHbSYv24j69ogmX52NwYS5S6inMM+2A==}
+  '@rxova/brand@1.7.0':
+    resolution: {integrity: sha512-fY2iwY2wyK7JzR/o/LzGoWAr8ZowzBnngaKAc7Fo43HPQmMQIHyyjAJ/Wlt2EtNMpNqaqEqCCITMPNwrMza6Fg==}
     engines: {node: '>=24.0.0'}
 
   '@rxova/docs-kit@0.1.1':
@@ -6276,8 +6278,8 @@ packages:
   bcp-47@2.1.1:
     resolution: {integrity: sha512-KLw+H/gd2p4zly1X7Yh/qziuyae5/w/QFnvTng9eZL5fvszL7Whl3MBoWF8yxL7ksUjBfOD+OxkytiqbBpG+Fw==}
 
-  body-parser@2.3.0:
-    resolution: {integrity: sha512-2cGmJupaNgg+QUwVLAucDuWuoMZ6EX9iHDRswZ5lsNYEmwPaRknMPCLZz07yTzVq/83p4o/wzbDZbBrTvGGTIw==}
+  body-parser@2.4.0:
+    resolution: {integrity: sha512-Ifk1KcLrxaGt1occQagQNFNNOqRt1LFuehEnHHzB8Z6cRgIxRU1TBaiIsUiCdA+gy5PL7Y1IX31DNKkRmxtXjQ==}
     engines: {node: '>=18'}
 
   boolbase@1.0.0:
@@ -7789,8 +7791,8 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  lucide-static@1.47.0:
-    resolution: {integrity: sha512-yWIrkdXc688Feq5VjOktsKmV5Ikc7y5Nu3rrdtbr8nWjkJWk8QlnZfVtIak22Af+fNhZ7k4cTJpZo1zmj7X5sA==}
+  lucide-static@1.77.0:
+    resolution: {integrity: sha512-v+BzpQrjlwDRWPDzzAu5IFhOkI6jVKb91fsjw1ZSS7Tsb2YvRX5olRN0DXGW99LF2wV4fycuTf5aPOMC62ZW0g==}
 
   lunr@2.3.9:
     resolution: {integrity: sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==}
@@ -9489,8 +9491,8 @@ packages:
   undici-types@8.9.0:
     resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
 
-  undici@8.10.2:
-    resolution: {integrity: sha512-/y4/bH9YNU5hi9NIrpOuvGXFcxrj3CMrV+/AYpowAYTpHn8gX/XPFjNy766FPoYY0miQhdW977JFWKGNhBdwyQ==}
+  undici@8.13.0:
+    resolution: {integrity: sha512-mxbeyRlRhHUTWE1zf/FwDOXTKMhE1vMQRz/o2oOir/5fIWsB79TeZrByMkj019EdDuxPg03jprCjFLxLkmxTCQ==}
     engines: {node: '>=22.19.0'}
 
   unicode-canonical-property-names-ecmascript@2.0.1:
@@ -13964,15 +13966,15 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.62.2':
     optional: true
 
-  '@rxova/astro-ui@0.7.0(@astrojs/starlight@0.42.6(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(astro@7.4.2(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.15)(yaml@2.9.1))(supports-color@10.2.2)(typescript@6.0.3))(astro@7.4.2(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.15)(yaml@2.9.1))':
+  '@rxova/astro-ui@0.8.0(@astrojs/starlight@0.42.6(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(astro@7.4.2(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.15)(yaml@2.9.1))(supports-color@10.2.2)(typescript@6.0.3))(astro@7.4.2(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.15)(yaml@2.9.1))':
     dependencies:
-      '@rxova/brand': 1.4.0
+      '@rxova/brand': 1.7.0
       astro: 7.4.2(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.15)(yaml@2.9.1)
-      lucide-static: 1.47.0
+      lucide-static: 1.77.0
     optionalDependencies:
       '@astrojs/starlight': 0.42.6(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(astro@7.4.2(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.49.0)(tsx@4.23.15)(yaml@2.9.1))(supports-color@10.2.2)(typescript@6.0.3)
 
-  '@rxova/brand@1.4.0':
+  '@rxova/brand@1.7.0':
     dependencies:
       '@fontsource/ibm-plex-mono': 5.3.0
       '@fontsource/space-grotesk': 5.3.0
@@ -15628,7 +15630,7 @@ snapshots:
       is-alphanumerical: 2.0.1
       is-decimal: 2.0.1
 
-  body-parser@2.3.0(supports-color@10.2.2):
+  body-parser@2.4.0(supports-color@10.2.2):
     dependencies:
       bytes: 3.1.2
       content-type: 2.1.0
@@ -16451,7 +16453,7 @@ snapshots:
   express@5.2.1(supports-color@10.2.2):
     dependencies:
       accepts: 2.0.0
-      body-parser: 2.3.0(supports-color@10.2.2)
+      body-parser: 2.4.0(supports-color@10.2.2)
       content-disposition: 1.1.0
       content-type: 1.0.5
       cookie: 0.7.2
@@ -17371,7 +17373,7 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-static@1.47.0: {}
+  lucide-static@1.77.0: {}
 
   lunr@2.3.9: {}
 
@@ -19708,7 +19710,7 @@ snapshots:
 
   undici-types@8.9.0: {}
 
-  undici@8.10.2: {}
+  undici@8.13.0: {}
 
   unicode-canonical-property-names-ecmascript@2.0.1:
     optional: true
@@ -19742,7 +19744,7 @@ snapshots:
       css-tree: 3.2.1
       fnv1a-64: 0.1.2
       std-env: 4.3.0
-      undici: 8.10.2
+      undici: 8.13.0
 
   unist-util-find-after@5.0.0:
     dependencies:
