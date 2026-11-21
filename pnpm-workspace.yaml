@@ -83,6 +83,25 @@ overrides:
   # Upper bound load-bearing as above.
   qs@6: ">=6.16.0 <7"
 
+  # GHSA-2m5v-pch6-74hx, GHSA-qrxm-fqhp-jwvm and two siblings (high): undici
+  # below 8.12.2 drops TLS options in Agent (certificate validation bypass),
+  # mishandles TLS 1.2 renegotiation and excessive content-encodings (DoS), and
+  # poisons its cache across cross-origin redirects. It arrives only through
+  # unifont > astro in the docs build, which pins 8.10.2 and has no release to
+  # bump to. Scoped to 8.x, the only line that resolves here.
+  #
+  # Upper bound load-bearing as above.
+  undici@8: ">=8.12.2 <9"
+
+  # GHSA-27r3-jxmh-p828 (high): a request body with trailing bytes after the
+  # compressed payload is read as a denial of service. Reached only through
+  # express > body-parser under @react-router/serve in a dev-only compat
+  # fixture, so it is never shipped. 2.4.0 is the first fixed release. Scoped
+  # to 2.x, the only line that resolves here.
+  #
+  # Upper bound load-bearing as above.
+  body-parser@2: ">=2.4.0 <3"
+
   # GHSA-9rgm-9g3h-6x36: devalue <5.9.1 can be driven into a denial of service
   # by malformed input to `parse`/`unflatten`; 5.9.2 is the first patched
   # release. Reached only through Astro (and @astrojs/react), which declares `^5.8.1` -- still
