@@ -34,7 +34,7 @@
     "@rxova/react-tags-input": "workspace:*",
     "@rxova/react-time-input": "workspace:*",
     "antd": "^6.6.7",
-    "astro": "^7.4.13",
+    "astro": "^7.4.2",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
